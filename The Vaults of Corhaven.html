@@ -1212,7 +1212,7 @@ let last=performance.now(),time=0,xrFrame=null;
 function loop(now,frame){
   xrFrame=frame||null;
   const dt=Math.min(0.05,(now-last)/1000);last=now;time+=dt;
-  if(renderer.xr.isPresenting)updateXR(frame);
+  if(renderer.xr.isPresenting)updateXR(frame,dt);
   for(let i=anims.length-1;i>=0;i--){const a=anims[i];a.t+=dt*1000;const k=Math.min(1,a.t/a.d);a.fn(k);if(k>=1){anims.splice(i,1);a.res();}}
   if(world)stepDice(dt);
   pieceMeshes.forEach(m=>{const u=m.userData;const tgt=u.hl?0.1+Math.sin(time*5)*0.06:0;u.inner.position.y+=(tgt-u.inner.position.y)*Math.min(1,dt*12);
@@ -1231,8 +1231,9 @@ function loop(now,frame){
 renderer.setAnimationLoop(loop);
 
 /* ================= WebXR room ================= */
-let boardCm=58;
-const BOARD_CM_MIN=42,BOARD_CM_MAX=106,BOARD_CM_STEP=8;
+let boardCm=58,settingsOpen=false;
+const BOARD_CM_MIN=12,BOARD_CM_MAX=110,BOARD_CM_STEP=2;
+const SLIDER_X=188,SLIDER_W=648;
 const surfacePos=new THREE.Vector3(),surfaceQuat=new THREE.Quaternion();
 let savedFog=null,xrPlaced=false,xrPlacing=false,haveSurface=false;
 function currentBoardScale(){return (boardCm/100)/(2*HALF);}
@@ -1249,9 +1250,15 @@ function applyBoardPlacement(){
   if(world)world.gravity.y=-9.8/scale;
 }
 function setBoardCm(cm){
-  boardCm=Math.max(BOARD_CM_MIN,Math.min(BOARD_CM_MAX,cm));
+  const next=Math.max(BOARD_CM_MIN,Math.min(BOARD_CM_MAX,Math.round(cm)));
+  if(next===boardCm)return;
+  boardCm=next;
   applyBoardPlacement();
   if(typeof paintXRPanel==='function')paintXRPanel();
+}
+function cmFromSliderPixel(px){
+  const t=Math.min(1,Math.max(0,(px-SLIDER_X)/SLIDER_W));
+  return BOARD_CM_MIN+t*(BOARD_CM_MAX-BOARD_CM_MIN);
 }
 const hitSources=[null,null];
 const xrRay=new THREE.Raycaster();
@@ -1302,10 +1309,10 @@ function xrInstruction(){
   if(!xrPlaced)return 'Point at a table or the floor, then press the trigger.';
   const pl=curP();
   if(!pl||pl.cpu)return '';
-  if(heldDice.length)return 'Toss and release the trigger. Let the dice land on the board.';
-  if(S.phase==='roll'||S.phase==='orderRoll')return 'Press the trigger. The dice come to your right hand.';
-  if(S.phase==='choose')return 'Point at a troop or a landing ring, then press the trigger.';
-  return '';
+  if(heldDice.length)return 'Toss and release. The dice land on the board.';
+  if(S.phase==='roll'||S.phase==='orderRoll')return 'Press the trigger, or pinch your right hand. The dice come to that hand.';
+  if(S.phase==='choose')return 'Tap a troop or a ring with your hand, or point and press the trigger.';
+  return 'Tap X, or pinch your left hand, for settings.';
 }
 function paintViewHud(){
   if(!hud)return;
@@ -1377,12 +1384,19 @@ function paintXRPanel(){
   g.strokeStyle='#C9A14A';g.lineWidth=8;roundRect(g,8,8,W-16,panelCanvas.height-16,28);g.stroke();
   g.textAlign='left';g.textBaseline='top';
   g.fillStyle='#EBC76A';g.font='700 44px Georgia,serif';
-  g.fillText('Board',48,36);
-  paintBtn(g,'smaller','−',48,100,200,120,false);
-  paintBtn(g,'larger','+',W-248,100,200,120,false);
-  g.fillStyle='#F2E7CD';g.font='700 48px Georgia,serif';g.textAlign='center';g.textBaseline='middle';
-  g.fillText(boardCm+' cm',W/2,160);
-  let y=260;
+  g.fillText('Board',48,28);
+  g.fillStyle='#1C1712';roundRect(g,SLIDER_X,138,SLIDER_W,28,14);g.fill();
+  g.strokeStyle='#C9A14A';g.lineWidth=4;roundRect(g,SLIDER_X,138,SLIDER_W,28,14);g.stroke();
+  const knobT=(boardCm-BOARD_CM_MIN)/(BOARD_CM_MAX-BOARD_CM_MIN);
+  const knobX=SLIDER_X+knobT*SLIDER_W;
+  g.fillStyle='#E6C064';g.beginPath();g.arc(knobX,152,22,0,Math.PI*2);g.fill();
+  g.strokeStyle='#F2E7CD';g.lineWidth=3;g.stroke();
+  panelButtons.push({id:'slider',x:SLIDER_X-20,y:96,w:SLIDER_W+40,h:112});
+  paintBtn(g,'smaller','−',36,96,130,112,false);
+  paintBtn(g,'larger','+',W-166,96,130,112,false);
+  g.fillStyle='#F2E7CD';g.font='700 42px Georgia,serif';g.textAlign='center';g.textBaseline='middle';
+  g.fillText(boardCm+' cm',W/2,236);
+  let y=270;
   if(xrPlaced&&S.pending.length){
     S.pending.forEach((d,di)=>{
       const x=48+di*160,hot=di===S.sel&&!d.used&&S.phase==='choose';
@@ -1440,7 +1454,7 @@ function controllerFor(hand){
 }
 function updateViewHud(xrCam){
   if(!hud.visible)return;
-  const offset=new THREE.Vector3(-0.38,0.24,-1.02);
+  const offset=new THREE.Vector3(-0.14,0.16,-1.05);
   offset.applyQuaternion(xrCam.quaternion);
   hud.position.copy(xrCam.position).add(offset);
   hud.quaternion.copy(xrCam.quaternion);
@@ -1505,11 +1519,18 @@ function gripVelocity(inputSource){
   ang.applyQuaternion(inv);
   return{lin,ang};
 }
+const tipPrev=[new THREE.Vector3(),new THREE.Vector3()],tipVel=[new THREE.Vector3(),new THREE.Vector3()],tipHas=[false,false];
+function handThrowVelocity(handIndex){
+  const lin=tipVel[handIndex].clone();
+  const inv=tableRoot.quaternion.clone().invert();
+  lin.applyQuaternion(inv).divideScalar(currentBoardScale());
+  return{lin,ang:new THREE.Vector3()};
+}
 function releaseHeld(throwIt){
   if(!heldDice.length)return;
   const batch=heldDice.slice();
   heldDice=[];
-  const base=throwIt?gripVelocity(batch[0].input):null;
+  const base=throwIt?(batch[0].handIndex>=0?handThrowVelocity(batch[0].handIndex):gripVelocity(batch[0].input)):null;
   batch.forEach((held,n)=>{
     const mesh=dice[held.index];
     mesh.userData.held=false;mesh.userData.summon=null;
@@ -1541,10 +1562,10 @@ function canSummon(){
   if(S.phase!=='rolling'||!motionRoll||!motionRoll.thrown[0]||!motionRoll.thrown[1])return false;
   return !diceBodies.length||diceBodies.every(b=>dieSettled(b));
 }
-function summonDice(controller){
-  const grip=controller.userData.grip;
+function summonDice(controller,anchor,handIndex){
+  const grip=anchor||(controller&&controller.userData&&controller.userData.grip);
   if(!grip)return;
-  const input=controller.userData.inputSource;
+  const input=controller&&controller.userData?controller.userData.inputSource:null;
   const gap=Math.max(0.03,2*DS*currentBoardScale()*0.65);
   const offsets=[new THREE.Vector3(-gap,0.02,-0.03),new THREE.Vector3(gap,0.02,-0.03)];
   heldDice=[];
@@ -1561,21 +1582,12 @@ function summonDice(controller){
       mesh.position.lerpVectors(from,offsets[i],e);
       mesh.quaternion.copy(fromQ).slerp(toQ,e);
     });
-    heldDice.push({index:i,input,grip,ray:controller});
+    heldDice.push({index:i,input,grip,ray:controller,handIndex:handIndex==null?-1:handIndex});
   });
   if(motionRoll){motionRoll.thrown=[false,false];motionRoll.still=0;motionRoll.t=0;}
   renderTurn();
 }
-function onSelect(ev){
-  if(!xrActive)return;
-  const controller=ev.target;
-  if(panel.visible&&panel.parent!==controller){
-    const ph=rayFrom(controller).intersectObject(panel,false);
-    if(ph.length){const btn=buttonAt(ph[0].uv);if(btn)pressPanel(btn.id);return;}
-  }
-  if(xrPlacing&&reticle.visible){confirmPlace();return;}
-  if(handOf(controller)==='right'&&canSummon()){summonDice(controller);return;}
-  const hit=pickHits(rayFrom(controller).intersectObjects(pieceMeshes.concat(dice,markers),true));
+function actOnHit(hit){
   const pl=curP();if(!hit||!pl||pl.cpu)return;
   if(hit.die&&S.phase==='choose'){
     const d=S.pending[hit.dieIndex];
@@ -1583,7 +1595,39 @@ function onSelect(ev){
   }else if(hit.marker&&S.phase==='choose')doMove(hit.marker);
   else if(hit.piece&&S.phase==='choose')choosePiece(hit.piece);
 }
+function nearestSelectable(point){
+  const reach=Math.min(0.035,Math.max(0.015,0.7*currentBoardScale()));
+  let best=null,dist=reach;
+  const test=(obj,hit)=>{
+    if(!obj.visible)return;
+    const q=new THREE.Vector3();obj.getWorldPosition(q);
+    const d=point.distanceTo(q);
+    if(d<dist){dist=d;best=hit;}
+  };
+  pieceMeshes.forEach(m=>{if(m.userData.piece)test(m,{piece:m.userData.piece,key:'p'+m.id});});
+  markers.forEach(m=>{if(m.visible&&m.userData.move)test(m,{marker:m.userData.move,key:'m'+m.id});});
+  dice.forEach((d,i)=>test(d,{die:true,dieIndex:i,key:'d'+i}));
+  return best;
+}
+let sliderDrag=null;
+function onSelect(ev){
+  if(!xrActive)return;
+  const controller=ev.target;
+  if(panel.visible&&panel.parent!==controller){
+    const ph=rayFrom(controller).intersectObject(panel,false);
+    if(ph.length){
+      const btn=buttonAt(ph[0].uv);
+      if(btn&&btn.id==='slider'){sliderDrag={controller};setBoardCm(cmFromSliderPixel(ph[0].uv.x*panelCanvas.width));return;}
+      if(btn)pressPanel(btn.id);
+      return;
+    }
+  }
+  if(xrPlacing&&reticle.visible){confirmPlace();return;}
+  if(handOf(controller)==='right'&&canSummon()){summonDice(controller);return;}
+  actOnHit(pickHits(rayFrom(controller).intersectObjects(pieceMeshes.concat(dice,markers),true)));
+}
 function onSelectEnd(ev){
+  if(sliderDrag&&sliderDrag.controller===ev.target)sliderDrag=null;
   if(heldDice.length&&ev.target===heldDice[0].ray)releaseHeld(true);
 }
 function onControllerConnected(ev){
@@ -1606,6 +1650,110 @@ const xrHands=[0,1].map(i=>{
   scene.add(rayCtrl);scene.add(grip);
   return rayCtrl;
 });
+const xrHandRoots=[0,1].map(()=>{
+  const dot=new THREE.Mesh(new THREE.SphereGeometry(0.008,12,8),new THREE.MeshBasicMaterial({color:0xEBC76A,depthTest:false}));
+  dot.renderOrder=998;dot.visible=false;scene.add(dot);
+  return{hand:null,dot};
+});
+function trackedHand(i){
+  if(!xrHandRoots[i].hand)xrHandRoots[i].hand=renderer.xr.getHand(i);
+  const hand=xrHandRoots[i].hand;
+  if(hand.parent!==scene)scene.add(hand);
+  const tip=hand.joints&&hand.joints['index-finger-tip'];
+  return tip&&tip.visible?hand:null;
+}
+function gamepadOf(controller){
+  return controller&&controller.userData.inputSource&&controller.userData.inputSource.gamepad;
+}
+function stickOf(gp){
+  if(!gp||!gp.axes)return{x:0,y:0};
+  let x=gp.axes[0]||0,y=gp.axes[1]||0;
+  if(gp.axes.length>=4&&Math.hypot(x,y)<0.15&&Math.hypot(gp.axes[2]||0,gp.axes[3]||0)>0.15){x=gp.axes[2];y=gp.axes[3];}
+  return{x,y};
+}
+function toggleSettings(){
+  settingsOpen=!settingsOpen;
+  panel.visible=!!(settingsOpen&&xrActive);
+  if(panel.visible)paintXRPanel();
+}
+function panelLocalX(point){
+  if(!panel.visible)return null;
+  panel.updateWorldMatrix(true,false);
+  const local=point.clone().applyMatrix4(panel.matrixWorld.clone().invert());
+  if(Math.abs(local.z)>0.04)return null;
+  return (local.x/0.30+0.5)*panelCanvas.width;
+}
+function panelButtonAtPoint(point){
+  if(!panel.visible)return null;
+  panel.updateWorldMatrix(true,false);
+  const local=point.clone().applyMatrix4(panel.matrixWorld.clone().invert());
+  if(Math.abs(local.z)>0.03||Math.abs(local.x)>0.15||Math.abs(local.y)>0.1125)return null;
+  return buttonAt({x:local.x/0.30+0.5,y:local.y/0.225+0.5});
+}
+let xWasDown=false,sizeHold=0,pinchWas=[false,false],touchWas=[null,null];
+function pollControls(dt){
+  const left=controllerFor('left'),right=controllerFor('right');
+  const lgp=gamepadOf(left),rgp=gamepadOf(right);
+  const xDown=!!(lgp&&lgp.buttons[4]&&lgp.buttons[4].pressed);
+  if(xDown&&!xWasDown)toggleSettings();
+  xWasDown=xDown;
+  const ls=stickOf(lgp);
+  if(Math.abs(ls.x)>0.55){
+    sizeHold-=dt;
+    if(sizeHold<=0){setBoardCm(boardCm+Math.sign(ls.x)*BOARD_CM_STEP);sizeHold=0.16;}
+  }else sizeHold=0;
+  if(xrPlaced&&!xrPlacing){
+    const rs=stickOf(rgp);
+    if(Math.abs(rs.x)>0.25){
+      tableRoot.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),-rs.x*dt*2.2));
+      surfaceQuat.copy(tableRoot.quaternion);
+    }
+  }
+  if(sliderDrag&&sliderDrag.controller){
+    const gp=gamepadOf(sliderDrag.controller);
+    if(!(gp&&gp.buttons[0]&&gp.buttons[0].pressed))sliderDrag=null;
+    else{
+      const hits=rayFrom(sliderDrag.controller).intersectObject(panel,false);
+      if(hits.length)setBoardCm(cmFromSliderPixel(hits[0].uv.x*panelCanvas.width));
+    }
+  }
+}
+function updateHands(dt){
+  xrHandRoots.forEach((rec,i)=>{
+    const hand=trackedHand(i);
+    const ctrl=xrHands[i];
+    const line=ctrl.getObjectByName('ray');
+    if(line)line.visible=!hand;
+    if(!hand){rec.dot.visible=false;pinchWas[i]=false;tipHas[i]=false;touchWas[i]=null;return;}
+    const tip=hand.joints['index-finger-tip'];
+    const p=new THREE.Vector3();tip.getWorldPosition(p);
+    rec.dot.visible=true;rec.dot.position.copy(p);
+    if(tipHas[i])tipVel[i].copy(p).sub(tipPrev[i]).divideScalar(Math.max(dt,0.001));
+    else tipVel[i].set(0,0,0);
+    tipPrev[i].copy(p);tipHas[i]=true;
+    const pinching=!!(hand.inputState&&hand.inputState.pinching);
+    const over=panelButtonAtPoint(p);
+    const side=handOf(ctrl);
+    if(pinching&&!pinchWas[i]){
+      if(over&&over.id==='slider'){sliderDrag={hand:i};const px=panelLocalX(p);if(px!=null)setBoardCm(cmFromSliderPixel(px));}
+      else if(over)pressPanel(over.id);
+      else if(side==='right'&&canSummon()&&hand.joints.wrist)summonDice(hand,hand.joints.wrist,i);
+      else if(side==='left')toggleSettings();
+    }
+    if(!pinching&&pinchWas[i]){
+      if(sliderDrag&&sliderDrag.hand===i)sliderDrag=null;
+      if(heldDice.length&&heldDice[0].handIndex===i)releaseHeld(true);
+    }
+    if(pinching&&sliderDrag&&sliderDrag.hand===i){const px=panelLocalX(p);if(px!=null)setBoardCm(cmFromSliderPixel(px));}
+    if(!over&&!pinching&&!(heldDice.length&&heldDice[0].handIndex===i)){
+      const hit=nearestSelectable(p);
+      const key=hit?hit.key:null;
+      if(key&&key!==touchWas[i])actOnHit(hit);
+      touchWas[i]=key;
+    }else touchWas[i]=null;
+    pinchWas[i]=pinching;
+  });
+}
 function setShadow(size){
   sun.shadow.mapSize.set(size,size);
   if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}
@@ -1615,7 +1763,7 @@ function onXRStart(){
   sky.visible=false;stars.visible=false;tableMesh.visible=false;
   savedFog=scene.fog;scene.fog=null;
   tableRoot.visible=false;
-  reticle.visible=false;panel.visible=true;hud.visible=true;
+  reticle.visible=false;settingsOpen=false;panel.visible=false;hud.visible=true;
   xrHands.forEach(c=>{c.visible=true;if(c.userData.grip)c.userData.grip.visible=true;});
   setShadow(1024);
   renderer.setPixelRatio(1);
@@ -1639,7 +1787,8 @@ function onXREnd(){
   if(heldDice.length)releaseHeld(false);
   motionRoll=null;xrActive=false;xrPlaced=false;xrPlacing=false;haveSurface=false;
   hitSources.forEach((s,i)=>{if(s){try{s.cancel();}catch(e){}hitSources[i]=null;}});
-  reticle.visible=false;panel.visible=false;hud.visible=false;
+  reticle.visible=false;settingsOpen=false;panel.visible=false;hud.visible=false;
+  xrHandRoots.forEach(rec=>{rec.dot.visible=false;});
   xrHands.forEach(c=>{c.visible=false;if(c.userData.grip)c.userData.grip.visible=false;});
   sky.visible=true;tableMesh.visible=true;
   scene.fog=savedFog;savedFog=null;
@@ -1651,9 +1800,11 @@ function onXREnd(){
   if(controls)controls.enabled=true;
   applyTheme();resize();
 }
-function updateXR(frame){
+function updateXR(frame,dt){
   const xrCam=renderer.xr.getCamera(camera);
   if(xrPlacing)updateHit(frame);else reticle.visible=false;
+  pollControls(dt||0.016);
+  updateHands(dt||0.016);
   updateViewHud(xrCam);
   updateHandPanel(xrCam);
 }
@@ -1662,7 +1813,8 @@ async function enterRoom(){
   if($('setup').classList.contains('open'))$('btnBegin').click();
   let session;
   try{
-    session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor']});
+    try{session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['hand-tracking']});}
+    catch(e){session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor']});}
   }catch(err){
     ui.hint.textContent='The room view did not start. Open this page in the Quest Browser after Space Setup.';
     return;
