@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interface inventory — The Vaults of Corhaven</title>
+<link rel="stylesheet" href="./The Vaults of Corhaven_files/css2">
+<style>
+:root{
+  --leather:#2F2119;--leather-2:#46321F;--gold:#C9A14A;--gold-bright:#EBC76A;
+  --parch:#F2E7CD;--parch-dim:#CDBD99;--iron:#1C1712;--bone:#EAE0C6;--pip:#7A1A14;
+  --bg:#8DB3D6;--table:#3b2a1e;--table-2:#2a1d14;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--table);color:var(--parch);
+  font-family:'Alegreya','Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+  font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--gold-bright)}
+code{font-family:inherit;color:var(--gold-bright)}
+:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
+
+.sg{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.nav{
+  position:sticky;top:0;height:100vh;overflow:auto;
+  padding:28px 18px 48px;background:var(--table-2);
+  border-right:1px solid rgba(201,161,74,.35);
+}
+.brand{
+  display:block;margin:0 0 18px;font-family:'Pirata One','UnifrakturCook',Georgia,serif;
+  font-size:28px;line-height:1;color:var(--gold-bright);text-decoration:none;
+}
+.nav .group{margin:20px 0 4px;color:var(--gold);font-size:15px}
+.nav a.jump{display:block;padding:4px 0;color:var(--parch-dim);text-decoration:none;font-size:16px}
+.nav a.jump:hover{color:var(--parch)}
+.main{padding:40px 44px 96px;max-width:1120px}
+.kicker{margin:0 0 6px;color:var(--gold)}
+h1{
+  margin:0 0 12px;font-family:'Pirata One','UnifrakturCook',Georgia,serif;
+  font-weight:400;font-size:58px;line-height:.95;color:var(--gold-bright);
+}
+.lede{margin:0 0 8px;max-width:62ch;color:var(--parch)}
+.lede.dim{color:var(--parch-dim)}
+.rule{width:72px;height:2px;margin:18px 0 8px;background:var(--gold);border:0}
+
+section{margin:56px 0 0;scroll-margin-top:18px}
+section h2{
+  margin:0 0 8px;font-size:32px;font-weight:700;line-height:1.15;color:var(--parch);
+}
+.lead{margin:0 0 18px;max-width:68ch;color:var(--parch-dim)}
+h3{margin:28px 0 8px;font-size:22px;font-weight:700;color:var(--parch)}
+
+figure{margin:0}
+figcaption{margin-top:8px;max-width:42ch;color:var(--parch-dim);font-size:15px}
+.stack{display:flex;flex-direction:column;gap:28px}
+.row{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.sky{
+  background:linear-gradient(180deg,#5E93CC 0%,#c9dbed 46%,#E7D6B0 100%);
+  border-radius:16px;padding:22px;
+}
+.sky.night{background:linear-gradient(180deg,#0B1030 0%,#2a223c 52%,#3A2C4A 100%)}
+.sky figcaption{color:#24180f}
+.sky.night figcaption{color:var(--parch)}
+.col{width:min(320px,100%)}
+
+.swatches{display:flex;flex-wrap:wrap;gap:16px 18px}
+.swatch{width:150px}
+.swatch i{
+  display:block;height:74px;border-radius:10px;
+  border:1px solid rgba(242,231,205,.28);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);
+}
+.swatch b{display:block;margin-top:7px;font-size:16px}
+.swatch span{display:block;color:var(--parch-dim);font-size:14px;line-height:1.35}
+
+.copy h3{margin-top:22px}
+.copy ul,ul.copy{margin:0;padding:0;list-style:none;max-width:70ch}
+.copy li{margin:0 0 8px;color:var(--parch-dim)}
+.copy q{color:var(--parch);font-style:italic}
+.copy .who{color:var(--gold)}
+
+.loom{width:96px;height:114px}
+.loom .crest{transform:scale(3);transform-origin:top left}
+.loom-coins{height:42px;display:flex;gap:18px;align-items:center}
+.loom-coins .coin{transform:scale(4);transform-origin:left center;margin-right:18px}
+
+/* ===== Game UI, copied from The Vaults of Corhaven ===== */
+.g{
+  font-size:17px;line-height:1.45;color:var(--parch);
+  font-family:'Alegreya','Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+}
+.g button{font:inherit;cursor:pointer}
+.g button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
+button{font:inherit;color:inherit;cursor:pointer}
+.panel{background:linear-gradient(160deg,var(--leather-2),var(--leather) 70%);border:2px solid var(--gold);border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,220,150,.08)}
+.hud{position:static;z-index:5}
+.stage>.hud{position:absolute}
+.turn-card{top:calc(env(safe-area-inset-top,0px) + 14px);left:calc(env(safe-area-inset-left,0px) + 14px);padding:12px 16px;width:min(330px,calc(100% - 28px))}
+.title{font-family:'Pirata One','UnifrakturCook','Old English Text MT',Georgia,serif;font-size:26px;line-height:1;color:var(--gold-bright)}
+.turn{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
+.crest{display:inline-block;flex:none;width:30px;height:36px;background:var(--c,#777);clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18);position:relative}
+.turn-name{font-weight:700;font-size:19px;line-height:1.2}
+.msg{color:var(--parch-dim);font-size:15px;min-height:1.4em}
+.tally{display:flex;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(201,161,74,.35);flex-wrap:wrap}
+.tally .t{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--parch-dim);padding:2px 6px 2px 2px;border-radius:6px}
+.tally .t.active{background:rgba(233,199,106,.14);color:var(--parch)}
+.tally .crest{width:16px;height:19px}
+.coins{display:flex;gap:2px}
+.coin{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(201,161,74,.5)}
+.coin.on{background:radial-gradient(circle at 35% 35%,#FFE9A0,#C9961F);box-shadow:0 0 5px rgba(255,210,90,.8)}
+.controls-tr{top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(env(safe-area-inset-right,0px) + 14px);display:flex;gap:8px}
+.chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.chip:hover,.chip.as-hover{border-color:var(--gold-bright)}
+.bottom-bar{left:auto;transform:none;bottom:auto;display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:calc(100% - 24px)}
+.stage>.bottom-bar{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px)}
+.dice{display:flex;gap:10px;align-items:center}
+.dice[hidden]{display:none}
+.dchip{width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #8a6a3a;
+  box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;place-items:center;transition:transform .12s ease}
+.dchip svg{width:100%;height:100%;display:block}
+.dchip.bonus{width:auto;padding:0 14px;background:linear-gradient(#F3D27A,#C9961F);color:var(--iron);font-weight:700;font-size:21px;border-color:#7A5A1A}
+.dchip[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold-bright),0 0 18px rgba(255,210,100,.7);transform:translateY(-3px)}
+.dchip.used{opacity:.3;filter:grayscale(1);cursor:default;transform:none;box-shadow:none}
+.dchip.stuck{opacity:.55}
+.roll{--c:#555;min-width:220px;padding:14px 30px;font-size:21px;font-weight:700;
+  background:radial-gradient(120% 140% at 50% 0%,color-mix(in srgb,var(--c) 70%,white 18%),var(--c) 55%,color-mix(in srgb,var(--c) 70%,black));
+  color:#FFF6DE;text-shadow:0 1px 2px rgba(0,0,0,.6);border:3px solid var(--gold);border-radius:14px;
+  box-shadow:0 10px 26px rgba(0,0,0,.5),inset 0 -4px 0 rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.2);transition:transform .12s ease,filter .2s ease}
+.roll:not(:disabled):hover,.roll.as-hover:not(:disabled){transform:translateY(-2px)}
+.roll:disabled{filter:saturate(.45) brightness(.8);cursor:default}
+.hint{font-size:14px;color:var(--parch);text-shadow:0 1px 3px rgba(0,0,0,.9);text-align:center}
+.modal{position:relative;inset:auto;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(10,8,14,.55);backdrop-filter:blur(2px)}
+.modal.open{display:flex}
+.stage>.modal.open{position:absolute;inset:0}
+.sheet{width:min(480px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px 26px 22px}
+.sheet.full{max-height:none;overflow:visible}
+.sheet h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:40px;line-height:1.02;margin:0 0 8px;color:var(--gold-bright)}
+.sheet h2{font-size:18px;margin:18px 0 8px;font-weight:700}
+.sheet p{margin:0 0 10px;color:var(--parch-dim)}
+.seg{display:flex;border:1.5px solid var(--gold);border-radius:10px;overflow:hidden}
+.seg button{flex:1;padding:8px 0;background:transparent;border:0;font-size:18px;font-weight:600;color:var(--parch-dim)}
+.seg button+button{border-left:1.5px solid rgba(201,161,74,.5)}
+.seg button[aria-checked="true"]{background:var(--gold);color:var(--iron)}
+.seat{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(201,161,74,.2)}
+.seat .name{flex:1;font-weight:600}
+.toggle{display:flex;border:1.5px solid rgba(201,161,74,.7);border-radius:8px;overflow:hidden}
+.toggle button{background:transparent;border:0;padding:5px 11px;font-size:15px;color:var(--parch-dim)}
+.toggle button[aria-pressed="true"]{background:rgba(233,199,106,.9);color:var(--iron);font-weight:600}
+.primary{margin-top:20px;width:100%;padding:13px;font-size:20px;font-weight:700;background:linear-gradient(#E6C064,#B98B2E);color:var(--iron);border:2px solid #7A5A1A;border-radius:12px;box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.35)}
+.secondary{margin-top:10px;width:100%;padding:11px;font-size:17px;background:transparent;border:1.5px solid var(--gold);border-radius:12px;color:var(--parch)}
+.rules p{color:var(--parch);margin:0 0 10px}
+.rules p strong{color:var(--gold-bright)}
+.stage{
+  position:relative;height:640px;overflow:hidden;border-radius:16px;
+  background:linear-gradient(180deg,#5E93CC 0%,#b9d0e6 42%,#E7D6B0 100%);
+}
+.stage.night{background:linear-gradient(180deg,#0B1030 0%,#261d36 48%,#3A2C4A 100%)}
+.stage.tall{height:900px}
+.stage.short{height:560px}
+.stage.narrow{width:390px;height:780px;font-size:16px}
+.stage.narrow .turn-card{padding:9px 12px;width:calc(100% - 24px)}
+.stage.narrow .turn-card .title{display:none}
+.stage.narrow .turn{margin-top:0}
+.stage.narrow .turn-name{font-size:17px}
+.stage.narrow>.controls-tr{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 170px);right:12px;flex-direction:column}
+.stage.narrow .chip{padding:5px 11px;font-size:14px}
+.stage.narrow .roll{min-width:190px;padding:12px 22px;font-size:19px}
+.stage.narrow .dchip{width:48px;height:48px}
+.as-focus{outline:3px solid var(--gold-bright);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .roll,.dchip{transition:none}
+}
+@media (max-width:860px){
+  .sg{grid-template-columns:1fr}
+  .nav{
+    position:sticky;top:0;height:auto;z-index:40;display:flex;gap:14px;align-items:center;
+    overflow:auto;padding:12px 14px;border-right:0;border-bottom:1px solid rgba(201,161,74,.35);
+  }
+  .brand{margin:0 8px 0 0;font-size:22px;flex:none}
+  .nav .group{display:none}
+  .nav a.jump{flex:none;white-space:nowrap;padding:6px 0}
+  .main{padding:28px 16px 72px}
+  h1{font-size:44px}
+}
+</style>
+</head>
+<body>
+<div class="sg" id="top">
+<nav class="nav" aria-label="Inventory">
+  <a class="brand" href="#top">Inventory</a>
+  <div class="group">On the board</div>
+  <a class="jump" href="#screens">Assembled screens</a>
+  <a class="jump" href="#narrow">Narrow screen</a>
+  <div class="group">The pieces</div>
+  <a class="jump" href="#color">Color</a>
+  <a class="jump" href="#type">Type</a>
+  <a class="jump" href="#crest">Crest</a>
+  <a class="jump" href="#turn-card">Turn card</a>
+  <a class="jump" href="#tally">Tally and coins</a>
+  <a class="jump" href="#chips">Chips</a>
+  <a class="jump" href="#dice">Dice</a>
+  <a class="jump" href="#roll">Roll button</a>
+  <a class="jump" href="#hint">Hint</a>
+  <a class="jump" href="#count">Player count</a>
+  <a class="jump" href="#seats">Seats</a>
+  <a class="jump" href="#buttons">Sheet buttons</a>
+  <a class="jump" href="#dialogs">Dialogs</a>
+  <div class="group">Reference</div>
+  <a class="jump" href="#copy">Every line of copy</a>
+  <a class="jump" href="#board">Cues that are not HTML</a>
+</nav>
+
+<main class="main">
+  <p class="kicker">The Vaults of Corhaven</p>
+  <h1>Interface inventory</h1>
+  <p class="lede">Every overlay piece in the game, shown in the states the match actually uses. The leather, gold, type, and wording below are the current interface, not a proposal.</p>
+  <p class="lede dim">The board, troops, and thrown dice are drawn in 3D. They are listed at the end. Dialogs sit above the corner controls: the controls are layer 5, a dialog is layer 20. There is no close icon and no click on the dimmed board. Each dialog leaves through its own button.</p>
+  <hr class="rule">
+  <p class="lede dim"><a href="./The Vaults of Corhaven.html">Open the game</a></p>
+
+  <section id="screens">
+    <h2>Assembled screens</h2>
+    <p class="lead">These are the overlays as they sit on the sky. Day sky runs from <code>#5E93CC</code> down to <code>#E7D6B0</code>. Night sky runs from <code>#0B1030</code> down to <code>#3A2C4A</code>. Night changes the sky only. The leather pieces stay the same.</p>
+
+    <div class="stack">
+      <figure>
+        <div class="g">
+          <div class="stage tall" aria-label="Setup, before the first march">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest"></span>
+                <div>
+                  <div class="turn-name">Choose your players</div>
+                  <div class="msg"></div>
+                </div>
+              </div>
+              <div class="tally"></div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button" data-sound aria-pressed="true">Sound on</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice" hidden></div>
+              <button class="roll" type="button" disabled>Roll the dice</button>
+              <div class="hint">Drag to turn the board, pinch or scroll to zoom</div>
+            </div>
+            <div class="modal open" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+              <div class="sheet panel">
+                <h1 id="setupTitle">The Vaults of Corhaven</h1>
+                <p>A rider has brought word that the lost vaults of Corhaven survived. March your troops through the Sundered March, find your kingdom's hidden passage, and claim the gold before your rivals do.</p>
+                <button class="secondary" type="button" style="margin-top:4px">Read the chronicle</button>
+                <h2>How many players?</h2>
+                <div class="seg" id="live-count" role="radiogroup" aria-label="How many players">
+                  <button type="button" role="radio" data-n="2" aria-checked="false">2</button>
+                  <button type="button" role="radio" data-n="3" aria-checked="false">3</button>
+                  <button type="button" role="radio" data-n="4" aria-checked="true">4</button>
+                </div>
+                <h2>Who rules each kingdom?</h2>
+                <div id="live-seats">
+                  <div class="seat"><span class="crest" style="--c:#B3261E"></span><span class="name">Emberhold</span><div class="toggle" role="group" data-house="0" aria-label="Emberhold player type"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+                  <div class="seat"><span class="crest" style="--c:#2E7D32"></span><span class="name">Thornwald</span><div class="toggle" role="group" data-house="1" aria-label="Thornwald player type"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+                  <div class="seat"><span class="crest" style="--c:#D9A21B"></span><span class="name">Solmere</span><div class="toggle" role="group" data-house="2" aria-label="Solmere player type"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+                  <div class="seat"><span class="crest" style="--c:#1F4E9C"></span><span class="name">Tidereach</span><div class="toggle" role="group" data-house="3" aria-label="Tidereach player type"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+                </div>
+                <button class="primary" type="button">Begin the game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Arrival. The setup dialog is open. The crest has no kingdom yet, so it falls back to gray. The tally is empty and still draws its gold line. The roll button is disabled and still the default gray, because no kingdom color has been applied. Switch the count and the rulers here. Two players seat Emberhold and Solmere. Three add Thornwald. Four add Tidereach.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="g">
+          <div class="stage short" aria-label="Rolling to decide who marches first">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest" style="--c:#2E7D32"></span>
+                <div>
+                  <div class="turn-name">Thornwald</div>
+                  <div class="msg">Roll to see when the rider reached your court.</div>
+                </div>
+              </div>
+              <div class="tally">
+                <div class="t" title="Emberhold: 0 of 4 troops at the vault"><span class="crest" style="--c:#B3261E"></span><span>Emberhold · 11</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t active" title="Thornwald: 0 of 4 troops at the vault"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Solmere: 0 of 4 troops at the vault"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Tidereach: 0 of 4 troops at the vault"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+              </div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button" data-sound aria-pressed="true">Sound on</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice" hidden></div>
+              <button class="roll" type="button" style="--c:#2E7D32">Roll for order</button>
+              <div class="hint">Drag to turn the board, pinch or scroll to zoom</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Deciding march order. Dice chips stay hidden. The roll button takes the current kingdom’s color. A finished order roll is appended on the tally, as in Emberhold · 11.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="g">
+          <div class="stage" aria-label="Choosing which troop marches">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest" style="--c:#D9A21B"></span>
+                <div>
+                  <div class="turn-name">Solmere</div>
+                  <div class="msg">You rolled 5 and 2, doubles.</div>
+                </div>
+              </div>
+              <div class="tally">
+                <div class="t" title="Emberhold: 1 of 4 troops at the vault"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Thornwald: 0 of 4 troops at the vault"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t active" title="Solmere: 2 of 4 troops at the vault"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Tidereach: 0 of 4 troops at the vault"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+              </div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button" data-sound aria-pressed="true">Sound on</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice">
+                <button class="dchip" type="button" data-face="5" aria-pressed="true" aria-label="Die showing 5"></button>
+                <button class="dchip stuck" type="button" data-face="2" aria-pressed="false" disabled aria-label="Die showing 2, no legal move"></button>
+                <button class="dchip bonus" type="button" aria-pressed="false" aria-label="Bonus move of 20">+20</button>
+              </div>
+              <button class="roll" type="button" style="--c:#D9A21B" disabled>Choose a troop</button>
+              <div class="hint">Pick a die, then tap a glowing troop. Rings show where it will land.</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Choosing a march. The selected die lifts and glows. A die with no legal troop is dimmed. A capture or a troop reaching the vault adds a +20 bonus. The roll button is disabled and reads Choose a troop. The hint changes only in this moment.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="g">
+          <div class="stage night" aria-label="The same choice on the night sky">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest" style="--c:#D9A21B"></span>
+                <div>
+                  <div class="turn-name">Solmere</div>
+                  <div class="msg">You rolled 5 and 2, doubles.</div>
+                </div>
+              </div>
+              <div class="tally">
+                <div class="t"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t active"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+              </div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button">Sound on</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice">
+                <button class="dchip" type="button" data-face="5" aria-pressed="true" aria-label="Die showing 5"></button>
+                <button class="dchip stuck" type="button" data-face="2" disabled aria-label="Die showing 2, no legal move"></button>
+                <button class="dchip bonus" type="button">+20</button>
+              </div>
+              <button class="roll" type="button" style="--c:#D9A21B" disabled>Choose a troop</button>
+              <div class="hint">Pick a die, then tap a glowing troop. Rings show where it will land.</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>The same screen on the night sky. Hint text is parchment with a dark shadow so it can sit on either sky.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="g">
+          <div class="stage short" aria-label="Computer turn">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest" style="--c:#2E7D32"></span>
+                <div>
+                  <div class="turn-name">Thornwald (computer)</div>
+                  <div class="msg">Thornwald is on the march.</div>
+                </div>
+              </div>
+              <div class="tally">
+                <div class="t"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t active"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+              </div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button">Sound on</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice" hidden></div>
+              <button class="roll" type="button" style="--c:#2E7D32" disabled>Computer is playing</button>
+              <div class="hint">Drag to turn the board, pinch or scroll to zoom</div>
+            </div>
+          </div>
+        </div>
+        <figcaption>A computer kingdom. The turn name says (computer). The tally says (CPU). Those two strings are different. The roll button stays disabled for the whole computer turn.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="g">
+          <div class="stage" aria-label="Victory">
+            <div class="hud panel turn-card">
+              <div class="title">The Vaults of Corhaven</div>
+              <div class="turn">
+                <span class="crest" style="--c:#D9A21B"></span>
+                <div>
+                  <div class="turn-name">Solmere</div>
+                  <div class="msg">Solmere claims the gold of Corhaven.</div>
+                </div>
+              </div>
+              <div class="tally">
+                <div class="t" title="Emberhold: 1 of 4 troops at the vault"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Thornwald: 0 of 4 troops at the vault"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+                <div class="t" title="Solmere: 4 of 4 troops at the vault"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin on"></span><span class="coin on"></span></span></div>
+                <div class="t" title="Tidereach: 2 of 4 troops at the vault"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin"></span><span class="coin"></span></span></div>
+              </div>
+            </div>
+            <div class="hud controls-tr">
+              <button class="chip" type="button">Chronicle</button>
+              <button class="chip" type="button">Rules</button>
+              <button class="chip" type="button">Sound off</button>
+              <button class="chip" type="button">New game</button>
+            </div>
+            <div class="hud bottom-bar">
+              <div class="dice" hidden></div>
+              <button class="roll" type="button" style="--c:#D9A21B" disabled>Victory</button>
+              <div class="hint">Drag to turn the board, pinch or scroll to zoom</div>
+            </div>
+            <div class="modal open" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+              <div class="sheet panel">
+                <h1 id="winTitle">Solmere claims the vault</h1>
+                <p>All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.</p>
+                <button class="primary" type="button">Play again</button>
+                <button class="secondary" type="button">Change players</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Victory. No tally row is marked active once the match is over. All four of the winner’s coins are lit. Play again keeps the same rulers. Change players returns to setup.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="narrow">
+    <h2>Narrow screen</h2>
+    <p class="lead">At a window of 640px or narrower, the game hides the turn-card title, tightens the type, and stacks the four chips in a column on the right, above the roll button. This frame is 390px wide so you can see that layout on a large monitor.</p>
+    <figure>
+      <div class="g">
+        <div class="stage narrow" aria-label="Choosing a march on a narrow screen">
+          <div class="hud panel turn-card">
+            <div class="title">The Vaults of Corhaven</div>
+            <div class="turn">
+              <span class="crest" style="--c:#1F4E9C"></span>
+              <div>
+                <div class="turn-name">Tidereach</div>
+                <div class="msg">You rolled 6 and 3.</div>
+              </div>
+            </div>
+            <div class="tally">
+              <div class="t"><span class="crest" style="--c:#B3261E"></span><span>Emberhold (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+              <div class="t active"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+            </div>
+          </div>
+          <div class="hud controls-tr">
+            <button class="chip" type="button">Chronicle</button>
+            <button class="chip" type="button">Rules</button>
+            <button class="chip" type="button">Sound on</button>
+            <button class="chip" type="button">New game</button>
+          </div>
+          <div class="hud bottom-bar">
+            <div class="dice">
+              <button class="dchip" type="button" data-face="6" aria-pressed="true" aria-label="Die showing 6"></button>
+              <button class="dchip" type="button" data-face="3" aria-label="Die showing 3"></button>
+            </div>
+            <button class="roll" type="button" style="--c:#1F4E9C" disabled>Choose a troop</button>
+            <div class="hint">Pick a die, then tap a glowing troop. Rings show where it will land.</div>
+          </div>
+        </div>
+      </div>
+      <figcaption>Two-player match on a phone-width frame. Emberhold and Tidereach are the two-player pair only when the count is two. Here Tidereach is the human and Emberhold is the computer, which is a legal setup either way.</figcaption>
+    </figure>
+  </section>
+
+  <section id="color">
+    <h2>Color</h2>
+    <p class="lead">These are the colors the overlay actually paints. Kingdom colors are also poured into the roll button and the crest.</p>
+    <h3>Interface</h3>
+    <div class="swatches">
+      <div class="swatch"><i style="background:linear-gradient(160deg,#46321F,#2F2119 70%)"></i><b>Panel</b><span>--leather-2 to --leather</span></div>
+      <div class="swatch"><i style="background:#2F2119"></i><b>Leather</b><span>--leather · #2F2119</span></div>
+      <div class="swatch"><i style="background:#46321F"></i><b>Leather light</b><span>--leather-2 · #46321F</span></div>
+      <div class="swatch"><i style="background:#C9A14A"></i><b>Gold</b><span>--gold · #C9A14A</span></div>
+      <div class="swatch"><i style="background:#EBC76A"></i><b>Gold bright</b><span>--gold-bright · #EBC76A</span></div>
+      <div class="swatch"><i style="background:#F2E7CD"></i><b>Parchment</b><span>--parch · #F2E7CD</span></div>
+      <div class="swatch"><i style="background:#CDBD99"></i><b>Parchment dim</b><span>--parch-dim · #CDBD99</span></div>
+      <div class="swatch"><i style="background:#1C1712"></i><b>Iron</b><span>--iron · #1C1712</span></div>
+      <div class="swatch"><i style="background:#EAE0C6"></i><b>Bone</b><span>--bone · #EAE0C6</span></div>
+      <div class="swatch"><i style="background:#7A1A14"></i><b>Pip</b><span>--pip · #7A1A14</span></div>
+      <div class="swatch"><i style="background:#FFF6DE"></i><b>Roll text</b><span>#FFF6DE</span></div>
+      <div class="swatch"><i style="background:rgba(10,8,14,.55)"></i><b>Dialog scrim</b><span>rgba(10, 8, 14, .55)</span></div>
+    </div>
+    <h3>Kingdoms</h3>
+    <div class="swatches">
+      <div class="swatch"><i style="background:#B3261E"></i><b>Emberhold</b><span>#B3261E</span></div>
+      <div class="swatch"><i style="background:#2E7D32"></i><b>Thornwald</b><span>#2E7D32</span></div>
+      <div class="swatch"><i style="background:#D9A21B"></i><b>Solmere</b><span>#D9A21B</span></div>
+      <div class="swatch"><i style="background:#1F4E9C"></i><b>Tidereach</b><span>#1F4E9C</span></div>
+      <div class="swatch"><i style="background:#777"></i><b>No kingdom</b><span>#777 · crest fallback</span></div>
+    </div>
+    <h3>Sky, behind the overlay</h3>
+    <div class="swatches">
+      <div class="swatch"><i style="background:linear-gradient(#5E93CC,#E7D6B0)"></i><b>Day sky</b><span>#5E93CC to #E7D6B0</span></div>
+      <div class="swatch"><i style="background:linear-gradient(#0B1030,#3A2C4A)"></i><b>Night sky</b><span>#0B1030 to #3A2C4A</span></div>
+      <div class="swatch"><i style="background:#8DB3D6"></i><b>Page, day</b><span>--bg · #8DB3D6</span></div>
+      <div class="swatch"><i style="background:#141A33"></i><b>Page, night</b><span>--bg · #141A33</span></div>
+    </div>
+    <h3>Mixes used inside pieces</h3>
+    <div class="swatches">
+      <div class="swatch"><i style="background:linear-gradient(#E6C064,#B98B2E)"></i><b>Primary fill</b><span>#E6C064 to #B98B2E</span></div>
+      <div class="swatch"><i style="background:linear-gradient(#F3D27A,#C9961F)"></i><b>Bonus die</b><span>#F3D27A to #C9961F</span></div>
+      <div class="swatch"><i style="background:#7A5A1A"></i><b>Gold button rim</b><span>#7A5A1A</span></div>
+      <div class="swatch"><i style="background:#8a6a3a"></i><b>Die rim</b><span>#8A6A3A</span></div>
+      <div class="swatch"><i style="background:rgba(233,199,106,.9)"></i><b>Toggle on</b><span>rgba(233, 199, 106, .9)</span></div>
+      <div class="swatch"><i style="background:radial-gradient(circle at 35% 35%,#FFE9A0,#C9961F)"></i><b>Coin, in the vault</b><span>#FFE9A0 to #C9961F</span></div>
+    </div>
+  </section>
+
+  <section id="type">
+    <h2>Type</h2>
+    <p class="lead">Titles are Pirata One. Everything else is Alegreya. The sizes below are the ones the game sets.</p>
+    <div class="g">
+      <div class="sheet panel full" style="max-width:480px">
+        <h1>The Vaults of Corhaven</h1>
+        <p>Sheet title, 40px. Body copy sits under it in parchment dim, 17px.</p>
+        <h2>How many players?</h2>
+        <p>Section heading, 18px, weight 700.</p>
+      </div>
+    </div>
+    <figcaption style="margin:8px 0 18px">Sheet type. In the turn card the same title face is 26px, and it is hidden on a narrow screen.</figcaption>
+    <div class="row">
+      <figure>
+        <div class="g"><div class="panel" style="padding:16px 18px;width:min(330px,100%)"><div class="title">The Vaults of Corhaven</div></div></div>
+        <figcaption>Turn-card title. Pirata One, 26px, gold bright.</figcaption>
+      </figure>
+      <figure>
+        <div class="sky g"><div class="turn-name" style="color:#1C1712">Solmere</div></div>
+        <figcaption>Turn name. Alegreya 19px, weight 700. On the leather it is parchment, not iron. 17px on a narrow screen.</figcaption>
+      </figure>
+      <figure>
+        <div class="sky g"><button class="roll" type="button" style="--c:#B3261E">Roll the dice</button></div>
+        <figcaption>Roll label. 21px, weight 700. 19px on a narrow screen.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="crest">
+    <h2>Crest</h2>
+    <p class="lead">A shield clipped from a rectangle. The color is the custom property <code>--c</code>. The turn card draws it at 30 by 36. The tally draws it at 16 by 19. The enlarged ones are the same crest, scaled so the shape is easy to redraw.</p>
+    <div class="row">
+      <figure>
+        <div class="g loom"><span class="crest" style="--c:#B3261E"></span></div>
+        <figcaption>Emberhold, enlarged.</figcaption>
+      </figure>
+      <figure>
+        <div class="g loom"><span class="crest" style="--c:#2E7D32"></span></div>
+        <figcaption>Thornwald, enlarged.</figcaption>
+      </figure>
+      <figure>
+        <div class="g loom"><span class="crest" style="--c:#D9A21B"></span></div>
+        <figcaption>Solmere, enlarged.</figcaption>
+      </figure>
+      <figure>
+        <div class="g loom"><span class="crest" style="--c:#1F4E9C"></span></div>
+        <figcaption>Tidereach, enlarged.</figcaption>
+      </figure>
+      <figure>
+        <div class="g loom"><span class="crest"></span></div>
+        <figcaption>No <code>--c</code>. Fallback <code>#777</code>, used before a match starts.</figcaption>
+      </figure>
+    </div>
+    <div class="g" style="margin-top:22px">
+      <div class="panel turn-card">
+        <div class="turn" style="margin-top:0">
+          <span class="crest" style="--c:#B3261E"></span>
+          <div><div class="turn-name">Emberhold</div><div class="msg">Turn-card size, 30×36.</div></div>
+        </div>
+        <div class="tally">
+          <div class="t active"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span></div>
+        </div>
+      </div>
+    </div>
+    <figcaption>The same crest at both sizes the game uses.</figcaption>
+  </section>
+
+  <section id="turn-card">
+    <h2>Turn card</h2>
+    <p class="lead">Class <code>panel</code> on <code>#turnCard</code>. Fixed to the top left, 14px from the safe area, width 330px. The message line keeps a minimum height even when it is empty, so the card does not jump.</p>
+    <div class="stack">
+      <figure>
+        <div class="g"><div class="panel turn-card">
+          <div class="title">The Vaults of Corhaven</div>
+          <div class="turn"><span class="crest"></span><div><div class="turn-name">Choose your players</div><div class="msg"></div></div></div>
+          <div class="tally"></div>
+        </div></div>
+        <figcaption>Before the match. Empty message, empty tally, gray crest. The gold tally rule still shows.</figcaption>
+      </figure>
+      <figure>
+        <div class="g"><div class="panel turn-card">
+          <div class="title">The Vaults of Corhaven</div>
+          <div class="turn"><span class="crest" style="--c:#B3261E"></span><div><div class="turn-name">Emberhold</div><div class="msg">Your turn. Roll the dice.</div></div></div>
+          <div class="tally">
+            <div class="t active"><span class="crest" style="--c:#B3261E"></span><span>Emberhold</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+            <div class="t"><span class="crest" style="--c:#D9A21B"></span><span>Solmere (CPU)</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+          </div>
+        </div></div>
+        <figcaption>Human turn, waiting for a roll.</figcaption>
+      </figure>
+      <figure>
+        <div class="g"><div class="panel turn-card">
+          <div class="title">The Vaults of Corhaven</div>
+          <div class="turn"><span class="crest" style="--c:#1F4E9C"></span><div><div class="turn-name">Tidereach (computer)</div><div class="msg">You rolled a third double. Greed is punished: Tidereach's furthest troop is lost and must be raised again at the keep.</div></div></div>
+          <div class="tally">
+            <div class="t active"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach (CPU)</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin"></span><span class="coin"></span></span></div>
+          </div>
+        </div></div>
+        <figcaption>The longest status the card has to hold. It wraps inside the 330px width.</figcaption>
+      </figure>
+      <figure>
+        <div class="g"><div class="panel turn-card">
+          <div class="title">The Vaults of Corhaven</div>
+          <div class="turn"><span class="crest" style="--c:#2E7D32"></span><div><div class="turn-name">Thornwald</div><div class="msg"></div></div></div>
+          <div class="tally"><div class="t active"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div></div>
+        </div></div>
+        <figcaption>While the dice are in the air the status is cleared. The blank line remains.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="tally">
+    <h2>Tally and coins</h2>
+    <p class="lead">One row per kingdom in march order. The current kingdom gets <code>active</code> until the match ends. Four coins, one per troop. A coin lights when that troop is in the vault. Hover text on a row reads like “Solmere: 2 of 4 troops at the vault.”</p>
+    <div class="g">
+      <div class="panel" style="padding:12px 16px;width:min(330px,100%)">
+        <div class="tally" style="margin-top:0">
+          <div class="t" title="Emberhold: 1 of 4 troops at the vault"><span class="crest" style="--c:#B3261E"></span><span>Emberhold · 9</span><span class="coins"><span class="coin on"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+          <div class="t active" title="Thornwald: 0 of 4 troops at the vault"><span class="crest" style="--c:#2E7D32"></span><span>Thornwald (CPU)</span><span class="coins"><span class="coin"></span><span class="coin"></span><span class="coin"></span><span class="coin"></span></span></div>
+          <div class="t" title="Solmere: 4 of 4 troops at the vault"><span class="crest" style="--c:#D9A21B"></span><span>Solmere</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin on"></span><span class="coin on"></span></span></div>
+          <div class="t" title="Tidereach: 2 of 4 troops at the vault"><span class="crest" style="--c:#1F4E9C"></span><span>Tidereach</span><span class="coins"><span class="coin on"></span><span class="coin on"></span><span class="coin"></span><span class="coin"></span></span></div>
+        </div>
+      </div>
+    </div>
+    <figcaption>Active row, computer label, order-roll number, and both coin states. Point at a row to see the hover sentence.</figcaption>
+    <div class="g" style="margin-top:22px">
+      <div class="panel" style="display:inline-block;padding:16px 18px">
+        <div class="loom-coins"><span class="coin on"></span><span class="coin"></span></div>
+      </div>
+    </div>
+    <figcaption>The same coins enlarged 4 times. Lit means the troop has reached the vault. Each coin is 8px in the game.</figcaption>
+  </section>
+
+  <section id="chips">
+    <h2>Chips</h2>
+    <p class="lead">The four controls at the top right. Class <code>chip</code>. Hover only brightens the gold rim. Sound is the only chip whose words change. <code>aria-pressed</code> on it does not change the shape.</p>
+    <div class="sky g">
+      <div class="row">
+        <figure><button class="chip" type="button">Chronicle</button><figcaption>Opens the chronicle.</figcaption></figure>
+        <figure><button class="chip" type="button">Rules</button><figcaption>Opens the rules.</figcaption></figure>
+        <figure><button class="chip" type="button" data-sound aria-pressed="true">Sound on</button><figcaption>Click it. The label becomes Sound off. Click again to turn it back.</figcaption></figure>
+        <figure><button class="chip" type="button" aria-pressed="false">Sound off</button><figcaption>Sound is off. Same shape as Sound on.</figcaption></figure>
+        <figure><button class="chip" type="button">New game</button><figcaption>Opens setup.</figcaption></figure>
+        <figure><button class="chip as-hover" type="button">Rules</button><figcaption>Hover. Brighter gold rim. Not a separate class in the game.</figcaption></figure>
+        <figure><button class="chip as-focus" type="button">Rules</button><figcaption>Keyboard focus. 3px gold-bright outline, 2px outside the rim. Every button uses this.</figcaption></figure>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:16px">On a narrow screen the chips shrink to 14px type and stack in a column. See the narrow frame above.</p>
+  </section>
+
+  <section id="dice">
+    <h2>Dice</h2>
+    <p class="lead">Class <code>dchip</code>, inside <code>#diceChips</code>. They appear only after a roll, and they hide again when the turn ends. Faces are bone squares with pip-colored dots. The bonus march is the same button with the class <code>bonus</code>.</p>
+    <div class="sky g">
+      <div class="row">
+        <figure><button class="dchip" type="button" data-face="1" aria-label="Die showing 1"></button><figcaption>1</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="2" aria-label="Die showing 2"></button><figcaption>2</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="3" aria-label="Die showing 3"></button><figcaption>3</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="4" aria-label="Die showing 4"></button><figcaption>4</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="5" aria-label="Die showing 5"></button><figcaption>5</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="6" aria-label="Die showing 6"></button><figcaption>6</figcaption></figure>
+      </div>
+    </div>
+    <h3>States</h3>
+    <div class="sky g">
+      <div class="row">
+        <figure><button class="dchip" type="button" data-face="4" aria-pressed="true" aria-label="Die showing 4"></button><figcaption>Selected. <code>aria-pressed</code> true. Lifts 3px and gains a gold ring.</figcaption></figure>
+        <figure><button class="dchip stuck" type="button" data-face="3" disabled aria-label="Die showing 3, no legal move"></button><figcaption>No legal move. Class <code>stuck</code>, and disabled. Opacity .55.</figcaption></figure>
+        <figure><button class="dchip used" type="button" data-face="6" disabled aria-label="Die showing 6, used"></button><figcaption>Already marched. Class <code>used</code>. Fades and loses its shadow.</figcaption></figure>
+        <figure><button class="dchip" type="button" data-face="1" disabled aria-label="Die showing 1"></button><figcaption>Disabled with no extra class, as on a computer turn. The game adds no further style.</figcaption></figure>
+        <figure><button class="dchip bonus" type="button" aria-label="Bonus move of 20">+20</button><figcaption>Bonus march. Always 20.</figcaption></figure>
+        <figure><button class="dchip bonus" type="button" aria-pressed="true" aria-label="Bonus move of 20">+20</button><figcaption>Bonus, selected.</figcaption></figure>
+        <figure><button class="dchip bonus stuck" type="button" disabled aria-label="Bonus move of 20, no legal move">+20</button><figcaption>Bonus, no troop can take it.</figcaption></figure>
+        <figure><button class="dchip bonus used" type="button" disabled aria-label="Bonus move of 20, used">+20</button><figcaption>Bonus, already used.</figcaption></figure>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:16px">A die is 54px, and 48px on a narrow screen. The bonus chip grows to fit the +20. Left and right arrows move the selection. Keys 1 to 4 march that troop.</p>
+  </section>
+
+  <section id="roll">
+    <h2>Roll button</h2>
+    <p class="lead">Class <code>roll</code> on <code>#btnRoll</code>. The fill is the current kingdom, mixed with white at the top and black at the bottom. Before any kingdom is set, the color is <code>#555</code>. Disabled buttons are dulled and do not lift.</p>
+    <div class="sky g">
+      <div class="row">
+        <figure><button class="roll" type="button" style="--c:#B3261E">Roll the dice</button><figcaption>Emberhold, ready.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#2E7D32">Roll the dice</button><figcaption>Thornwald, ready.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#D9A21B">Roll the dice</button><figcaption>Solmere, ready.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#1F4E9C">Roll the dice</button><figcaption>Tidereach, ready.</figcaption></figure>
+        <figure><button class="roll as-hover" type="button" style="--c:#B3261E">Roll the dice</button><figcaption>Hover. Lifts 2px.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#2E7D32">Roll for order</button><figcaption>While kingdoms roll for first march.</figcaption></figure>
+        <figure><button class="roll" type="button" disabled>Roll the dice</button><figcaption>Before a match. Default gray, disabled.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#D9A21B" disabled>Choose a troop</button><figcaption>Waiting for a troop. Disabled.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#B3261E" disabled>Rolling…</button><figcaption>Dice are in the air. Disabled.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#2E7D32" disabled>Computer is playing</button><figcaption>Computer turn. Disabled.</figcaption></figure>
+        <figure><button class="roll" type="button" style="--c:#D9A21B" disabled>Victory</button><figcaption>Match over. Disabled.</figcaption></figure>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:16px">Space or Enter also rolls, when it is your turn and a dialog is not open.</p>
+  </section>
+
+  <section id="hint">
+    <h2>Hint</h2>
+    <p class="lead">Class <code>hint</code>, under the roll button. Two sentences exist. The second is used only while a human is choosing a troop.</p>
+    <div class="row">
+      <figure>
+        <div class="sky g" style="padding:28px 22px"><div class="hint">Drag to turn the board, pinch or scroll to zoom</div></div>
+        <figcaption>Default, on the day sky.</figcaption>
+      </figure>
+      <figure>
+        <div class="sky night g" style="padding:28px 22px"><div class="hint">Drag to turn the board, pinch or scroll to zoom</div></div>
+        <figcaption>Same sentence on the night sky.</figcaption>
+      </figure>
+      <figure>
+        <div class="sky g" style="padding:28px 22px;max-width:280px"><div class="hint">Pick a die, then tap a glowing troop. Rings show where it will land.</div></div>
+        <figcaption>While choosing a march.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="count">
+    <h2>Player count</h2>
+    <p class="lead">Class <code>seg</code>. A radio group. The checked button fills with gold and the label turns iron. The arrival screen above is the one that switches. These three stay put so each selected state remains visible.</p>
+    <div class="g">
+      <div class="row">
+        <figure style="width:min(420px,100%)">
+          <div class="panel" style="padding:16px">
+            <div class="seg" data-frozen role="radiogroup" aria-label="Two players selected">
+              <button type="button" role="radio" aria-checked="true">2</button>
+              <button type="button" role="radio" aria-checked="false">3</button>
+              <button type="button" role="radio" aria-checked="false">4</button>
+            </div>
+          </div>
+          <figcaption style="color:#CDBD99">Two selected.</figcaption>
+        </figure>
+        <figure style="width:min(420px,100%)">
+          <div class="panel" style="padding:16px">
+            <div class="seg" data-frozen role="radiogroup" aria-label="Three players selected">
+              <button type="button" role="radio" aria-checked="false">2</button>
+              <button type="button" role="radio" aria-checked="true">3</button>
+              <button type="button" role="radio" aria-checked="false">4</button>
+            </div>
+          </div>
+          <figcaption style="color:#CDBD99">Three selected.</figcaption>
+        </figure>
+        <figure style="width:min(420px,100%)">
+          <div class="panel" style="padding:16px">
+            <div class="seg" data-frozen role="radiogroup" aria-label="Four players selected">
+              <button type="button" role="radio" aria-checked="false">2</button>
+              <button type="button" role="radio" aria-checked="false">3</button>
+              <button type="button" role="radio" aria-checked="true">4</button>
+            </div>
+          </div>
+          <figcaption style="color:#CDBD99">Four selected. This is how a new visit starts.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="seats">
+    <h2>Seats</h2>
+    <p class="lead">Class <code>seat</code>, with a crest, the kingdom name, and a <code>toggle</code>. The pressed side is pale gold with iron type. A new game sets every kingdom to Human. Two players are Emberhold and Solmere. Three are Emberhold, Thornwald, and Solmere.</p>
+    <div class="row">
+      <figure>
+        <div class="g"><div class="sheet panel full" style="width:min(480px,100%)">
+          <h2 style="margin-top:0">Who rules each kingdom?</h2>
+          <div class="seat"><span class="crest" style="--c:#B3261E"></span><span class="name">Emberhold</span><div class="toggle" data-frozen role="group"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+          <div class="seat"><span class="crest" style="--c:#D9A21B"></span><span class="name">Solmere</span><div class="toggle" data-frozen role="group"><button type="button" aria-pressed="false">Human</button><button type="button" aria-pressed="true">Computer</button></div></div>
+        </div></div>
+        <figcaption>Two players. Both toggle states are showing.</figcaption>
+      </figure>
+      <figure>
+        <div class="g"><div class="sheet panel full" style="width:min(480px,100%)">
+          <h2 style="margin-top:0">Who rules each kingdom?</h2>
+          <div class="seat"><span class="crest" style="--c:#B3261E"></span><span class="name">Emberhold</span><div class="toggle" data-frozen role="group"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+          <div class="seat"><span class="crest" style="--c:#2E7D32"></span><span class="name">Thornwald</span><div class="toggle" data-frozen role="group"><button type="button" aria-pressed="false">Human</button><button type="button" aria-pressed="true">Computer</button></div></div>
+          <div class="seat"><span class="crest" style="--c:#D9A21B"></span><span class="name">Solmere</span><div class="toggle" data-frozen role="group"><button type="button" aria-pressed="true">Human</button><button type="button" aria-pressed="false">Computer</button></div></div>
+        </div></div>
+        <figcaption>Three players.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="buttons">
+    <h2>Sheet buttons</h2>
+    <p class="lead">Class <code>primary</code> is the gold action. Class <code>secondary</code> is a gold outline on leather. Both stretch to the sheet. Primary has 20px of space above it. Secondary has 10px, except Read the chronicle, which is pulled up to 4px.</p>
+    <div class="row">
+      <figure>
+        <div class="g col"><div class="panel" style="padding:8px 22px 22px">
+          <button class="primary" type="button">Begin the game</button>
+          <button class="secondary" type="button">Change players</button>
+        </div></div>
+        <figcaption>Primary and secondary, as they stack in a dialog.</figcaption>
+      </figure>
+      <figure>
+        <div class="g col"><div class="panel" style="padding:16px 22px 22px">
+          <button class="secondary" type="button" style="margin-top:4px">Read the chronicle</button>
+          <button class="primary" type="button">Play again</button>
+          <button class="secondary" type="button">Back to the board</button>
+          <button class="primary" type="button">Close the chronicle</button>
+        </div></div>
+        <figcaption>Every label these two buttons wear.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="dialogs">
+    <h2>Dialogs</h2>
+    <p class="lead">Class <code>modal</code> covers the board with a blurred dark scrim. The sheet inside is a <code>panel</code>, at most 480px wide, and it scrolls when it is taller than the window. Rules and chronicle use the extra class <code>rules</code>, which turns the paragraphs parchment and the lead-in words gold.</p>
+
+    <h3>Rules</h3>
+    <div class="g">
+      <div class="modal open stand">
+        <div class="sheet panel rules full">
+          <h1>Rules of the realm</h1>
+          <p><strong>Who rides first.</strong> Each kingdom rolls both dice at the start. The highest total moves first, the way the rider reached that court first, and so on down. Ties roll again.</p>
+          <p><strong>Two dice.</strong> Each die is its own march. Use them on two different troops, or on the same troop one after the other.</p>
+          <p><strong>Leaving the keep.</strong> A die showing 1 or 6 sends a troop out through your gate, the coloured square beside your castle. Enemy troops standing at your gate fall when you march out.</p>
+          <p><strong>Falling in battle.</strong> Land exactly on a lone enemy troop and it falls. Its kingdom must raise a new troop at its keep. The victor presses on with a bonus march of 20 squares for any troop that can make it.</p>
+          <p><strong>Shrines and gates.</strong> Grey star squares are shrines where no blood may be spilled, so troops of different kingdoms can stand there together. You may only stop on another kingdom's gate when nobody is standing on it.</p>
+          <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
+          <p><strong>Doubles.</strong> Rolling doubles lets you roll again after marching. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
+          <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
+          <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
+          <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
+          <button class="primary" type="button">Back to the board</button>
+        </div>
+      </div>
+    </div>
+    <figcaption>Shown in full here. In the game this sheet scrolls inside the window.</figcaption>
+
+    <h3>Chronicle</h3>
+    <div class="g">
+      <div class="modal open stand">
+        <div class="sheet panel rules full">
+          <h1>The Chronicle of Corhaven</h1>
+          <p>Five kingdoms once shared the realm, and one of them ruled the rest. From its white towers at the heart of the land, Corhaven took tribute from the four kingdoms around it: iron from Emberhold, timber from Thornwald, grain from Solmere and salt from Tidereach. All of it was locked away in the vaults beneath the city.</p>
+          <p>In time the four refused to pay. They rose together, broke Corhaven's walls and burned its streets. Then they turned on one another, because each meant to rule in Corhaven's place. The war lasted three hundred years and none of them won. The city was fought over so many times that nothing was left standing, and its vaults vanished under the rubble.</p>
+          <p>At last, among the ruins, the four monarchs signed the Pact of Four Stones. The realm was divided into four equal kingdoms, and the land around the dead city became the Sundered March, a no man's land no army would ever enter again. If no kingdom could grow, none could rule the others.</p>
+          <p>The peace held for a hundred years.</p>
+          <p>Then, over four nights, a hooded rider came to each court in turn with the same message. The vaults of Corhaven survived. A hidden passage runs from each kingdom's old road down to the gold, and whoever reaches it first will be rich enough to rule the realm without lifting a sword.</p>
+          <p>Each monarch burned the letter, swore their council to silence and sent their troops to the border keeps.</p>
+          <p>Each believed they were the only one who knew.</p>
+          <button class="primary" type="button">Close the chronicle</button>
+        </div>
+      </div>
+    </div>
+
+    <h3>Victory, when the computer wins</h3>
+    <div class="g">
+      <div class="modal open stand">
+        <div class="sheet panel full">
+          <h1>Thornwald claims the vault</h1>
+          <p>All four Thornwald troops reached the vault first. With Corhaven's gold, Thornwald now stands above every kingdom in the realm.</p>
+          <button class="primary" type="button">Play again</button>
+          <button class="secondary" type="button">Change players</button>
+        </div>
+      </div>
+    </div>
+    <figcaption>The human victory line is on the victory screen above. This is the computer wording. The title is always “{Kingdom} claims the vault.”</figcaption>
+  </section>
+
+  <section id="copy" class="copy">
+    <h2>Every line of copy</h2>
+    <p class="lead">The containers have to fit these sentences. Names in braces are Emberhold, Thornwald, Solmere, or Tidereach.</p>
+
+    <h3>Turn name</h3>
+    <ul>
+      <li><q>Choose your players</q> <span class="who">before a match</span></li>
+      <li><q>{Kingdom}</q> <span class="who">human turn</span></li>
+      <li><q>{Kingdom} (computer)</q> <span class="who">computer turn</span></li>
+    </ul>
+
+    <h3>Status line</h3>
+    <ul>
+      <li><q>Roll to see when the rider reached your court.</q></li>
+      <li><q>{Kingdom} rolls to see when the rider arrived.</q> <span class="who">computer</span></li>
+      <li><q>{Kingdom} rolled {total}.</q></li>
+      <li><q>{A} and {B} tied on {total}, so they roll again.</q> <span class="who">three names are joined the same way: “A and B and C”</span></li>
+      <li><q>The rider reached {A} first, and {B} second. {A} marches first.</q> <span class="who">two players</span></li>
+      <li><q>The rider reached {A} first, then {B}, {C}, and {D} last. {A} marches first.</q></li>
+      <li><q>Your turn. Roll the dice.</q></li>
+      <li><q>{Kingdom} is on the march.</q> <span class="who">computer</span></li>
+      <li><q>Doubles, so roll again.</q></li>
+      <li>Empty, while the dice are rolling.</li>
+      <li><q>You rolled {a} and {b}.</q> <span class="who">or “The computer rolled…”</span></li>
+      <li><q>You rolled {a} and {b}, doubles.</q></li>
+      <li><q>You rolled a third double. Greed is punished: {Kingdom}'s furthest troop is lost and must be raised again at the keep.</q></li>
+      <li><q>You rolled a third double. The turn passes.</q> <span class="who">when no troop is out on the road</span></li>
+      <li><q>No troop can march with a {value}.</q> <span class="who">or “a 5 or a 2” when both remain</span></li>
+      <li><q>No troop can make the 20-square bonus march.</q></li>
+      <li><q>A {Kingdom} troop fell to {Kingdom}. {Kingdom} must raise a new troop at the keep. {Kingdom} presses on: march any troop 20.</q></li>
+      <li><q>Two troops fell to {Kingdom}. {A} and {B} must raise new troops at the keep. {Kingdom} presses on: march any troop 20.</q></li>
+      <li><q>A {Kingdom} troop found the passage to the vault. Bonus: march any troop 20.</q></li>
+      <li><q>{Kingdom} claims the gold of Corhaven.</q></li>
+    </ul>
+
+    <h3>Tally</h3>
+    <ul>
+      <li><q>{Kingdom}</q></li>
+      <li><q>{Kingdom} (CPU)</q></li>
+      <li><q>{Kingdom} · {total}</q> <span class="who">while rolling for order</span></li>
+      <li>Hover: <q>{Kingdom}: {n} of 4 troops at the vault</q></li>
+    </ul>
+
+    <h3>Roll button</h3>
+    <ul>
+      <li><q>Roll the dice</q></li>
+      <li><q>Roll for order</q></li>
+      <li><q>Rolling…</q></li>
+      <li><q>Choose a troop</q></li>
+      <li><q>Computer is playing</q></li>
+      <li><q>Victory</q></li>
+    </ul>
+
+    <h3>Hint, chips, dice, dialogs</h3>
+    <ul>
+      <li><q>Drag to turn the board, pinch or scroll to zoom</q></li>
+      <li><q>Pick a die, then tap a glowing troop. Rings show where it will land.</q></li>
+      <li>Chips: <q>Chronicle</q>, <q>Rules</q>, <q>Sound on</q>, <q>Sound off</q>, <q>New game</q></li>
+      <li>Bonus die: <q>+20</q></li>
+      <li>Count: <q>2</q>, <q>3</q>, <q>4</q></li>
+      <li>Toggle: <q>Human</q>, <q>Computer</q></li>
+      <li>Setup title matches the turn-card title. Headings: <q>How many players?</q> and <q>Who rules each kingdom?</q></li>
+      <li><q>Read the chronicle</q>, <q>Begin the game</q></li>
+      <li>Rules title: <q>Rules of the realm</q>. Closes with <q>Back to the board</q></li>
+      <li>Chronicle title: <q>The Chronicle of Corhaven</q>. Closes with <q>Close the chronicle</q></li>
+      <li>Victory title: <q>{Kingdom} claims the vault</q></li>
+      <li>Human victory: <q>All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.</q></li>
+      <li>Computer victory: <q>All four {Kingdom} troops reached the vault first. With Corhaven's gold, {Kingdom} now stands above every kingdom in the realm.</q></li>
+      <li><q>Play again</q>, <q>Change players</q></li>
+    </ul>
+  </section>
+
+  <section id="board">
+    <h2>Cues that are not HTML</h2>
+    <p class="lead">These are part of playing, and they have no overlay piece. A custom interface still has to leave room for them.</p>
+    <ul class="copy">
+      <li>A troop you can move gains a pulsing ring and lifts. The landing square shows a pulsing ring.</li>
+      <li>Two troops of one kingdom on one square flash a colored lock ring. That is the phalanx.</li>
+      <li>The physical dice tumble on the board. The bone chips above the roll button repeat the result after they land.</li>
+      <li>The pointer becomes a hand over your dice, when you may roll, and over a troop you may move.</li>
+      <li>The board canvas is named “3D ludo board” for assistive tech. It has no visible label.</li>
+    </ul>
+  </section>
+</main>
+</div>
+<script>
+(function () {
+  var PIPS = {
+    1: [[.5, .5]],
+    2: [[.27, .27], [.73, .73]],
+    3: [[.25, .25], [.5, .5], [.75, .75]],
+    4: [[.27, .27], [.73, .27], [.27, .73], [.73, .73]],
+    5: [[.26, .26], [.74, .26], [.5, .5], [.26, .74], [.74, .74]],
+    6: [[.27, .24], [.73, .24], [.27, .5], [.73, .5], [.27, .76], [.73, .76]]
+  };
+  function pipSVG(n) {
+    return '<svg viewBox="0 0 100 100" aria-hidden="true">' + PIPS[n].map(function (p) {
+      return '<circle cx="' + (p[0] * 100) + '" cy="' + (p[1] * 100) + '" r="9.5" fill="#7A1A14"/>';
+    }).join('') + '</svg>';
+  }
+  document.querySelectorAll('[data-face]').forEach(function (el) {
+    el.innerHTML = pipSVG(+el.dataset.face);
+  });
+
+  var HOUSES = [
+    { name: 'Emberhold', css: '#B3261E' },
+    { name: 'Thornwald', css: '#2E7D32' },
+    { name: 'Solmere', css: '#D9A21B' },
+    { name: 'Tidereach', css: '#1F4E9C' }
+  ];
+  var SEATS = { 2: [0, 2], 3: [0, 1, 2], 4: [0, 1, 2, 3] };
+  var cpu = [false, false, false, false];
+
+  function renderSeats() {
+    var checked = document.querySelector('#live-count button[aria-checked="true"]');
+    var n = checked ? +checked.dataset.n : 4;
+    var wrap = document.getElementById('live-seats');
+    wrap.innerHTML = '';
+    SEATS[n].forEach(function (h) {
+      var row = document.createElement('div');
+      row.className = 'seat';
+      row.innerHTML = '<span class="crest" style="--c:' + HOUSES[h].css + '"></span><span class="name">' + HOUSES[h].name + '</span>';
+      var tg = document.createElement('div');
+      tg.className = 'toggle';
+      tg.setAttribute('role', 'group');
+      tg.setAttribute('data-house', String(h));
+      tg.setAttribute('aria-label', HOUSES[h].name + ' player type');
+      [['Human', false], ['Computer', true]].forEach(function (pair) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = pair[0];
+        b.setAttribute('aria-pressed', String(cpu[h] === pair[1]));
+        tg.appendChild(b);
+      });
+      row.appendChild(tg);
+      wrap.appendChild(row);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var seg = btn.closest('.seg');
+    if (seg && seg.contains(btn) && !seg.hasAttribute('data-frozen')) {
+      seg.querySelectorAll('button').forEach(function (b) {
+        b.setAttribute('aria-checked', String(b === btn));
+      });
+      if (seg.id === 'live-count') renderSeats();
+    }
+    var tg = btn.closest('.toggle');
+    if (tg && tg.contains(btn) && !tg.hasAttribute('data-frozen')) {
+      tg.querySelectorAll('button').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b === btn));
+      });
+      if (tg.dataset.house != null) cpu[+tg.dataset.house] = btn.textContent === 'Computer';
+    }
+    if (btn.hasAttribute('data-sound')) {
+      var on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? 'Sound on' : 'Sound off';
+    }
+  });
+})();
+</script>
+</body>
+</html>

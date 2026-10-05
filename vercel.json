@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/The%20Vaults%20of%20Corhaven.html" }
+  ]
+}
