@@ -3,8 +3,20 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Vaults of Corhaven</title>
-<audio id="theme" src="assets/Music/main-theme.wav" loop autoplay preload="auto"></audio>
-<script>document.getElementById('theme').volume=0.22</script>
+<audio id="theme" src="assets/Music/main-theme.m4a" loop autoplay preload="auto"></audio>
+<script>
+(function(){
+  var t=document.getElementById('theme');
+  var start=function(){
+    if(!t.paused&&t.volume>0.01)return;
+    t.muted=false;t.volume=0.22;
+    var p=t.play();if(p&&p.catch)p.catch(function(){});
+  };
+  start();
+  t.addEventListener('loadeddata',start);
+  t.addEventListener('canplay',start);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
 <link href="./The Vaults of Corhaven_files/css2" rel="stylesheet">
@@ -675,7 +687,7 @@ function hop(mesh,to,dur,h){const from=mesh.position.clone();return animate(dur,
 /* ================= Sound ================= */
 /* Theme is mastered much hotter than the short clips, so it sits under them. */
 const THEME_VOL=0.22;
-let soundOn=true,winPlaying=false,clipEpoch=0,fadeToken=0,lastStep=-1;
+let soundOn=true,winPlaying=false,clipEpoch=0,lastStep=-1;
 const theme=document.getElementById('theme');
 theme.loop=true;theme.preload='auto';theme.autoplay=true;
 theme.addEventListener('ended',()=>{if(soundOn&&!winPlaying){theme.currentTime=0;const p=theme.play();if(p)p.catch(()=>{});}});
@@ -685,20 +697,11 @@ const winAudio=new Audio('assets/Music/win.wav');
 winAudio.preload='auto';winAudio.volume=0.85;
 STEP_SRCS.concat(DICE_SRCS).forEach(src=>{const a=new Audio();a.preload='auto';a.src=src;});
 const clips=new Set();
-function fadeThemeTo(target,ms){
-  const token=++fadeToken,from=theme.volume,t0=performance.now();
-  (function tick(now){
-    if(token!==fadeToken)return;
-    const k=Math.min(1,(now-t0)/ms);
-    theme.volume=from+(target-from)*k;
-    if(k<1)requestAnimationFrame(tick);
-  })(t0);
-}
 function ensureTheme(){
-  if(!soundOn||winPlaying||!theme.paused)return;
-  theme.volume=0;
+  if(!soundOn||winPlaying)return;
+  if(!theme.paused&&theme.volume>0.01)return;
+  theme.muted=false;theme.volume=THEME_VOL;
   const p=theme.play();if(p)p.catch(()=>{});
-  fadeThemeTo(THEME_VOL,700);
 }
 function stopOneShots(){
   clipEpoch++;
@@ -742,7 +745,7 @@ const sfx={
   win(){
     if(!soundOn)return;
     clipEpoch++;clips.forEach(a=>a.pause());clips.clear();
-    fadeToken++;theme.pause();
+    theme.pause();
     winPlaying=true;
     try{winAudio.currentTime=0;}catch(e){}
     const p=winAudio.play();if(p)p.catch(()=>{winPlaying=false;ensureTheme();});
@@ -751,7 +754,7 @@ const sfx={
 winAudio.addEventListener('ended',()=>{winPlaying=false;ensureTheme();});
 ensureTheme();
 theme.addEventListener('canplay',()=>ensureTheme());
-document.addEventListener('pointerdown',()=>ensureTheme());
+['pointerdown','click','keydown','touchend'].forEach(type=>document.addEventListener(type,()=>ensureTheme(),true));
 
 /* ================= Game rules ================= */
 const S={players:[],cur:0,phase:'idle',pending:[],sel:0,dbl:false,doubles:0,gid:0,config:null};
@@ -1132,7 +1135,7 @@ function setSound(on){
   b.textContent=soundOn?'Sound on':'Sound off';
   b.setAttribute('aria-pressed',String(soundOn));
   if(soundOn)ensureTheme();
-  else{fadeToken++;theme.pause();stopOneShots();}
+  else{theme.pause();stopOneShots();}
   if(typeof paintXRPanel==='function')paintXRPanel();
 }
 $('btnSound').onclick=()=>setSound(!soundOn);
