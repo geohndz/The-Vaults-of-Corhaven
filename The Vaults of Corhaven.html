@@ -1650,11 +1650,68 @@ const xrHands=[0,1].map(i=>{
   scene.add(rayCtrl);scene.add(grip);
   return rayCtrl;
 });
+const HAND_BONES=(()=>{
+  const bones=[];
+  ['thumb','index-finger','middle-finger','ring-finger','pinky-finger'].forEach(finger=>{
+    const parts=finger==='thumb'
+      ?['metacarpal','phalanx-proximal','phalanx-distal','tip']
+      :['metacarpal','phalanx-proximal','phalanx-intermediate','phalanx-distal','tip'];
+    const names=parts.map(part=>finger+'-'+part);
+    bones.push(['wrist',names[0]]);
+    for(let i=0;i<names.length-1;i++)bones.push([names[i],names[i+1]]);
+  });
+  const palm=['index-finger-metacarpal','middle-finger-metacarpal','ring-finger-metacarpal','pinky-finger-metacarpal'];
+  for(let i=0;i<palm.length-1;i++)bones.push([palm[i],palm[i+1]]);
+  return bones;
+})();
+const handMat=new THREE.MeshBasicMaterial({color:0xEBC76A,depthTest:false,depthWrite:false,transparent:true,opacity:0.95});
+const boneGeo=new THREE.CylinderGeometry(0.004,0.004,1,6);
+boneGeo.translate(0,0.5,0);
+const _boneA=new THREE.Vector3(),_boneB=new THREE.Vector3(),_boneDir=new THREE.Vector3(),_boneUp=new THREE.Vector3(0,1,0);
+let handTint=null;
+function handColor(){
+  const turn=curP();
+  const mine=S.players&&S.players.find(p=>!p.cpu);
+  const pl=(turn&&!turn.cpu)?turn:(mine||turn);
+  return pl?HOUSES[pl.h].color:0xEBC76A;
+}
+function tintHands(){
+  const color=handColor();
+  if(color===handTint)return;
+  handTint=color;
+  handMat.color.setHex(color);
+}
 const xrHandRoots=[0,1].map(()=>{
-  const dot=new THREE.Mesh(new THREE.SphereGeometry(0.008,12,8),new THREE.MeshBasicMaterial({color:0xEBC76A,depthTest:false}));
-  dot.renderOrder=998;dot.visible=false;scene.add(dot);
-  return{hand:null,dot};
+  const dot=new THREE.Mesh(new THREE.SphereGeometry(0.011,10,8),handMat);
+  dot.renderOrder=31;dot.frustumCulled=false;dot.visible=false;scene.add(dot);
+  const bones=HAND_BONES.map(()=>{
+    const m=new THREE.Mesh(boneGeo,handMat);
+    m.renderOrder=30;m.frustumCulled=false;m.visible=false;scene.add(m);
+    return m;
+  });
+  return{hand:null,dot,bones};
 });
+function hideHandOutline(rec){
+  rec.dot.visible=false;
+  rec.bones.forEach(b=>{b.visible=false;});
+}
+function drawHandOutline(rec,hand){
+  tintHands();
+  hand.updateWorldMatrix(true,true);
+  rec.bones.forEach((bone,bi)=>{
+    const pair=HAND_BONES[bi];
+    const ja=hand.joints[pair[0]],jb=hand.joints[pair[1]];
+    if(!ja||!jb||!ja.visible||!jb.visible){bone.visible=false;return;}
+    ja.getWorldPosition(_boneA);jb.getWorldPosition(_boneB);
+    const len=_boneA.distanceTo(_boneB);
+    if(len<0.001){bone.visible=false;return;}
+    _boneDir.copy(_boneB).sub(_boneA).multiplyScalar(1/len);
+    bone.visible=true;
+    bone.position.copy(_boneA);
+    bone.quaternion.setFromUnitVectors(_boneUp,_boneDir);
+    bone.scale.set(1,len,1);
+  });
+}
 function trackedHand(i){
   if(!xrHandRoots[i].hand)xrHandRoots[i].hand=renderer.xr.getHand(i);
   const hand=xrHandRoots[i].hand;
@@ -1724,7 +1781,8 @@ function updateHands(dt){
     const ctrl=xrHands[i];
     const line=ctrl.getObjectByName('ray');
     if(line)line.visible=!hand;
-    if(!hand){rec.dot.visible=false;pinchWas[i]=false;tipHas[i]=false;touchWas[i]=null;return;}
+    if(!hand){hideHandOutline(rec);pinchWas[i]=false;tipHas[i]=false;touchWas[i]=null;return;}
+    drawHandOutline(rec,hand);
     const tip=hand.joints['index-finger-tip'];
     const p=new THREE.Vector3();tip.getWorldPosition(p);
     rec.dot.visible=true;rec.dot.position.copy(p);
@@ -1788,7 +1846,7 @@ function onXREnd(){
   motionRoll=null;xrActive=false;xrPlaced=false;xrPlacing=false;haveSurface=false;
   hitSources.forEach((s,i)=>{if(s){try{s.cancel();}catch(e){}hitSources[i]=null;}});
   reticle.visible=false;settingsOpen=false;panel.visible=false;hud.visible=false;
-  xrHandRoots.forEach(rec=>{rec.dot.visible=false;});
+  xrHandRoots.forEach(hideHandOutline);
   xrHands.forEach(c=>{c.visible=false;if(c.userData.grip)c.userData.grip.visible=false;});
   sky.visible=true;tableMesh.visible=true;
   scene.fog=savedFog;savedFog=null;
