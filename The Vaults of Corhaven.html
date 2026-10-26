@@ -32,10 +32,10 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141A33;}}
 :root[data-theme="dark"]{--bg:#141A33;}
 *,*::before,*::after{box-sizing:inherit}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--parch);
+html{height:100%;height:100dvh;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;height:100dvh;margin:0;overflow:hidden;background:var(--bg);color:var(--parch);
   font-family:'Alegreya','Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
-canvas#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none}
+canvas#scene{position:fixed;inset:0;display:block;touch-action:none;outline:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .panel{background:linear-gradient(160deg,var(--leather-2),var(--leather) 70%);border:2px solid var(--gold);border-radius:12px;
@@ -96,11 +96,11 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .sheet label{display:block;font-weight:600;margin:14px 0 6px}
 .field{width:100%;padding:11px 14px;font:inherit;font-size:20px;background:rgba(0,0,0,.28);color:var(--parch);border:1.5px solid var(--gold);border-radius:10px}
 .field:focus-visible{outline:3px solid var(--gold-bright);outline-offset:1px}
-.field.code{font-size:34px;font-weight:700;letter-spacing:.3em;text-align:center;text-transform:uppercase;padding:8px 0 8px .3em}
+.field.code{font-size:clamp(24px,9vw,34px);font-weight:700;letter-spacing:.18em;text-align:center;text-transform:uppercase;padding:8px 0 8px .18em}
 .err{color:#FFB8A8;min-height:1.4em;margin:10px 0 0;font-size:15px}
 .err:empty{display:none}
 .roomcode{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px;padding:8px 14px;border:1.5px dashed var(--gold);border-radius:12px;color:var(--parch-dim)}
-.roomcode b{font-size:34px;letter-spacing:.24em;color:var(--gold-bright)}
+.roomcode b{font-size:clamp(22px,8vw,34px);letter-spacing:.16em;color:var(--gold-bright)}
 .kingdoms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
 .kbtn{display:flex;align-items:center;gap:10px;padding:12px;text-align:left;background:rgba(0,0,0,.22);border:2px solid rgba(201,161,74,.45);border-radius:12px}
 .kbtn:not(:disabled):hover{border-color:var(--gold-bright)}
@@ -122,19 +122,33 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .tally .away{color:#FFB8A8;font-size:12px;font-variant-numeric:tabular-nums}
 @media (max-width:640px){
   body{font-size:16px}
-  #turnCard{padding:9px 12px}
+  #turnCard{padding:8px 10px}
   #turnCard .title{display:none}
-  .turn{margin-top:0}
+  .turn{margin-top:0;gap:8px}
   #turnName{font-size:17px}
-  #controlsTR{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 170px);right:12px;flex-direction:column}
-  .chip{padding:5px 11px;font-size:14px}
-  .roll{min-width:190px;padding:12px 22px;font-size:19px}
+  .tally{gap:4px 8px;margin-top:6px;padding-top:6px}
+  #controlsTR{top:auto;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--phone-stack,150px));flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px}
+  .chip{padding:6px 12px;font-size:14px}
+  #bottomBar{bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px}
+  .roll{min-width:0;max-width:100%;padding:12px 22px;font-size:19px}
   .dchip{width:48px;height:48px}
+  .sheet{padding:18px 16px 16px}
+  .sheet h1{font-size:34px}
+  .roomcode{padding:8px 10px;gap:8px}
+  .kingdoms{gap:8px}
+  .kbtn{padding:10px 8px;gap:8px}
 }
+body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
+.titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 36px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
+.titlepage.open{display:flex;align-items:center;justify-content:center}
+.titlemain{width:min(420px,100%)}
+.titlemain h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:clamp(46px,11vw,76px);line-height:.95;margin:0 0 18px;color:var(--gold-bright)}
+.titlemain .titlelead{margin:0;color:var(--parch-dim);font-size:18px}
+.titlemain .titleactions{margin-top:28px}
 @media (prefers-reduced-motion: reduce){.roll,.dchip{transition:none}}
 </style>
 </head>
-<body>
+<body class="at-title">
 <canvas id="scene" aria-label="3D ludo board" width="1589" height="1288"></canvas>
 
 <div class="hud panel" id="turnCard">
@@ -162,16 +176,18 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   <div class="hint" id="hint">Drag to turn the board, pinch or scroll to zoom</div>
 </div>
 
-<div class="modal open" id="title" role="dialog" aria-modal="true" aria-labelledby="titleTitle">
-  <div class="sheet panel">
+<div class="titlepage open" id="title">
+  <main class="titlemain">
     <h1 id="titleTitle">The Vaults of Corhaven</h1>
-    <p>A rider has brought word that the lost vaults of Corhaven survived. March your troops through the Sundered March, find your kingdom's hidden passage, and claim the gold before your rivals do.</p>
+    <p class="titlelead">A rider has brought word that the lost vaults of Corhaven survived. March your troops through the Sundered March, find your kingdom's hidden passage, and claim the gold before your rivals do.</p>
     <p class="err" id="titleErr" role="alert"></p>
-    <button class="primary" id="btnCreate">Create a room</button>
-    <button class="secondary" id="btnJoin">Join a room</button>
-    <button class="secondary" id="btnLocal">Play local</button>
-    <button class="secondary" id="btnStory2">Read the chronicle</button>
-  </div>
+    <div class="titleactions">
+      <button class="primary" id="btnCreate">Create a room</button>
+      <button class="secondary" id="btnJoin">Join a room</button>
+      <button class="secondary" id="btnLocal">Play local</button>
+      <button class="secondary" id="btnStory2">Read the chronicle</button>
+    </div>
+  </main>
 </div>
 
 <div class="modal" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
@@ -903,7 +919,7 @@ function renderTurn(){
   ui.roll.appendChild(rollSecs);
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
   ui.hint.textContent=tip||(NET.on&&NET.ws&&NET.ws.readyState!==1&&!NET.ended?'Reconnecting to the room…':S.phase==='choose'&&mine?'Pick a die, then tap a glowing troop. Rings show where it will land.':'Drag to turn the board, pinch or scroll to zoom');
-  renderChips();renderTally();
+  renderChips();renderTally();reflowPhone();
   if(typeof paintViewHud==='function')paintViewHud();
   if(typeof paintXRPanel==='function')paintXRPanel();
 }
@@ -1187,8 +1203,8 @@ function renderSetup(){
     row.appendChild(tg);wrap.appendChild(row);});
 }
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
-function openModal(id){$(id).classList.add('open');const f=$(id).querySelector('button');if(f)setTimeout(()=>f.focus(),30);}
-function closeModal(id){$(id).classList.remove('open');}
+function openModal(id){$(id).classList.add('open');if(id==='title')document.body.classList.add('at-title');const f=$(id).querySelector('button');if(f)setTimeout(()=>f.focus(),30);}
+function closeModal(id){$(id).classList.remove('open');if(id==='title')document.body.classList.remove('at-title');}
 $('btnBegin').onclick=()=>{try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
 $('btnNew').onclick=()=>showTitle();
 $('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
@@ -1577,6 +1593,7 @@ function paintClock(){
     const left=Math.max(0,Math.ceil((60000-(netNow()-Number(el.dataset.awaySince)))/1000));
     el.textContent='away '+left+'s';
   });
+  reflowPhone();
 }
 setInterval(()=>{if(NET.on&&NET.playing)paintClock();},250);
 document.addEventListener('visibilitychange',()=>{
@@ -1650,10 +1667,46 @@ function limitTilt(){
   for(let i=0;i<8;i++){const mid=(lo+hi)/2;if(hits(mid))lo=mid;else hi=mid;}
   controls.maxPolarAngle=lo;
 }
-function resize(){if(renderer.xr.isPresenting)return;const w=window.innerWidth,h=window.innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+/* On a phone the turn card and the buttons take the top and bottom, so the board is framed in the band between them. */
+function fitPhoneFrame(w,h){
+  const openTop=$('turnCard').getBoundingClientRect().bottom+8;
+  const openBot=Math.min($('bottomBar').getBoundingClientRect().top,$('controlsTR').getBoundingClientRect().top)-8;
+  const openH=Math.max(100,openBot-openTop),mid=(openTop+openBot)/2,half=8.2;
+  const project=()=>{const v=new THREE.Vector3();let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+    [[-half,.7,-half],[half,.7,-half],[-half,0,-half],[half,0,-half],[-half,0,half],[half,0,half]].forEach(p=>{v.set(p[0],p[1],p[2]).project(camera);const x=(v.x*.5+.5)*w,y=(-v.y*.5+.5)*h;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);});
+    return{bw:Math.max(1,maxX-minX),bh:Math.max(1,maxY-minY),cy:(minY+maxY)/2}};
+  let box=project();
+  const scale=Math.min(1.35,Math.max(.55,Math.min((w-16)/box.bw,openH/box.bh)));
+  if(Math.abs(scale-1)>.03&&controls){
+    const d=Math.max(7,camera.position.distanceTo(controls.target)/scale);
+    const dir=camera.position.clone().sub(controls.target).normalize();
+    camera.position.copy(controls.target).addScaledVector(dir,d);
+    controls.maxDistance=Math.max(42,d*1.6);limitTilt();controls.update();box=project();
+  }
+  const delta=Math.round(box.cy-mid);
+  if(Math.abs(delta)>3)camera.setViewOffset(w,h,0,delta,w,h);
+}
+/* The size the board is actually drawn into. On a phone this is the visible screen, which is shorter than the page once the browser bar is showing. */
+function viewportBox(){
+  const v=window.visualViewport;
+  if(v&&v.width>2&&v.height>2)return{w:v.width,h:v.height,x:v.offsetLeft||0,y:v.offsetTop||0};
+  return{w:window.innerWidth,h:window.innerHeight,x:0,y:0};
+}
+function resize(){if(renderer.xr.isPresenting)return;const box=viewportBox();const w=box.w,h=box.h;if(w<2||h<2)return;
+  canvas.style.left=box.x+'px';canvas.style.top=box.y+'px';canvas.style.width=w+'px';canvas.style.height=h+'px';
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.clearViewOffset();camera.updateProjectionMatrix();
+  const narrow=w<=640;
+  if(narrow)document.documentElement.style.setProperty('--phone-stack',Math.ceil($('bottomBar').getBoundingClientRect().height+10)+'px');
+  else document.documentElement.style.removeProperty('--phone-stack');
   const dist=25.5*Math.max(1,1.05/camera.aspect);const dir=camera.position.clone().sub(controls?controls.target:new THREE.Vector3()).normalize();
-  camera.position.copy(dir.multiplyScalar(dist));if(controls){controls.maxDistance=Math.max(42,dist*1.6);limitTilt();controls.update();}}
-window.addEventListener('resize',resize);resize();
+  camera.position.copy(dir.multiplyScalar(dist));
+  if(controls){controls.maxDistance=Math.max(42,dist*1.6);limitTilt();controls.update();}
+  if(narrow)fitPhoneFrame(w,h);
+}
+function reflowPhone(){if((canvas.clientWidth||innerWidth)>640)return;const h=$('bottomBar').offsetHeight*1000+$('turnCard').offsetHeight;if(h===reflowPhone.h)return;reflowPhone.h=h;resize();}
+window.addEventListener('resize',resize);
+if(window.visualViewport){visualViewport.addEventListener('resize',resize);visualViewport.addEventListener('scroll',resize);}
+resize();
 
 /* ================= Loop ================= */
 const reduced=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);

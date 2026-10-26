@@ -164,7 +164,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .stage.narrow .turn-card .title{display:none}
 .stage.narrow .turn{margin-top:0}
 .stage.narrow .turn-name{font-size:17px}
-.stage.narrow>.controls-tr{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 170px);right:12px;flex-direction:column}
+.stage.narrow>.controls-tr{top:auto;left:12px;right:12px;bottom:168px;flex-direction:row;flex-wrap:wrap;justify-content:center}
 .stage.narrow .chip{padding:5px 11px;font-size:14px}
 .stage.narrow .roll{min-width:190px;padding:12px 22px;font-size:19px}
 .stage.narrow .dchip{width:48px;height:48px}
@@ -471,7 +471,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   <section id="narrow">
     <h2>Narrow screen</h2>
-    <p class="lead">At a window of 640px or narrower, the game hides the turn-card title, tightens the type, and stacks the four chips in a column on the right, above the roll button. This frame is 390px wide so you can see that layout on a large monitor.</p>
+    <p class="lead">At a window of 640px or narrower, the game hides the turn-card title, tightens the type, and lays the chips in a row above the roll button so they stay off the board. This frame is 390px wide so you can see that layout on a large monitor.</p>
     <figure>
       <div class="g">
         <div class="stage narrow" aria-label="Choosing a march on a narrow screen">
