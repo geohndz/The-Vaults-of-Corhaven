@@ -101,13 +101,18 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .err:empty{display:none}
 .roomcode{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px;padding:8px 14px;border:1.5px dashed var(--gold);border-radius:12px;color:var(--parch-dim)}
 .roomcode b{font-size:clamp(22px,8vw,34px);letter-spacing:.16em;color:var(--gold-bright)}
-.kingdoms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-.kbtn{display:flex;align-items:center;gap:10px;padding:12px;text-align:left;background:rgba(0,0,0,.22);border:2px solid rgba(201,161,74,.45);border-radius:12px}
-.kbtn:not(:disabled):hover{border-color:var(--gold-bright)}
-.kbtn[aria-pressed="true"]{border-color:var(--gold-bright);background:rgba(233,199,106,.16)}
-.kbtn:disabled{opacity:.45;cursor:default}
-.kbtn span{display:block;font-weight:700}
-.kbtn small{display:block;color:var(--parch-dim);font-size:13px}
+.kingdoms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:8px;align-items:start}
+#online:has(#stepKingdom:not([hidden])) .sheet{width:min(760px,100%)}
+.banner{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0;background:none;border:0;color:inherit}
+.banner .frame{position:relative;width:100%;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+.banner .frame svg{display:block;width:100%;height:auto}
+.banner .art{filter:grayscale(1);transition:filter .18s ease}
+.banner .kname{position:absolute;left:14%;right:14%;bottom:7%;text-align:center;font-weight:700;font-size:14px;line-height:1.1;color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.banner .pname{min-height:1.3em;font-weight:700;font-size:15px;text-align:center;color:var(--gold-bright);overflow-wrap:anywhere}
+.banner .glow{position:absolute;z-index:-1;left:10%;right:10%;top:12%;bottom:6%;background:var(--c);opacity:0;filter:blur(16px);transition:opacity .18s ease}
+.banner:hover:not(.claimed) .art,.banner:focus-visible .art,.banner.claimed .art{filter:none}
+.banner:hover:not(.claimed) .glow,.banner:focus-visible .glow,.banner.claimed .glow{opacity:.9}
+.banner.claimed,.banner:disabled{cursor:default;opacity:1}
 .seat .who{flex:1;font-weight:600;overflow-wrap:anywhere}
 .seat .who small{display:block;font-weight:400;color:var(--parch-dim);font-size:14px}
 .tag{flex:none;font-size:13px;border:1px solid var(--gold);border-radius:999px;padding:1px 8px;color:var(--gold-bright)}
@@ -135,8 +140,9 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   .sheet{padding:18px 16px 16px}
   .sheet h1{font-size:34px}
   .roomcode{padding:8px 10px;gap:8px}
-  .kingdoms{gap:8px}
-  .kbtn{padding:10px 8px;gap:8px}
+  .kingdoms{grid-template-columns:1fr 1fr;gap:10px}
+  .banner .frame{width:88%}
+  .banner .kname{font-size:13px}
 }
 body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 .titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 36px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
@@ -145,7 +151,7 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 .titlemain h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:clamp(46px,11vw,76px);line-height:.95;margin:0 0 18px;color:var(--gold-bright)}
 .titlemain .titlelead{margin:0;color:var(--parch-dim);font-size:18px}
 .titlemain .titleactions{margin-top:28px}
-@media (prefers-reduced-motion: reduce){.roll,.dchip{transition:none}}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art{transition:none}}
 </style>
 </head>
 <body class="at-title">
@@ -1357,6 +1363,24 @@ function seatRow(room,s){
   if(s.pid===NET.pid){const t=document.createElement('span');t.className='tag';t.textContent='You';row.appendChild(t);}
   return row;
 }
+function bannerSvg(h){
+  const skies=[
+    ['#F2B2A4','#8E2A22','#2A0C0A'],
+    ['#C6E2A4','#2E7D32','#102414'],
+    ['#FFF3C4','#E0B44A','#6A4A10'],
+    ['#D4E8F8','#3D74B8','#0C2444']
+  ];
+  const scenes=[
+    `<path fill="#1A0908" d="M16 124V86h6V74h8v12h6v38zM34 124V60h8V46h12v14h8v64zM62 124V90h5V76h8v14h5v34z"/><rect x="40" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="47" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="43.5" y="80" width="3.2" height="5" fill="#F6D48A"/><rect x="21" y="96" width="3" height="4" fill="#E07040"/>`,
+    `<path fill="#0E1C12" d="M14 124L26 74l12 50zM28 124L44 58l16 66zM52 124L64 78l12 46z"/><path fill="#1A140C" d="M33 124V98h24v26zM30 98L45 82l15 16z"/><rect x="42" y="106" width="6" height="12" fill="#C9A14A"/>`,
+    `<circle cx="60" cy="40" r="11" fill="#FFF8DC"/><path fill="#3A2810" d="M20 124V98h8V80h8v18h6V86h8V68h10v18h6v12h10v26z"/>`,
+    `<path fill="#E4F1FA" d="M14 108H72V130H14z"/><path fill="#101820" d="M24 108V76h36v32zM20 76L42 56l22 20z"/><rect x="39" y="88" width="8" height="14" fill="#F2E7CD"/>`
+  ];
+  const [a,b,c]=skies[h];
+  const outer='M8 128V54C8 36 20 24 32 18 36 16 39 11 43 11s7 5 11 7c12 6 24 18 24 36v74q0 8-8 8H16q-8 0-8-8z';
+  const inner='M14 123V56C14 40 24 30 35 24 38 22 41 18 43 18s5 4 8 6c11 6 21 16 21 32v67q0 6-6 6H20q-6 0-6-6z';
+  return `<svg viewBox="0 0 86 146" aria-hidden="true"><defs><linearGradient id="gold${h}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8E7A8"/><stop offset=".48" stop-color="#A6843A"/><stop offset="1" stop-color="#E6C56A"/></linearGradient><linearGradient id="sky${h}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient><clipPath id="win${h}"><path d="${inner}"/></clipPath></defs><path d="${outer}" fill="url(#gold${h})"/><g class="art" clip-path="url(#win${h})"><rect width="86" height="146" fill="url(#sky${h})"/>${scenes[h]}</g><circle cx="43" cy="8.5" r="6.4" fill="url(#gold${h})"/><circle cx="43" cy="8.5" r="3.1" fill="#5C4318"/><circle cx="43" cy="8.5" r="1.5" fill="#F3D27A"/></svg>`;
+}
 function renderLobby(room){
   const me=room.seats.find(s=>s.pid===NET.pid);
   if(!me){leaveOnline(false,'You were away from the room for over a minute, so your seat was given up.');return;}
@@ -1366,15 +1390,20 @@ function renderLobby(room){
     return;
   }
   if(me.h===null){
-    if(onlineStep!=='stepKingdom')showStep('stepKingdom',{title:'Pick your color',lead:'Each kingdom marches in its own color. Kingdoms someone has already claimed are greyed out.'});
+    if(onlineStep!=='stepKingdom')showStep('stepKingdom',{title:'Pick your color',lead:'Choose a kingdom. A claimed color stays lit, with that player\'s name beneath it.'});
     const list=$('kingdomList');list.innerHTML='';
     HOUSES.forEach((H,h)=>{
       const holder=room.seats.find(s=>s.h===h);
-      const b=document.createElement('button');b.className='kbtn';b.disabled=!!holder;b.setAttribute('aria-pressed','false');
-      const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',H.css);b.appendChild(crest);
-      const txt=document.createElement('div');const nm=document.createElement('span');nm.textContent=H.name;txt.appendChild(nm);
-      const sm=document.createElement('small');sm.textContent=holder?'Taken by '+holder.name:'Free';txt.appendChild(sm);b.appendChild(txt);
-      b.onclick=()=>{$('onlineErr').textContent='';netSend({t:'pick',h});};
+      const b=document.createElement('button');b.className='banner'+(holder?' claimed':'');b.disabled=!!holder;b.style.setProperty('--c',H.css);
+      b.setAttribute('aria-pressed',String(!!holder&&holder.pid===NET.pid));
+      b.setAttribute('aria-label',H.name+(holder?' taken by '+holder.name:''));
+      const frame=document.createElement('span');frame.className='frame';
+      frame.insertAdjacentHTML('beforeend',bannerSvg(h));
+      const glow=document.createElement('span');glow.className='glow';frame.appendChild(glow);
+      const kn=document.createElement('span');kn.className='kname';kn.textContent=H.name;frame.appendChild(kn);
+      b.appendChild(frame);
+      const pname=document.createElement('span');pname.className='pname';pname.textContent=holder?holder.name:'';b.appendChild(pname);
+      if(!holder)b.onclick=()=>{$('onlineErr').textContent='';netSend({t:'pick',h});};
       list.appendChild(b);
     });
     return;
