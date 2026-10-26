@@ -1,0 +1,16 @@
+{
+  "name": "vaults-of-corhaven",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "local": "node scripts/local.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "ioredis": "^5.8.2",
+    "ws": "^8.18.3"
+  }
+}

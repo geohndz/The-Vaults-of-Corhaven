@@ -93,6 +93,33 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .secondary{margin-top:10px;width:100%;padding:11px;font-size:17px;background:transparent;border:1.5px solid var(--gold);border-radius:12px}
 .rules p{color:var(--parch);margin:0 0 10px}
 .rules p strong{color:var(--gold-bright)}
+.sheet label{display:block;font-weight:600;margin:14px 0 6px}
+.field{width:100%;padding:11px 14px;font:inherit;font-size:20px;background:rgba(0,0,0,.28);color:var(--parch);border:1.5px solid var(--gold);border-radius:10px}
+.field:focus-visible{outline:3px solid var(--gold-bright);outline-offset:1px}
+.field.code{font-size:34px;font-weight:700;letter-spacing:.3em;text-align:center;text-transform:uppercase;padding:8px 0 8px .3em}
+.err{color:#FFB8A8;min-height:1.4em;margin:10px 0 0;font-size:15px}
+.err:empty{display:none}
+.roomcode{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px;padding:8px 14px;border:1.5px dashed var(--gold);border-radius:12px;color:var(--parch-dim)}
+.roomcode b{font-size:34px;letter-spacing:.24em;color:var(--gold-bright)}
+.kingdoms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.kbtn{display:flex;align-items:center;gap:10px;padding:12px;text-align:left;background:rgba(0,0,0,.22);border:2px solid rgba(201,161,74,.45);border-radius:12px}
+.kbtn:not(:disabled):hover{border-color:var(--gold-bright)}
+.kbtn[aria-pressed="true"]{border-color:var(--gold-bright);background:rgba(233,199,106,.16)}
+.kbtn:disabled{opacity:.45;cursor:default}
+.kbtn span{display:block;font-weight:700}
+.kbtn small{display:block;color:var(--parch-dim);font-size:13px}
+.seat .who{flex:1;font-weight:600;overflow-wrap:anywhere}
+.seat .who small{display:block;font-weight:400;color:var(--parch-dim);font-size:14px}
+.tag{flex:none;font-size:13px;border:1px solid var(--gold);border-radius:999px;padding:1px 8px;color:var(--gold-bright)}
+.clock{display:flex;align-items:center;gap:10px;margin-top:8px}
+.clock[hidden]{display:none}
+.clock .bar{flex:1;height:6px;border-radius:3px;background:rgba(0,0,0,.35);overflow:hidden}
+.clock .bar i{display:block;height:100%;background:var(--gold-bright);transform-origin:left center;transition:transform .25s linear}
+.clock.low .bar i{background:#E0603A}
+.clock span{min-width:2.6em;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--parch)}
+.roll .secs{font-weight:600;opacity:.85;font-variant-numeric:tabular-nums}
+.tally .t.out{opacity:.45;text-decoration:line-through}
+.tally .away{color:#FFB8A8;font-size:12px;font-variant-numeric:tabular-nums}
 @media (max-width:640px){
   body{font-size:16px}
   #turnCard{padding:9px 12px}
@@ -116,6 +143,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
     <span class="crest" id="turnCrest"></span>
     <div><div id="turnName">Choose your players</div><div class="msg" id="turnMsg" aria-live="polite"></div></div>
   </div>
+  <div class="clock" id="turnClock" hidden><div class="bar"><i id="turnClockBar"></i></div><span id="turnClockText"></span></div>
   <div class="tally" id="tally"></div>
 </div>
 
@@ -124,6 +152,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   <button class="chip" id="btnRules">Rules</button>
   <button class="chip" id="btnSound" aria-pressed="true">Sound on</button>
   <button class="chip" id="btnNew">New game</button>
+  <button class="chip" id="btnLeave" hidden>Leave room</button>
   <button class="chip" id="btnXR" hidden="">Play in the room</button>
 </div>
 
@@ -133,11 +162,56 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   <div class="hint" id="hint">Drag to turn the board, pinch or scroll to zoom</div>
 </div>
 
-<div class="modal open" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+<div class="modal open" id="title" role="dialog" aria-modal="true" aria-labelledby="titleTitle">
   <div class="sheet panel">
-    <h1 id="setupTitle">The Vaults of Corhaven</h1>
+    <h1 id="titleTitle">The Vaults of Corhaven</h1>
     <p>A rider has brought word that the lost vaults of Corhaven survived. March your troops through the Sundered March, find your kingdom's hidden passage, and claim the gold before your rivals do.</p>
-    <button class="secondary" id="btnStory2" style="margin-top:4px">Read the chronicle</button>
+    <p class="err" id="titleErr" role="alert"></p>
+    <button class="primary" id="btnCreate">Create a room</button>
+    <button class="secondary" id="btnJoin">Join a room</button>
+    <button class="secondary" id="btnLocal">Play local</button>
+    <button class="secondary" id="btnStory2">Read the chronicle</button>
+  </div>
+</div>
+
+<div class="modal" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+  <div class="sheet panel">
+    <h1 id="onlineTitle">Join a room</h1>
+    <div class="roomcode" id="roomCodeBox" hidden><span>Room code</span><b id="roomCode"></b></div>
+    <p id="onlineLead"></p>
+    <form id="stepCode" hidden>
+      <label for="codeInput">Room code</label>
+      <input class="field code" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+      <button class="primary" type="submit">Continue</button>
+    </form>
+    <form id="stepName" hidden>
+      <label for="nameInput">Your name</label>
+      <input class="field" id="nameInput" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="go">
+      <button class="primary" type="submit">Continue</button>
+    </form>
+    <div id="stepKingdom" hidden><div class="kingdoms" id="kingdomList" role="group" aria-label="Kingdoms"></div></div>
+    <div id="stepWait" hidden>
+      <div id="lobbyList"></div>
+      <button class="primary" id="btnStart">Start the match</button>
+    </div>
+    <p class="err" id="onlineErr" role="alert"></p>
+    <button class="secondary" id="btnOnlineBack">Back</button>
+  </div>
+</div>
+
+<div class="modal" id="leave" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+  <div class="sheet panel">
+    <h1 id="leaveTitle">Leave the match?</h1>
+    <p>Leaving counts as a forfeit. Your troops leave the board, and you can't rejoin this match.</p>
+    <button class="primary" id="btnLeaveYes">Leave the match</button>
+    <button class="secondary" id="btnLeaveNo">Stay</button>
+  </div>
+</div>
+
+<div class="modal" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+  <div class="sheet panel">
+    <h1 id="setupTitle">Play local</h1>
+    <p>Everyone plays on this device. Set any kingdom to the computer.</p>
     <h2>How many players?</h2>
     <div class="seg" role="radiogroup" id="countSeg">
       <button role="radio" data-n="2" aria-checked="false">2</button>
@@ -148,6 +222,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
     <div id="seats"><div class="seat"><span class="crest" style="--c:#B3261E"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#2E7D32"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#D9A21B"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#1F4E9C"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
     <button class="primary" id="btnBegin">Begin the game</button>
     <button class="secondary" id="btnXRSetup" hidden="">Play in the room</button>
+    <button class="secondary" id="btnSetupBack">Back</button>
   </div>
 </div>
 
@@ -194,6 +269,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
+<script src="./lib/rules.js"></script>
 <script>
 (function(){
 'use strict';
@@ -230,8 +306,9 @@ for(let k=7;k>=0;k--)TRACK.push(['T',-1,k]);  // 48-55
 for(let k=0;k<8;k++)TRACK.push(['L',-1,k]);   // 56-63
 TRACK.push(['L',0,7]);                        // 64
 for(let k=7;k>=4;k--)TRACK.push(['L',1,k]);   // 65-68
+const R=window.CorhavenRules;
 const NTRACK=TRACK.length;     // 68
-const LAST=63,GOAL=71;         // progress: 0..63 track, 64..70 home path, 71 treasure
+const LAST=R.LAST,GOAL=R.GOAL; // progress: 0..63 track, 64..70 home path, 71 treasure
 
 const HOUSES=[
   {name:'Emberhold', short:'Emberhold',  color:0xB3261E,css:'#B3261E',start:0, yard:[-1,1], goalDir:[-1,0],homeArm:'L'},
@@ -239,9 +316,8 @@ const HOUSES=[
   {name:'Solmere',  short:'Solmere', color:0xD9A21B,css:'#D9A21B',start:34,yard:[1,-1], goalDir:[1,0], homeArm:'R'},
   {name:'Tidereach',short:'Tidereach', color:0x1F4E9C,css:'#1F4E9C',start:51,yard:[-1,-1],goalDir:[0,-1],homeArm:'T'},
 ];
-const SAFE=new Set([0,17,34,51, 7,24,41,58, 12,29,46,63]);
 const SEATS={2:[0,2],3:[0,1,2],4:[0,1,2,3]};
-const BONUS=20;
+const BONUS=R.BONUS,SAFE=R.SAFE;
 const TILE_TOP=0.12,GOAL_Y=0.13,TOWER_TOP=0.82,DS=0.35;
 
 /* ================= Renderer / scene ================= */
@@ -758,51 +834,24 @@ theme.addEventListener('canplay',()=>ensureTheme());
 
 /* ================= Game rules ================= */
 const S={players:[],cur:0,phase:'idle',pending:[],sel:0,dbl:false,doubles:0,gid:0,config:null};
+/* Online room connection. In an online match every player but `myH` is remote and moves come from the server. */
+const NET={on:false,playing:false,ws:null,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),epoch:0,offset:0,retry:0,retryTimer:null,ended:false};
 const pieceMeshes=[];
 const curP=()=>S.players[S.cur];
+const isMine=pl=>!!pl&&!pl.cpu&&!pl.out&&(!NET.on||pl.h===NET.myH);
+function displayName(pl){if(!pl)return'';return pl.name||HOUSES[pl.h].name+(pl.cpu?' (computer)':'');}
+const shortName=pl=>pl.name||HOUSES[pl.h].short;
 const allPieces=()=>S.players.flatMap(pl=>pl.pieces);
-const trackIndex=(h,p)=>(HOUSES[h].start+p)%NTRACK;
+const trackIndex=R.trackIndex,cellKey=R.cellKey;
 function cellAK(h,p){return p<=LAST?TRACK[trackIndex(h,p)]:[HOUSES[h].homeArm,0,70-p];}
-function cellKey(h,p){if(p<0||p>=GOAL)return null;return p<=LAST?'t'+trackIndex(h,p):'h'+h+'_'+p;}
 function cellPos(h,p,idx){
   if(p<0)return basePos[h][idx].clone();
   if(p<GOAL){const[a,l,k]=cellAK(h,p);const[x,z]=anchorXZ(a,l,k);return new THREE.Vector3(x,TILE_TOP,z);}
   const[dx,dz]=HOUSES[h].goalDir,px=-dz,pz=dx,o=(idx-1.5)*0.44;   // troops are 0.216 wide at goal scale, so 0.44 keeps them apart
   return new THREE.Vector3(dx*(CH-T-0.4)+px*o,GOAL_Y,dz*(CH-T-0.4)+pz*o);
 }
-function occupants(key,exclude){return allPieces().filter(pc=>pc!==exclude&&cellKey(pc.h,pc.p)===key);}
-function isBlockade(key,exclude){const o=occupants(key,exclude);return o.length>=2&&o[0].h===o[1].h;}
-/* Returns null when the move is illegal, or {np, captures, exit} */
-function moveResult(pc,v){
-  if(pc.p===GOAL)return null;
-  if(pc.p===-1){
-    if(v!==1&&v!==6)return null;
-    const occ=occupants(cellKey(pc.h,0),pc);
-    if(occ.filter(o=>o.h===pc.h).length>=2)return null;
-    return{np:0,exit:true,captures:occ.filter(o=>o.h!==pc.h)};
-  }
-  const np=pc.p+v;if(np>GOAL)return null;
-  for(let s=1;s<v;s++){const k=cellKey(pc.h,pc.p+s);if(k&&isBlockade(k,pc))return null;}
-  if(np===GOAL)return{np,captures:[]};
-  const occ=occupants(cellKey(pc.h,np),pc);
-  if(occ.length>=2)return null;
-  if(np<=LAST){const ti=trackIndex(pc.h,np);if(occ.length&&HOUSES.some((H,i)=>i!==pc.h&&H.start===ti))return null;} // another kingdom's gate: only when empty
-  const captures=(np<=LAST&&occ.length===1&&occ[0].h!==pc.h&&!SAFE.has(trackIndex(pc.h,np)))?[occ[0]]:[];
-  return{np,captures};
-}
-function options(){const pl=curP();const out=[];S.pending.forEach((d,di)=>{if(d.used)return;pl.pieces.forEach(pc=>{const r=moveResult(pc,d.v);if(r)out.push({di,pc,r});});});return out;}
-function inDanger(h,np){if(np<0||np>LAST)return false;const ti=trackIndex(h,np);if(SAFE.has(ti))return false;
-  return allPieces().some(o=>{if(o.h===h||o.p<0||o.p>LAST)return false;const d=(ti-trackIndex(o.h,o.p)+NTRACK)%NTRACK;return d>=1&&d<=12&&o.p+d<=LAST;});}
-function cpuScore(o){const{pc,r}=o;const np=r.np;let s=np*0.25+Math.random()*2;
-  if(np===GOAL)s+=100;
-  if(r.captures.length)s+=85+r.captures.reduce((a,c)=>a+c.p,0)*0.6;
-  if(r.exit)s+=55;
-  if(np>LAST&&np<GOAL)s+=35;
-  if(np<=LAST&&SAFE.has(trackIndex(pc.h,np)))s+=18;
-  if(!r.exit&&np<=LAST&&occupants(cellKey(pc.h,np),pc).some(x=>x.h===pc.h))s+=12;
-  if(inDanger(pc.h,np))s-=26;
-  if(pc.p>=0&&inDanger(pc.h,pc.p))s+=20;
-  return s;}
+function moveResult(pc,v){return R.moveResult(allPieces(),pc,v);}
+function options(){const pl=curP();if(!pl)return[];return R.options(allPieces(),pl.h,S.pending);}
 
 /* ================= Layout ================= */
 function restLayout(){
@@ -824,7 +873,7 @@ function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[
 function renderChips(){
   if(!S.pending.length){ui.chips.hidden=true;ui.chips.innerHTML='';return;}
   ui.chips.hidden=false;ui.chips.innerHTML='';
-  const opts=S.phase==='choose'?options():[];const human=!curP().cpu;
+  const opts=S.phase==='choose'?options():[];const human=isMine(curP());
   S.pending.forEach((d,di)=>{const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
     const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can)b.classList.add('stuck');
     b.innerHTML=d.bonus?'+'+d.v:pipSVG(d.v);
@@ -836,19 +885,24 @@ function renderChips(){
 }
 function renderTally(){
   ui.tally.innerHTML='';
-  S.players.forEach((pl,i)=>{const d=document.createElement('div');d.className='t'+(i===S.cur&&S.phase!=='over'?' active':'');
-    d.innerHTML=`<span class="crest" style="--c:${HOUSES[pl.h].css}"></span><span>${HOUSES[pl.h].short}${pl.cpu?' (CPU)':''}${S.ordering&&pl.orderRoll?' · '+pl.orderRoll:''}</span>`;
+  S.players.forEach((pl,i)=>{const d=document.createElement('div');d.className='t'+(i===S.cur&&S.phase!=='over'&&!pl.out?' active':'')+(pl.out?' out':'');
+    const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',HOUSES[pl.h].css);d.appendChild(crest);
+    const label=document.createElement('span');label.textContent=shortName(pl)+(pl.cpu?' (CPU)':'')+(NET.on&&pl.h===NET.myH?' (you)':'')+(S.ordering&&pl.orderRoll?' · '+pl.orderRoll:'');d.appendChild(label);
+    if(pl.away&&!pl.out){const a=document.createElement('span');a.className='away';a.dataset.awaySince=pl.awaySince;d.appendChild(a);}
     const cs=document.createElement('span');cs.className='coins';pl.pieces.forEach(pc=>{const c=document.createElement('span');c.className='coin'+(pc.p===GOAL?' on':'');cs.appendChild(c);});d.appendChild(cs);
-    d.title=`${HOUSES[pl.h].name}: ${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;ui.tally.appendChild(d);});
+    d.title=pl.out?`${displayName(pl)} left the match`:`${displayName(pl)}: ${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;ui.tally.appendChild(d);});
+  if(NET.on)paintClock();
 }
+const rollSecs=document.createElement('span');rollSecs.className='secs';
 function renderTurn(){
-  const pl=curP();if(!pl)return;const H=HOUSES[pl.h];
-  ui.crest.style.setProperty('--c',H.css);ui.name.textContent=H.name+(pl.cpu?' (computer)':'');
+  const pl=curP();if(!pl)return;const H=HOUSES[pl.h];const mine=isMine(pl);
+  ui.crest.style.setProperty('--c',H.css);ui.name.textContent=displayName(pl)+(NET.on&&mine?' (you)':'');
   ui.roll.style.setProperty('--c',H.css);
-  ui.roll.disabled=!((S.phase==='roll'||S.phase==='orderRoll')&&!pl.cpu);
-  ui.roll.textContent=S.phase==='over'?'Victory':S.phase==='rolling'?'Rolling…':pl.cpu?'Computer is playing':S.phase==='orderRoll'?'Roll for order':S.phase==='choose'?'Choose a troop':'Roll the dice';
+  ui.roll.disabled=!((S.phase==='roll'||S.phase==='orderRoll')&&mine);
+  ui.roll.textContent=S.phase==='over'?'Victory':S.phase==='rolling'?'Rolling…':pl.cpu?'Computer is playing':!mine?`${shortName(pl)} is playing`:S.phase==='orderRoll'?'Roll for order':S.phase==='choose'?'Choose a troop':'Roll the dice';
+  ui.roll.appendChild(rollSecs);
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
-  ui.hint.textContent=tip||(S.phase==='choose'&&!pl.cpu?'Pick a die, then tap a glowing troop. Rings show where it will land.':'Drag to turn the board, pinch or scroll to zoom');
+  ui.hint.textContent=tip||(NET.on&&NET.ws&&NET.ws.readyState!==1&&!NET.ended?'Reconnecting to the room…':S.phase==='choose'&&mine?'Pick a die, then tap a glowing troop. Rings show where it will land.':'Drag to turn the board, pinch or scroll to zoom');
   renderChips();renderTally();
   if(typeof paintViewHud==='function')paintViewHud();
   if(typeof paintXRPanel==='function')paintXRPanel();
@@ -880,7 +934,7 @@ function syncDieBody(i,vel){
   if(vel){b.velocity.set(vel.lin.x,vel.lin.y,vel.lin.z);b.angularVelocity.set(vel.ang.x,vel.ang.y,vel.ang.z);b.wakeUp();}
   else{b.velocity.set(0,0,0);b.angularVelocity.set(0,0,0);b.sleep();}
 }
-async function throwDice(h){
+async function throwDice(h,forced){
   diceIntro=true;
   if(typeof releaseHeld==='function')releaseHeld(false);
   const yc=yardCenter(h);const inward=new THREE.Vector3(-yc.x,0,-yc.z).normalize();const perp=new THREE.Vector3(-inward.z,0,inward.x);
@@ -888,7 +942,7 @@ async function throwDice(h){
   const starts=[origin.clone().addScaledVector(perp,-0.5),origin.clone().addScaledVector(perp,0.5)];
   await Promise.all(dice.map((d,i)=>{const from=d.position.clone(),q0=d.quaternion.clone(),q1=randQuat();return animate(360,k=>{const e=ease(k);d.position.lerpVectors(from,starts[i],e);d.position.y+=Math.sin(Math.PI*k)*0.8;d.quaternion.copy(q0).slerp(q1,e);});}));
   diceIntro=false;
-  if(!world)return fallbackRoll();
+  if(forced||!world)return fallbackRoll(forced);
   armDicePhysics();
   const k=impulseScale();
   dice.forEach((d,i)=>{const b=diceBodies[i];b.position.set(d.position.x,d.position.y,d.position.z);b.quaternion.set(d.quaternion.x,d.quaternion.y,d.quaternion.z,d.quaternion.w);
@@ -931,8 +985,8 @@ function stepMotionRoll(dt){
   if(order)finishOrder(pl,vals[0],vals[1],gid);else finishRoll(pl,vals[0],vals[1],gid);
 }
 const FACE_EULER={1:[0,0,0],6:[Math.PI,0,0],2:[-Math.PI/2,0,0],5:[Math.PI/2,0,0],3:[0,0,Math.PI/2],4:[0,0,-Math.PI/2]};
-async function fallbackRoll(){ // used only if the physics engine failed to load
-  const vals=[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
+async function fallbackRoll(forced){ // also lands online rolls on the faces the room server drew
+  const vals=forced||[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
   let sounded=false;
   await Promise.all(dice.map((d,i)=>{const from=d.position.clone();const to=new THREE.Vector3((Math.random()-.5)*6,TILE_TOP+DS,(Math.random()-.5)*6);if(Math.hypot(to.x,to.z)<1.6)to.x+=2.4;
     const q0=d.quaternion.clone();const qf=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.random()*6).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...FACE_EULER[vals[i]])));
@@ -942,11 +996,16 @@ async function fallbackRoll(){ // used only if the physics engine failed to load
 
 /* ================= Turn flow ================= */
 function clearPieces(){pieceMeshes.forEach(m=>board.remove(m));pieceMeshes.length=0;coinsFx.forEach(c=>board.remove(c.m));coinsFx.length=0;clearBarricades();showMarkers([]);}
-function newGame(config){
+function createPiece(h,idx){const mesh=makePiece(h);mesh.position.copy(basePos[h][idx]);mesh.rotation.y=Math.atan2(-basePos[h][idx].x,-basePos[h][idx].z);board.add(mesh);pieceMeshes.push(mesh);const pc={h,idx,p:-1,mesh};mesh.userData.piece=pc;return pc;}
+function removePiece(pc){board.remove(pc.mesh);const i=pieceMeshes.indexOf(pc.mesh);if(i>=0)pieceMeshes.splice(i,1);}
+function resetBoard(){
   stopOneShots();ensureTheme();
-  diceArmed=false;S.gid++;anims=[];rollState=null;clearPieces();S.config=config;
-  S.players=config.map(({h,cpu})=>({h,cpu,pieces:[0,1,2,3].map(idx=>{const mesh=makePiece(h);mesh.position.copy(basePos[h][idx]);mesh.rotation.y=Math.atan2(-basePos[h][idx].x,-basePos[h][idx].z);board.add(mesh);pieceMeshes.push(mesh);const pc={h,idx,p:-1,mesh};mesh.userData.piece=pc;return pc;})}));
-  S.cur=0;S.pending=[];S.phase='idle';lidTarget=-0.22;
+  diceArmed=false;S.gid++;anims=[];rollState=null;motionRoll=null;clearPieces();
+  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.phase='idle';lidTarget=-0.22;
+}
+function newGame(config){
+  resetBoard();S.config=config;
+  S.players=config.map(({h,cpu})=>({h,cpu,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
   decideOrder();
 }
 /* Everyone rolls; highest total goes first. Tied kingdoms roll again among themselves. */
@@ -1032,7 +1091,7 @@ async function continueTurn(){
     return endTurn();
   }
   if(pl.cpu){S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
-    let best=opts[0],bs=-1e9;opts.forEach(o=>{const s=cpuScore(o);if(s>bs){bs=s;best=o;}});
+    const best=R.bestOption(allPieces(),opts);
     S.sel=best.di;setHighlights([best.pc]);showMarkers([cellPos(best.pc.h,best.r.np,best.pc.idx)]);renderChips();await wait(380);if(gid!==S.gid)return;
     return doMove(best);}
   const uniq=new Set(opts.map(o=>S.pending[o.di].v+':'+o.pc.p));
@@ -1097,14 +1156,22 @@ function stepBarricades(dt){
 }
 async function victory(pl){
   const gid=S.gid;S.phase='over';S.pending=[];renderTurn();setHighlights();showMarkers([]);
-  say(`${HOUSES[pl.h].name} claims the gold of Corhaven.`);lidTarget=-1.9;sfx.win();
+  say(`${pl.name||HOUSES[pl.h].name} claims the gold of Corhaven.`);lidTarget=-1.9;sfx.win();
   const cm=new THREE.MeshStandardMaterial({color:0xF0C04A,metalness:0.8,roughness:0.3,emissive:0x442a00});
   for(let i=0;i<50;i++){const c=new THREE.Mesh(coinGeo,cm);c.scale.setScalar(1.3);c.position.set((Math.random()-.5)*0.6,1.0,(Math.random()-.5)*0.4);c.castShadow=true;board.add(c);
     const a=Math.random()*Math.PI*2,sp=1.5+Math.random()*3;coinsFx.push({m:c,v:new THREE.Vector3(Math.cos(a)*sp,4+Math.random()*4,Math.sin(a)*sp),spin:new THREE.Vector3(Math.random()*10,Math.random()*10,0),rest:false});}
   await wait(1900);if(gid!==S.gid)return;
-  $('winTitle').textContent=`${HOUSES[pl.h].name} claims the vault`;
-  $('winText').textContent=pl.cpu?`All four ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, ${HOUSES[pl.h].name} now stands above every kingdom in the realm.`:`All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.`;
+  $('winTitle').textContent=`${pl.name||HOUSES[pl.h].name} claims the vault`;
+  const forfeitWin=NET.on&&NET.room&&NET.room.game&&NET.room.game.winReason==='forfeit';
+  $('winText').textContent=forfeitWin?(isMine(pl)?`Everyone else abandoned the race for the vault. The gold of Corhaven is yours, and with it the realm.`:`Everyone else abandoned the race for the vault, so ${displayName(pl)} claims the gold of Corhaven.`)
+    :isMine(pl)?`All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.`
+    :NET.on?`All four of ${displayName(pl)}'s ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, they now stand above every kingdom in the realm.`
+    :`All four ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, ${HOUSES[pl.h].name} now stands above every kingdom in the realm.`;
+  $('btnAgain').textContent=NET.on?'Back to the title':'Play again';
+  $('btnChange').hidden=NET.on;
+  if(NET.on){$('btnLeave').hidden=true;$('btnNew').hidden=false;}
   openModal('win');
+  if(NET.on)endOnlineSocket();
 }
 
 /* ================= Setup ================= */
@@ -1122,14 +1189,16 @@ function renderSetup(){
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
 function openModal(id){$(id).classList.add('open');const f=$(id).querySelector('button');if(f)setTimeout(()=>f.focus(),30);}
 function closeModal(id){$(id).classList.remove('open');}
-$('btnBegin').onclick=()=>{try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu}));}catch(e){}closeModal('setup');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
-$('btnNew').onclick=()=>{renderSetup();openModal('setup');};
+$('btnBegin').onclick=()=>{try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
+$('btnNew').onclick=()=>showTitle();
+$('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
+$('btnSetupBack').onclick=()=>{closeModal('setup');showTitle();};
 $('btnRules').onclick=()=>openModal('rules');
 $('btnStory').onclick=()=>openModal('story');
 $('btnStory2').onclick=()=>openModal('story');
 $('btnStoryClose').onclick=()=>closeModal('story');
 $('btnRulesClose').onclick=()=>closeModal('rules');
-$('btnAgain').onclick=()=>{closeModal('win');newGame(S.config);};
+$('btnAgain').onclick=()=>{closeModal('win');if(NET.on){leaveOnline(false);return;}newGame(S.config);};
 $('btnChange').onclick=()=>{closeModal('win');renderSetup();openModal('setup');};
 function setSound(on){
   soundOn=on;
@@ -1141,8 +1210,388 @@ function setSound(on){
   if(typeof paintXRPanel==='function')paintXRPanel();
 }
 $('btnSound').onclick=()=>setSound(!soundOn);
-ui.roll.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&!curP().cpu)doRoll();};
+ui.roll.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
 renderSetup();
+function showTitle(msg){
+  ['setup','online','win','leave'].forEach(closeModal);
+  $('titleErr').textContent=msg||'';
+  openModal('title');
+}
+
+/* ================= Online rooms ================= */
+const ROOM_ERRORS={
+  gone:'No room has that code. Check it with the person who made the room.',
+  full:'That room already has four players.',
+  started:'That match has already started.',
+  forfeited:'You left that match, so you can\'t rejoin it.',
+  'name-empty':'Enter a name.',
+  'name-taken':'Someone in this room already uses that name.',
+  'kingdom-taken':'Someone just claimed that kingdom. Pick another one.',
+  'need-two':'At least two players need to join before the match can start.',
+  'not-ready':'Everyone needs a name and a kingdom before the match can start.',
+  'not-host':'Only the person who made the room can start the match.',
+  offline:'Couldn\'t reach the room server. Check your connection and try again.',
+  file:'Online rooms only work when the game is opened from its web address.',
+  server:'Something went wrong in the room. Try that again.',
+};
+const roomError=code=>ROOM_ERRORS[code]||ROOM_ERRORS.server;
+function playerId(){
+  let id=null;try{id=sessionStorage.getItem('corhaven-id');}catch(e){}
+  if(!id||!/^[A-Za-z0-9_-]{16,64}$/.test(id)){const a=new Uint8Array(18);crypto.getRandomValues(a);id=Array.from(a,b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'[b&63]).join('');try{sessionStorage.setItem('corhaven-id',id);}catch(e){}}
+  return id;
+}
+function rememberRoom(code){try{if(code)sessionStorage.setItem('corhaven-room',code);else sessionStorage.removeItem('corhaven-room');}catch(e){}}
+function savedRoom(){try{return sessionStorage.getItem('corhaven-room');}catch(e){return null;}}
+const myId=playerId();
+const netNow=()=>Date.now()+NET.offset;
+function netSend(msg){if(NET.ws&&NET.ws.readyState===1){NET.ws.send(JSON.stringify(msg));return true;}return false;}
+
+/* Opens the socket and sends `hello` (create or join) once it is up. Reconnects with backoff while a room is open. */
+function connect(hello){
+  if(location.protocol!=='http:'&&location.protocol!=='https:'){onlineError('file');return;}
+  clearTimeout(NET.retryTimer);
+  if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}}
+  const ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/api/ws');
+  NET.ws=ws;
+  ws.onopen=()=>{NET.retry=0;ws.send(JSON.stringify(hello));if(NET.playing)renderTurn();};
+  ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}if(ws===NET.ws)onNetMessage(m);};
+  ws.onclose=()=>{
+    if(ws!==NET.ws)return;
+    if(!NET.code){NET.ws=null;onlineError('offline');return;}
+    if(NET.ended||!NET.on)return;
+    if(NET.playing)renderTurn();
+    if(document.hidden)return;
+    NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended)connect({t:'join',id:myId,code:NET.code});},Math.min(10000,600*Math.pow(2,NET.retry++)));
+  };
+}
+function endOnlineSocket(){
+  NET.ended=true;clearTimeout(NET.retryTimer);
+  if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}NET.ws=null;}
+}
+function startOnline(){
+  if(NET.on)endOnlineSocket();
+  S.gid++;anims=[];rollState=null;
+  Object.assign(NET,{on:true,playing:false,ended:false,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),retry:0});
+  NET.epoch++;
+}
+function leaveOnline(sendLeave,msg){
+  if(sendLeave)netSend({t:'leave'});
+  const ws=NET.ws;
+  NET.ws=null;NET.ended=true;clearTimeout(NET.retryTimer);
+  if(ws){ws.onclose=null;setTimeout(()=>{try{ws.close();}catch(e){}},sendLeave?400:0);}
+  rememberRoom(null);
+  const wasPlaying=NET.playing;
+  Object.assign(NET,{on:false,playing:false,code:null,pid:null,myH:null,room:null,busy:0});
+  NET.epoch++;
+  $('btnLeave').hidden=true;$('btnNew').hidden=false;$('turnClock').hidden=true;rollSecs.textContent='';
+  if(wasPlaying){resetBoard();ui.chips.hidden=true;ui.name.textContent='Choose your players';say('');ui.tally.innerHTML='';ui.roll.textContent='Roll the dice';ui.roll.disabled=true;}
+  showTitle(msg);
+}
+
+/* ---- Lobby screens ---- */
+let onlineStep=null;
+function showStep(step,opts){
+  onlineStep=step;
+  closeModal('title');if(!$('online').classList.contains('open'))openModal('online');
+  const o=opts||{};
+  $('onlineTitle').textContent=o.title||'Join a room';
+  $('onlineLead').textContent=o.lead||'';
+  ['stepCode','stepName','stepKingdom','stepWait'].forEach(id=>{$(id).hidden=id!==step;});
+  $('roomCodeBox').hidden=!NET.code;$('roomCode').textContent=NET.code||'';
+  $('btnOnlineBack').textContent=NET.code?'Leave room':'Back';
+  if(!o.keepError)$('onlineErr').textContent='';
+}
+function onlineError(code){
+  if(!NET.code&&onlineStep!=='stepCode'){leaveOnline(false,roomError(code));return;}
+  $('onlineErr').textContent=roomError(code);
+}
+$('btnCreate').onclick=()=>{
+  startOnline();
+  showStep(null,{title:'Create a room',lead:'Making a room…'});
+  connect({t:'create',id:myId});
+};
+$('btnJoin').onclick=()=>{
+  startOnline();
+  showStep('stepCode',{lead:'Enter the code shown on the screen of the person who made the room.'});
+  $('codeInput').value='';setTimeout(()=>$('codeInput').focus(),40);
+};
+$('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);});
+$('stepCode').onsubmit=e=>{
+  e.preventDefault();
+  const code=$('codeInput').value;
+  if(code.length!==5){$('onlineErr').textContent='Room codes have five characters.';return;}
+  $('onlineErr').textContent='';$('onlineLead').textContent='Finding the room…';
+  connect({t:'join',id:myId,code});
+};
+$('stepName').onsubmit=e=>{
+  e.preventDefault();
+  const name=$('nameInput').value.replace(/\s+/g,' ').trim();
+  if(!name){$('onlineErr').textContent=roomError('name-empty');return;}
+  $('onlineErr').textContent='';netSend({t:'name',name});
+};
+$('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
+$('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else leaveOnline(false);};
+
+function seatRow(room,s){
+  const row=document.createElement('div');row.className='seat';
+  const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',s.h===null?'#5a4a38':HOUSES[s.h].css);row.appendChild(crest);
+  const who=document.createElement('div');who.className='who';who.textContent=s.name||'Joining…';
+  const sub=document.createElement('small');sub.textContent=s.h===null?(s.name?'Picking a kingdom':'Entering a name'):HOUSES[s.h].name;who.appendChild(sub);row.appendChild(who);
+  if(s.pid===room.hostPid){const t=document.createElement('span');t.className='tag';t.textContent='Host';row.appendChild(t);}
+  if(s.pid===NET.pid){const t=document.createElement('span');t.className='tag';t.textContent='You';row.appendChild(t);}
+  return row;
+}
+function renderLobby(room){
+  const me=room.seats.find(s=>s.pid===NET.pid);
+  if(!me){leaveOnline(false,'You were away from the room for over a minute, so your seat was given up.');return;}
+  const isHost=me.pid===room.hostPid;
+  if(!me.name){
+    if(onlineStep!=='stepName'){showStep('stepName',{title:isHost?'Your room is ready':'Join a room',lead:isHost?'Share the room code with your friends. Then enter your name.':'Enter the name the others will see.'});$('nameInput').value='';setTimeout(()=>$('nameInput').focus(),40);}
+    return;
+  }
+  if(me.h===null){
+    if(onlineStep!=='stepKingdom')showStep('stepKingdom',{title:'Pick your color',lead:'Each kingdom marches in its own color. Kingdoms someone has already claimed are greyed out.'});
+    const list=$('kingdomList');list.innerHTML='';
+    HOUSES.forEach((H,h)=>{
+      const holder=room.seats.find(s=>s.h===h);
+      const b=document.createElement('button');b.className='kbtn';b.disabled=!!holder;b.setAttribute('aria-pressed','false');
+      const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',H.css);b.appendChild(crest);
+      const txt=document.createElement('div');const nm=document.createElement('span');nm.textContent=H.name;txt.appendChild(nm);
+      const sm=document.createElement('small');sm.textContent=holder?'Taken by '+holder.name:'Free';txt.appendChild(sm);b.appendChild(txt);
+      b.onclick=()=>{$('onlineErr').textContent='';netSend({t:'pick',h});};
+      list.appendChild(b);
+    });
+    return;
+  }
+  const host=room.seats.find(s=>s.pid===room.hostPid);
+  const ready=room.seats.filter(s=>s.name&&s.h!==null).length;
+  const allReady=ready===room.seats.length;
+  showStep('stepWait',{title:'Waiting room',keepError:onlineStep==='stepWait',
+    lead:isHost?(ready<2?'Share the room code. You can start once someone else joins.':allReady?'Everyone is ready. Start the match when you like.':'Waiting for everyone to pick a name and a kingdom.')
+      :`Waiting for ${host?host.name||'the host':'the host'} to start the match.`});
+  const list=$('lobbyList');list.innerHTML='';
+  room.seats.forEach(s=>list.appendChild(seatRow(room,s)));
+  $('btnStart').hidden=!isHost;
+  $('btnStart').disabled=!(ready>=2&&allReady);
+}
+
+/* ---- Match ---- */
+function seatOfH(room,h){return room.seats.find(s=>s.h===h)||null;}
+function applySeats(room){
+  S.players.forEach(pl=>{const s=seatOfH(room,pl.h);if(!s)return;pl.name=s.name;pl.out=s.out;pl.away=s.away;pl.awaySince=s.awaySince;});
+}
+/* Makes the board match the server exactly. Runs when no event animation is pending. */
+function syncFromRoom(room){
+  const g=room.game;
+  const byH=new Map(S.players.map(p=>[p.h,p]));
+  S.players=g.players.map(sp=>{const pl=byH.get(sp.h)||{h:sp.h,cpu:false,pieces:[]};pl.orderRoll=sp.orderRoll;return pl;});
+  applySeats(room);
+  const want=new Set(g.pieces.map(p=>p.h+':'+p.idx));
+  S.players.forEach(pl=>{pl.pieces=pl.pieces.filter(pc=>{if(want.has(pc.h+':'+pc.idx))return true;removePiece(pc);return false;});});
+  g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;});
+  S.players.forEach(pl=>pl.pieces.sort((a,b)=>a.idx-b.idx));
+  S.cur=g.cur;S.pending=g.pending.map(d=>Object.assign({},d));S.dbl=g.dbl;S.ordering=g.ordering;
+  S.phase=room.status==='over'?'over':g.phase;
+}
+function promptFor(pl){
+  if(!pl)return'';const mine=isMine(pl),nm=shortName(pl);
+  if(S.phase==='orderRoll')return mine?'Roll to see when the rider reached your court.':`${nm} rolls to see when the rider arrived.`;
+  if(S.phase==='roll')return mine?'Your turn. Roll the dice.':`${nm} is on the march.`;
+  if(S.phase==='choose')return mine?'Pick a die, then tap a glowing troop.':`${nm} is choosing a troop.`;
+  return'';
+}
+function settleUi(snapMsg){
+  if(S.phase==='choose'&&isMine(curP())){refreshChoice();}
+  else{setHighlights();showMarkers([]);renderTurn();}
+  if(snapMsg)say(promptFor(curP()));
+}
+async function enterMatch(room){
+  NET.playing=true;NET.seen=room.seq;
+  const me=room.seats.find(s=>s.pid===NET.pid);NET.myH=me?me.h:null;
+  ['online','title','setup','leave'].forEach(closeModal);
+  $('btnLeave').hidden=room.status!=='playing';$('btnNew').hidden=room.status==='playing';
+  resetBoard();
+  syncFromRoom(room);
+  await settleAll(10);
+  renderTally();
+  if(room.status==='over'){const w=S.players.find(p=>p.h===room.game.winner);if(w)victory(w);return;}
+  settleUi(true);
+}
+function onState(room){
+  NET.room=room;
+  if(room.status==='closed'){
+    if(!NET.playing)leaveOnline(false,room.closed==='host-left'?'The person who made the room left, so the room closed.':'The room closed.');
+    return;
+  }
+  if(room.status==='lobby'){renderLobby(room);return;}
+  if(!NET.playing){const epoch=NET.epoch;NET.chain=NET.chain.then(()=>{if(epoch===NET.epoch)return enterMatch(room);});return;}
+  const fresh=room.events.filter(e=>e.seq>NET.seen);
+  const gap=fresh.length&&fresh[0].seq>NET.seen+1;
+  NET.seen=Math.max(NET.seen,room.seq);
+  const epoch=NET.epoch;
+  NET.busy++;
+  NET.chain=NET.chain.then(async()=>{
+    if(epoch!==NET.epoch)return;
+    if(!gap)for(const e of fresh){await playEvent(e,epoch);if(epoch!==NET.epoch)return;}
+  }).catch(err=>console.error(err)).then(async()=>{
+    if(epoch!==NET.epoch)return;
+    NET.busy--;
+    if(NET.busy)return;
+    const latest=NET.room;
+    if(!latest||!latest.game)return;
+    syncFromRoom(latest);
+    await settleAll(gap?10:160);
+    if(epoch!==NET.epoch)return;
+    renderTally();
+    if(latest.status==='over'){if(S.phase!=='over'||gap){const w=S.players.find(p=>p.h===latest.game.winner);if(w)victory(w);}return;}
+    settleUi(gap);
+  });
+}
+function onNetMessage(m){
+  if(m.now)NET.offset=m.now-Date.now();
+  if(m.t==='joined'){NET.code=m.code;NET.pid=m.pid;rememberRoom(m.code);return;}
+  if(m.t==='state'){onState(m.room);return;}
+  if(m.t==='left')return;
+  if(m.t==='error'){
+    if(m.during==='join'){
+      if(NET.playing||onlineStep!=='stepCode'){leaveOnline(false,roomError(m.code));return;}
+      $('onlineLead').textContent='Enter the code shown on the screen of the person who made the room.';
+      onlineError(m.code);return;
+    }
+    if(m.during==='roll'||m.during==='move'){if(NET.room&&!NET.busy){syncFromRoom(NET.room);settleUi(false);}return;}
+    if(!NET.playing)onlineError(m.code);
+  }
+}
+function requestRoll(){
+  if(!NET.on)return doRoll();
+  if(!(S.phase==='roll'||S.phase==='orderRoll')||!isMine(curP())||NET.busy)return;
+  if(!netSend({t:'roll'}))return;
+  S.phase='rolling';renderTurn();
+}
+function requestMove(opt){
+  if(!NET.on)return doMove(opt);
+  if(S.phase!=='choose'||!isMine(curP())||NET.busy)return;
+  if(!netSend({t:'move',idx:opt.pc.idx,di:opt.di}))return;
+  S.phase='moving';setHighlights();showMarkers([]);renderTurn();
+}
+const playerOfH=h=>S.players.find(p=>p.h===h);
+const autoNote=(e,what)=>e.auto?`Time ran out, so ${what}. `:'';
+/* Replays one server event on the board, mirroring the local turn flow. */
+async function playEvent(e,epoch){
+  const gone=()=>epoch!==NET.epoch;
+  const pl=playerOfH(e.h);const nm=pl?shortName(pl):'';
+  switch(e.type){
+    case'orderTurn':
+      S.cur=S.players.indexOf(pl);S.phase='orderRoll';S.ordering=true;say(promptFor(pl));renderTurn();return;
+    case'orderRoll':
+      S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();
+      await throwDice(e.h,e.vals);if(gone())return;
+      pl.orderRoll=e.total;say(autoNote(e,`the dice were rolled for ${nm}`)+`${nm} rolled ${e.total}.`);S.phase='moving';renderTurn();
+      await wait(900);return;
+    case'orderTie':
+      say(`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} tied on ${e.total}, so they roll again.`);renderTurn();
+      await wait(1500);return;
+    case'order':{
+      const ranked=e.hs.map(playerOfH);
+      S.players=ranked.concat(S.players.filter(p=>!ranked.includes(p)));S.cur=0;S.ordering=false;S.phase='moving';
+      const names=ranked.map(shortName);
+      say(`The rider reached ${names[0]} first${names.length>2?', then '+names.slice(1,-1).join(', ')+', and '+names[names.length-1]+' last':', and '+names[1]+' second'}. ${names[0]} marches first.`);
+      renderTurn();await wait(2600);return;}
+    case'turn':
+      S.cur=S.players.indexOf(pl);S.pending=[];S.phase='roll';setHighlights();showMarkers([]);
+      say(e.again?'Doubles, so roll again.':promptFor(pl));renderTurn();return;
+    case'roll':
+      S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();say('');
+      await throwDice(e.h,e.vals);if(gone())return;
+      S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dbl=e.dbl;S.phase='moving';
+      say(autoNote(e,`the dice were rolled for ${nm}`)+`${isMine(pl)?'You':nm} rolled ${e.vals[0]} and ${e.vals[1]}${e.dbl?', doubles':''}.`);renderTurn();
+      await wait(350);return;
+    case'thirdDouble':{
+      S.phase='rolling';renderTurn();
+      await throwDice(e.h,e.vals);if(gone())return;
+      S.phase='moving';renderTurn();sfx.bad();
+      const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
+      if(lost){say(`${isMine(pl)?'You':nm} rolled a third double. Greed is punished: ${nm}'s furthest troop is lost and must be raised again at the keep.`);lost.p=-1;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);await settleAll();renderTally();}
+      else say(`${isMine(pl)?'You':nm} rolled a third double. The turn passes.`);
+      await wait(1300);return;}
+    case'noMove':
+      S.phase='moving';renderTurn();
+      say(e.bonusOnly?'No troop can make the 20-square bonus march.':`No troop can march with ${e.vals.map(v=>'a '+v).join(' or ')}.`);
+      await wait(1200);return;
+    case'move':{
+      const pc=pl.pieces.find(p=>p.idx===e.idx);if(!pc)return;
+      S.phase='moving';const d=S.pending[e.di];if(d)d.used=true;setHighlights();showMarkers([]);renderTurn();
+      if(e.auto)say(autoNote(e,`${nm}'s march was made for them`).trim());
+      const m=pc.mesh;pc.p=e.from;
+      if(m.scale.x!==1)await animate(120,k=>m.scale.setScalar(m.scale.x+(1-m.scale.x)*k));
+      if(e.exit){pc.p=0;await hop(m,cellPos(pc.h,0,pc.idx),440,1.4);if(gone())return;sfx.step();}
+      else{const steps=e.to-e.from,dur=steps>8?95:165;for(let s=0;s<steps;s++){pc.p++;sfx.step();await hop(m,cellPos(pc.h,pc.p,pc.idx),dur,0.5);if(gone())return;}}
+      if(e.captures.length){
+        sfx.capture();
+        const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
+        const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
+        say(`${fallen.length>1?'Two troops':'A '+names[0]+' troop'} fell to ${nm}. ${names.join(' and ')} must raise ${fallen.length>1?'new troops':'a new troop'} at the keep. ${nm} presses on: march any troop ${BONUS}.`);
+        await Promise.all(fallen.map(o=>{o.p=-1;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+        fallen.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
+      }
+      if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});say(`A ${nm} troop found the passage to the vault. Bonus: march any troop ${BONUS}.`);}
+      if(pc.p>=0&&pc.p<GOAL){const key=cellKey(pc.h,pc.p);const mates=allPieces().filter(o=>o.h===pc.h&&cellKey(o.h,o.p)===key);if(mates.length>=2)lockShields(pc.h,cellPos(pc.h,pc.p,0));}
+      await settleAll();if(gone())return;
+      renderTally();renderChips();
+      await wait(250);return;}
+    case'forfeit':{
+      if(!pl)return;
+      pl.out=true;
+      await Promise.all(pl.pieces.map(pc=>animate(300,k=>pc.mesh.scale.setScalar(Math.max(0.01,1-k)))));
+      pl.pieces.forEach(removePiece);pl.pieces=[];
+      if(e.h===NET.myH){leaveOnline(false,e.reason==='away'?'You were away for more than a minute, so you forfeited the match.':'');return;}
+      say(e.reason==='away'?`${e.name||nm} was away too long and has left the realm.`:`${e.name||nm} has left the realm.`);
+      await settleAll();renderTally();renderTurn();
+      await wait(900);return;}
+    case'win':
+      S.phase='over';S.pending=[];
+      if(NET.room){const w=playerOfH(e.h);if(w)await victory(w);}
+      return;
+  }
+}
+$('btnLeave').onclick=()=>{openModal('leave');setTimeout(()=>$('btnLeaveNo').focus(),40);};
+$('btnLeaveNo').onclick=()=>closeModal('leave');
+$('btnLeaveYes').onclick=()=>{closeModal('leave');leaveOnline(true);};
+
+/* Turn clock and away countdowns. */
+function paintClock(){
+  const room=NET.room,box=$('turnClock');
+  let show=false;
+  if(NET.on&&NET.playing&&room&&room.status==='playing'&&room.game&&room.game.deadline&&!NET.busy&&(S.phase==='roll'||S.phase==='orderRoll'||S.phase==='choose')){
+    const left=Math.max(0,Math.min(20000,room.game.deadline-netNow()));
+    const secs=Math.ceil(left/1000);
+    show=true;
+    $('turnClockBar').style.transform=`scaleX(${left/20000})`;
+    $('turnClockText').textContent=secs+'s';
+    box.classList.toggle('low',secs<=5);
+    rollSecs.textContent=isMine(curP())?' · '+secs+'s':'';
+  }
+  box.hidden=!show;
+  if(!show)rollSecs.textContent='';
+  document.querySelectorAll('#tally .away').forEach(el=>{
+    const left=Math.max(0,Math.ceil((60000-(netNow()-Number(el.dataset.awaySince)))/1000));
+    el.textContent='away '+left+'s';
+  });
+}
+setInterval(()=>{if(NET.on&&NET.playing)paintClock();},250);
+document.addEventListener('visibilitychange',()=>{
+  if(!NET.on||!NET.code||NET.ended)return;
+  if(document.hidden){netSend({t:'away'});return;}
+  if(NET.ws&&NET.ws.readyState===1)netSend({t:'back'});
+  else connect({t:'join',id:myId,code:NET.code});
+});
+(function resume(){
+  const code=savedRoom();
+  if(!code||location.protocol==='file:')return;
+  startOnline();
+  showStep(null,{title:'Rejoining room',lead:`Rejoining room ${code}…`});
+  connect({t:'join',id:myId,code});
+})();
 
 /* ================= Input ================= */
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
@@ -1160,20 +1609,20 @@ function pick(ev){const r=canvas.getBoundingClientRect();ndc.set(((ev.clientX-r.
   return pickHits(ray.intersectObjects(pieceMeshes.concat(dice),true));}
 function choosePiece(pc){
   const opts=options().filter(o=>o.pc===pc);if(!opts.length)return;
-  const o=opts.find(x=>x.di===S.sel)||opts[0];doMove(o);
+  const o=opts.find(x=>x.di===S.sel)||opts[0];requestMove(o);
 }
 let downAt=null;
 canvas.addEventListener('pointerdown',e=>{downAt={x:e.clientX,y:e.clientY};});
 canvas.addEventListener('pointerup',e=>{if(!downAt)return;const moved=Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y);downAt=null;if(moved>7)return;
-  const hit=pick(e);if(!hit)return;const pl=curP();if(!pl||pl.cpu)return;
-  if(hit.die&&(S.phase==='roll'||S.phase==='orderRoll'))doRoll();else if(hit.piece&&S.phase==='choose')choosePiece(hit.piece);});
+  const hit=pick(e);if(!hit)return;const pl=curP();if(!isMine(pl))return;
+  if(hit.die&&(S.phase==='roll'||S.phase==='orderRoll'))requestRoll();else if(hit.piece&&S.phase==='choose')choosePiece(hit.piece);});
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const hit=pick(e);const pl=curP();
-  const ok=pl&&!pl.cpu&&hit&&((hit.die&&(S.phase==='roll'||S.phase==='orderRoll'))||(hit.piece&&S.phase==='choose'&&options().some(o=>o.pc===hit.piece)));canvas.style.cursor=ok?'pointer':'';});
-window.addEventListener('keydown',e=>{if(document.querySelector('.modal.open'))return;const pl=curP();if(!pl||pl.cpu)return;
-  if((e.code==='Space'||e.key==='Enter')&&(S.phase==='roll'||S.phase==='orderRoll')&&document.activeElement!==ui.roll){e.preventDefault();doRoll();}
+  const ok=isMine(pl)&&hit&&((hit.die&&(S.phase==='roll'||S.phase==='orderRoll'))||(hit.piece&&S.phase==='choose'&&options().some(o=>o.pc===hit.piece)));canvas.style.cursor=ok?'pointer':'';});
+window.addEventListener('keydown',e=>{if(document.querySelector('.modal.open'))return;const pl=curP();if(!isMine(pl))return;
+  if((e.code==='Space'||e.key==='Enter')&&(S.phase==='roll'||S.phase==='orderRoll')&&document.activeElement!==ui.roll){e.preventDefault();requestRoll();}
   if(S.phase!=='choose')return;
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){const opts=options();const dis=[...new Set(opts.map(o=>o.di))].sort();if(dis.length>1){const i=dis.indexOf(S.sel);S.sel=dis[(i+(e.key==='ArrowRight'?1:dis.length-1))%dis.length];refreshChoice();}e.preventDefault();}
-  const n=parseInt(e.key,10);if(n>=1&&n<=4){const pc=pl.pieces[n-1];const o=options().find(x=>x.pc===pc&&x.di===S.sel);if(o)doMove(o);}});
+  const n=parseInt(e.key,10);if(n>=1&&n<=4){const pc=pl.pieces[n-1];const o=options().find(x=>x.pc===pc&&x.di===S.sel);if(o)requestMove(o);}});
 
 /* ================= Theme ================= */
 function isDark(){const t=document.documentElement.getAttribute('data-theme');if(t==='dark')return true;if(t==='light')return false;return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);}
@@ -1308,9 +1757,9 @@ function xrInstruction(){
   if(!xrActive)return '';
   if(!xrPlaced)return 'Point at a table or the floor, then press the trigger.';
   const pl=curP();
-  if(!pl||pl.cpu)return '';
+  if(!isMine(pl))return '';
   if(heldDice.length)return 'Toss and release. The dice land on the board.';
-  if(S.phase==='roll'||S.phase==='orderRoll')return 'Press the trigger, or pinch your right hand. The dice come to that hand.';
+  if(S.phase==='roll'||S.phase==='orderRoll')return NET.on?'Press the trigger, or pinch your right hand, to roll.':'Press the trigger, or pinch your right hand. The dice come to that hand.';
   if(S.phase==='choose')return 'Tap a troop or a ring with your hand, or point and press the trigger.';
   return 'Tap X, or pinch your left hand, for settings.';
 }
@@ -1327,7 +1776,7 @@ function paintViewHud(){
     const house=HOUSES[pl.h];
     paintCrest(g,44,y,52,62,house.css);
     g.fillStyle='#F2E7CD';g.font='700 46px Georgia,serif';
-    g.fillText(house.name+(pl.cpu?' (computer)':''),114,y+6);
+    g.fillText(displayName(pl),114,y+6);
     y=118;
     g.fillStyle='#CDBD99';g.font='32px Georgia,serif';
     wrapText(g,ui.msg.textContent||'',48,y,W-96,40,2);
@@ -1364,7 +1813,7 @@ function paintViewHud(){
       paintCrest(g,48,y,28,34,HOUSES[p.h].css);
       g.fillStyle=active?'#F2E7CD':'#CDBD99';
       g.font=(active?'700 ':'')+'30px Georgia,serif';g.textAlign='left';g.textBaseline='middle';
-      g.fillText(HOUSES[p.h].short+(p.cpu?' (CPU)':'')+(S.ordering&&p.orderRoll?' · '+p.orderRoll:''),90,y+16);
+      g.fillText(shortName(p)+(p.cpu?' (CPU)':'')+(p.out?' (left)':'')+(S.ordering&&p.orderRoll?' · '+p.orderRoll:''),90,y+16);
       p.pieces.forEach((pc,ci)=>{
         g.beginPath();g.arc(W-160+ci*36,y+16,11,0,Math.PI*2);
         g.fillStyle=pc.p===GOAL?'#E6C064':'rgba(0,0,0,.45)';g.fill();
@@ -1409,7 +1858,7 @@ function paintXRPanel(){
     y+=124;
   }
   const bh=108,gap=16,bw=(W-96-gap)/2;
-  if(S.phase==='over'){paintBtn(g,'again','Play again',48,y,W-96,bh,true);y+=bh+gap;}
+  if(S.phase==='over'){paintBtn(g,'again',NET.on?'Back to the title':'Play again',48,y,W-96,bh,true);y+=bh+gap;}
   if(xrPlaced){paintBtn(g,'move',xrPlacing?'Placing…':'Move board',48,y,W-96,bh,xrPlacing);y+=bh+gap;}
   paintBtn(g,'sound',soundOn?'Sound on':'Sound off',48,y,bw,bh,false);
   paintBtn(g,'exit','Exit',48+bw+gap,y,bw,bh,false);
@@ -1426,7 +1875,7 @@ function pressPanel(id){
   else if(id==='move'){xrPlacing=true;reticle.visible=true;paintXRPanel();paintViewHud();}
   else if(id==='sound')setSound(!soundOn);
   else if(id==='exit'){const s=renderer.xr.getSession();if(s)s.end();}
-  else if(id==='again'){if(S.config){closeModal('win');newGame(S.config);}}
+  else if(id==='again'){closeModal('win');if(NET.on)leaveOnline(false);else if(S.config)newGame(S.config);}
   else if(id.indexOf('die-')===0){const di=+id.slice(4);const d=S.pending[di];if(d&&!d.used&&S.phase==='choose'&&options().some(o=>o.di===di)){S.sel=di;refreshChoice();}}
 }
 function confirmPlace(){
@@ -1557,7 +2006,7 @@ function noteThrown(i){
 }
 function canSummon(){
   const pl=curP();
-  if(!xrPlaced||!pl||pl.cpu||diceIntro||heldDice.length||rollState)return false;
+  if(NET.on||!xrPlaced||!isMine(pl)||diceIntro||heldDice.length||rollState)return false;
   if(S.phase==='roll'||S.phase==='orderRoll')return true;
   if(S.phase!=='rolling'||!motionRoll||!motionRoll.thrown[0]||!motionRoll.thrown[1])return false;
   return !diceBodies.length||diceBodies.every(b=>dieSettled(b));
@@ -1588,11 +2037,11 @@ function summonDice(controller,anchor,handIndex){
   renderTurn();
 }
 function actOnHit(hit){
-  const pl=curP();if(!hit||!pl||pl.cpu)return;
+  const pl=curP();if(!hit||!isMine(pl))return;
   if(hit.die&&S.phase==='choose'){
     const d=S.pending[hit.dieIndex];
     if(d&&!d.used&&options().some(o=>o.di===hit.dieIndex)){S.sel=hit.dieIndex;refreshChoice();}
-  }else if(hit.marker&&S.phase==='choose')doMove(hit.marker);
+  }else if(hit.marker&&S.phase==='choose')requestMove(hit.marker);
   else if(hit.piece&&S.phase==='choose')choosePiece(hit.piece);
 }
 function nearestSelectable(point){
@@ -1624,6 +2073,7 @@ function onSelect(ev){
   }
   if(xrPlacing&&reticle.visible){confirmPlace();return;}
   if(handOf(controller)==='right'&&canSummon()){summonDice(controller);return;}
+  if(NET.on&&handOf(controller)==='right'&&isMine(curP())&&(S.phase==='roll'||S.phase==='orderRoll')){requestRoll();return;}
   actOnHit(pickHits(rayFrom(controller).intersectObjects(pieceMeshes.concat(dice,markers),true)));
 }
 function onSelectEnd(ev){
@@ -1671,8 +2121,8 @@ const _boneA=new THREE.Vector3(),_boneB=new THREE.Vector3(),_boneDir=new THREE.V
 let handTint=null;
 function handColor(){
   const turn=curP();
-  const mine=S.players&&S.players.find(p=>!p.cpu);
-  const pl=(turn&&!turn.cpu)?turn:(mine||turn);
+  const mine=S.players&&S.players.find(p=>isMine(p));
+  const pl=isMine(turn)?turn:(mine||turn);
   return pl?HOUSES[pl.h].color:0xEBC76A;
 }
 function tintHands(){
@@ -1796,6 +2246,7 @@ function updateHands(dt){
       if(over&&over.id==='slider'){sliderDrag={hand:i};const px=panelLocalX(p);if(px!=null)setBoardCm(cmFromSliderPixel(px));}
       else if(over)pressPanel(over.id);
       else if(side==='right'&&canSummon()&&hand.joints.wrist)summonDice(hand,hand.joints.wrist,i);
+      else if(side==='right'&&NET.on&&isMine(curP())&&(S.phase==='roll'||S.phase==='orderRoll'))requestRoll();
       else if(side==='left')toggleSettings();
     }
     if(!pinching&&pinchWas[i]){
@@ -1868,7 +2319,7 @@ function updateXR(frame,dt){
 }
 async function enterRoom(){
   if(xrActive||!navigator.xr)return;
-  if($('setup').classList.contains('open'))$('btnBegin').click();
+  if($('setup').classList.contains('open')||$('title').classList.contains('open')&&!NET.on)$('btnBegin').click();
   let session;
   try{
     try{session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['hand-tracking']});}
