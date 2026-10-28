@@ -36,6 +36,36 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 03 | [2026-10-27-03-mobile-waiting-stable-hud-mobile.png](./screenshots/2026-10-27-03-mobile-waiting-stable-hud-mobile.png) | In-match, waiting (390×844) | Same frame as 02 with the button gone: no HUD or camera movement on turn change |
 | 04 | [2026-10-27-04-mobile-menu-top-right-mobile.png](./screenshots/2026-10-27-04-mobile-menu-top-right-mobile.png) | Menu open (390×844) | Opens downward from the top-right button, above the turn card; bottom band is roster + roll stack only |
 
+## Session: 2026-10-27 (night) — The March on the board
+
+**Trigger:** The wheel named the event before it stopped, the mist hid troops and dice when the camera pulled back, and the flood and ash were flat sheets. The road now uses a moving water and lava surface, the result waits until the wheel stops, and the mist no longer swallows what you are allowed to see.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 11 | [2026-10-27-11-flood-sheet-desktop.png](./screenshots/2026-10-27-11-flood-sheet-desktop.png) | The Great Flood | Reflective water on the King's Road; tile numbers and the castle arrow stay readable |
+| 12 | [2026-10-27-12-ash-shader-desktop.png](./screenshots/2026-10-27-12-ash-shader-desktop.png) | Ashen Skies | Cracked lava on the road and a pool in the ruins; Emberhold shows +2 |
+
+## Session: 2026-10-28 — The siege performances
+
+**Trigger:** The per-tile sheets were replaced with the Ludo Under Siege performances. Each event is one thing across the whole board. The four castle yards stay clear.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 13 | [2026-10-28-13-flood-tsunami-desktop.png](./screenshots/2026-10-28-13-flood-tsunami-desktop.png) | The Great Flood | One wave across the road and the ruins; the castle yards stay dry |
+| 14 | [2026-10-28-14-ash-volcano-desktop.png](./screenshots/2026-10-28-14-ash-volcano-desktop.png) | Ashen Skies | The cone rises in the ruined centre and one lava sheet spreads around the yards |
+| 17 | [2026-10-28-17-sun-lances-desktop.png](./screenshots/2026-10-28-17-sun-lances-desktop.png) | The Sun's Ascendance | Three lances sweep the road and burn a trail into the board, not the castle yards |
+
+## Session: 2026-10-28 — March polish
+
+**Trigger:** Local play showed a duplicated kingdom, and the siege look needed the flood, lava, vines, sun, and shifting ways tightened. The wheel now lands and gets out of the way.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 18 | [2026-10-28-18-ash-lava-desktop.png](./screenshots/2026-10-28-18-ash-lava-desktop.png) | Ashen Skies | Lava reads as a molten pool, with broad heat instead of combed streaks |
+| 19 | [2026-10-28-19-flood-castle-desktop.png](./screenshots/2026-10-28-19-flood-castle-desktop.png) | The Great Flood | Shallower water covers the road up to the walls; the courtyard stays dry |
+| 21 | [2026-10-28-21-shifting-portals-desktop.png](./screenshots/2026-10-28-21-shifting-portals-desktop.png) | The Shifting Ways | A glowing portal stands on each of the four stones, with no line between them |
+| 25 | [2026-10-28-25-plus-two-badge-desktop.png](./screenshots/2026-10-28-25-plus-two-badge-desktop.png) | Roster | Solmere's avatar carries a +2 while the Sun blesses that kingdom |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

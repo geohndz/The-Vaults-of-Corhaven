@@ -26,7 +26,7 @@ function play(room, rand, now = 1, maxSteps = 20000) {
     now += 50;
     if (g.phase === 'roll' || g.phase === 'orderRoll') assert.equal(G.playRoll(room, id, now), null);
     else if (g.phase === 'choose') {
-      const opts = R.options(g.pieces, curH(room), g.pending);
+      const opts = R.options(g.pieces, curH(room), g.pending, g.world);
       assert.ok(opts.length, 'choose phase always has a legal move');
       const o = opts[Math.floor(rand() * opts.length)];
       assert.equal(G.playMove(room, id, o.pc.idx, o.di, now), null);
@@ -198,4 +198,19 @@ test('a shifting stone off your road is an ordinary square', () => {
   assert.equal(r.shift, undefined);
   assert.equal(r.np, 30);
   assert.equal(r.captures[0], foe);
+});
+
+test('world events deal every event before one can repeat', () => {
+  const game = { world: null, worldBag: [] };
+  let s = 11;
+  const rng = (n) => { s = (s * 9301 + 49297) % 233280; return Math.floor((s / 233280) * n); };
+  const seen = [];
+  for (let i = 0; i < 18; i++) seen.push(G.takeWorld(game, rng));
+  const ids = Object.keys(R.WORLD);
+  for (let round = 0; round < 3; round++) {
+    const slice = seen.slice(round * 6, round * 6 + 6);
+    assert.equal(new Set(slice).size, 6);
+    ids.forEach((id) => assert.ok(slice.includes(id)));
+  }
+  for (let i = 6; i < seen.length; i += 6) assert.notEqual(seen[i], seen[i - 1]);
 });

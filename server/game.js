@@ -31,7 +31,10 @@ function eventMs(e) {
     case 'thirdDouble': return 2300;
     case 'noMove': return 1300;
     case 'forfeit': return 900;
-    case 'world': return 2400;
+    case 'world': {
+      const intro = { flood: 5500, ash: 4200, wild: 3600, mist: 7000, sun: 4200, ways: 2000 };
+      return 1750 + (intro[e.id] || 2000);
+    }
     case 'move': {
       const span = e.exit ? 0 : Math.max(0, (e.shift ? e.land : e.to) - e.from);
       return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
@@ -128,6 +131,7 @@ export function start(room, id, now) {
     winner: null,
     winReason: null,
     world: null,
+    worldBag: [],
   };
   step(room, now, () => beginOrderGroup(room));
   return null;
@@ -203,10 +207,32 @@ function beginTurn(room, again) {
   emit(room, { type: 'turn', h: curH(room), again: !!again });
 }
 
-function openWorld(room) {
+/* Deals every world event once, then shuffles again. A fresh bag does not open on the event that just ended. */
+export function takeWorld(game, rng = (n) => randomInt(n)) {
   const ids = Object.keys(R.WORLD);
-  const id = ids[randomInt(ids.length)];
-  room.game.world = id;
+  if (!Array.isArray(game.worldBag) || !game.worldBag.length) {
+    const bag = ids.slice();
+    for (let i = bag.length - 1; i > 0; i--) {
+      const j = rng(i + 1);
+      const t = bag[i];
+      bag[i] = bag[j];
+      bag[j] = t;
+    }
+    const last = bag.length - 1;
+    if (game.world && bag[last] === game.world && last > 0) {
+      const j = rng(last);
+      const t = bag[last];
+      bag[last] = bag[j];
+      bag[j] = t;
+    }
+    game.worldBag = bag;
+  }
+  game.world = game.worldBag.pop();
+  return game.world;
+}
+
+function openWorld(room) {
+  const id = takeWorld(room.game);
   emit(room, { type: 'world', id });
 }
 
@@ -428,6 +454,7 @@ export function publicView(room) {
       deadline: room.game.deadline,
       winner: room.game.winner,
       winReason: room.game.winReason,
+      world: room.game.world,
     },
   };
 }
