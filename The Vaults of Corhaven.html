@@ -7,9 +7,14 @@
 <script>
 (function(){
   var t=document.getElementById('theme');
+  var saved=null;
+  try{saved=JSON.parse(localStorage.getItem('corhaven-audio')||'null');}catch(e){}
+  var themeOn=!saved||saved.themeOn!==false;
+  var themeVol=saved&&typeof saved.themeVol==='number'?saved.themeVol:0.22;
   var start=function(){
+    if(!themeOn||themeVol<=0.001){t.pause();return;}
     if(!t.paused&&t.volume>0.01)return;
-    t.muted=false;t.volume=0.22;
+    t.muted=false;t.volume=themeVol;
     var p=t.play();if(p&&p.catch)p.catch(function(){});
   };
   start();
@@ -86,10 +91,11 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .roster li.out{opacity:.45}
 .roster li.out b{text-decoration:line-through}
 #menuWrap{right:calc(env(safe-area-inset-right,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#gearWrap{left:calc(env(safe-area-inset-left,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:16}
 .menuBtn{display:grid;place-items:center;width:50px;height:50px;padding:0;border-radius:50%;background:linear-gradient(160deg,var(--leather-2),var(--leather));border:2px solid var(--gold);color:var(--gold-bright);box-shadow:0 6px 16px rgba(0,0,0,.4)}
 .menuBtn:hover,.menuBtn[aria-expanded="true"]{border-color:var(--gold-bright)}
 .menuBtn svg{width:22px;height:22px}
-.menu{display:flex;flex-direction:column;min-width:200px;padding:6px;transform-origin:top right}
+.menu{display:flex;flex-direction:column;min-width:220px;padding:6px;transform-origin:top right}
 .menu:not([hidden]){animation:menuIn .14s ease-out}
 .menu[hidden],.menu [hidden]{display:none}
 .menu button{background:none;border:0;border-radius:8px;padding:10px 14px;text-align:left;font-size:16px}
@@ -108,6 +114,11 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .dchip[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold-bright),0 0 18px rgba(255,210,100,.7);transform:translateY(-3px)}
 .dchip.used{opacity:.3;filter:grayscale(1);cursor:default;transform:none;box-shadow:none}
 .dchip.stuck{opacity:.55}
+.dchip.rolldie{border-color:var(--c,var(--gold));cursor:pointer}
+.dchip.rolldie:not(:disabled):hover{transform:translateY(-2px)}
+.dchip.rolldie:disabled{cursor:default;filter:saturate(.7)}
+.dieclock{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.dieclock[hidden]{display:none}
 .roll{--c:#555;min-width:220px;padding:14px 30px;font-size:21px;font-weight:700;
   background:radial-gradient(120% 140% at 50% 0%,color-mix(in srgb,var(--c) 70%,white 18%),var(--c) 55%,color-mix(in srgb,var(--c) 70%,black));
   color:#FFF6DE;text-shadow:0 1px 2px rgba(0,0,0,.6);border:3px solid var(--gold);border-radius:14px;
@@ -147,6 +158,10 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .rules p{color:var(--parch);margin:0 0 10px}
 .rules p strong{color:var(--gold-bright)}
 .sheet label{display:block;font-weight:600;margin:14px 0 6px}
+.sheet label.check{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.check input{width:22px;height:22px;accent-color:#C9A14A}
+.vol{width:100%;height:28px;accent-color:#C9A14A;margin:0 0 4px}
+.vol:disabled{opacity:.4}
 .field{width:100%;padding:11px 14px;font:inherit;font-size:20px;background:rgba(0,0,0,.28);color:var(--parch);border:1.5px solid var(--gold);border-radius:10px}
 .field:focus-visible{outline:3px solid var(--gold-bright);outline-offset:1px}
 .field.code{font-size:clamp(24px,9vw,34px);font-weight:700;letter-spacing:.18em;text-align:center;text-transform:uppercase;padding:8px 0 8px .18em}
@@ -180,7 +195,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   #toast .orn{width:28px;height:28px;margin-bottom:6px}
   #toast .tt{font-size:19px;letter-spacing:.1em}
   #toast .st{font-size:15px}
-  .roster{left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--phone-stack,150px));gap:5px}
+  .roster{left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--phone-stack,72px));gap:5px}
   .roster li{gap:8px;padding:2px 10px 2px 2px}
   .roster .av{width:34px;height:34px}
   .roster li.cur .av{width:42px;height:42px}
@@ -188,15 +203,13 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   .roster li.cur b{font-size:15px}
   .roster small{font-size:12px}
   #menuWrap{right:10px;top:calc(env(safe-area-inset-top,0px) + 8px)}
+  #gearWrap{left:10px;top:calc(env(safe-area-inset-top,0px) + 8px)}
   .menuBtn{width:44px;height:44px}
   #meCard{max-width:calc(100vw - 128px)}
-  #bottomBar{bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px}
-  .roll{min-width:0;max-width:100%;padding:12px 22px;font-size:19px;white-space:nowrap}
+  /* On a phone the dice sit at the bottom left, and only on your turn, so that corner is not a reserved empty button. The camera still does not reframe when they appear. */
+  #bottomBar{left:calc(env(safe-area-inset-left,0px) + 10px);right:auto;transform:none;align-items:flex-start;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px}
   .dchip{width:48px;height:48px}
-  /* The bottom stack keeps one footprint whether or not it is your turn, so the roster and the board never jump when the button or the dice come and go. Testers got motion-sick from that. */
-  .roll[hidden]{display:block;visibility:hidden;pointer-events:none}
-  .dice[hidden]{display:flex;visibility:hidden;min-height:48px}
-  .hint:empty{display:block;min-height:1.4em}
+  .hint:empty{display:none;min-height:0}
   .roster li.cur .av{width:34px;height:34px}
   .roster li.cur b{font-size:14px}
   .sheet{padding:18px 16px 16px}
@@ -207,12 +220,24 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   .banner .kname{font-size:13px}
 }
 body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
+body.at-title #gearWrap{visibility:visible}
 .titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 36px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
 .titlepage.open{display:flex;align-items:center;justify-content:center}
 .titlemain{width:min(420px,100%)}
 .titlemain h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:clamp(46px,11vw,76px);line-height:.95;margin:0 0 18px;color:var(--gold-bright)}
 .titlemain .titlelead{margin:0;color:var(--parch-dim);font-size:18px}
 .titlemain .titleactions{margin-top:28px}
+.aboutpage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 72px) 24px calc(env(safe-area-inset-bottom,0px) + 28px)}
+.aboutpage.open{display:block}
+.aboutinner{width:min(720px,100%);margin:0 auto}
+.aboutinner h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:clamp(36px,8vw,58px);line-height:.95;margin:0 0 16px;color:var(--gold-bright)}
+.aboutnav{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:12px}
+.aboutnav button{flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch-dim);font-size:15px}
+.aboutnav button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
+.aboutbody section h2{margin:8px 0 8px;color:var(--gold-bright);font-size:22px}
+.aboutbody p{margin:0 0 12px;color:var(--parch-dim)}
+.aboutbody h3{margin:16px 0 4px;color:var(--parch);font-size:18px}
+.aboutback{max-width:280px}
 @media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]){animation:none}#toast{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
 </style>
 </head>
@@ -237,13 +262,16 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 
 <ol class="hud roster" id="tally" aria-label="Other players"></ol>
 
+<div class="hud" id="gearWrap">
+  <button class="menuBtn" id="btnGear" aria-label="Settings" aria-haspopup="dialog" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+</div>
+
 <div class="hud" id="menuWrap">
   <button class="menuBtn" id="btnMenu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
   <div class="menu panel" id="menu" role="menu" aria-label="Game menu" hidden>
-    <button role="menuitem" id="btnStory">Chronicle</button>
+    <button role="menuitem" id="btnStory">About</button>
     <button role="menuitem" id="btnRules">Rules</button>
-    <button role="menuitemcheckbox" id="btnSound" aria-checked="true">Sound on</button>
-    <button role="menuitem" id="btnNew">New game</button>
+    <button role="menuitem" id="btnNew">Back to title screen</button>
     <button role="menuitem" id="btnLeave" hidden>Leave room</button>
     <button role="menuitem" id="btnXR" hidden="">Play in the room</button>
   </div>
@@ -251,7 +279,8 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 
 <div class="hud" id="bottomBar">
   <div class="dice" id="diceChips" hidden=""></div>
-  <button class="roll" id="btnRoll" disabled="">Roll the dice</button>
+  <span class="dieclock" id="dieClock" hidden=""></span>
+  <button class="roll" id="btnRoll" hidden="">Roll the dice</button>
   <div class="hint" id="hint"></div>
 </div>
 
@@ -264,7 +293,7 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
       <button class="primary" id="btnCreate">Create a room</button>
       <button class="secondary" id="btnJoin">Join a room</button>
       <button class="secondary" id="btnLocal">Play local</button>
-      <button class="secondary" id="btnStory2">Read the chronicle</button>
+      <button class="secondary" id="btnStory2">About the Vaults of Corhaven</button>
     </div>
   </main>
 </div>
@@ -348,23 +377,92 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
     <p><strong>Doubles.</strong> Rolling doubles lets you roll again after marching. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
     <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
     <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
-    <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Great Flood, Ashen Skies, the Wild Awakening and the Sun's Ascendance each lengthen one kingdom's marches by two squares. The Veil of Mist hides enemy troops farther than the next square. The Shifting Ways carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite, and an enemy waiting there falls.</p>
+    <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Drowning Tide, the Heartfire Rising, the Wild Awakening and the Searing Seal each lengthen one kingdom's marches by two squares. The Veil of Mist hides enemy troops farther than the next square, and it hides the markers that would give those troops away. The Stones of the Pact carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite. A troop already on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
     <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
     <button class="primary" id="btnRulesClose">Back to the board</button>
   </div>
 </div>
 
-<div class="modal" id="story" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
-  <div class="sheet panel rules">
-    <h1 id="storyTitle">The Chronicle of Corhaven</h1>
-    <p>Five kingdoms once shared the realm, and one of them ruled the rest. From its white towers at the heart of the land, Corhaven took tribute from the four kingdoms around it: iron from Emberhold, timber from Thornwald, grain from Solmere and salt from Tidereach. All of it was locked away in the vaults beneath the city.</p>
-    <p>In time the four refused to pay. They rose together, broke Corhaven's walls and burned its streets. Then they turned on one another, because each meant to rule in Corhaven's place. The war lasted three hundred years and none of them won. The city was fought over so many times that nothing was left standing, and its vaults vanished under the rubble.</p>
-    <p>At last, among the ruins, the four monarchs signed the Pact of Four Stones. The realm was divided into four equal kingdoms, and the land around the dead city became the Sundered March, a no man's land no army would ever enter again. If no kingdom could grow, none could rule the others.</p>
-    <p>The peace held for a hundred years, and still the March did not heal. Storms came down under clear skies, rivers rose and swallowed whole roads in a night, and unnatural mists hid the stones from anyone a few paces off. The kingdoms left it alone. It was a scar on the map, and a warning, until the vaults were worth the risk.</p>
-    <p>Then, over four nights, a hooded rider came to each court in turn with the same message. The vaults of Corhaven survived. A hidden passage runs from each kingdom's old road down to the gold, and whoever reaches it first will be rich enough to rule the realm without lifting a sword.</p>
-    <p>Each monarch burned the letter, swore their council to silence and sent their troops to the border keeps.</p>
-    <p>Each believed they were the only one who knew.</p>
-    <button class="primary" id="btnStoryClose">Close the chronicle</button>
+<div class="aboutpage" id="about">
+  <div class="aboutinner">
+    <h1>About the Vaults of Corhaven</h1>
+    <nav class="aboutnav" aria-label="Lore">
+      <button type="button" data-lore="chronicle" aria-pressed="true">The chronicle</button>
+      <button type="button" data-lore="kingdoms" aria-pressed="false">The kingdoms</button>
+      <button type="button" data-lore="march" aria-pressed="false">The Sundered March</button>
+      <button type="button" data-lore="kings" aria-pressed="false">The kings</button>
+      <button type="button" data-lore="events" aria-pressed="false">World events</button>
+    </nav>
+    <div class="aboutbody">
+      <section data-lore="chronicle">
+        <h2>The chronicle</h2>
+        <p>Five kingdoms once shared the realm, and one of them ruled the rest. From its white towers at the heart of the land, Corhaven took tribute from the four kingdoms around it: iron from Emberhold, timber from Thornwald, grain from Solmere and salt from Tidereach. All of it was locked away in the vaults beneath the city.</p>
+        <p>In time the four refused to pay. They rose together, broke Corhaven's walls and burned its streets. Then they turned on one another, because each meant to rule in Corhaven's place. The war lasted three hundred years and none of them won. The city was fought over so many times that nothing was left standing, and its vaults vanished under the rubble.</p>
+        <p>At last, among the ruins, the four monarchs signed the Pact of Four Stones. The realm was divided into four equal kingdoms, and the land around the dead city became the Sundered March, a no man's land no army would ever enter again. If no kingdom could grow, none could rule the others.</p>
+        <p>The peace held for a hundred years, and still the March did not heal. Storms came down under clear skies, rivers rose and swallowed whole roads in a night, and unnatural mists hid the stones from anyone a few paces off. The kingdoms left it alone. It was a scar on the map, and a warning, until the vaults were worth the risk.</p>
+        <p>Then, over four nights, a hooded rider came to each court in turn with the same message. The vaults of Corhaven survived. A hidden passage runs from each kingdom's old road down to the gold, and whoever reaches it first will be rich enough to rule the realm without lifting a sword.</p>
+        <p>Each monarch burned the letter, swore their council to silence and sent their troops to the border keeps.</p>
+        <p>Each believed they were the only one who knew.</p>
+      </section>
+      <section data-lore="kingdoms" hidden>
+        <h2>The kingdoms</h2>
+        <h3>Emberhold</h3>
+        <p>Emberhold's tribute was iron, and the keep still smells of the forge. Its gate is the colour of a cooling brand. The troops who leave it march for the passage that runs back under their own walls, and for the gold that was smelted from their hills.</p>
+        <h3>Thornwald</h3>
+        <p>Thornwald paid in timber. The forest has taken back most of the old cuts, and the roads out of the green keep are narrower than the maps say. Thornwald wants the vault because a kingdom that holds Corhaven's gold can buy what the trees no longer give.</p>
+        <h3>Solmere</h3>
+        <p>Solmere's fields paid Corhaven in grain. The harvest still comes, and the court still eats well, which is why the other kingdoms trust Solmere least. A full store and a secret passage are enough to outlast a siege without ever fighting one.</p>
+        <h3>Tidereach</h3>
+        <p>Tidereach's tribute was salt, taken from the reaches where the rivers go brackish. The blue keep watches the water the way Emberhold watches the fire. If the vaults open, Tidereach means to hold the roads that feed them, and to charge every wagon that passes.</p>
+      </section>
+      <section data-lore="march" hidden>
+        <h2>The Sundered March</h2>
+        <p>The March is the ring of land around the dead city. No kingdom claims it. The Pact of Four Stones forbade armies from entering, and for a hundred years they obeyed, because the ground itself did not.</p>
+        <p>The old King's Road still runs there: sixty-eight squares around the ruins, counted the long way, past shrines where no blood may be spilled and past the four gates that open back into the keeps. Each kingdom's hidden passage leaves that road and drops seven squares to its own vault.</p>
+        <p>The road does not stay quiet. Once every kingdom has marched, the March turns. A wheel chooses one weather, and that weather holds until every kingdom has marched again. The Drowning Tide, the Heartfire Rising, the Wild Awakening, the Searing Seal, the Veil of Mist, or the Stones of the Pact. The troops are already on the road when it happens. They march through it.</p>
+      </section>
+      <section data-lore="kings" hidden>
+        <h2>The kings</h2>
+        <p>Four monarchs signed the Pact, and four sit the keeps now. None of them has said the rider's message aloud.</p>
+        <h3>King Halric of Emberhold</h3>
+        <p>Halric keeps the forges lit whether or not there is an order to fill. He burned the rider's letter in the mouth of a furnace and told his council the iron would be enough. He has sent four troops to the border anyway.</p>
+        <h3>Queen Briar of Thornwald</h3>
+        <p>Briar read the letter under the trees and burned it there, where the smoke would look like a clearing fire. She has not told the court what the rider said. The troops she sent out were ordered to gather timber. They were not given saws.</p>
+        <h3>King Oswin of Solmere</h3>
+        <p>Oswin smiled at the rider, fed him, and burned the letter with the kitchen coals. Solmere can afford to wait. He would rather the other kingdoms spend their troops on the road while his grain keeps, and his own four riders go out looking like a tax party.</p>
+        <h3>Queen Lirra of Tidereach</h3>
+        <p>Lirra took the letter to the salt stairs, where the wind pulls paper apart, and let it go. She has posted her troops on the roads that lead into the March and called it a watch against smugglers. The vault, if it is there, will have to pay her to pass.</p>
+      </section>
+      <section data-lore="events" hidden>
+        <h2>World events</h2>
+        <p>The wheel names one of these, and it holds until the March turns again.</p>
+        <h3>The Drowning Tide</h3>
+        <p>Ancient waterways burst across the old roads. Tidereach's marches are two squares longer while the water is up.</p>
+        <h3>The Heartfire Rising</h3>
+        <p>Lava breaks from the scorched ruins of Corhaven. Emberhold's marches are two squares longer under the ash.</p>
+        <h3>The Wild Awakening</h3>
+        <p>Roots and thorned vines reclaim the abandoned roads. Thornwald's marches are two squares longer while the wild is awake.</p>
+        <h3>The Searing Seal</h3>
+        <p>A strange golden light uncovers paths hidden for centuries. Solmere's marches are two squares longer in that light.</p>
+        <h3>The Veil of Mist</h3>
+        <p>An unnatural fog hides everything beyond a short distance. You see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
+        <h3>The Stones of the Pact</h3>
+        <p>Four stones on the road, squares 14, 31, 48 and 65, trade places with the stone opposite. Land on one and you are carried to its pair. A troop already standing on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
+      </section>
+    </div>
+    <button class="secondary aboutback" id="btnAboutBack" type="button">Back</button>
+  </div>
+</div>
+
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="sheet panel">
+    <h1 id="settingsTitle">Settings</h1>
+    <p>The theme and the effects can each sit quieter, or go silent. The levels stay where you leave them.</p>
+    <label class="check">Theme <input type="checkbox" id="themeOn" checked></label>
+    <input class="vol" id="themeVol" type="range" min="0" max="100" value="22" aria-label="Theme volume">
+    <label class="check">Effects <input type="checkbox" id="fxOn" checked></label>
+    <input class="vol" id="fxVol" type="range" min="0" max="100" value="100" aria-label="Effects volume">
+    <button class="primary" id="btnSettingsClose" type="button">Done</button>
   </div>
 </div>
 
@@ -380,8 +478,8 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=march"></script>
-<script src="./lib/siege-fx.js?v=siege6"></script>
+<script src="./lib/rules.js?v=names1"></script>
+<script src="./lib/siege-fx.js?v=siege11"></script>
 <script>
 (function(){
 'use strict';
@@ -755,7 +853,9 @@ HOUSES.forEach((H,hi)=>{
 Object.values(INST).forEach(o=>{const im=new THREE.InstancedMesh(o.geo,o.mat,o.list.length);o.list.forEach((m,i)=>im.setMatrixAt(i,m));im.castShadow=o.shadow;im.receiveShadow=true;board.add(im);});
 
 /* Ruins of Corhaven: a white rubble mound under the chest, broken tower stumps on the
-   diagonals (clear of the troops' finishing spots) and low crumbled wall fragments. */
+   diagonals (clear of the troops' finishing spots) and low crumbled wall fragments.
+   The Heartfire Rising sinks this group so the stumps stay inside the cone. */
+let ruinsGroup=null;
 const RUIN_TOP=0.36;
 const RM={
   marble:new THREE.MeshStandardMaterial({color:0xEEEAE0,map:texRep(wallTex,2,1),roughness:0.85}),
@@ -765,7 +865,7 @@ const RM={
 };
 {
   const rr=seeded(77);
-  const ruins=new THREE.Group();board.add(ruins);
+  const ruins=new THREE.Group();ruinsGroup=ruins;board.add(ruins);
   const put=(geo,mat,x,y,z,rx,ry,rz,shadow=true)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx||0,ry||0,rz||0);m.castShadow=shadow;m.receiveShadow=true;ruins.add(m);return m;};
   // stepped rubble mound (the chest sits on top)
   put(new THREE.CylinderGeometry(0.9,0.97,0.12,10),RM.marble2,0,0.12+0.06,0,0,0.2);
@@ -868,7 +968,7 @@ function makePiece(h){
 const coarse=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
 const markerGeo=coarse?new THREE.RingGeometry(0.2,0.4,32):new THREE.RingGeometry(0.16,0.3,32);
 const markers=[];
-function showMarkers(list){markers.forEach(m=>{m.visible=false;m.userData.move=null;});const lift=S.world==='ash'?0.22:0.02;list.forEach((item,i)=>{const p=item.pos||item;let m=markers[i];if(!m){m=new THREE.Mesh(markerGeo,new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,side:THREE.DoubleSide,depthWrite:false}));m.rotation.x=-Math.PI/2;m.renderOrder=8;m.userData.marker=true;board.add(m);markers.push(m);}m.userData.move=item.move||null;m.userData.baseY=p.y;m.position.set(p.x,p.y+lift,p.z);m.visible=true;});}
+function showMarkers(list){markers.forEach(m=>{m.visible=false;m.userData.move=null;});const lift=S.world==='ash'?0.22:0.02;list.forEach((item,i)=>{const move=item.move||null;if(move&&move.pc&&veilHides(move.pc))return;const p=item.pos||item;let m=markers[i];if(!m){m=new THREE.Mesh(markerGeo,new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,side:THREE.DoubleSide,depthWrite:false}));m.rotation.x=-Math.PI/2;m.renderOrder=8;m.userData.marker=true;board.add(m);markers.push(m);}m.userData.move=move;m.userData.baseY=p.y;m.position.set(p.x,p.y+lift,p.z);m.visible=true;});}
 
 /* ================= Animation helpers ================= */
 let anims=[];
@@ -878,22 +978,25 @@ const ease=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
 function hop(mesh,to,dur,h){const from=mesh.position.clone();if(mesh.userData.lift)from.y-=mesh.userData.lift;return animate(dur,k=>{mesh.position.lerpVectors(from,to,k);mesh.position.y=from.y+(to.y-from.y)*k+Math.sin(Math.PI*k)*h;});}
 
 /* ================= Sound ================= */
-/* Theme is mastered much hotter than the short clips, so it sits under them. */
-const THEME_VOL=0.22;
-let soundOn=true,winPlaying=false,clipEpoch=0,lastStep=-1;
+/* Theme is mastered much hotter than the short clips. themeVol is the level you hear; fxVol scales the effects under it. */
+const AUDIO_KEY='corhaven-audio';
+let themeOn=true,fxOn=true,themeVol=0.22,fxVol=1,winPlaying=false,clipEpoch=0,lastStep=-1;
+try{const saved=JSON.parse(localStorage.getItem(AUDIO_KEY)||'null');if(saved){if(typeof saved.themeOn==='boolean')themeOn=saved.themeOn;if(typeof saved.fxOn==='boolean')fxOn=saved.fxOn;if(typeof saved.themeVol==='number')themeVol=saved.themeVol;if(typeof saved.fxVol==='number')fxVol=saved.fxVol;}}catch(e){}
+const heard=base=>fxOn?Math.min(1,Math.max(0,base*fxVol)):0;
+function saveAudioPrefs(){try{localStorage.setItem(AUDIO_KEY,JSON.stringify({themeOn,fxOn,themeVol,fxVol}));}catch(e){}}
 const theme=document.getElementById('theme');
 theme.loop=true;theme.preload='auto';theme.autoplay=true;
-theme.addEventListener('ended',()=>{if(soundOn&&!winPlaying){theme.currentTime=0;const p=theme.play();if(p)p.catch(()=>{});}});
+theme.addEventListener('ended',()=>{if(themeOn&&themeVol>0.001&&!winPlaying){theme.currentTime=0;const p=theme.play();if(p)p.catch(()=>{});}});
 const STEP_SRCS=[1,2,3,4,5].map(n=>'assets/Music/piece-movement-'+n+'.wav');
 const DICE_SRCS=[1,2,3].map(n=>'assets/Music/playing-dice-'+n+'.wav');
 const winAudio=new Audio('assets/Music/win.wav');
-winAudio.preload='auto';winAudio.volume=0.85;
+winAudio.preload='auto';winAudio.volume=heard(0.85);
 STEP_SRCS.concat(DICE_SRCS).forEach(src=>{const a=new Audio();a.preload='auto';a.src=src;});
 const clips=new Set();
 function ensureTheme(){
-  if(!soundOn||winPlaying)return;
-  if(!theme.paused&&theme.volume>0.01)return;
-  theme.muted=false;theme.volume=THEME_VOL;
+  if(!themeOn||winPlaying||themeVol<=0.001)return;
+  if(!theme.paused&&Math.abs(theme.volume-themeVol)<0.01)return;
+  theme.muted=false;theme.volume=themeVol;
   const p=theme.play();if(p)p.catch(()=>{});
 }
 function stopOneShots(){
@@ -904,17 +1007,16 @@ function stopOneShots(){
   winAudio.pause();
   stopWorldBed();
 }
-/* World beds stay under the theme. The theme file is mastered hot and plays at 0.22; these clips are quieter than that. */
-const WORLD_INTRO_VOL=0.12,WORLD_LOOP_VOL=0.07;
+/* Heard level stays under the theme. The theme file is mastered hot and plays at 0.22; these library clips are quieter, so their gains differ and still land below that. */
 const WORLD_BED={
-  flood:{intro:'assets/Music/WATRWave_Huge-Approach Pass_SIDEA_GENHD5_HD5-49316.wav',loop:'assets/Music/Sea Waves.wav'},
-  ash:{intro:'assets/Music/Volcano PS04_63.wav',loop:'assets/Music/Volcano Eruption Loop.wav'},
-  wild:{intro:'assets/Music/Wood_Cracks_Wood_Hard_Split_Tear_Rip_Slow_Heavy_Cracks_C_SDGWATT_34187.wav'},
-  sun:{intro:'assets/Music/SpaceshipBeam_BW.46633.wav',loop:'assets/Music/Tractor Beam.wav'},
-  mist:{loop:'assets/Music/Wind.wav'}
+  flood:{intro:{src:'assets/Music/WATRWave_Huge-Approach Pass_SIDEA_GENHD5_HD5-49316.wav',vol:0.2},loop:{src:'assets/Music/Sea Waves.wav',vol:0.48}},
+  ash:{intro:{src:'assets/Music/Volcano PS04_63.wav',vol:0.18},loop:{src:'assets/Music/Volcano Eruption Loop.wav',vol:0.16}},
+  wild:{intro:{src:'assets/Music/Wood_Cracks_Wood_Hard_Split_Tear_Rip_Slow_Heavy_Cracks_C_SDGWATT_34187.wav',vol:0.22}},
+  sun:{intro:{src:'assets/Music/SpaceshipBeam_BW.46633.wav',vol:0.24},loop:{src:'assets/Music/Tractor Beam.wav',vol:0.16}},
+  mist:{loop:{src:'assets/Music/Wind.wav',vol:0.4}}
 };
 let worldIntro=null,worldLoop=null,worldReady=null,worldBedTimer=null,worldPrimed=null,bedGen=0;
-function dropBedAudio(a){if(!a)return;a.pause();try{a.removeAttribute('src');a.load();}catch(e){}}
+function dropBedAudio(a){if(!a)return;a.pause();}
 function stopWorldBed(){
   bedGen++;
   clearTimeout(worldBedTimer);worldBedTimer=null;
@@ -922,12 +1024,19 @@ function stopWorldBed(){
   worldIntro=null;worldLoop=null;worldReady=null;
   if(worldPrimed){dropBedAudio(worldPrimed.intro);dropBedAudio(worldPrimed.loop);worldPrimed=null;}
 }
+let fadeSerial=0;
 function fadeAudio(audio,to,ms){
-  const from=audio.volume,t0=performance.now(),token=bedGen;
+  if(!audio)return;
+  if(ms<=0){audio.dataset.base=String(to);audio.volume=heard(to);return;}
+  const token=++fadeSerial,bed=bedGen;
+  audio._fade=token;
+  const from=Number(audio.dataset.base)||0,t0=performance.now();
   const step=now=>{
-    if(token!==bedGen)return;
+    if(audio._fade!==token||bed!==bedGen)return;
     const k=Math.min(1,(now-t0)/ms);
-    audio.volume=from+(to-from)*k;
+    const base=from+(to-from)*k;
+    audio.dataset.base=String(base);
+    audio.volume=heard(base);
     if(k<1)requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
@@ -935,56 +1044,57 @@ function fadeAudio(audio,to,ms){
 function primeWorldBed(id){
   if(worldPrimed){dropBedAudio(worldPrimed.intro);dropBedAudio(worldPrimed.loop);worldPrimed=null;}
   const bed=WORLD_BED[id];if(!bed)return;
-  const make=(src,loop)=>{if(!src)return null;const a=new Audio(src);a.preload='auto';if(loop)a.loop=true;return a;};
+  const make=(clip,loop)=>{if(!clip)return null;const a=new Audio(clip.src);a.preload='auto';a.volume=clip.vol;if(loop)a.loop=true;return a;};
   worldPrimed={id,intro:make(bed.intro,false),loop:make(bed.loop,true)};
 }
-function playWorldLoop(src,primed){
-  const a=primed||new Audio(src);
-  a.loop=true;a.volume=0;
-  worldLoop=a;worldReady=null;
-  const p=a.play();if(p)p.catch(()=>{});
-  fadeAudio(a,WORLD_LOOP_VOL,800);
+function playWorldClip(clip,primed,loop,volume){
+  const a=primed||new Audio(clip.src);
+  const base=volume==null?clip.vol:volume;
+  a.loop=!!loop;a.dataset.base=String(base);a.volume=heard(base);
+  if(fxOn){const p=a.play();if(p)p.catch(()=>{});}
+  return a;
 }
 function startWorldBed(id,intro){
   const primed=worldPrimed&&worldPrimed.id===id?worldPrimed:null;
   if(primed)worldPrimed=null;
   stopWorldBed();
-  if(!soundOn||winPlaying||!WORLD_BED[id]){if(primed){dropBedAudio(primed.intro);dropBedAudio(primed.loop);}return;}
+  if(!fxOn||winPlaying||!WORLD_BED[id]){if(primed){dropBedAudio(primed.intro);dropBedAudio(primed.loop);}return;}
   const bed=WORLD_BED[id],gen=bedGen;
   if(intro&&bed.intro){
-    const a=primed&&primed.intro||new Audio(bed.intro);
-    a.volume=WORLD_INTRO_VOL;worldIntro=a;
-    const p=a.play();if(p)p.catch(()=>{});
-    if(!bed.loop){if(primed&&primed.loop)dropBedAudio(primed.loop);return;}
-    worldReady=primed&&primed.loop||new Audio(bed.loop);
-    worldReady.loop=true;worldReady.preload='auto';
+    worldIntro=playWorldClip(bed.intro,primed&&primed.intro,false,0);
     const hold=reduced?900:(WORLD_INTRO[id]||2000);
+    const fadeIn=Math.min(500,hold*0.35),fadeOut=Math.min(700,hold*0.4);
+    fadeAudio(worldIntro,bed.intro.vol,fadeIn);
+    if(bed.loop){
+      worldReady=primed&&primed.loop||new Audio(bed.loop.src);
+      worldReady.loop=true;worldReady.volume=0;worldReady.preload='auto';
+    }else if(primed&&primed.loop)dropBedAudio(primed.loop);
     worldBedTimer=setTimeout(()=>{
       if(gen!==bedGen)return;
-      if(worldIntro){fadeAudio(worldIntro,0,700);const gone=worldIntro;setTimeout(()=>{if(gone===worldIntro){dropBedAudio(gone);worldIntro=null;}},740);}
-      if(worldReady)playWorldLoop(bed.loop,worldReady);
-    },hold);
-  }else{
-    if(primed&&primed.intro)dropBedAudio(primed.intro);
-    if(bed.loop)playWorldLoop(bed.loop,primed&&primed.loop);
-    else if(primed&&primed.loop)dropBedAudio(primed.loop);
+      if(worldIntro){fadeAudio(worldIntro,0,fadeOut);const gone=worldIntro;setTimeout(()=>{if(gone===worldIntro){dropBedAudio(gone);worldIntro=null;}},fadeOut+40);}
+      if(worldReady){worldLoop=worldReady;worldReady=null;worldLoop.dataset.base='0';worldLoop.volume=0;const p=worldLoop.play();if(p)p.catch(()=>{});fadeAudio(worldLoop,bed.loop.vol,fadeOut);}
+    },Math.max(0,hold-fadeOut));
+    return;
   }
+  if(primed&&primed.intro)dropBedAudio(primed.intro);
+  if(bed.loop){worldLoop=playWorldClip(bed.loop,primed&&primed.loop,true,0);fadeAudio(worldLoop,bed.loop.vol,600);}
+  else if(primed&&primed.loop)dropBedAudio(primed.loop);
 }
 function playClip(src,volume,delay,kind,rate){
-  if(!soundOn)return;
+  if(!fxOn)return;
   const epoch=clipEpoch;
   const a=new Audio(src);
-  a.volume=volume;
+  a.dataset.base=String(volume);a.volume=heard(volume);
   if(rate)a.playbackRate=rate;
   if(kind)a.dataset.kind=kind;
   clips.add(a);
   const drop=()=>clips.delete(a);
   a.addEventListener('ended',drop);
-  const start=()=>{if(epoch!==clipEpoch||!soundOn||!clips.has(a))return;const p=a.play();if(p)p.catch(drop);};
+  const start=()=>{if(epoch!==clipEpoch||!fxOn||!clips.has(a))return;const p=a.play();if(p)p.catch(drop);};
   if(delay)setTimeout(start,delay);else start();
 }
 let actx=null;
-function tone(f,d,type,vol,slide,delay){if(!soundOn)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const t=actx.currentTime+(delay||0);const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(vol||0.12,t);g.gain.exponentialRampToValueAtTime(0.0005,t+d);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function tone(f,d,type,vol,slide,delay){if(!fxOn)return;const gain=heard(vol||0.12);if(gain<=0.0001)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const t=actx.currentTime+(delay||0);const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+d);g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(0.0005,t+d);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
 const sfx={
   step(){
     let i=Math.floor(Math.random()*STEP_SRCS.length);
@@ -1003,12 +1113,13 @@ const sfx={
   home(){[660,880,1100].forEach((f,i)=>tone(f,0.25,'triangle',0.08,1,i*0.09));},
   bad(){tone(300,0.5,'sawtooth',0.07,0.4);},
   win(){
-    if(!soundOn)return;
+    if(!fxOn)return;
     clipEpoch++;clips.forEach(a=>a.pause());clips.clear();
     stopWorldBed();
     theme.pause();
     winPlaying=true;
     try{winAudio.currentTime=0;}catch(e){}
+    winAudio.volume=heard(0.85);
     const p=winAudio.play();if(p)p.catch(()=>{winPlaying=false;ensureTheme();});
   }
 };
@@ -1035,16 +1146,19 @@ function cellPos(h,p,idx){
   const[dx,dz]=HOUSES[h].goalDir,px=-dz,pz=dx,o=(idx-1.5)*0.44;   // troops are 0.216 wide at goal scale, so 0.44 keeps them apart
   return new THREE.Vector3(dx*(CH-T-0.4)+px*o,GOAL_Y,dz*(CH-T-0.4)+pz*o);
 }
+function trackPos(ti){const[a,l,k]=TRACK[ti];const[x,z]=anchorXZ(a,l,k);return new THREE.Vector3(x,TILE_TOP,z);}
+function posOf(pc){return pc.at!=null?trackPos(pc.at):cellPos(pc.h,pc.p,pc.idx);}
+function resultPos(pc,r){return r.at!=null?trackPos(r.at):cellPos(pc.h,r.np,pc.idx);}
 function moveResult(pc,v){return R.moveResult(allPieces(),pc,v,S.world);}
 function options(){const pl=curP();if(!pl)return[];return R.options(allPieces(),pl.h,S.pending,S.world);}
 
 /* ================= Layout ================= */
 function restLayout(){
   const groups=new Map();
-  allPieces().forEach(pc=>{const key=pc.p<0?`b${pc.h}${pc.idx}`:pc.p===GOAL?`g${pc.h}${pc.idx}`:cellKey(pc.h,pc.p);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(pc);});
+  allPieces().forEach(pc=>{const key=pc.p<0?`b${pc.h}${pc.idx}`:pc.p===GOAL?`g${pc.h}${pc.idx}`:R.locKey(pc);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(pc);});
   const out=[];
-  groups.forEach(list=>{const n=list.length;list.forEach((pc,i)=>{const pos=cellPos(pc.h,pc.p,pc.idx);
-    if(n>1){const a=cellAK(pc.h,pc.p)[0];const off=(i-(n-1)/2)*0.72;if(a==='T'||a==='B')pos.x+=off;else pos.z+=off;}
+  groups.forEach(list=>{const n=list.length;list.forEach((pc,i)=>{const pos=posOf(pc);
+    if(n>1){const a=pc.at!=null?TRACK[pc.at][0]:cellAK(pc.h,pc.p)[0];const off=(i-(n-1)/2)*0.72;if(a==='T'||a==='B')pos.x+=off;else pos.z+=off;}
     out.push({pc,pos,scale:pc.p===GOAL?0.72:0.92});});});
   return out;
 }
@@ -1088,9 +1202,25 @@ function announceTurn(pl,kind){
 const orderToast=names=>toast(`${names[0]} marches first`,names.length>2?`Then ${names.slice(1,-1).join(', ')}, and ${names[names.length-1]} last.`:`${names[1]} rides second.`);
 function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[n].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#7A1A14"/>`).join('')}</svg>`;}
 function renderChips(){
-  const human=isMine(curP());
-  if(!S.pending.length||!human){ui.chips.hidden=true;ui.chips.innerHTML='';return;}
-  ui.chips.hidden=false;ui.chips.innerHTML='';
+  const pl=curP(),human=isMine(pl);
+  ui.chips.innerHTML='';
+  if(pl)ui.chips.style.setProperty('--c',HOUSES[pl.h].css);
+  const canRoll=human&&(S.phase==='roll'||S.phase==='orderRoll');
+  const spinning=human&&S.phase==='rolling';
+  if(canRoll||(spinning&&!S.pending.length)){
+    ui.chips.hidden=false;
+    for(let i=0;i<2;i++){
+      const b=document.createElement('button');b.type='button';b.className='dchip rolldie';
+      b.disabled=spinning;
+      b.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="8" fill="#C9A14A"/></svg>';
+      b.setAttribute('aria-label',S.phase==='orderRoll'?'Roll for order':spinning?'Rolling':'Roll the dice');
+      b.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
+      ui.chips.appendChild(b);
+    }
+    return;
+  }
+  if(!S.pending.length||!human){ui.chips.hidden=true;return;}
+  ui.chips.hidden=false;
   const opts=S.phase==='choose'?options():[];
   S.pending.forEach((d,di)=>{const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
     const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can)b.classList.add('stuck');
@@ -1140,7 +1270,7 @@ function renderTally(){
     ui.tally.appendChild(li);});
   if(NET.on)paintClock();
 }
-const rollSecs=document.createElement('span');rollSecs.className='secs';
+const dieClock=$('dieClock');
 /* A triangle that floats above the castle of whoever is playing. */
 function turnTri(w,h){const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(w/2,h);s.lineTo(-w/2,h);s.closePath();return new THREE.ShapeGeometry(s);}
 const turnMark=new THREE.Group();
@@ -1158,13 +1288,8 @@ function showTurnMark(){
   turnMark.visible=true;
 }
 function renderTurn(){
-  const pl=curP();if(!pl)return;const H=HOUSES[pl.h];const mine=isMine(pl);
-  ui.roll.style.setProperty('--c',H.css);
-  /* The button and dice only exist on your own turn; off-turn, the roster and the marker above the castle say who is playing. */
-  ui.roll.hidden=!mine||S.phase==='over'||S.phase==='idle';
-  ui.roll.disabled=!((S.phase==='roll'||S.phase==='orderRoll')&&mine);
-  ui.roll.textContent=S.phase==='rolling'?'Rolling…':S.phase==='orderRoll'?'Roll for order':S.phase==='choose'?'Choose a troop':S.phase==='moving'?'Marching…':'Roll the dice';
-  ui.roll.appendChild(rollSecs);
+  const pl=curP();if(!pl)return;
+  ui.roll.hidden=true;
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
   ui.hint.textContent=tip||(NET.on&&NET.ws&&NET.ws.readyState!==1&&!NET.ended?'Reconnecting to the room…':'');
   renderChips();renderTally();showTurnMark();reflowPhone();if(S.world==='mist')applyVeil();
@@ -1176,8 +1301,8 @@ function refreshChoice(){
   const opts=options();
   if(!opts.some(o=>o.di===S.sel)&&opts.length)S.sel=opts[0].di;
   const mine=opts.filter(o=>o.di===S.sel);
-  setHighlights(mine.map(o=>o.pc));
-  const seen=new Set();showMarkers(mine.filter(o=>{const k=o.r.np+':'+o.pc.p;if(seen.has(k))return false;seen.add(k);return true;}).map(o=>({pos:cellPos(o.pc.h,o.r.np,o.pc.idx),move:o})));
+  setHighlights(mine.filter(o=>!veilHides(o.pc)).map(o=>o.pc));
+  const seen=new Set();showMarkers(mine.filter(o=>!veilHides(o.pc)).filter(o=>{const k=(o.r.at!=null?'a'+o.r.at:o.r.np)+':'+o.pc.p;if(seen.has(k))return false;seen.add(k);return true;}).map(o=>({pos:resultPos(o.pc,o.r),move:o})));
   renderTurn();
 }
 
@@ -1341,7 +1466,7 @@ async function finishRoll(pl,a,b,gid){
     S.phase='moving';renderTurn();
     const out=pl.pieces.filter(p=>p.p>=0&&p.p<GOAL).sort((x,y)=>y.p-x.p)[0];
     sfx.bad();
-    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);out.p=-1;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
+    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
     else toast('Third double',`${who} lose${pl.cpu?'s':''} the turn.`,pl.h);
     await wait(1300);if(gid===S.gid)nextTurn();return;
   }
@@ -1368,7 +1493,7 @@ async function continueTurn(){
   }
   if(pl.cpu){S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
     const best=R.bestOption(allPieces(),opts);
-    S.sel=best.di;setHighlights([best.pc]);showMarkers([cellPos(best.pc.h,best.r.np,best.pc.idx)]);renderChips();await wait(380);if(gid!==S.gid)return;
+    S.sel=best.di;if(!veilHides(best.pc)){setHighlights([best.pc]);showMarkers([{pos:resultPos(best.pc,best.r),move:best}]);}renderChips();await wait(380);if(gid!==S.gid)return;
     return doMove(best);}
   const uniq=new Set(opts.map(o=>S.pending[o.di].v+':'+o.pc.p));
   if(uniq.size===1){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(opts[0]);}
@@ -1394,26 +1519,34 @@ async function walkMove(pc,spec,alive){
   const m=pc.mesh;
   if(m.scale.x!==1)await animate(120,k=>m.scale.setScalar(m.scale.x+(1-m.scale.x)*k));
   if(!alive())return false;
-  if(spec.exit){pc.p=0;await hop(m,cellPos(pc.h,0,pc.idx),440,1.4);if(!alive())return false;sfx.step();return true;}
+  if(spec.exit){delete pc.at;pc.p=0;await hop(m,cellPos(pc.h,0,pc.idx),440,1.4);if(!alive())return false;sfx.step();return true;}
+  if(pc.at!=null){
+    delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
+    await hop(m,posOf(pc),480,1.2);if(!alive())return false;sfx.step();return true;
+  }
   const land=spec.shift?spec.land:spec.to,steps=land-pc.p,dur=steps>8?95:165;
   for(let s=0;s<steps;s++){pc.p++;sfx.step();await hop(m,cellPos(pc.h,pc.p,pc.idx),dur,0.5);if(!alive())return false;}
-  if(spec.shift&&spec.to!==land){flashWay(trackIndex(pc.h,land));pc.p=spec.to;await hop(m,cellPos(pc.h,pc.p,pc.idx),560,2.4);if(!alive())return false;}
+  if(spec.shift&&(spec.to!==land||spec.at!=null)){
+    flashWay(trackIndex(pc.h,land));
+    delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
+    await hop(m,posOf(pc),560,2.4);if(!alive())return false;
+  }
   return true;
 }
 async function doMove(opt){
   const gid=S.gid;const{pc,di}=opt;const d=S.pending[di];const r=moveResult(pc,d.v);
   if(!r){return continueTurn();}
   S.phase='moving';d.used=true;setHighlights();showMarkers([]);renderTurn();
-  if(!await walkMove(pc,{exit:!!r.exit,shift:!!r.shift,land:r.land,to:r.np},()=>gid===S.gid))return;
+  if(!await walkMove(pc,{exit:!!r.exit,shift:!!r.shift,land:r.land,to:r.np,at:r.at},()=>gid===S.gid))return;
   if(r.captures.length){
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
     toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,pc.h);
-    await Promise.all(r.captures.map(o=>{o.p=-1;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+    await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
   if(pc.p===GOAL){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);}
-  if(pc.p>=0&&pc.p<GOAL){const key=cellKey(pc.h,pc.p);const mates=allPieces().filter(o=>o.h===pc.h&&cellKey(o.h,o.p)===key);if(mates.length>=2){lockShields(pc.h,cellPos(pc.h,pc.p,0));phalanxToast(pc.h);}}
+  if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
   if(curP().pieces.every(p=>p.p===GOAL))return victory(curP());
@@ -1487,22 +1620,46 @@ $('btnNew').onclick=()=>showTitle();
 $('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
 $('btnSetupBack').onclick=()=>{closeModal('setup');showTitle();};
 $('btnRules').onclick=()=>openModal('rules');
-$('btnStory').onclick=()=>openModal('story');
-$('btnStory2').onclick=()=>openModal('story');
-$('btnStoryClose').onclick=()=>closeModal('story');
+$('btnStory').onclick=()=>openAbout();
+$('btnStory2').onclick=()=>openAbout();
+document.querySelectorAll('.aboutnav button').forEach(b=>b.onclick=()=>showLore(b.dataset.lore));
+$('btnAboutBack').onclick=()=>$('about').classList.remove('open');
+function showLore(id){
+  document.querySelectorAll('#about .aboutbody section').forEach(s=>{s.hidden=s.dataset.lore!==id;});
+  document.querySelectorAll('.aboutnav button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lore===id)));
+}
+function openAbout(){showLore('chronicle');$('about').classList.add('open');}
+function applyAudio(restartBed){
+  saveAudioPrefs();
+  if(themeOn&&themeVol>0.001&&!winPlaying){theme.muted=false;theme.volume=themeVol;ensureTheme();}
+  else theme.pause();
+  if(!fxOn){clipEpoch++;clips.forEach(a=>a.pause());clips.clear();stopWorldBed();}
+  else if(restartBed&&S.world)startWorldBed(S.world,false);
+  else{[worldIntro,worldLoop,worldReady].forEach(a=>{if(a&&a.dataset.base)a.volume=heard(+a.dataset.base);});clips.forEach(a=>{if(a.dataset.base)a.volume=heard(+a.dataset.base);});}
+  winAudio.volume=heard(0.85);
+  syncSettingsForm();
+  if(typeof paintXRPanel==='function')paintXRPanel();
+}
+function syncSettingsForm(){
+  $('themeOn').checked=themeOn;$('fxOn').checked=fxOn;
+  $('themeVol').value=String(Math.round(themeVol*100));$('fxVol').value=String(Math.round(fxVol*100));
+  $('themeVol').disabled=!themeOn;$('fxVol').disabled=!fxOn;
+}
+function setSound(on){themeOn=!!on;fxOn=!!on;applyAudio(!!on);}
+$('btnGear').onclick=()=>{syncSettingsForm();$('settings').classList.add('open');setTimeout(()=>$('themeOn').focus(),30);};
+$('btnSettingsClose').onclick=()=>$('settings').classList.remove('open');
+$('themeOn').onchange=()=>{themeOn=$('themeOn').checked;applyAudio(false);};
+$('fxOn').onchange=()=>{const back=fxOn;fxOn=$('fxOn').checked;applyAudio(!back&&fxOn);};
+$('themeVol').oninput=()=>{themeVol=+$('themeVol').value/100;applyAudio(false);};
+$('fxVol').oninput=()=>{fxVol=+$('fxVol').value/100;applyAudio(false);};
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if($('settings').classList.contains('open')){$('settings').classList.remove('open');e.preventDefault();}
+  else if($('about').classList.contains('open')){$('about').classList.remove('open');e.preventDefault();}
+});
 $('btnRulesClose').onclick=()=>closeModal('rules');
 $('btnAgain').onclick=()=>{closeModal('win');if(NET.on){leaveOnline(false);return;}newGame(S.config);};
 $('btnChange').onclick=()=>{closeModal('win');renderSetup();openModal('setup');};
-function setSound(on){
-  soundOn=on;
-  const b=$('btnSound');
-  b.textContent=soundOn?'Sound on':'Sound off';
-  b.setAttribute('aria-checked',String(soundOn));
-  if(soundOn){ensureTheme();if(S.world)startWorldBed(S.world,false);}
-  else{theme.pause();stopOneShots();}
-  if(typeof paintXRPanel==='function')paintXRPanel();
-}
-$('btnSound').onclick=()=>setSound(!soundOn);
 const menu=$('menu'),btnMenu=$('btnMenu');
 const menuItems=()=>[...menu.querySelectorAll('button')].filter(b=>!b.hidden);
 function setMenu(open,refocus){
@@ -1510,7 +1667,7 @@ function setMenu(open,refocus){
   if(open){const f=menuItems()[0];if(f)f.focus();}else if(refocus)btnMenu.focus();
 }
 btnMenu.onclick=()=>setMenu(menu.hidden);
-menu.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.id!=='btnSound')setMenu(false);});
+menu.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setMenu(false);});
 menu.addEventListener('keydown',e=>{
   if(e.key==='Escape'){e.preventDefault();e.stopPropagation();setMenu(false,true);return;}
   if(e.key!=='ArrowDown'&&e.key!=='ArrowUp')return;
@@ -1521,7 +1678,8 @@ document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!e.target.closest('
 ui.roll.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
 renderSetup();
 function showTitle(msg){
-  ['setup','online','win','leave'].forEach(closeModal);
+  ['setup','online','win','leave','settings'].forEach(closeModal);
+  $('about').classList.remove('open');
   $('titleErr').textContent=msg||'';
   openModal('title');
 }
@@ -1591,8 +1749,8 @@ function leaveOnline(sendLeave,msg){
   const wasPlaying=NET.playing;
   Object.assign(NET,{on:false,playing:false,code:null,pid:null,myH:null,room:null,busy:0});
   NET.epoch++;
-  $('btnLeave').hidden=true;$('btnNew').hidden=false;rollSecs.textContent='';
-  if(wasPlaying){resetBoard();ui.chips.hidden=true;say('');ui.roll.textContent='Roll the dice';ui.roll.disabled=true;ui.roll.hidden=true;}
+  $('btnLeave').hidden=true;$('btnNew').hidden=false;dieClock.textContent='';dieClock.hidden=true;
+  if(wasPlaying){resetBoard();ui.chips.hidden=true;say('');ui.roll.hidden=true;}
   showTitle(msg);
 }
 
@@ -1719,7 +1877,7 @@ function syncFromRoom(room){
   applySeats(room);
   const want=new Set(g.pieces.map(p=>p.h+':'+p.idx));
   S.players.forEach(pl=>{pl.pieces=pl.pieces.filter(pc=>{if(want.has(pc.h+':'+pc.idx))return true;removePiece(pc);return false;});});
-  g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;});
+  g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;if(sp.at!=null)pc.at=sp.at;else delete pc.at;});
   S.players.forEach(pl=>pl.pieces.sort((a,b)=>a.idx-b.idx));
   S.cur=g.cur;S.pending=g.pending.map(d=>Object.assign({},d));S.dbl=g.dbl;S.ordering=g.ordering;
   S.phase=room.status==='over'?'over':g.phase;
@@ -1844,7 +2002,7 @@ async function playEvent(e,epoch){
       await throwDice(e.h,e.vals);if(gone())return;
       S.phase='moving';renderTurn();sfx.bad();
       const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
-      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);await settleAll();renderTally();}
+      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);await settleAll();renderTally();}
       else toast('Third double',`${isMine(pl)?'You lose':nm+' loses'} the turn.`,e.h);
       await wait(1300);return;}
     case'noMove':{
@@ -1856,18 +2014,18 @@ async function playEvent(e,epoch){
       const pc=pl.pieces.find(p=>p.idx===e.idx);if(!pc)return;
       S.phase='moving';const d=S.pending[e.di];if(d)d.used=true;setHighlights();showMarkers([]);renderTurn();
       if(e.auto)say(autoNote(e,`${nm}'s march was made for them`).trim());
-      pc.p=e.from;
-      if(!await walkMove(pc,{exit:!!e.exit,shift:!!e.shift,land:e.land,to:e.to},()=>!gone()))return;
+      pc.p=e.from;if(e.fromAt!=null)pc.at=e.fromAt;else delete pc.at;
+      if(!await walkMove(pc,{exit:!!e.exit,shift:!!e.shift,land:e.land,to:e.to,at:e.at},()=>!gone()))return;
       if(e.captures.length){
         sfx.capture();
         const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
         const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
         toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,e.h);
-        await Promise.all(fallen.map(o=>{o.p=-1;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+        await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
         fallen.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
       }
       if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);}
-      if(pc.p>=0&&pc.p<GOAL){const key=cellKey(pc.h,pc.p);const mates=allPieces().filter(o=>o.h===pc.h&&cellKey(o.h,o.p)===key);if(mates.length>=2){lockShields(pc.h,cellPos(pc.h,pc.p,0));phalanxToast(pc.h,nm);}}
+      if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();
       await wait(250);return;}
@@ -1899,9 +2057,10 @@ function paintClock(){
     const secs=Math.ceil(left/1000);
     show=true;
     if(ring){ring.style.setProperty('--p',String(left/20000));ring.classList.toggle('low',secs<=5);}
-    rollSecs.textContent=isMine(curP())?' · '+secs+'s':'';
+    dieClock.textContent=isMine(curP())?secs+'s':'';
+    dieClock.hidden=!dieClock.textContent;
   }
-  if(!show){rollSecs.textContent='';if(ring){ring.style.removeProperty('--p');ring.classList.remove('low');}}
+  if(!show){dieClock.textContent='';dieClock.hidden=true;if(ring){ring.style.removeProperty('--p');ring.classList.remove('low');}}
   document.querySelectorAll('#tally .away').forEach(el=>{
     const left=Math.max(0,Math.ceil((60000-(netNow()-Number(el.dataset.awaySince)))/1000));
     el.textContent='away '+left+'s';
@@ -1971,8 +2130,8 @@ canvas.addEventListener('pointerup',e=>{if(!downAt)return;const moved=Math.hypot
   const hit=pick(e);if(!hit)return;
   if(hit.die)requestRoll();else if(hit.marker)requestMove(hit.marker);else if(hit.piece)choosePiece(hit.piece);});
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;canvas.style.cursor=pick(e)?'pointer':'';});
-window.addEventListener('keydown',e=>{if(document.querySelector('.modal.open')||!menu.hidden)return;const pl=curP();if(!isMine(pl))return;
-  if((e.code==='Space'||e.key==='Enter')&&(S.phase==='roll'||S.phase==='orderRoll')&&document.activeElement!==ui.roll){e.preventDefault();requestRoll();}
+window.addEventListener('keydown',e=>{if(document.querySelector('.modal.open')||$('about').classList.contains('open')||!menu.hidden)return;const pl=curP();if(!isMine(pl))return;
+  if((e.code==='Space'||e.key==='Enter')&&(S.phase==='roll'||S.phase==='orderRoll')&&!(e.target&&e.target.closest&&e.target.closest('#diceChips'))){e.preventDefault();requestRoll();}
   if(S.phase!=='choose')return;
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){const opts=options();const dis=[...new Set(opts.map(o=>o.di))].sort();if(dis.length>1){const i=dis.indexOf(S.sel);S.sel=dis[(i+(e.key==='ArrowRight'?1:dis.length-1))%dis.length];refreshChoice();}e.preventDefault();}
   const n=parseInt(e.key,10);if(n>=1&&n<=4){const pc=pl.pieces[n-1];const o=options().find(x=>x.pc===pc&&x.di===S.sel);if(o)requestMove(o);}});
@@ -2025,6 +2184,12 @@ function buildWays(){
 }
 function stepWorldFx(dt){
   if(siege)siege.update(dt||0);
+  const pose=siege?siege.volcanoPose():null;
+  syncVolcanoBody(pose);
+  if(ruinsGroup){
+    const sink=pose?-0.88*pose.cover:0;
+    ruinsGroup.position.y+=(sink-ruinsGroup.position.y)*Math.min(1,(dt||0)*4);
+  }
   const u=worldFx.userData;
   if(u.rings)u.rings.forEach((g,i)=>{
     const pulse=0.55+0.45*Math.sin(time*2.6+i*1.3);
@@ -2037,21 +2202,39 @@ function stepWorldFx(dt){
     g.userData.disc.material.opacity=0.2+0.3*pulse;
     g.userData.disc.scale.setScalar(0.9+0.12*pulse);
   });
-  if(S.world==='sun'&&siege){
-    const dim=!!siege.settled();
-    if(dim!==stepWorldFx.dim){stepWorldFx.dim=dim;applyWorldLook();}
+  if(S.world==='sun')applyWorldLook();
+}
+let volcanoBody=null,volcanoKey='';
+function syncVolcanoBody(pose){
+  if(!world)return;
+  if(!pose||pose.cover<0.05||pose.height<0.2){
+    if(volcanoBody){world.removeBody(volcanoBody);volcanoBody=null;volcanoKey='';}
+    return;
   }
+  const key=[pose.radiusTop,pose.radiusBottom,pose.height,pose.y].map(n=>n.toFixed(2)).join();
+  if(!volcanoBody){volcanoBody=new CANNON.Body({mass:0});world.addBody(volcanoBody);}
+  volcanoBody.position.set(0,pose.y,0);
+  if(key===volcanoKey)return;
+  volcanoKey=key;
+  volcanoBody.shapes.length=0;volcanoBody.shapeOffsets.length=0;volcanoBody.shapeOrientations.length=0;
+  volcanoBody.addShape(new CANNON.Cylinder(pose.radiusTop,pose.radiusBottom,pose.height,10),new CANNON.Vec3(0,0,0),cylQ);
+  diceBodies.forEach(b=>{if(Math.hypot(b.position.x,b.position.z)<pose.radiusBottom+0.8)b.wakeUp();});
 }
 function flashWay(ti){const gate=worldFx.children.find(m=>m.userData.portal===ti);if(!gate)return;animate(480,k=>{gate.scale.setScalar(1+Math.sin(Math.PI*k)*0.45);});}
+const sunBright={top:new THREE.Color(0xFFE7A0),bottom:new THREE.Color(0xFFF8E4),hemi:new THREE.Color(0xFFF6D2),sun:new THREE.Color(0xFFE08A),hemiI:1.05,sunI:1.15};
+const sunDark={top:new THREE.Color(),bottom:new THREE.Color(),hemi:new THREE.Color(),sun:new THREE.Color(0xC4B090)};
 function applyWorldLook(){
   const id=S.world;if(!id||!scene.fog)return;
   if(id==='sun'){
-    const d=isDark(),dim=siege&&siege.settled();
-    if(dim){
-      skyU.top.value.set(d?0x08101F:0x4E7EAE);skyU.bottom.value.set(d?0x241C32:0xCDB892);
-      hemi.intensity=(d?0.38:0.72)*0.7;hemi.color.set(d?0x8A98C4:0xE4D2B4);
-      sun.intensity=(d?0.42:0.95)*0.58;sun.color.set(0xC4B090);
-    }else{skyU.top.value.set(0xFFE7A0);skyU.bottom.value.set(0xFFF8E4);hemi.intensity=1.05;hemi.color.set(0xFFF6D2);sun.intensity=1.15;sun.color.set(0xFFE08A);}
+    const d=isDark(),dim=siege?siege.sunDim():0;
+    sunDark.top.set(d?0x08101F:0x4E7EAE);sunDark.bottom.set(d?0x241C32:0xCDB892);sunDark.hemi.set(d?0x8A98C4:0xE4D2B4);
+    const hemiDark=(d?0.38:0.72)*0.7,sunDarkI=(d?0.42:0.95)*0.58;
+    skyU.top.value.copy(sunBright.top).lerp(sunDark.top,dim);
+    skyU.bottom.value.copy(sunBright.bottom).lerp(sunDark.bottom,dim);
+    hemi.color.copy(sunBright.hemi).lerp(sunDark.hemi,dim);
+    hemi.intensity=sunBright.hemiI+(hemiDark-sunBright.hemiI)*dim;
+    sun.color.copy(sunBright.sun).lerp(sunDark.sun,dim);
+    sun.intensity=sunBright.sunI+(sunDarkI-sunBright.sunI)*dim;
   }
   else if(id==='flood'){hemi.color.set(0xD5E7FF);sun.color.set(0xC5D6EE);}
   else if(id==='ash'){const d=isDark();skyU.top.value.set(d?0x4A160E:0xE7A07A);skyU.bottom.value.set(d?0x2A100C:0xF0C2A4);hemi.color.set(0xFFB088);sun.color.set(0xFF8A4A);sun.intensity+=0.45;}
@@ -2063,12 +2246,14 @@ function viewerH(){
   const cur=curP();if(cur&&!cur.cpu&&!cur.out)return cur.h;
   const me=meP();return me?me.h:(cur?cur.h:0);
 }
+function pieceTrack(pc){if(pc.at!=null)return pc.at;if(pc.p<0||pc.p>LAST)return null;return trackIndex(pc.h,pc.p);}
 function enemyNear(viewer,pc){
   if(pc.p<0||pc.p===GOAL)return true;
-  if(pc.p>LAST)return false;
-  const ti=trackIndex(pc.h,pc.p);
-  return allPieces().some(o=>{if(o.h!==viewer||o.p<0||o.p>LAST)return false;const d=Math.abs(ti-trackIndex(o.h,o.p));return Math.min(d,NTRACK-d)<=1;});
+  if(pc.at==null&&pc.p>LAST)return false;
+  const ti=pieceTrack(pc);if(ti==null)return false;
+  return allPieces().some(o=>{if(o.h!==viewer)return false;const ot=pieceTrack(o);if(ot==null)return false;const d=Math.abs(ti-ot);return Math.min(d,NTRACK-d)<=1;});
 }
+function veilHides(pc){return S.world==='mist'&&pc&&pc.h!==viewerH()&&!enemyNear(viewerH(),pc);}
 function applyVeil(){
   const mist=S.world==='mist',viewer=viewerH();
   allPieces().forEach(pc=>{
@@ -2081,6 +2266,7 @@ function applyVeil(){
       pc.mesh.userData.ring.position.y=0.02;
     }
   });
+  if(mist)markers.forEach(m=>{const mv=m.userData.move;if(mv&&mv.pc&&veilHides(mv.pc))m.visible=false;});
   dieMats.forEach(m=>{m.fog=!mist;});
 }
 function setWorld(id,intro){
@@ -2438,7 +2624,7 @@ function paintXRPanel(){
   const bh=108,gap=16,bw=(W-96-gap)/2;
   if(S.phase==='over'){paintBtn(g,'again',NET.on?'Back to the title':'Play again',48,y,W-96,bh,true);y+=bh+gap;}
   if(xrPlaced){paintBtn(g,'move',xrPlacing?'Placing…':'Move board',48,y,W-96,bh,xrPlacing);y+=bh+gap;}
-  paintBtn(g,'sound',soundOn?'Sound on':'Sound off',48,y,bw,bh,false);
+  paintBtn(g,'sound',(themeOn||fxOn)?'Sound on':'Sound off',48,y,bw,bh,false);
   paintBtn(g,'exit','Exit',48+bw+gap,y,bw,bh,false);
   panelTex.needsUpdate=true;
 }
@@ -2451,7 +2637,7 @@ function pressPanel(id){
   if(id==='smaller')setBoardCm(boardCm-BOARD_CM_STEP);
   else if(id==='larger')setBoardCm(boardCm+BOARD_CM_STEP);
   else if(id==='move'){xrPlacing=true;reticle.visible=true;paintXRPanel();paintViewHud();}
-  else if(id==='sound')setSound(!soundOn);
+  else if(id==='sound')setSound(!(themeOn||fxOn));
   else if(id==='exit'){const s=renderer.xr.getSession();if(s)s.end();}
   else if(id==='again'){closeModal('win');if(NET.on)leaveOnline(false);else if(S.config)newGame(S.config);}
   else if(id.indexOf('die-')===0){const di=+id.slice(4);const d=S.pending[di];if(d&&!d.used&&S.phase==='choose'&&options().some(o=>o.di===di)){S.sel=di;refreshChoice();}}

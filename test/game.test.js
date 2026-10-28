@@ -191,13 +191,33 @@ test('a shifting stone carries the troop and captures only on arrival', () => {
   assert.equal(taken.captures[0], waiting);
 });
 
-test('a shifting stone off your road is an ordinary square', () => {
+test('a portal carries you even when the pair is off your road, and never captures the troop on the stone you enter', () => {
   const mover = piece(3, 0, 29);
   const foe = piece(0, 0, 13);
   const r = R.moveResult([mover, foe], mover, 1, 'ways');
-  assert.equal(r.shift, undefined);
+  assert.equal(r.shift, true);
+  assert.equal(r.at, 47);
   assert.equal(r.np, 30);
-  assert.equal(r.captures[0], foe);
+  assert.equal(r.captures.length, 0);
+  const waiting = piece(1, 0, 30);
+  const taken = R.moveResult([mover, waiting], mover, 1, 'ways');
+  assert.equal(taken.captures[0], waiting);
+  const ghost = piece(2, 0, 0);
+  ghost.at = 47;
+  const takenGhost = R.moveResult([mover, ghost], mover, 1, 'ways');
+  assert.equal(takenGhost.captures[0], ghost);
+  const blocked = [mover, piece(1, 0, 30), piece(1, 1, 30)];
+  assert.equal(R.moveResult(blocked, mover, 1, 'ways'), null);
+  const stood = piece(3, 0, 30);
+  stood.at = 47;
+  const step = R.moveResult([stood], stood, 1, 'ways');
+  assert.equal(step.at, 48);
+  assert.equal(step.np, 30);
+  const gate = piece(3, 0, 30);
+  gate.at = 50;
+  const home = R.moveResult([gate], gate, 1, null);
+  assert.equal(home.np, 0);
+  assert.equal(home.at, undefined);
 });
 
 test('world events deal every event before one can repeat', () => {

@@ -36,6 +36,7 @@ function eventMs(e) {
       return 1750 + (intro[e.id] || 2000);
     }
     case 'move': {
+      if (e.fromAt != null && !e.exit) return 500 + 480 + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
       const span = e.exit ? 0 : Math.max(0, (e.shift ? e.land : e.to) - e.from);
       return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
     }
@@ -262,7 +263,7 @@ function roll(room, auto) {
   if (g.dbl && g.doubles === 3) {
     const lost = g.pieces.filter((pc) => pc.h === h && pc.p >= 0 && pc.p < GOAL).sort((x, y) => y.p - x.p)[0];
     emit(room, { type: 'thirdDouble', h, vals: [a, b], idx: lost ? lost.idx : null, from: lost ? lost.p : null, auto: !!auto });
-    if (lost) lost.p = -1;
+    if (lost) { lost.p = -1; delete lost.at; }
     return nextTurn(room);
   }
   g.pending = [{ v: a }, { v: b }];
@@ -297,12 +298,15 @@ function applyMove(room, opt, auto) {
   const d = g.pending[di];
   d.used = true;
   const from = pc.p;
+  const fromAt = pc.at != null ? pc.at : null;
   pc.p = r.np;
+  if (r.at != null) pc.at = r.at;
+  else delete pc.at;
   const captures = r.captures.map((o) => ({ h: o.h, idx: o.idx, from: o.p }));
-  r.captures.forEach((o) => { o.p = -1; g.pending.push({ v: BONUS, bonus: true }); });
+  r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: BONUS, bonus: true }); });
   const goal = pc.p === GOAL;
   if (goal) g.pending.push({ v: BONUS, bonus: true });
-  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, to: pc.p, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
+  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
   if (g.pieces.filter((x) => x.h === pc.h).every((x) => x.p === GOAL)) return win(room, pc.h, 'vault');
   continueTurn(room);
 }

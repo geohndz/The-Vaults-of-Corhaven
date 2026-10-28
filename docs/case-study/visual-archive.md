@@ -66,6 +66,42 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 21 | [2026-10-28-21-shifting-portals-desktop.png](./screenshots/2026-10-28-21-shifting-portals-desktop.png) | The Shifting Ways | A glowing portal stands on each of the four stones, with no line between them |
 | 25 | [2026-10-28-25-plus-two-badge-desktop.png](./screenshots/2026-10-28-25-plus-two-badge-desktop.png) | Roster | Solmere's avatar carries a +2 while the Sun blesses that kingdom |
 
+## Session: 2026-10-28 — Sun, fog, and the cone
+
+**Trigger:** The sun snapped from bright to dark at the end of the intro, the mist was too heavy for the frame rate, and the ruins stuck out of the volcano.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 26 | [2026-10-28-26-sun-dim-scorch-desktop.png](./screenshots/2026-10-28-26-sun-dim-scorch-desktop.png) | The Sun's Ascendance | The room eases from bright to dark through the intro. The lances stay thick and leave a hot trail |
+| 27 | [2026-10-28-27-ash-volcano-dice-desktop.png](./screenshots/2026-10-28-27-ash-volcano-dice-desktop.png) | Ashen Skies | The ruins sit down inside the cone, and a die rests on the lava beside it |
+| 28 | [2026-10-28-28-mist-fog-desktop.png](./screenshots/2026-10-28-28-mist-fog-desktop.png) | The Veil of Mists | The bank still rolls across the road, drawn with a lighter fog so the board stays readable |
+
+## Session: 2026-10-28 — Water through the yards
+
+**Trigger:** The castle yards no longer need to stay dry, and the flood should keep its old surface while sitting lower.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 29 | [2026-10-28-29-flood-yards-desktop.png](./screenshots/2026-10-28-29-flood-yards-desktop.png) | The Great Flood | The water runs through the four yards. The sheet stays shallow, and the road still reads through it |
+
+## Session: 2026-10-28 — Title, settings, and the lore
+
+**Trigger:** The title needed a way into the lore, the theme and the effects needed their own levels, and the roll control should be the dice themselves.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 31 | [2026-10-28-31-title-gear-about-desktop.png](./screenshots/2026-10-28-31-title-gear-about-desktop.png) | Title | Gear at the top left. The chronicle button is now About the Vaults of Corhaven |
+| 32 | [2026-10-28-32-settings-desktop.png](./screenshots/2026-10-28-32-settings-desktop.png) | Settings | Theme and effects each have a level and a checkbox. Unchecking one silences it and disables its slider |
+| 33 | [2026-10-28-33-about-kings-desktop.png](./screenshots/2026-10-28-33-about-kings-desktop.png) | About | One page for the chronicle, the kingdoms, the March, the kings, and the world events |
+
+## Session: 2026-10-28 — The names of the March
+
+**Trigger:** The world events needed names with the weight of the chronicle.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 35 | [2026-10-28-35-world-event-names-desktop.png](./screenshots/2026-10-28-35-world-event-names-desktop.png) | World events | The Drowning Tide, the Heartfire Rising, the Wild Awakening, the Searing Seal, the Veil of Mist, and the Stones of the Pact |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
