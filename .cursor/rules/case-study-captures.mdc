@@ -1,0 +1,38 @@
+---
+description: After meaningful Corhaven work, capture UI screenshots and update the case study visual archive.
+alwaysApply: true
+---
+
+# Case study — visual capture
+
+When Geo works on **The Vaults of Corhaven** (`board-game/v3`) and the turn produces something **meaningful for a portfolio** (new/changed screens, flows, components, HUD states, or design-system updates), finish by documenting it visually—not only in code or prose.
+
+## Meaningful (capture)
+
+- New or redesigned screens, modals, or HUD layouts
+- Online lobby steps, in-match states (your turn vs waiting), toasts, errors
+- Style-guide / interface-inventory updates
+- Notable before/after UX (reference git commit in caption)
+
+## Skip capture
+
+- Typo-only, refactors with no UI change, dependency bumps, pure docs unrelated to UI
+
+## Capture steps
+
+1. **Run the UI:** `python3 -m http.server 8765` from repo root, or production URL for online/WebSocket flows.
+2. **Browser:** Use `cursor-ide-browser` — navigate, set mobile viewport via CDP when relevant, snapshot to interact, `browser_take_screenshot` with filename under `docs/case-study/screenshots/`.
+3. **Sync:** Run `./scripts/sync-case-study-screenshots.sh` (screenshots land in Cursor temp first).
+4. **Log:** Append a session table row to `docs/case-study/visual-archive.md` (file link, screen name, 1-line design note, commit SHA if applicable).
+5. **Timeline:** If the change is a product milestone, add a one-line link to the visual in `docs/case-study-development-log.md` under **Visual archive** or the relevant timeline phase.
+
+## Naming
+
+`YYYY-MM-DD-##-kebab-description-{desktop|mobile}.png` — increment `##` per session.
+
+## Online / XR
+
+- Static server cannot host WS: capture join/title locally; use **deployed** app for create room, kingdom banners, waiting room.
+- Quest passthrough: capture when hardware or simulator is available; note limitation in archive.
+
+Keep capture count modest (1–3 images per request) unless Geo asks for a full audit.

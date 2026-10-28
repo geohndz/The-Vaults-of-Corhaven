@@ -82,17 +82,17 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .roster li.cur b{font-size:18px;color:var(--gold-bright)}
 .roster li.out{opacity:.45}
 .roster li.out b{text-decoration:line-through}
-#menuWrap{right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#menuWrap{right:calc(env(safe-area-inset-right,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .menuBtn{display:grid;place-items:center;width:50px;height:50px;padding:0;border-radius:50%;background:linear-gradient(160deg,var(--leather-2),var(--leather));border:2px solid var(--gold);color:var(--gold-bright);box-shadow:0 6px 16px rgba(0,0,0,.4)}
 .menuBtn:hover,.menuBtn[aria-expanded="true"]{border-color:var(--gold-bright)}
 .menuBtn svg{width:22px;height:22px}
-.menu{display:flex;flex-direction:column;min-width:200px;padding:6px;transform-origin:bottom right}
+.menu{display:flex;flex-direction:column;min-width:200px;padding:6px;transform-origin:top right}
 .menu:not([hidden]){animation:menuIn .14s ease-out}
 .menu[hidden],.menu [hidden]{display:none}
 .menu button{background:none;border:0;border-radius:8px;padding:10px 14px;text-align:left;font-size:16px}
 .menu button:hover,.menu button:focus-visible{background:rgba(233,199,106,.16)}
 .menu button:focus-visible{outline-offset:-2px}
-@keyframes menuIn{from{opacity:0;transform:translateY(6px) scale(.97)}}
+@keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.97)}}
 .chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35)}
 .chip:hover{border-color:var(--gold-bright)}
 #bottomBar{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:calc(100vw - 24px)}
@@ -174,11 +174,18 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   .roster b{font-size:14px}
   .roster li.cur b{font-size:15px}
   .roster small{font-size:12px}
-  #menuWrap{right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--phone-stack,150px))}
+  #menuWrap{right:10px;top:calc(env(safe-area-inset-top,0px) + 8px)}
   .menuBtn{width:44px;height:44px}
+  #meCard{max-width:calc(100vw - 128px)}
   #bottomBar{bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px}
-  .roll{min-width:0;max-width:100%;padding:12px 22px;font-size:19px}
+  .roll{min-width:0;max-width:100%;padding:12px 22px;font-size:19px;white-space:nowrap}
   .dchip{width:48px;height:48px}
+  /* The bottom stack keeps one footprint whether or not it is your turn, so the roster and the board never jump when the button or the dice come and go. Testers got motion-sick from that. */
+  .roll[hidden]{display:block;visibility:hidden;pointer-events:none}
+  .dice[hidden]{display:flex;visibility:hidden;min-height:48px}
+  .hint:empty{display:block;min-height:1.4em}
+  .roster li.cur .av{width:34px;height:34px}
+  .roster li.cur b{font-size:14px}
   .sheet{padding:18px 16px 16px}
   .sheet h1{font-size:34px}
   .roomcode{padding:8px 10px;gap:8px}
@@ -218,6 +225,7 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 <ol class="hud roster" id="tally" aria-label="Other players"></ol>
 
 <div class="hud" id="menuWrap">
+  <button class="menuBtn" id="btnMenu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
   <div class="menu panel" id="menu" role="menu" aria-label="Game menu" hidden>
     <button role="menuitem" id="btnStory">Chronicle</button>
     <button role="menuitem" id="btnRules">Rules</button>
@@ -226,7 +234,6 @@ body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
     <button role="menuitem" id="btnLeave" hidden>Leave room</button>
     <button role="menuitem" id="btnXR" hidden="">Play in the room</button>
   </div>
-  <button class="menuBtn" id="btnMenu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
 </div>
 
 <div class="hud" id="bottomBar">
@@ -1000,6 +1007,9 @@ function meP(){
   return S.players.find(p=>p.h===localMe)||S.players.find(p=>!p.cpu)||c||null;
 }
 function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES[pl.h].name:pl.cpu?'Computer':'Player'};}
+/* Two dice are thrown for the order, so the words name both dice rather than claim a single "7" was rolled. The total still decides the order. */
+function orderWords(a,b){return a===b?`double ${a}s, ${a+b} in all`:`${a} and ${b}, ${a+b} in all`;}
+function orderTag(pl){if(!S.ordering||!pl.orderRoll)return'';return' · rolled '+(pl.orderVals?pl.orderVals[0]+' + '+pl.orderVals[1]:pl.orderRoll);}
 function coinsFor(pl,el){el.innerHTML='';pl.pieces.forEach(pc=>{const c=document.createElement('span');c.className='coin'+(pc.p===GOAL?' on':'');el.appendChild(c);});el.title=`${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;}
 function renderTally(){
   const me=meP(),live=S.phase!=='over';
@@ -1007,7 +1017,7 @@ function renderTally(){
   if(me){
     const L=labelsFor(me),av=$('meAv');
     av.className='av'+(me===curP()&&live&&!me.out?' cur':'');av.style.setProperty('--c',HOUSES[me.h].css);
-    ui.name.textContent=L.name;$('meKingdom').textContent=L.sub+(S.ordering&&me.orderRoll?' · rolled '+me.orderRoll:'');
+    ui.name.textContent=L.name;$('meKingdom').textContent=L.sub+orderTag(me);
     coinsFor(me,$('meCoins'));
   }
   ui.tally.innerHTML='';
@@ -1017,7 +1027,7 @@ function renderTally(){
     const av=document.createElement('span');av.className='av'+(cur?' cur':'');av.style.setProperty('--c',HOUSES[pl.h].css);
     const crest=document.createElement('span');crest.className='crest';av.appendChild(crest);li.appendChild(av);
     const who=document.createElement('div');const b=document.createElement('b');b.textContent=L.name;who.appendChild(b);
-    const sm=document.createElement('small');sm.append(L.sub+(S.ordering&&pl.orderRoll?' · rolled '+pl.orderRoll:''));
+    const sm=document.createElement('small');sm.append(L.sub+orderTag(pl));
     const cs=document.createElement('span');cs.className='coins';coinsFor(pl,cs);sm.appendChild(cs);
     if(pl.away&&!pl.out){const a=document.createElement('span');a.className='away';a.dataset.awaySince=pl.awaySince;sm.appendChild(a);}
     who.appendChild(sm);li.appendChild(who);
@@ -1170,7 +1180,7 @@ async function decideOrder(){
   beginTurn(false);
 }
 async function rankGroup(ids,gid){
-  for(const i of ids){S.players[i].orderRoll=0;}
+  for(const i of ids){S.players[i].orderRoll=0;S.players[i].orderVals=null;}
   for(const i of ids){await orderRollFor(i,gid);if(gid!==S.gid)return ids;}
   const sorted=ids.slice().sort((a,b)=>S.players[b].orderRoll-S.players[a].orderRoll);
   const out=[];
@@ -1194,7 +1204,7 @@ function orderRollFor(i,gid){
 }
 async function finishOrder(pl,a,b,gid){
   if(gid!==S.gid||!pl)return;
-  pl.orderRoll=a+b;say(`${HOUSES[pl.h].short} rolled ${a+b}.`);S.phase='moving';renderTurn();
+  pl.orderRoll=a+b;pl.orderVals=[a,b];say(`${HOUSES[pl.h].short} rolled ${orderWords(a,b)}.`);S.phase='moving';renderTurn();
   await wait(900);if(gid!==S.gid)return;
   const r=S.orderRes;S.orderRes=null;if(r)r();
 }
@@ -1678,7 +1688,7 @@ async function playEvent(e,epoch){
     case'orderRoll':
       S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();
       await throwDice(e.h,e.vals);if(gone())return;
-      pl.orderRoll=e.total;say(autoNote(e,`the dice were rolled for ${nm}`)+`${nm} rolled ${e.total}.`);S.phase='moving';renderTurn();
+      pl.orderRoll=e.total;pl.orderVals=e.vals;say(autoNote(e,`the dice were rolled for ${nm}`)+`${nm} rolled ${orderWords(e.vals[0],e.vals[1])}.`);S.phase='moving';renderTurn();
       await wait(900);return;
     case'orderTie':
       toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);renderTurn();
@@ -1864,17 +1874,17 @@ function limitTilt(){
   controls.maxPolarAngle=lo;
 }
 /* On a phone the turn card and the buttons take the top and bottom, so the board is framed in the band between them. */
-function fitPhoneFrame(w,h){
+function fitPhoneFrame(w,h,zoom){
   const me=$('meCard'),list=$('tally');
   const openTop=(me.hidden?0:me.getBoundingClientRect().bottom)+8;
-  const openBot=Math.min($('bottomBar').getBoundingClientRect().top,list.childElementCount?list.getBoundingClientRect().top:1e9,btnMenu.getBoundingClientRect().top)-8;
+  const openBot=Math.min($('bottomBar').getBoundingClientRect().top,list.childElementCount?list.getBoundingClientRect().top:1e9)-8;
   const openH=Math.max(100,openBot-openTop),mid=(openTop+openBot)/2,half=8.2;
   const project=()=>{const v=new THREE.Vector3();let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
     [[-half,.7,-half],[half,.7,-half],[-half,0,-half],[half,0,-half],[-half,0,half],[half,0,half]].forEach(p=>{v.set(p[0],p[1],p[2]).project(camera);const x=(v.x*.5+.5)*w,y=(-v.y*.5+.5)*h;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);});
     return{bw:Math.max(1,maxX-minX),bh:Math.max(1,maxY-minY),cy:(minY+maxY)/2}};
   let box=project();
   const scale=Math.min(1.35,Math.max(.55,Math.min((w-16)/box.bw,openH/box.bh)));
-  if(Math.abs(scale-1)>.03&&controls){
+  if(zoom!==false&&Math.abs(scale-1)>.03&&controls){
     const d=Math.max(7,camera.position.distanceTo(controls.target)/scale);
     const dir=camera.position.clone().sub(controls.target).normalize();
     camera.position.copy(controls.target).addScaledVector(dir,d);
@@ -1889,24 +1899,51 @@ function viewportBox(){
   if(v&&v.width>2&&v.height>2)return{w:v.width,h:v.height,x:v.offsetLeft||0,y:v.offsetTop||0};
   return{w:window.innerWidth,h:window.innerHeight,x:0,y:0};
 }
-function resize(){if(renderer.xr.isPresenting)return;const box=viewportBox();const w=box.w,h=box.h;if(w<2||h<2)return;
-  canvas.style.left=box.x+'px';canvas.style.top=box.y+'px';canvas.style.width=w+'px';canvas.style.height=h+'px';
-  renderer.setSize(w,h,false);camera.aspect=w/h;camera.clearViewOffset();camera.updateProjectionMatrix();
-  const narrow=w<=640;
+/* On a phone the side controls sit above the bottom stack. */
+function setPhoneStack(narrow){
   if(narrow)document.documentElement.style.setProperty('--phone-stack',Math.ceil($('bottomBar').getBoundingClientRect().height+10)+'px');
   else document.documentElement.style.removeProperty('--phone-stack');
-  const dist=25.5*Math.max(1,1.05/camera.aspect);const dir=camera.position.clone().sub(controls?controls.target:new THREE.Vector3()).normalize();
-  camera.position.copy(dir.multiplyScalar(dist));
-  if(controls){controls.maxDistance=Math.max(42,dist*1.6);limitTilt();controls.update();}
-  if(narrow)fitPhoneFrame(w,h);
 }
-function reflowPhone(){if((canvas.clientWidth||innerWidth)>640)return;const h=[$('bottomBar').offsetHeight,$('meCard').offsetHeight,$('tally').offsetHeight].join();if(h===reflowPhone.h)return;reflowPhone.h=h;resize();}
-window.addEventListener('resize',resize);
-if(window.visualViewport){visualViewport.addEventListener('resize',resize);visualViewport.addEventListener('scroll',resize);}
-resize();
+function placeCanvas(){const box=viewportBox();canvas.style.left=box.x+'px';canvas.style.top=box.y+'px';}
+/* The camera is only re-framed when the shape of the screen changes (first paint, rotation, leaving XR) or when the HUD appears or clears (a game starting or ending).
+   A turn change, a roll, or the browser bar sliding in never moves the board: user testers found that nauseating. Once the player has pinched or dragged, their framing is kept until the screen rotates. */
+let frameW=0,userFramed=false;
+if(controls)controls.addEventListener('start',()=>{userFramed=true;});
+function resize(force){if(renderer.xr.isPresenting)return;const box=viewportBox();const w=box.w,h=box.h;if(w<2||h<2)return;
+  canvas.style.left=box.x+'px';canvas.style.top=box.y+'px';canvas.style.width=w+'px';canvas.style.height=h+'px';
+  renderer.setSize(w,h,false);camera.aspect=w/h;
+  const narrow=w<=640,turned=w!==frameW;
+  setPhoneStack(narrow);
+  if(!turned&&force!==true){
+    /* Height-only change: keep the distance and any zoom the player set, just carry the letterbox offset over. */
+    if(camera.view&&camera.view.enabled)camera.setViewOffset(w,h,0,camera.view.offsetY,w,h);else camera.updateProjectionMatrix();
+    if(controls){limitTilt();controls.update();}
+    return;
+  }
+  if(turned)userFramed=false;
+  frameW=w;camera.clearViewOffset();camera.updateProjectionMatrix();
+  if(!userFramed){
+    const dist=25.5*Math.max(1,1.05/camera.aspect);const dir=camera.position.clone().sub(controls?controls.target:new THREE.Vector3()).normalize();
+    camera.position.copy(dir.multiplyScalar(dist));
+    if(controls)controls.maxDistance=Math.max(42,dist*1.6);
+  }
+  if(controls){limitTilt();controls.update();}
+  if(narrow)fitPhoneFrame(w,h,!userFramed);
+}
+/* Called whenever the HUD is redrawn. Only re-frames when the HUD's shape changes (the turn card or roster appearing or clearing), never because a button toggled. */
+function reflowPhone(){
+  if((canvas.clientWidth||innerWidth)>640)return;
+  setPhoneStack(true);
+  const sig=[$('meCard').hidden,$('tally').childElementCount>0].join();
+  if(sig===reflowPhone.sig)return;reflowPhone.sig=sig;resize(true);
+}
+window.addEventListener('resize',()=>resize());
+if(window.visualViewport){visualViewport.addEventListener('resize',()=>resize());visualViewport.addEventListener('scroll',placeCanvas);}
+resize(true);
 
 /* ================= Loop ================= */
 const reduced=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+if(controls)controls.enableDamping=!reduced;
 let last=performance.now(),time=0,xrFrame=null;
 function loop(now,frame){
   xrFrame=frame||null;
@@ -2558,7 +2595,7 @@ function onXREnd(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   if(world)world.gravity.y=-30;
   if(controls)controls.enabled=true;
-  applyTheme();resize();
+  applyTheme();userFramed=false;resize(true);
 }
 function updateXR(frame,dt){
   const xrCam=renderer.xr.getCamera(camera);
