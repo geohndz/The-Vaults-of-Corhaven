@@ -162,3 +162,40 @@ test('random games with leavers and timeouts always finish cleanly', () => {
     assert.equal(room.status, 'over', 'seed ' + seed);
   }
 });
+
+const piece = (h, idx, p) => ({ h, idx, p });
+
+test('a blessed march is two squares longer, and never longer than the vault', () => {
+  const road = [piece(3, 0, 10)];
+  assert.equal(R.moveResult(road, road[0], 4, 'flood').np, 16);
+  assert.equal(R.moveResult(road, road[0], 4, 'ash').np, 14);
+  const near = [piece(3, 0, 70)];
+  assert.equal(R.moveResult(near, near[0], 1, 'flood').np, R.GOAL);
+  const keep = [piece(3, 0, -1)];
+  assert.equal(R.moveResult(keep, keep[0], 2, 'flood'), null);
+  assert.equal(R.moveResult(keep, keep[0], 1, 'flood').exit, true);
+});
+
+test('a shifting stone carries the troop and captures only on arrival', () => {
+  const mover = piece(0, 0, 12);
+  const leftBehind = piece(2, 0, 47);
+  const passed = R.moveResult([mover, leftBehind], mover, 1, 'ways');
+  assert.equal(passed.shift, true);
+  assert.equal(passed.land, 13);
+  assert.equal(R.trackIndex(0, passed.land), 13);
+  assert.equal(passed.np, 47);
+  assert.equal(passed.captures.length, 0);
+  const waiting = piece(2, 0, 13);
+  const taken = R.moveResult([mover, waiting], mover, 1, 'ways');
+  assert.equal(taken.np, 47);
+  assert.equal(taken.captures[0], waiting);
+});
+
+test('a shifting stone off your road is an ordinary square', () => {
+  const mover = piece(3, 0, 29);
+  const foe = piece(0, 0, 13);
+  const r = R.moveResult([mover, foe], mover, 1, 'ways');
+  assert.equal(r.shift, undefined);
+  assert.equal(r.np, 30);
+  assert.equal(r.captures[0], foe);
+});

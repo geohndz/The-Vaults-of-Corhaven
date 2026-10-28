@@ -31,9 +31,10 @@ function eventMs(e) {
     case 'thirdDouble': return 2300;
     case 'noMove': return 1300;
     case 'forfeit': return 900;
+    case 'world': return 2400;
     case 'move': {
-      const steps = e.exit ? 0 : e.to - e.from;
-      return 500 + (e.exit ? 440 : steps * (steps > 8 ? 95 : 165)) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
+      const span = e.exit ? 0 : Math.max(0, (e.shift ? e.land : e.to) - e.from);
+      return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
     }
     default: return 0;
   }
@@ -126,6 +127,7 @@ export function start(room, id, now) {
     deadline: null,
     winner: null,
     winReason: null,
+    world: null,
   };
   step(room, now, () => beginOrderGroup(room));
   return null;
@@ -201,14 +203,26 @@ function beginTurn(room, again) {
   emit(room, { type: 'turn', h: curH(room), again: !!again });
 }
 
+function openWorld(room) {
+  const ids = Object.keys(R.WORLD);
+  const id = ids[randomInt(ids.length)];
+  room.game.world = id;
+  emit(room, { type: 'world', id });
+}
+
 function nextTurn(room) {
   const g = room.game;
   g.dbl = false;
   g.pending = [];
+  const from = g.cur;
+  let to = from;
   for (let k = 1; k <= g.players.length; k++) {
     const i = (g.cur + k) % g.players.length;
-    if (!isOut(room, g.players[i].h)) { g.cur = i; break; }
+    if (!isOut(room, g.players[i].h)) { to = i; break; }
   }
+  g.cur = to;
+  /* A round is one turn each. Wrapping back, or staying on the only kingdom left, is when the March turns. */
+  if (to <= from) openWorld(room);
   beginTurn(room, false);
 }
 
@@ -233,7 +247,7 @@ function roll(room, auto) {
 function continueTurn(room) {
   const g = room.game;
   const h = curH(room);
-  const opts = R.options(g.pieces, h, g.pending);
+  const opts = R.options(g.pieces, h, g.pending, g.world);
   if (!opts.length) {
     const left = g.pending.filter((d) => !d.used);
     if (left.length) emit(room, { type: 'noMove', h, vals: [...new Set(left.map((d) => d.v))], bonusOnly: left.length === 1 && !!left[0].bonus });
@@ -262,7 +276,7 @@ function applyMove(room, opt, auto) {
   r.captures.forEach((o) => { o.p = -1; g.pending.push({ v: BONUS, bonus: true }); });
   const goal = pc.p === GOAL;
   if (goal) g.pending.push({ v: BONUS, bonus: true });
-  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, to: pc.p, exit: !!r.exit, captures, goal, auto: !!auto });
+  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, to: pc.p, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
   if (g.pieces.filter((x) => x.h === pc.h).every((x) => x.p === GOAL)) return win(room, pc.h, 'vault');
   continueTurn(room);
 }
@@ -294,7 +308,7 @@ export function playMove(room, id, idx, di, now) {
   const seat = seatOf(room, id);
   if (room.status !== 'playing' || !seat || seat.out) return 'nope';
   if (curH(room) !== seat.h || g.phase !== 'choose') return 'not-your-turn';
-  const opt = R.options(g.pieces, seat.h, g.pending).find((o) => o.pc.idx === idx && o.di === di);
+  const opt = R.options(g.pieces, seat.h, g.pending, g.world).find((o) => o.pc.idx === idx && o.di === di);
   if (!opt) return 'illegal';
   step(room, now, () => applyMove(room, opt, false));
   return null;
@@ -373,7 +387,7 @@ export function tick(room, now) {
     if (room.status !== 'playing' || !g || !g.deadline || now < g.deadline) break;
     if (g.phase === 'roll' || g.phase === 'orderRoll') step(room, now, () => roll(room, true));
     else if (g.phase === 'choose') {
-      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending));
+      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending, g.world));
       step(room, now, () => (opt ? applyMove(room, opt, true) : continueTurn(room)));
     } else g.deadline = null;
     changed = true;
