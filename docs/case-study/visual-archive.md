@@ -110,6 +110,33 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 |---|------|-------------------|--------|
 | 36 | [2026-10-28-36-dice-right-roster-mobile.png](./screenshots/2026-10-28-36-dice-right-roster-mobile.png) | Phone HUD | Dice sit bottom right. The roster sits at the bottom left, with the troop count under the kingdom |
 
+## Session: 2026-10-28 — Tap to roll
+
+**Trigger:** The roll control was a gold dot. It should be the same die you tap to choose a march, with a small arrow that says to tap.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 37 | [2026-10-28-37-roll-dice-arrow-mobile.png](./screenshots/2026-10-28-37-roll-dice-arrow-mobile.png) | Phone HUD | The roll dice use the same bone face and red pips as a chosen march. A small arrow bobs above them |
+
+## Session: 2026-10-28 — Order total, march numbers
+
+**Trigger:** The order roll should show one total between the two dice. A march should keep each die's own number.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 38 | [2026-10-28-38-order-total-mobile.png](./screenshots/2026-10-28-38-order-total-mobile.png) | Order roll | A 1 and a 6 with 7 between them. The seat keeps the total |
+| 39 | [2026-10-28-39-split-dice-mobile.png](./screenshots/2026-10-28-39-split-dice-mobile.png) | Choosing a march | Each die keeps its own number, 3 and 6, with no total between them |
+
+## Session: 2026-10-28 — One roll, one announcement
+
+**Trigger:** The two dice should be one button. Your roll is a banner. Everyone else's roll sits beside the name.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 40 | [2026-10-28-40-roll-pair-mobile.png](./screenshots/2026-10-28-40-roll-pair-mobile.png) | Roll button | Both dice are one button. The arrow bobs above the pair |
+| 41 | [2026-10-28-41-roll-banner-mobile.png](./screenshots/2026-10-28-41-roll-banner-mobile.png) | Your roll | A banner names the two dice, 6 and 5, and the total, 11 in all |
+| 42 | [2026-10-28-42-roll-beside-name-mobile.png](./screenshots/2026-10-28-42-roll-beside-name-mobile.png) | Other players | Thornwald 9 and Solmere 5 sit beside the name. No banner |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

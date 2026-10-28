@@ -108,8 +108,11 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35)}
 .chip:hover{border-color:var(--gold-bright)}
 #bottomBar{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:calc(100vw - 24px)}
-.dice{display:flex;gap:10px;align-items:center}
+.dice{position:relative;display:flex;gap:10px;align-items:center}
 .dice[hidden]{display:none}
+.taparrow{position:absolute;left:50%;bottom:calc(100% + 4px);width:16px;height:10px;color:var(--gold-bright);filter:drop-shadow(0 1px 2px rgba(0,0,0,.85));pointer-events:none;transform:translateX(-50%);animation:tapbob 1.35s cubic-bezier(.45,0,.55,1) infinite}
+.taparrow svg{display:block;width:100%;height:100%}
+@keyframes tapbob{0%,100%{transform:translateX(-50%) translateY(2px)}50%{transform:translateX(-50%) translateY(-4px)}}
 .dchip{width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #8a6a3a;
   box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;place-items:center;transition:transform .12s ease}
 .dchip svg{width:100%;height:100%;display:block}
@@ -117,9 +120,16 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .dchip[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold-bright),0 0 18px rgba(255,210,100,.7);transform:translateY(-3px)}
 .dchip.used{opacity:.3;filter:grayscale(1);cursor:default;transform:none;box-shadow:none}
 .dchip.stuck{opacity:.55}
-.dchip.rolldie{border-color:var(--c,var(--gold));cursor:pointer}
-.dchip.rolldie:not(:disabled):hover{transform:translateY(-2px)}
-.dchip.rolldie:disabled{cursor:default;filter:saturate(.7)}
+.rollpair{display:flex;gap:10px;align-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;border-radius:14px}
+.rollpair:disabled{cursor:default}
+.rollpair:disabled .dchip{filter:saturate(.7)}
+.rollpair:not(:disabled):hover .dchip{transform:translateY(-2px)}
+.rollpair:not(:disabled):active .dchip{transform:translateY(1px)}
+.rollpair:focus-visible{outline:3px solid var(--gold-bright);outline-offset:4px}
+.rollpair .dchip{pointer-events:none}
+.dchip.showdie{cursor:default;pointer-events:none}
+.diecol{display:flex;flex-direction:column;align-items:center;gap:3px}
+.dienum{font-weight:700;font-size:16px;line-height:1;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
 .dieclock{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .dieclock[hidden]{display:none}
 .roll{--c:#555;min-width:220px;padding:14px 30px;font-size:21px;font-weight:700;
@@ -213,6 +223,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   #bottomBar{left:auto;right:calc(env(safe-area-inset-right,0px) + 10px);transform:none;align-items:flex-end;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px;max-width:46vw}
   .hint{text-align:right}
   .dchip{width:48px;height:48px}
+  .dienum{font-size:14px}
   .hint:empty{display:none;min-height:0}
   .roster li.cur .av{width:34px;height:34px}
   .roster li.cur b{font-size:14px}
@@ -242,7 +253,7 @@ body.at-title #gearWrap{visibility:visible}
 .aboutbody p{margin:0 0 12px;color:var(--parch-dim)}
 .aboutbody h3{margin:16px 0 4px;color:var(--parch);font-size:18px}
 .aboutback{max-width:280px}
-@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]){animation:none}#toast{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]),.taparrow{animation:none}#toast{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
 </style>
 </head>
 <body class="at-title">
@@ -483,7 +494,7 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
 <script src="./lib/rules.js?v=names1"></script>
-<script src="./lib/siege-fx.js?v=siege11"></script>
+<script src="./lib/siege-fx.js?v=siege12"></script>
 <script>
 (function(){
 'use strict';
@@ -1298,29 +1309,37 @@ function renderChips(){
   if(pl)ui.chips.style.setProperty('--c',HOUSES[pl.h].css);
   const canRoll=human&&(S.phase==='roll'||S.phase==='orderRoll');
   const spinning=human&&S.phase==='rolling';
+  /* Both dice are one control. The result is a banner for us, and a note beside the name for everyone else. */
   if(canRoll||(spinning&&!S.pending.length)){
     ui.chips.hidden=false;
-    for(let i=0;i<2;i++){
-      const b=document.createElement('button');b.type='button';b.className='dchip rolldie';
-      b.disabled=spinning;
-      b.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="8" fill="#C9A14A"/></svg>';
-      b.setAttribute('aria-label',S.phase==='orderRoll'?'Roll for order':spinning?'Rolling':'Roll the dice');
-      b.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
-      ui.chips.appendChild(b);
+    if(canRoll){
+      const arrow=document.createElement('span');arrow.className='taparrow';arrow.setAttribute('aria-hidden','true');
+      arrow.innerHTML='<svg viewBox="0 0 16 10"><path d="M1.2 1.4 8 8.2 14.8 1.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      ui.chips.appendChild(arrow);
     }
+    const b=document.createElement('button');b.type='button';b.className='rollpair';b.disabled=spinning;
+    b.setAttribute('aria-label',S.phase==='orderRoll'?'Roll for order':spinning?'Rolling':'Roll the dice');
+    b.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
+    [5,3].forEach(face=>{
+      const die=document.createElement('span');die.className='dchip';die.innerHTML=pipSVG(face);die.setAttribute('aria-hidden','true');b.appendChild(die);
+    });
+    ui.chips.appendChild(b);
     return;
   }
   if(!S.pending.length||!human){ui.chips.hidden=true;return;}
   ui.chips.hidden=false;
   const opts=S.phase==='choose'?options():[];
-  S.pending.forEach((d,di)=>{const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
+  S.pending.forEach((d,di)=>{
+    const col=document.createElement('span');col.className='diecol';
+    if(!d.bonus){const n=document.createElement('span');n.className='dienum';n.textContent=String(d.v);n.setAttribute('aria-hidden','true');col.appendChild(n);}
+    const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
     const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can)b.classList.add('stuck');
     b.innerHTML=d.bonus?'+'+d.v:pipSVG(d.v);
     b.setAttribute('aria-label',(d.bonus?'Bonus move of ':'Die showing ')+d.v+(d.used?', used':can?'':', no legal move'));
     b.setAttribute('aria-pressed',String(di===S.sel&&!d.used&&S.phase==='choose'));
     b.disabled=d.used||!human||S.phase!=='choose'||!can;
     b.onclick=()=>{S.sel=di;refreshChoice();};
-    ui.chips.appendChild(b);});
+    col.appendChild(b);ui.chips.appendChild(col);});
 }
 /* Online, the top card is your seat. Locally it follows whichever human last held the device. */
 let localMe=-1;
@@ -1332,7 +1351,25 @@ function meP(){
 function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES[pl.h].name:pl.cpu?'Computer':'Player'};}
 /* Two dice are thrown for the order, so the words name both dice rather than claim a single "7" was rolled. The total still decides the order. */
 function orderWords(a,b){return a===b?`double ${a}s, ${a+b} in all`:`${a} and ${b}, ${a+b} in all`;}
-function orderTag(pl){if(!S.ordering||!pl.orderRoll)return'';return' · rolled '+(pl.orderVals?pl.orderVals[0]+' + '+pl.orderVals[1]:pl.orderRoll);}
+/* The order keeps its total beside every seat. A march shows the two faces beside the other players only. */
+function seatRoll(pl){
+  if(S.ordering&&pl.orderRoll)return' · '+pl.orderRoll;
+  if(!isMine(pl)&&pl.shownRoll&&pl.shownRoll.length)return' · '+pl.shownRoll.join(' · ');
+  return'';
+}
+function clearShownRolls(){S.players.forEach(p=>{p.shownRoll=null;});}
+/* Our own roll is a banner. Everyone else keeps the faces beside their name. */
+function announceRoll(pl,a,b,kind,auto){
+  const title=a===b?`Double ${a}s`:`${a} and ${b}`;
+  if(isMine(pl)){
+    const sub=kind==='order'?`${a+b} in all`:(auto?'Time ran out.':'');
+    toast(title,sub,pl.h);
+    return;
+  }
+  if(kind==='march')pl.shownRoll=[a,b];
+  const words=kind==='order'?orderWords(a,b):`${a} and ${b}${a===b?', doubles':''}`;
+  say((auto?`Time ran out, so the dice were rolled for ${shortName(pl)}. `:'')+`${shortName(pl)} rolled ${words}.`);
+}
 function blessed(pl){return !!(pl&&S.world&&R.worldBlessing(S.world)===pl.h);}
 function coinsFor(pl,el){el.innerHTML='';pl.pieces.forEach(pc=>{const c=document.createElement('span');c.className='coin'+(pc.p===GOAL?' on':'');el.appendChild(c);});el.title=`${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;}
 function renderTally(){
@@ -1342,7 +1379,7 @@ function renderTally(){
     const L=labelsFor(me),av=$('meAv');
     av.className='av'+(me===curP()&&live&&!me.out?' cur':'');av.style.setProperty('--c',HOUSES[me.h].css);
     $('meSlot').classList.toggle('blessed',blessed(me));
-    ui.name.textContent=L.name;$('meKingdom').textContent=L.sub+orderTag(me);
+    ui.name.textContent=L.name;$('meKingdom').textContent=L.sub+seatRoll(me);
     coinsFor(me,$('meCoins'));
   }
   ui.tally.innerHTML='';
@@ -1354,7 +1391,7 @@ function renderTally(){
     const crest=document.createElement('span');crest.className='crest';av.appendChild(crest);slot.appendChild(av);li.appendChild(slot);
     const who=document.createElement('div');who.className='who';
     const b=document.createElement('b');b.textContent=L.name;who.appendChild(b);
-    const sm=document.createElement('small');sm.textContent=L.sub+orderTag(pl);who.appendChild(sm);
+    const sm=document.createElement('small');sm.textContent=L.sub+seatRoll(pl);who.appendChild(sm);
     const cs=document.createElement('span');cs.className='coins';coinsFor(pl,cs);who.appendChild(cs);
     if(pl.away&&!pl.out){const a=document.createElement('span');a.className='away';a.dataset.awaySince=pl.awaySince;sm.appendChild(a);}
     li.appendChild(who);
@@ -1533,8 +1570,8 @@ function orderRollFor(i,gid){
 }
 async function finishOrder(pl,a,b,gid){
   if(gid!==S.gid||!pl)return;
-  pl.orderRoll=a+b;pl.orderVals=[a,b];say(`${HOUSES[pl.h].short} rolled ${orderWords(a,b)}.`);S.phase='moving';renderTurn();
-  await wait(900);if(gid!==S.gid)return;
+  pl.orderRoll=a+b;pl.orderVals=[a,b];announceRoll(pl,a,b,'order');S.phase='moving';renderTurn();
+  await wait(1600);if(gid!==S.gid)return;
   const r=S.orderRes;S.orderRes=null;if(r)r();
 }
 async function doOrderRoll(){
@@ -1545,6 +1582,7 @@ async function doOrderRoll(){
 }
 async function beginTurn(again){
   const gid=S.gid;if(!again)S.doubles=0;
+  clearShownRolls();
   const pl=curP();S.phase='roll';S.pending=[];setHighlights();showMarkers([]);
   announceTurn(pl,again?'again':'turn');
   renderTurn();
@@ -1555,6 +1593,7 @@ async function finishRoll(pl,a,b,gid){
   const who=pl.cpu?'The computer':'You';
   S.dbl=a===b;if(S.dbl)S.doubles++;
   if(S.dbl&&S.doubles===3){
+    if(!isMine(pl))pl.shownRoll=[a,b];
     S.phase='moving';renderTurn();
     const out=pl.pieces.filter(p=>p.p>=0&&p.p<GOAL).sort((x,y)=>y.p-x.p)[0];
     sfx.bad();
@@ -1563,7 +1602,7 @@ async function finishRoll(pl,a,b,gid){
     await wait(1300);if(gid===S.gid)nextTurn();return;
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
-  say(`${who} rolled ${a} and ${b}${S.dbl?', doubles':''}.`);
+  announceRoll(pl,a,b,'march');
   continueTurn();
 }
 async function doRoll(){
@@ -1980,6 +2019,12 @@ function syncFromRoom(room){
   g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;if(sp.at!=null)pc.at=sp.at;else delete pc.at;});
   S.players.forEach(pl=>pl.pieces.sort((a,b)=>a.idx-b.idx));
   S.cur=g.cur;S.pending=g.pending.map(d=>Object.assign({},d));S.dbl=g.dbl;S.ordering=g.ordering;
+  S.players.forEach(pl=>{pl.shownRoll=null;});
+  const roller=S.players[g.cur];
+  if(roller&&!isMine(roller)&&!g.ordering){
+    const faces=S.pending.filter(d=>!d.bonus).map(d=>d.v);
+    if(faces.length)roller.shownRoll=faces;
+  }
   S.phase=room.status==='over'?'over':g.phase;
   if((g.world||null)!==S.world)setWorld(g.world||null);
 }
@@ -2076,8 +2121,8 @@ async function playEvent(e,epoch){
     case'orderRoll':
       S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();
       await throwDice(e.h,e.vals);if(gone())return;
-      pl.orderRoll=e.total;pl.orderVals=e.vals;say(autoNote(e,`the dice were rolled for ${nm}`)+`${nm} rolled ${orderWords(e.vals[0],e.vals[1])}.`);S.phase='moving';renderTurn();
-      await wait(900);return;
+      pl.orderRoll=e.total;pl.orderVals=e.vals;announceRoll(pl,e.vals[0],e.vals[1],'order',e.auto);S.phase='moving';renderTurn();
+      await wait(1600);return;
     case'orderTie':
       toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);renderTurn();
       await wait(1500);return;
@@ -2089,17 +2134,19 @@ async function playEvent(e,epoch){
     case'world':
       await presentWorld(e.id);return;
     case'turn':
+      clearShownRolls();
       S.cur=S.players.indexOf(pl);S.pending=[];S.phase='roll';setHighlights();showMarkers([]);
       announceTurn(pl,e.again?'again':'turn');renderTurn();return;
     case'roll':
       S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();say('');
       await throwDice(e.h,e.vals);if(gone())return;
       S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dbl=e.dbl;S.phase='moving';
-      say(autoNote(e,`the dice were rolled for ${nm}`)+`${isMine(pl)?'You':nm} rolled ${e.vals[0]} and ${e.vals[1]}${e.dbl?', doubles':''}.`);renderTurn();
+      announceRoll(pl,e.vals[0],e.vals[1],'march',e.auto);renderTurn();
       await wait(350);return;
     case'thirdDouble':{
       S.phase='rolling';renderTurn();
       await throwDice(e.h,e.vals);if(gone())return;
+      if(!isMine(pl)&&e.vals)pl.shownRoll=[e.vals[0],e.vals[1]];
       S.phase='moving';renderTurn();sfx.bad();
       const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
       if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);await settleAll();renderTally();}
@@ -2670,7 +2717,7 @@ function paintViewHud(){
       paintCrest(g,48,y,28,34,HOUSES[p.h].css);
       g.fillStyle=active?'#F2E7CD':'#CDBD99';
       g.font=(active?'700 ':'')+'30px Georgia,serif';g.textAlign='left';g.textBaseline='middle';
-      g.fillText(shortName(p)+(p.cpu?' (CPU)':'')+(p.out?' (left)':'')+(S.ordering&&p.orderRoll?' · '+p.orderRoll:''),90,y+16);
+      g.fillText(shortName(p)+(p.cpu?' (CPU)':'')+(p.out?' (left)':'')+seatRoll(p),90,y+16);
       p.pieces.forEach((pc,ci)=>{
         g.beginPath();g.arc(W-160+ci*36,y+16,11,0,Math.PI*2);
         g.fillStyle=pc.p===GOAL?'#E6C064':'rgba(0,0,0,.45)';g.fill();
