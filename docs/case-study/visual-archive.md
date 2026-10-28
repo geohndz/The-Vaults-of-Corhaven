@@ -102,6 +102,14 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 |---|------|-------------------|--------|
 | 35 | [2026-10-28-35-world-event-names-desktop.png](./screenshots/2026-10-28-35-world-event-names-desktop.png) | World events | The Drowning Tide, the Heartfire Rising, the Wild Awakening, the Searing Seal, the Veil of Mist, and the Stones of the Pact |
 
+## Session: 2026-10-28 — Dice on the right
+
+**Trigger:** On a phone the dice sat under the roster, and each seat kept its troop count on the same line as the kingdom.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 36 | [2026-10-28-36-dice-right-roster-mobile.png](./screenshots/2026-10-28-36-dice-right-roster-mobile.png) | Phone HUD | Dice sit bottom right. The roster sits at the bottom left, with the troop count under the kingdom |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
