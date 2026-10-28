@@ -137,6 +137,14 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 41 | [2026-10-28-41-roll-banner-mobile.png](./screenshots/2026-10-28-41-roll-banner-mobile.png) | Your roll | A banner names the two dice, 6 and 5, and the total, 11 in all |
 | 42 | [2026-10-28-42-roll-beside-name-mobile.png](./screenshots/2026-10-28-42-roll-beside-name-mobile.png) | Other players | Thornwald 9 and Solmere 5 sit beside the name. No banner |
 
+## Session: 2026-10-28 — Order total on the banner
+
+**Trigger:** Only an order roll is announced. The total is large, and the two dice sit small beneath it.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 43 | [2026-10-28-43-order-total-banner-mobile.png](./screenshots/2026-10-28-43-order-total-banner-mobile.png) | Order roll | A large 6, with 5 and 1 beneath it |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

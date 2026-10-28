@@ -234,3 +234,70 @@ test('world events deal every event before one can repeat', () => {
   }
   for (let i = 6; i < seen.length; i += 6) assert.notEqual(seen[i], seen[i - 1]);
 });
+
+test('adaptive dice stay uniform until two empty turns, then cap every face at 30%', () => {
+  const keep = [0, 1].flatMap((h) => [0, 1, 2, 3].map((idx) => piece(h, idx, -1)));
+  const players = [{ h: 0 }, { h: 1 }];
+  const idle = R.adaptRoll(keep, 0, null, { dry: 1, finishMiss: 9 }, players, () => 0.2);
+  assert.equal(idle.vals, null);
+  assert.equal(idle.assisted, false);
+  const kept = R.adaptRoll(keep, 0, null, { dry: 2 }, players, () => 0);
+  assert.equal(kept.assisted, false);
+  assert.deepEqual(kept.vals, [1, 1]);
+  const helped = R.adaptRoll(keep, 0, null, { dry: 2 }, players, () => 0.2);
+  assert.equal(helped.assisted, true);
+  assert.equal(helped.reason, 'inactivity');
+  const weights = R.faceWeights(R.usefulFaces(keep, 0, null), 0.3, 0.08);
+  assert.ok(Math.abs(weights.reduce((a, b) => a + b, 0) - 1) < 1e-9);
+  weights.forEach((p) => assert.ok(p <= 0.3 + 1e-9 && p >= 0.08 - 1e-9));
+  assert.ok(Math.abs(weights[0] - 0.3) < 1e-9);
+  assert.ok(Math.abs(weights[5] - 0.3) < 1e-9);
+  const counts = [0, 0, 0, 0, 0, 0];
+  let assisted = 0;
+  for (let n = 0; n < 4000; n++) {
+    const plan = R.adaptRoll(keep, 0, null, { dry: 2 }, players, Math.random);
+    if (!plan.assisted) continue;
+    assisted++;
+    plan.vals.forEach((v) => { counts[v - 1]++; });
+  }
+  assert.ok(assisted > 1200);
+  const faces = counts.reduce((a, b) => a + b, 0);
+  counts.forEach((c) => assert.ok(c / faces < 0.36));
+  assert.ok(counts[0] / faces > 0.22 && counts[5] / faces > 0.22);
+  assert.ok(counts[2] / faces < 0.16);
+  const stuck = { dry: 0 };
+  R.noteDry(stuck, false);
+  R.noteDry(stuck, false);
+  assert.equal(stuck.dry, 2);
+  R.noteDry(stuck, true);
+  assert.equal(stuck.dry, 0);
+  const done = [0, 1, 2, 3].map((idx) => piece(0, idx, R.GOAL));
+  const hopeless = R.adaptRoll(done, 0, null, { dry: 9 }, players, () => 0.2);
+  assert.equal(hopeless.assisted, false);
+  assert.deepEqual(hopeless.vals, [2, 2]);
+});
+
+test('endgame help is off by default and never assists the leader', () => {
+  const ahead = [piece(0, 0, 70), piece(0, 1, -1), piece(0, 2, -1), piece(0, 3, -1), piece(1, 0, -1), piece(1, 1, -1), piece(1, 2, -1), piece(1, 3, -1)];
+  const players = [{ h: 0 }, { h: 1 }];
+  assert.equal(R.inTheLead(ahead, players, 0), true);
+  assert.equal(R.adaptRoll(ahead, 0, null, { dry: 0, finishMiss: 5 }, players, () => 0.2, { endgame: true }).vals, null);
+  const board = [piece(0, 0, R.GOAL), piece(0, 1, R.GOAL), piece(0, 2, R.GOAL), piece(0, 3, -1), piece(1, 0, 70), piece(1, 1, -1), piece(1, 2, -1), piece(1, 3, -1)];
+  assert.equal(R.inTheLead(board, players, 1), false);
+  assert.deepEqual(R.finishFaces(board, 1, null), [1]);
+  const off = R.adaptRoll(board, 1, null, { dry: 0, finishMiss: 5 }, players, () => 0.2);
+  assert.equal(off.vals, null);
+  let i = 0;
+  const seq = [0.2, 0.4, 0.01, 0.01];
+  const on = R.adaptRoll(board, 1, null, { dry: 0, finishMiss: 2 }, players, () => seq[i++], { endgame: true });
+  assert.equal(on.assisted, true);
+  assert.equal(on.reason, 'endgame');
+  assert.deepEqual(on.vals, [1, 1]);
+  const miss = { finishMiss: 0 };
+  R.noteFinish(board, 1, null, miss, 2, 3);
+  assert.equal(miss.finishMiss, 1);
+  R.noteFinish(board, 1, null, miss, 1, 4);
+  assert.equal(miss.finishMiss, 0);
+  R.noteVault(miss);
+  assert.equal(miss.finishMiss, 0);
+});

@@ -81,6 +81,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 #toast .rule.b{bottom:9px}
 #toast .orn{display:block;width:34px;height:34px;margin:0 auto 10px;color:var(--c,var(--gold-bright));filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
 #toast .tt{font-weight:700;font-size:24px;line-height:1.1;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#toast.num .tt{font-size:44px;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums;line-height:1}
 #toast .st{margin-top:6px;font-size:17px;line-height:1.35;color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.9)}
 #toast .st:empty{display:none}
 .roster{left:calc(env(safe-area-inset-left,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);margin:0;padding:0;list-style:none;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
@@ -207,6 +208,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   #toast{top:calc(env(safe-area-inset-top,0px) + 140px);padding:18px 22px 16px}
   #toast .orn{width:28px;height:28px;margin-bottom:6px}
   #toast .tt{font-size:19px;letter-spacing:.1em}
+  #toast.num .tt{font-size:36px;letter-spacing:0}
   #toast .st{font-size:15px}
   .roster{left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:5px}
   .roster li{gap:8px;padding:2px 10px 2px 2px}
@@ -493,7 +495,7 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=names1"></script>
+<script src="./lib/rules.js?v=adapt1"></script>
 <script src="./lib/siege-fx.js?v=siege12"></script>
 <script>
 (function(){
@@ -1275,9 +1277,9 @@ const say=t=>{ui.msg.textContent=t;};
 /* Banners queue up: one that arrives while another is showing waits, and the one on screen gets cut to a shorter hold. */
 const TOAST_HOLD=2800,TOAST_MIN=1500;
 let toastTimer=0,toastShownAt=0,toastBusy=false;const toastQ=[];
-function toast(title,sub,h,hold){
+function toast(title,sub,h,hold,num){
   say(sub?title+'. '+sub:title);
-  toastQ.push({title,sub,h,hold});
+  toastQ.push({title,sub,h,hold,num});
   if(!toastBusy)nextToast();
   else{clearTimeout(toastTimer);toastTimer=setTimeout(endToast,Math.max(0,TOAST_MIN-(Date.now()-toastShownAt)));}
 }
@@ -1285,6 +1287,7 @@ function nextToast(){
   const t=toastQ.shift();if(!t){toastBusy=false;return;}
   const el=ui.toast;toastBusy=true;toastShownAt=Date.now();
   el.querySelector('.tt').textContent=t.title;el.querySelector('.st').textContent=t.sub||'';
+  el.classList.toggle('num',!!t.num);
   if(t.h==null)el.style.removeProperty('--c');else el.style.setProperty('--c',HOUSES[t.h].css);
   el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
   const hold=t.hold||(toastQ.length?TOAST_MIN:TOAST_HOLD);
@@ -1309,7 +1312,7 @@ function renderChips(){
   if(pl)ui.chips.style.setProperty('--c',HOUSES[pl.h].css);
   const canRoll=human&&(S.phase==='roll'||S.phase==='orderRoll');
   const spinning=human&&S.phase==='rolling';
-  /* Both dice are one control. The result is a banner for us, and a note beside the name for everyone else. */
+  /* Both dice are one control. An order result is a banner for us. Everyone else's roll stays beside the name. */
   if(canRoll||(spinning&&!S.pending.length)){
     ui.chips.hidden=false;
     if(canRoll){
@@ -1358,17 +1361,16 @@ function seatRoll(pl){
   return'';
 }
 function clearShownRolls(){S.players.forEach(p=>{p.shownRoll=null;});}
-/* Our own roll is a banner. Everyone else keeps the faces beside their name. */
+/* Only an order roll is announced, and only to the player who threw it. The total is the banner. The two dice sit under it. */
 function announceRoll(pl,a,b,kind,auto){
-  const title=a===b?`Double ${a}s`:`${a} and ${b}`;
-  if(isMine(pl)){
-    const sub=kind==='order'?`${a+b} in all`:(auto?'Time ran out.':'');
-    toast(title,sub,pl.h);
+  if(kind==='order'&&isMine(pl)){
+    toast(String(a+b),(auto?'Time ran out. ':'')+`${a} and ${b}`,pl.h,undefined,true);
     return;
   }
-  if(kind==='march')pl.shownRoll=[a,b];
+  if(kind==='march'&&!isMine(pl))pl.shownRoll=[a,b];
   const words=kind==='order'?orderWords(a,b):`${a} and ${b}${a===b?', doubles':''}`;
-  say((auto?`Time ran out, so the dice were rolled for ${shortName(pl)}. `:'')+`${shortName(pl)} rolled ${words}.`);
+  const who=isMine(pl)?'You':shortName(pl);
+  say((auto?`Time ran out, so the dice were rolled for ${shortName(pl)}. `:'')+`${who} rolled ${words}.`);
 }
 function blessed(pl){return !!(pl&&S.world&&R.worldBlessing(S.world)===pl.h);}
 function coinsFor(pl,el){el.innerHTML='';pl.pieces.forEach(pc=>{const c=document.createElement('span');c.className='coin'+(pc.p===GOAL?' on':'');el.appendChild(c);});el.title=`${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;}
@@ -1403,9 +1405,12 @@ const dieClock=$('dieClock');
 /* A triangle that floats above the castle of whoever is playing. */
 function turnTri(w,h){const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(w/2,h);s.lineTo(-w/2,h);s.closePath();return new THREE.ShapeGeometry(s);}
 const turnMark=new THREE.Group();
-const turnGold=new THREE.Mesh(turnTri(1.35,1.55),new THREE.MeshBasicMaterial({color:0xE8C56A,side:THREE.DoubleSide,depthWrite:false,fog:false}));
-const turnArrow=new THREE.Mesh(turnTri(1.02,1.22),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide,depthWrite:false,fog:false}));
-turnArrow.position.set(0,0.18,0.02);turnMark.add(turnGold,turnArrow);turnMark.scale.setScalar(0.7);turnMark.visible=false;turnMark.renderOrder=8;board.add(turnMark);
+/* Drawn with the effects, after them, so a wave or a beam cannot cover the arrow. */
+const turnMat=()=>new THREE.MeshBasicMaterial({side:THREE.DoubleSide,depthWrite:false,depthTest:false,transparent:true,fog:false});
+const turnGold=new THREE.Mesh(turnTri(1.35,1.55),turnMat());turnGold.material.color.setHex(0xE8C56A);
+const turnArrow=new THREE.Mesh(turnTri(1.02,1.22),turnMat());
+turnArrow.position.set(0,0.18,0.02);turnMark.add(turnGold,turnArrow);turnMark.scale.setScalar(0.7);turnMark.visible=false;
+turnGold.renderOrder=30;turnArrow.renderOrder=31;turnMark.renderOrder=30;board.add(turnMark);
 const turnBob={h:-1,base:new THREE.Vector3()},turnFace=new THREE.Quaternion();
 function showTurnMark(){
   const pl=S.players.length?curP():null;
@@ -1525,7 +1530,8 @@ function resetBoard(){
 }
 function newGame(config){
   resetBoard();S.config=config;
-  S.players=config.map(({h,cpu})=>({h,cpu,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
+  S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now()};
+  S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
   decideOrder();
 }
 /* Everyone rolls; highest total goes first. Tied kingdoms roll again among themselves. */
@@ -1588,8 +1594,12 @@ async function beginTurn(again){
   renderTurn();
   if(pl.cpu){await wait(700);if(gid===S.gid)doRoll();}
 }
-async function finishRoll(pl,a,b,gid){
+async function finishRoll(pl,a,b,gid,plan){
   if(gid!==S.gid||!pl)return;
+  if(!S.diceStats)S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now()};
+  S.diceStats.turns++;
+  if(plan&&plan.assisted)S.diceStats.assisted++;
+  R.noteFinish(allPieces(),pl.h,S.world,pl,a,b);
   const who=pl.cpu?'The computer':'You';
   S.dbl=a===b;if(S.dbl)S.doubles++;
   if(S.dbl&&S.doubles===3){
@@ -1609,13 +1619,17 @@ async function doRoll(){
   if(S.phase==='orderRoll')return doOrderRoll();
   if(S.phase!=='roll'||motionRoll)return;const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();say('');
-  const[a,b]=await throwDice(pl.h);if(gid!==S.gid)return;
-  await finishRoll(pl,a,b,gid);
+  const plan=R.adaptRoll(allPieces(),pl.h,S.world,pl,S.players,Math.random,S.adapt);
+  const[a,b]=await throwDice(pl.h,plan.vals||undefined);if(gid!==S.gid)return;
+  await finishRoll(pl,a,b,gid,plan);
 }
 async function continueTurn(){
   const gid=S.gid;const pl=curP();const opts=options();
   if(!opts.length){
     const left=S.pending.filter(d=>!d.used);
+    const usedDie=S.pending.some(d=>d.used&&!d.bonus);
+    R.noteDry(pl,usedDie);
+    if(!usedDie&&left.some(d=>!d.bonus)){if(!S.diceStats)S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now()};S.diceStats.noMoves++;}
     if(left.length){S.phase='moving';renderTurn();
       const why=left.some(d=>d.bonus)&&left.length===1?'No troop can make the 20-square bonus march.':`No troop can march with ${[...new Set(left.map(d=>d.v))].map(v=>'a '+v).join(' or ')}.`;
       if(isMine(pl))toast('No legal move',why,pl.h);else say(`${shortName(pl)}: ${why}`);
@@ -1667,7 +1681,7 @@ async function walkMove(pc,spec,alive){
 async function doMove(opt){
   const gid=S.gid;const{pc,di}=opt;const d=S.pending[di];const r=moveResult(pc,d.v);
   if(!r){return continueTurn();}
-  S.phase='moving';d.used=true;setHighlights();showMarkers([]);renderTurn();
+  S.phase='moving';d.used=true;if(!d.bonus)R.noteDry(curP(),true);setHighlights();showMarkers([]);renderTurn();
   if(!await walkMove(pc,{exit:!!r.exit,shift:!!r.shift,land:r.land,to:r.np,at:r.at},()=>gid===S.gid))return;
   if(r.captures.length){
     sfx.capture();
@@ -1676,7 +1690,7 @@ async function doMove(opt){
     await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
-  if(pc.p===GOAL){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);}
+  if(pc.p===GOAL){R.noteVault(curP());sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);}
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
@@ -1713,6 +1727,7 @@ function stepBarricades(dt){
 }
 async function victory(pl){
   const gid=S.gid;S.phase='over';S.pending=[];renderTurn();setHighlights();showMarkers([]);
+  if(!NET.on&&S.diceStats)R.lastReport=R.diceReport(S.diceStats);
   toast(`${pl.name||HOUSES[pl.h].name} claims the vault`,'The gold of Corhaven is theirs.',pl.h);lidTarget=-1.9;sfx.win();
   const cm=new THREE.MeshStandardMaterial({color:0xF0C04A,metalness:0.8,roughness:0.3,emissive:0x442a00});
   for(let i=0;i<50;i++){const c=new THREE.Mesh(coinGeo,cm);c.scale.setScalar(1.3);c.position.set((Math.random()-.5)*0.6,1.0,(Math.random()-.5)*0.4);c.castShadow=true;board.add(c);
@@ -2187,6 +2202,7 @@ async function playEvent(e,epoch){
       await wait(900);return;}
     case'win':
       S.phase='over';S.pending=[];
+      if(e.diceStats)R.lastReport=e.diceStats;
       if(NET.room){const w=playerOfH(e.h);if(w)await victory(w);}
       return;
   }

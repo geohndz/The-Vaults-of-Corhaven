@@ -133,6 +133,7 @@ export function start(room, id, now) {
     winReason: null,
     world: null,
     worldBag: [],
+    diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now },
   };
   step(room, now, () => beginOrderGroup(room));
   return null;
@@ -257,7 +258,13 @@ function roll(room, auto) {
   const g = room.game;
   if (g.phase === 'orderRoll') return orderRoll(room, auto);
   const h = curH(room);
-  const a = die(), b = die();
+  const pl = g.players[g.cur];
+  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt);
+  const [a, b] = plan.vals || [die(), die()];
+  if (!g.diceStats) g.diceStats = { turns: 0, noMoves: 0, assisted: 0, started: 0 };
+  g.diceStats.turns++;
+  if (plan.assisted) g.diceStats.assisted++;
+  R.noteFinish(g.pieces, h, g.world, pl, a, b);
   g.dbl = a === b;
   if (g.dbl) g.doubles++;
   if (g.dbl && g.doubles === 3) {
@@ -277,6 +284,12 @@ function continueTurn(room) {
   const opts = R.options(g.pieces, h, g.pending, g.world);
   if (!opts.length) {
     const left = g.pending.filter((d) => !d.used);
+    const usedDie = g.pending.some((d) => d.used && !d.bonus);
+    R.noteDry(g.players[g.cur], usedDie);
+    if (!usedDie && left.some((d) => !d.bonus)) {
+      if (!g.diceStats) g.diceStats = { turns: 0, noMoves: 0, assisted: 0, started: 0 };
+      g.diceStats.noMoves++;
+    }
     if (left.length) emit(room, { type: 'noMove', h, vals: [...new Set(left.map((d) => d.v))], bonusOnly: left.length === 1 && !!left[0].bonus });
     return endTurn(room);
   }
@@ -297,6 +310,7 @@ function applyMove(room, opt, auto) {
   const { pc, di, r } = opt;
   const d = g.pending[di];
   d.used = true;
+  if (!d.bonus) R.noteDry(g.players.find((p) => p.h === pc.h), true);
   const from = pc.p;
   const fromAt = pc.at != null ? pc.at : null;
   pc.p = r.np;
@@ -305,7 +319,7 @@ function applyMove(room, opt, auto) {
   const captures = r.captures.map((o) => ({ h: o.h, idx: o.idx, from: o.p }));
   r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: BONUS, bonus: true }); });
   const goal = pc.p === GOAL;
-  if (goal) g.pending.push({ v: BONUS, bonus: true });
+  if (goal) { R.noteVault(g.players.find((p) => p.h === pc.h)); g.pending.push({ v: BONUS, bonus: true }); }
   emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
   if (g.pieces.filter((x) => x.h === pc.h).every((x) => x.p === GOAL)) return win(room, pc.h, 'vault');
   continueTurn(room);
@@ -319,7 +333,7 @@ function win(room, h, reason) {
   g.deadline = null;
   g.winner = h;
   g.winReason = reason;
-  emit(room, { type: 'win', h, reason });
+  emit(room, { type: 'win', h, reason, diceStats: g.diceStats ? R.diceReport(g.diceStats) : null });
 }
 
 /* ---------------- Player actions ---------------- */
@@ -448,7 +462,7 @@ export function publicView(room) {
     seq: room.seq,
     events: room.events,
     game: room.game && {
-      players: room.game.players,
+      players: room.game.players.map(({ dry, finishMiss, ...rest }) => rest),
       pieces: room.game.pieces,
       phase: room.game.phase,
       cur: room.game.cur,
@@ -459,6 +473,7 @@ export function publicView(room) {
       winner: room.game.winner,
       winReason: room.game.winReason,
       world: room.game.world,
+      diceStats: room.game.diceStats ? R.diceReport(room.game.diceStats) : null,
     },
   };
 }

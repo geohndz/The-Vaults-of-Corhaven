@@ -134,6 +134,7 @@ These were established at publish and treated as **constraints**, not drafts:
 | **28 Oct** | **Tap to roll** | The roll control is the same bone die, with the same red pips, as the die you tap to march. A small arrow bobs above it until you roll. [Phone](./case-study/screenshots/2026-10-28-37-roll-dice-arrow-mobile.png). |
 | **28 Oct** | **Order total** | While the rider's order is rolled, the total sits between the two dice, and the seat keeps that total. In the march, each die keeps its own number. [Order](./case-study/screenshots/2026-10-28-38-order-total-mobile.png), [march](./case-study/screenshots/2026-10-28-39-split-dice-mobile.png). |
 | **28 Oct** | **One roll** | The two dice are one button. Your roll is a banner. Everyone else's sits beside the name. [Pair](./case-study/screenshots/2026-10-28-40-roll-pair-mobile.png), [banner](./case-study/screenshots/2026-10-28-41-roll-banner-mobile.png), [seats](./case-study/screenshots/2026-10-28-42-roll-beside-name-mobile.png). |
+| **28 Oct** | **Order banner** | Only the order roll is announced, with the total large and the two dice small beneath it. A march is not announced. [Total](./case-study/screenshots/2026-10-28-43-order-total-banner-mobile.png). |
 
 **Phase 2 theme:** *From “beautiful solo/couch experience” to “async-friendly online play on phones”*—progressive disclosure, role-based controls, celebration moments without noise.
 
