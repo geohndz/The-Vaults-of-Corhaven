@@ -391,7 +391,7 @@ body.at-title #gearWrap{visibility:visible}
     <p><strong>Falling in battle.</strong> Land exactly on a lone enemy troop and it falls. Its kingdom must raise a new troop at its keep. The victor presses on with a bonus march of 20 squares for any troop that can make it.</p>
     <p><strong>Shrines and gates.</strong> Grey star squares are shrines where no blood may be spilled, so troops of different kingdoms can stand there together. You may only stop on another kingdom's gate when nobody is standing on it.</p>
     <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
-    <p><strong>Doubles.</strong> Rolling doubles lets you roll again after marching. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
+    <p><strong>Doubles.</strong> Rolling doubles lets you roll again after marching. If two of your troops are locked in a phalanx, one of them marches with that double before you choose the other die. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
     <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
     <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
     <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Drowning Tide, the Heartfire Rising, the Wild Awakening and the Searing Seal each lengthen one kingdom's marches by two squares. The Veil of Mist hides enemy troops farther than the next square, and it hides the markers that would give those troops away. The Stones of the Pact carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite. A troop already on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
@@ -495,7 +495,7 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=adapt1"></script>
+<script src="./lib/rules.js?v=phalanx1"></script>
 <script src="./lib/siege-fx.js?v=siege12"></script>
 <script>
 (function(){
@@ -1304,7 +1304,19 @@ function announceTurn(pl,kind){
   else if(kind==='again')toast('Doubles','Roll again.',pl.h);
   else toast('Your turn','Roll the dice.',pl.h);
 }
-const orderToast=names=>toast(`${names[0]} marches first`,names.length>2?`Then ${names.slice(1,-1).join(', ')}, and ${names[names.length-1]} last.`:`${names[1]} rides second.`);
+const PLACE=['first','second','third','fourth'];
+function orderToast(list){
+  list.forEach((pl,i)=>{pl.place=i+1;});
+  const label=pl=>isMine(pl)?'you':shortName(pl);
+  const mine=list.findIndex(pl=>isMine(pl));
+  const totals=list.map(pl=>pl.orderRoll||0);
+  const showTotals=totals.every((t,i)=>t>0&&(i===0||totals[i-1]>t));
+  const title=mine>=0?`You march ${PLACE[mine]||'next'}${showTotals?' on '+list[mine].orderRoll:''}`:`${shortName(list[0])} marches first${showTotals?' on '+list[0].orderRoll:''}`;
+  const name=pl=>label(pl)+(showTotals?' '+pl.orderRoll:'');
+  const sub=list.length<2?'':list.length===2?`${name(list[1])} rides second.`
+    :`Then ${list.slice(1,-1).map(name).join(', ')}, and ${name(list[list.length-1])} last.`;
+  toast(title,sub?sub.charAt(0).toUpperCase()+sub.slice(1):'');
+}
 function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[n].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#7A1A14"/>`).join('')}</svg>`;}
 function renderChips(){
   const pl=curP(),human=isMine(pl);
@@ -1356,6 +1368,7 @@ function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES
 function orderWords(a,b){return a===b?`double ${a}s, ${a+b} in all`:`${a} and ${b}, ${a+b} in all`;}
 /* The order keeps its total beside every seat. A march shows the two faces beside the other players only. */
 function seatRoll(pl){
+  if(pl.place)return' · '+['','1st','2nd','3rd','4th'][pl.place];
   if(S.ordering&&pl.orderRoll)return' · '+pl.orderRoll;
   if(!isMine(pl)&&pl.shownRoll&&pl.shownRoll.length)return' · '+pl.shownRoll.join(' · ');
   return'';
@@ -1542,27 +1555,22 @@ async function decideOrder(){
   ranked.forEach(i=>{if(seen.has(i))return;seen.add(i);order.push(i);});
   S.players.forEach((_,i)=>{if(!seen.has(i))order.push(i);});
   S.players=order.map(i=>S.players[i]);S.cur=0;S.phase='moving';S.ordering=false;
-  const names=S.players.map(pl=>HOUSES[pl.h].short);
-  orderToast(names);
+  orderToast(S.players);
   renderTurn();await wait(2600);if(gid!==S.gid)return;
   beginTurn(false);
 }
 async function rankGroup(ids,gid){
   for(const i of ids){S.players[i].orderRoll=0;S.players[i].orderVals=null;}
   for(const i of ids){await orderRollFor(i,gid);if(gid!==S.gid)return ids;}
-  const sorted=ids.slice().sort((a,b)=>S.players[b].orderRoll-S.players[a].orderRoll);
+  /* Snapshot the totals first. A re-roll writes new numbers, and those must not be compared with kingdoms already seated by this roll. */
+  const entries=ids.map(i=>({id:i,total:S.players[i].orderRoll}));
   const out=[];
-  /* Group from the snapshot of this roll. A re-roll must not pull an already-ranked kingdom back in, or that kingdom is seated twice and plays twice. */
-  for(let k=0;k<sorted.length;){
-    const v=S.players[sorted[k]].orderRoll;
-    let end=k+1;
-    while(end<sorted.length&&S.players[sorted[end]].orderRoll===v)end++;
-    const grp=sorted.slice(k,end);
-    if(grp.length>1){
-      toast(`Tied on ${v}`,`${grp.map(i=>HOUSES[S.players[i].h].short).join(' and ')} roll again.`);renderTurn();await wait(1500);if(gid!==S.gid)return ids;
-      out.push(...await rankGroup(grp,gid));
-    }else out.push(grp[0]);
-    k=end;
+  for(const grp of R.orderGroups(entries)){
+    const ix=grp.map(e=>e.id);
+    if(ix.length>1){
+      toast(`Tied on ${grp[0].total}`,`${ix.map(i=>HOUSES[S.players[i].h].short).join(' and ')} roll again.`);renderTurn();await wait(1500);if(gid!==S.gid)return ids;
+      out.push(...await rankGroup(ix,gid));
+    }else out.push(ix[0]);
   }
   return out;
 }
@@ -1636,6 +1644,7 @@ async function continueTurn(){
       await wait(1200);if(gid!==S.gid)return;}
     return endTurn();
   }
+  if(S.dbl){const open=R.phalanxDouble(allPieces(),pl.h,S.pending,S.world);if(open){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(open);}}
   if(pl.cpu){S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
     const best=R.bestOption(allPieces(),opts);
     S.sel=best.di;if(!veilHides(best.pc)){setHighlights([best.pc]);showMarkers([{pos:resultPos(best.pc,best.r),move:best}]);}renderChips();await wait(380);if(gid!==S.gid)return;
@@ -2142,9 +2151,9 @@ async function playEvent(e,epoch){
       toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);renderTurn();
       await wait(1500);return;
     case'order':{
-      const ranked=e.hs.map(playerOfH);
+      const ranked=e.hs.map(playerOfH).filter(Boolean);
       S.players=ranked.concat(S.players.filter(p=>!ranked.includes(p)));S.cur=0;S.ordering=false;S.phase='moving';
-      orderToast(ranked.map(shortName));
+      orderToast(S.players);
       renderTurn();await wait(2600);return;}
     case'world':
       await presentWorld(e.id);return;
@@ -2463,6 +2472,7 @@ function drawWorld(){
 }
 function presentWorld(id){
   const w=R.WORLD[id];if(!w)return Promise.resolve();
+  S.players.forEach(pl=>{pl.place=0;});renderTally();
   primeWorldBed(id);
   return spinWheel(Object.keys(R.WORLD).indexOf(id)).then(()=>{
     closeModal('march');

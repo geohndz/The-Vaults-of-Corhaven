@@ -144,6 +144,7 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | # | File | Screen / component | Notes |
 |---|------|-------------------|--------|
 | 43 | [2026-10-28-43-order-total-banner-mobile.png](./screenshots/2026-10-28-43-order-total-banner-mobile.png) | Order roll | A large 6, with 5 and 1 beneath it |
+| 44 | [2026-10-28-44-turn-order-places-desktop.png](./screenshots/2026-10-28-44-turn-order-places-desktop.png) | Turn order | Each seat keeps 1st through 4th for the opening round |
 
 ### Still to capture (when WS / production available)
 

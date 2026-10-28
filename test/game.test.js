@@ -235,6 +235,39 @@ test('world events deal every event before one can repeat', () => {
   for (let i = 6; i < seen.length; i += 6) assert.notEqual(seen[i], seen[i - 1]);
 });
 
+test('a turn order is seated from the totals of one roll, and a tiebreak cannot move anyone else', () => {
+  const first = R.orderGroups([
+    { id: 'you', total: 8 },
+    { id: 'a', total: 11 },
+    { id: 'b', total: 8 },
+    { id: 'c', total: 4 },
+  ]);
+  assert.deepEqual(first.map((g) => g.map((e) => e.id)), [['a'], ['you', 'b'], ['c']]);
+  const again = R.orderGroups([{ id: 'you', total: 9 }, { id: 'b', total: 2 }]);
+  assert.deepEqual(again.map((g) => g.map((e) => e.id)), [['you'], ['b']]);
+  const seated = [first[0][0].id, again[0][0].id, again[1][0].id, first[2][0].id];
+  assert.deepEqual(seated, ['a', 'you', 'b', 'c']);
+});
+
+test('a double marches one troop out of a phalanx before the other die is chosen', () => {
+  const pair = [piece(0, 0, 10), piece(0, 1, 10)];
+  const board = pair.concat([piece(0, 2, 4), piece(0, 3, -1), piece(1, 0, -1)]);
+  const doubled = [{ v: 4 }, { v: 4 }];
+  const open = R.phalanxDouble(board, 0, doubled, null);
+  assert.equal(open.pc.p, 10);
+  assert.equal(open.di, 0);
+  assert.equal(open.r.np, 14);
+  assert.equal(R.phalanxDouble(board, 0, [{ v: 4 }, { v: 5 }], null), null);
+  assert.equal(R.phalanxDouble(board, 0, [{ v: 4, used: true }, { v: 4 }], null), null);
+  const lone = [piece(0, 0, 10), piece(0, 1, 4), piece(0, 2, -1), piece(0, 3, -1)];
+  assert.equal(R.phalanxDouble(lone, 0, doubled, null), null);
+  const wall = [piece(0, 0, 10), piece(0, 1, 10)];
+  const left = piece(1, 0, 0); left.at = 14;
+  const right = piece(2, 0, 0); right.at = 14;
+  wall.push(left, right);
+  assert.equal(R.phalanxDouble(wall, 0, doubled, null), null);
+});
+
 test('adaptive dice stay uniform until two empty turns, then cap every face at 30%', () => {
   const keep = [0, 1].flatMap((h) => [0, 1, 2, 3].map((idx) => piece(h, idx, -1)));
   const players = [{ h: 0 }, { h: 1 }];

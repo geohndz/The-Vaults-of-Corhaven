@@ -171,17 +171,15 @@ function orderRoll(room, auto) {
 function resolveGroup(room) {
   const g = room.game;
   const gi = g.ranking.findIndex(Array.isArray);
-  const sorted = g.ranking[gi].slice().sort((a, b) => g.players[b].orderRoll - g.players[a].orderRoll);
+  const entries = g.ranking[gi].map((i) => ({ id: i, total: g.players[i].orderRoll }));
   const parts = [];
-  for (let k = 0; k < sorted.length;) {
-    const v = g.players[sorted[k]].orderRoll;
-    const grp = sorted.filter((i) => g.players[i].orderRoll === v);
-    if (grp.length > 1) {
-      parts.push(grp);
-      emit(room, { type: 'orderTie', hs: grp.map((i) => g.players[i].h), total: v });
-    } else parts.push(grp[0]);
-    k += grp.length;
-  }
+  R.orderGroups(entries).forEach((grp) => {
+    const ids = grp.map((e) => e.id);
+    if (ids.length > 1) {
+      parts.push(ids);
+      emit(room, { type: 'orderTie', hs: ids.map((i) => g.players[i].h), total: grp[0].total });
+    } else parts.push(ids[0]);
+  });
   g.ranking.splice(gi, 1, ...parts);
   beginOrderGroup(room);
 }
@@ -292,6 +290,10 @@ function continueTurn(room) {
     }
     if (left.length) emit(room, { type: 'noMove', h, vals: [...new Set(left.map((d) => d.v))], bonusOnly: left.length === 1 && !!left[0].bonus });
     return endTurn(room);
+  }
+  if (g.dbl) {
+    const open = R.phalanxDouble(g.pieces, h, g.pending, g.world);
+    if (open) return applyMove(room, open, false);
   }
   const uniq = new Set(opts.map((o) => g.pending[o.di].v + ':' + o.pc.p));
   if (uniq.size === 1) return applyMove(room, opts[0], false);
