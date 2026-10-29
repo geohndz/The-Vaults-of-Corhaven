@@ -146,6 +146,14 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 43 | [2026-10-28-43-order-total-banner-mobile.png](./screenshots/2026-10-28-43-order-total-banner-mobile.png) | Order roll | A large 6, with 5 and 1 beneath it |
 | 44 | [2026-10-28-44-turn-order-places-desktop.png](./screenshots/2026-10-28-44-turn-order-places-desktop.png) | Turn order | Each seat keeps 1st through 4th for the opening round |
 
+## Session: 2026-10-28 — Leave the last local human
+
+**Trigger:** Leaving a local match as the only person still playing sent the computers on without you. Leave now ends that match. If another person is still at the table, only your kingdom drops out.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 45 | [2026-10-28-45-leave-only-human-desktop.png](./screenshots/2026-10-28-45-leave-only-human-desktop.png) | Leave match | Copy names that you are the only one left, and that leaving ends the match |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

@@ -343,7 +343,7 @@ body.at-title #gearWrap{visibility:visible}
 <div class="modal" id="leave" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
   <div class="sheet panel">
     <h1 id="leaveTitle">Leave the match?</h1>
-    <p>Leaving counts as a forfeit. Your troops leave the board, and you can't rejoin this match.</p>
+    <p id="leaveText">Leaving counts as a forfeit. Your troops leave the board, and you can't rejoin this match.</p>
     <button class="primary" id="btnLeaveYes">Leave the match</button>
     <button class="secondary" id="btnLeaveNo">Stay</button>
   </div>
@@ -1361,7 +1361,7 @@ let localMe=-1;
 function meP(){
   if(NET.on)return S.players.find(p=>p.h===NET.myH)||null;
   const c=curP();if(c&&!c.cpu&&!c.out)localMe=c.h;
-  return S.players.find(p=>p.h===localMe)||S.players.find(p=>!p.cpu)||c||null;
+  return S.players.find(p=>p.h===localMe&&!p.out)||S.players.find(p=>!p.cpu&&!p.out)||S.players.find(p=>!p.out)||c||null;
 }
 function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES[pl.h].name:pl.cpu?'Computer':'Player'};}
 /* Two dice are thrown for the order, so the words name both dice rather than claim a single "7" was rolled. The total still decides the order. */
@@ -1435,6 +1435,10 @@ function showTurnMark(){
   turnMark.visible=true;
 }
 function renderTurn(){
+  if(!NET.on){
+    $('btnLeave').textContent='Leave match';
+    $('btnLeave').hidden=S.phase==='idle'||S.phase==='over'||!S.players.some(p=>!p.cpu&&!p.out);
+  }
   const pl=curP();if(!pl)return;
   ui.roll.hidden=true;
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
@@ -1471,12 +1475,14 @@ function syncDieBody(i,vel){
   else{b.velocity.set(0,0,0);b.angularVelocity.set(0,0,0);b.sleep();}
 }
 async function throwDice(h,forced){
+  const gid=S.gid;
   diceIntro=true;
   if(typeof releaseHeld==='function')releaseHeld(false);
   const yc=yardCenter(h);const inward=new THREE.Vector3(-yc.x,0,-yc.z).normalize();const perp=new THREE.Vector3(-inward.z,0,inward.x);
   const origin=yc.clone().multiplyScalar(0.95).setY(3.6);
   const starts=[origin.clone().addScaledVector(perp,-0.5),origin.clone().addScaledVector(perp,0.5)];
   await Promise.all(dice.map((d,i)=>{const from=d.position.clone(),q0=d.quaternion.clone(),q1=randQuat();return animate(360,k=>{const e=ease(k);d.position.lerpVectors(from,starts[i],e);d.position.y+=Math.sin(Math.PI*k)*0.8;d.quaternion.copy(q0).slerp(q1,e);});}));
+  if(gid!==S.gid)return [1,1];
   diceIntro=false;
   if(forced||!world)return fallbackRoll(forced);
   armDicePhysics();
@@ -1532,13 +1538,21 @@ async function fallbackRoll(forced){ // also lands online rolls on the faces the
 
 /* ================= Turn flow ================= */
 function clearPieces(){pieceMeshes.forEach(m=>board.remove(m));pieceMeshes.length=0;coinsFx.forEach(c=>board.remove(c.m));coinsFx.length=0;clearBarricades();showMarkers([]);}
+/* A local match that started with a person should stop once every person has left. An all-computer table is allowed to play itself. */
+function noHumanLeft(){return !NET.on&&S.players.length&&S.config&&S.config.some(c=>!c.cpu)&&!S.players.some(p=>!p.cpu&&!p.out);}
+function dropMotion(){
+  motionRoll=null;
+  if(rollState){const r=rollState;rollState=null;try{r.res([1,1]);}catch(e){}}
+  anims.splice(0,anims.length).forEach(a=>{try{a.res();}catch(e){}});
+}
 function createPiece(h,idx){const mesh=makePiece(h);mesh.position.copy(basePos[h][idx]);mesh.rotation.y=Math.atan2(-basePos[h][idx].x,-basePos[h][idx].z);board.add(mesh);pieceMeshes.push(mesh);const pc={h,idx,p:-1,mesh};mesh.userData.piece=pc;return pc;}
 function removePiece(pc){board.remove(pc.mesh);const i=pieceMeshes.indexOf(pc.mesh);if(i>=0)pieceMeshes.splice(i,1);}
 function resetBoard(){
   stopOneShots();ensureTheme();
-  diceArmed=false;S.gid++;anims=[];rollState=null;motionRoll=null;clearPieces();
+  diceArmed=false;S.gid++;dropMotion();clearPieces();
   S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.phase='idle';S.world=null;S.worldBag=null;lidTarget=-0.22;
   localMe=-1;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();closeModal('march');
+  if(siege)siege.stop();
   clearWorldFx();applyTheme();showTurnMark();
 }
 function newGame(config){
@@ -1576,28 +1590,34 @@ async function rankGroup(ids,gid){
 }
 function orderRollFor(i,gid){
   return new Promise(async res=>{
-    S.cur=i;S.phase='orderRoll';S.orderRes=res;const pl=S.players[i];
+    const pl=S.players[i];
+    if(!pl||pl.out){if(pl)pl.orderRoll=0;res();return;}
+    S.cur=i;S.phase='orderRoll';S.orderRes=res;
     announceTurn(pl,'order');
     renderTurn();
     if(pl.cpu){await wait(650);if(gid===S.gid)doOrderRoll();}
   });
 }
 async function finishOrder(pl,a,b,gid){
-  if(gid!==S.gid||!pl)return;
+  if(gid!==S.gid||!pl||pl.out)return;
   pl.orderRoll=a+b;pl.orderVals=[a,b];announceRoll(pl,a,b,'order');S.phase='moving';renderTurn();
   await wait(1600);if(gid!==S.gid)return;
   const r=S.orderRes;S.orderRes=null;if(r)r();
 }
 async function doOrderRoll(){
+  if(noHumanLeft()){showTitle();return;}
   if(S.phase!=='orderRoll'||motionRoll)return;const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();
-  const[a,b]=await throwDice(pl.h);if(gid!==S.gid)return;
+  const[a,b]=await throwDice(pl.h);if(gid!==S.gid||!pl||pl.out)return;
   await finishOrder(pl,a,b,gid);
 }
 async function beginTurn(again){
+  if(noHumanLeft()){showTitle();return;}
+  const pl=curP();if(!pl)return;
+  if(pl.out){nextTurn();return;}
   const gid=S.gid;if(!again)S.doubles=0;
   clearShownRolls();
-  const pl=curP();S.phase='roll';S.pending=[];setHighlights();showMarkers([]);
+  S.phase='roll';S.pending=[];setHighlights();showMarkers([]);
   announceTurn(pl,again?'again':'turn');
   renderTurn();
   if(pl.cpu){await wait(700);if(gid===S.gid)doRoll();}
@@ -1624,6 +1644,7 @@ async function finishRoll(pl,a,b,gid,plan){
   continueTurn();
 }
 async function doRoll(){
+  if(noHumanLeft()){showTitle();return;}
   if(S.phase==='orderRoll')return doOrderRoll();
   if(S.phase!=='roll'||motionRoll)return;const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();say('');
@@ -1632,7 +1653,8 @@ async function doRoll(){
   await finishRoll(pl,a,b,gid,plan);
 }
 async function continueTurn(){
-  const gid=S.gid;const pl=curP();const opts=options();
+  if(noHumanLeft()){showTitle();return;}
+  const gid=S.gid;const pl=curP();if(!pl)return;const opts=options();
   if(!opts.length){
     const left=S.pending.filter(d=>!d.used);
     const usedDie=S.pending.some(d=>d.used&&!d.bonus);
@@ -1658,6 +1680,7 @@ function endTurn(){
   if(S.dbl&&S.phase!=='over')beginTurn(true);else nextTurn();
 }
 async function nextTurn(){
+  if(noHumanLeft()){showTitle();return;}
   const gid=S.gid,from=S.cur,n=S.players.length;if(!n)return;
   let to=from;
   for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out){to=i;break;}}
@@ -1841,6 +1864,8 @@ document.addEventListener('pointerdown',e=>{if(!menu.hidden&&!e.target.closest('
 ui.roll.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
 renderSetup();
 function showTitle(msg){
+  if(!NET.on&&S.phase!=='idle'){resetBoard();ui.chips.hidden=true;say('');}
+  if(!NET.on)$('btnLeave').hidden=true;
   ['setup','online','win','leave','settings'].forEach(closeModal);
   $('about').classList.remove('open');
   $('titleErr').textContent=msg||'';
@@ -2068,6 +2093,7 @@ async function enterMatch(room){
   NET.playing=true;NET.seen=room.seq;
   const me=room.seats.find(s=>s.pid===NET.pid);NET.myH=me?me.h:null;
   ['online','title','setup','leave'].forEach(closeModal);
+  $('btnLeave').textContent='Leave room';
   $('btnLeave').hidden=room.status!=='playing';$('btnNew').hidden=room.status==='playing';
   resetBoard();
   syncFromRoom(room);
@@ -2216,9 +2242,52 @@ async function playEvent(e,epoch){
       return;
   }
 }
-$('btnLeave').onclick=()=>{openModal('leave');setTimeout(()=>$('btnLeaveNo').focus(),40);};
+function openLeave(){
+  if(NET.on){
+    $('leaveTitle').textContent='Leave the match?';
+    $('leaveText').textContent='Leaving counts as a forfeit. Your troops leave the board, and you can\'t rejoin this match.';
+  }else if(S.players.filter(p=>!p.cpu&&!p.out).length>1){
+    $('leaveTitle').textContent='Leave the match?';
+    $('leaveText').textContent='Your troops leave the board. The others keep playing.';
+  }else{
+    $('leaveTitle').textContent='Leave the match?';
+    $('leaveText').textContent='You are the only one still in this match. Leaving ends it.';
+  }
+  openModal('leave');
+  setTimeout(()=>$('btnLeaveNo').focus(),40);
+}
+/* Drops the human who holds the device. With another person still here, the match continues. Alone, it ends. */
+function leaveLocal(){
+  const human=meP();
+  if(!human||human.cpu||human.out){showTitle();return;}
+  if(!S.players.some(p=>p!==human&&!p.cpu&&!p.out)){showTitle();return;}
+  forfeitSeat(human);
+}
+function forfeitSeat(pl){
+  pl.out=true;
+  pl.pieces.slice().forEach(removePiece);
+  pl.pieces=[];
+  toast(`${HOUSES[pl.h].name} left the realm`,'',pl.h);
+  if(curP()===pl){
+    S.pending=[];showMarkers([]);setHighlights();
+    if(S.ordering){
+      /* Keep the order roll's generation. Bumping it would abandon everyone still seating. */
+      dropMotion();
+      pl.orderRoll=pl.orderRoll||0;
+      const r=S.orderRes;S.orderRes=null;if(r)r();
+    }else{
+      S.gid++;
+      dropMotion();
+      S.phase='moving';
+      nextTurn();
+    }
+  }
+  renderTally();
+  if(S.players.length)renderTurn();
+}
+$('btnLeave').onclick=()=>openLeave();
 $('btnLeaveNo').onclick=()=>closeModal('leave');
-$('btnLeaveYes').onclick=()=>{closeModal('leave');leaveOnline(true);};
+$('btnLeaveYes').onclick=()=>{closeModal('leave');if(NET.on)leaveOnline(true);else leaveLocal();};
 
 /* Turn clock and away countdowns. */
 function paintClock(){
@@ -2472,9 +2541,11 @@ function drawWorld(){
 }
 function presentWorld(id){
   const w=R.WORLD[id];if(!w)return Promise.resolve();
+  const gid=S.gid;
   S.players.forEach(pl=>{pl.place=0;});renderTally();
   primeWorldBed(id);
   return spinWheel(Object.keys(R.WORLD).indexOf(id)).then(()=>{
+    if(gid!==S.gid)return;
     closeModal('march');
     setWorld(id,true);
     const hold=reduced?900:(WORLD_INTRO[id]||2000);
