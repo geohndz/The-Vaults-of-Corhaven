@@ -11,7 +11,7 @@
 
 ## Visual archive
 
-Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png) and the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), set in the same frame as Your turn.
+Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png), the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), the [marker lab](./case-study/screenshots/2026-11-02-04-marker-lab-thorns-desktop.png), the [ring post](./case-study/screenshots/2026-11-02-09-ring-post-water-desktop.png), and the [wheel](./case-study/screenshots/2026-11-02-05-roulette-desktop.png) without its card.
 
 ---
 

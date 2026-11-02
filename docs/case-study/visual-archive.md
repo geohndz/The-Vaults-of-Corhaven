@@ -165,6 +165,12 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 01 | [2026-11-02-01-march-forming-desktop.png](./screenshots/2026-11-02-01-march-forming-desktop.png) | Match gate | Silence while the road opens. The gold rule fills to the shared start, then the theme fades in together |
 | 02 | [2026-11-02-02-connection-banner-desktop.png](./screenshots/2026-11-02-02-connection-banner-desktop.png) | Connection banner, first pass | Full-width bar. Replaced the same day by the centered banner |
 | 03 | [2026-11-02-03-connection-banner-desktop.png](./screenshots/2026-11-02-03-connection-banner-desktop.png) | Connection lost | Same banner as Your turn: gold rules, pulsing wifi, tracked title. Stays for the whole interruption and leaves the gear and menu where they are |
+| 04 | [2026-11-02-04-marker-lab-thorns-desktop.png](./screenshots/2026-11-02-04-marker-lab-thorns-desktop.png) | Marker lab | Five landing marks under the Wild Awakening, with the vines wrapped on the towers. The ring is the mark still used in a match |
+| 05 | [2026-11-02-05-roulette-desktop.png](./screenshots/2026-11-02-05-roulette-desktop.png) | The March wheel | The wheel sits on the board by itself. The leather card is gone |
+| 06 | [2026-11-02-06-ring-post-desktop.png](./screenshots/2026-11-02-06-ring-post-desktop.png) | Marker lab, ring post | First pass: a solid gold post and sphere over the ring. The post bobs |
+| 07 | [2026-11-02-07-ring-post-beam-desktop.png](./screenshots/2026-11-02-07-ring-post-beam-desktop.png) | Marker lab, ring post | The post and sphere use the beam's gold light, so they read through the thorns. The ring stays on the tile |
+| 08 | [2026-11-02-08-ring-post-cylinder-desktop.png](./screenshots/2026-11-02-08-ring-post-cylinder-desktop.png) | Marker lab, ring post | The stem is a straight cylinder of the same light. It runs down through the board, so the end stays buried while the post bobs |
+| 09 | [2026-11-02-09-ring-post-water-desktop.png](./screenshots/2026-11-02-09-ring-post-water-desktop.png) | Marker lab, ring post in the tide | The post and ring stay visible through the Drowning Tide. The stem still ends at the board |
 
 ### Still to capture (when WS / production available)
 

@@ -136,8 +136,6 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .rollpair:focus-visible{outline:3px solid var(--gold-bright);outline-offset:4px}
 .rollpair .dchip{pointer-events:none}
 .dchip.showdie{cursor:default;pointer-events:none}
-.diecol{display:flex;flex-direction:column;align-items:center;gap:3px}
-.dienum{font-weight:700;font-size:16px;line-height:1;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
 .dieclock{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .dieclock[hidden]{display:none}
 .roll{--c:#555;min-width:220px;padding:14px 30px;font-size:21px;font-weight:700;
@@ -151,16 +149,17 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .hint:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(10,8,14,.55);backdrop-filter:blur(2px)}
 .modal.open{display:flex}
-.marchsheet{text-align:center}
-.marchkicker{margin:0 0 8px;letter-spacing:.16em;text-transform:uppercase;font-size:13px;font-weight:700;color:var(--gold-bright)}
-.wheelbox{position:relative;width:min(240px,68vw);margin:4px auto 0}
+#march{background:transparent;backdrop-filter:none}
+.wheelbox{position:relative;width:min(280px,72vw);margin:0 auto;filter:drop-shadow(0 14px 22px rgba(0,0,0,.5))}
+#lab{position:fixed;z-index:40;left:14px;top:14px;width:min(440px,calc(100vw - 28px));display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:rgba(20,14,10,.9);border:1px solid var(--gold);border-radius:12px;color:var(--parch)}
+#lab p{margin:0;font-size:14px;line-height:1.35;color:var(--parch-dim)}
+#lab .row{display:flex;flex-wrap:wrap;gap:6px}
+#lab button{padding:6px 10px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch);font-size:14px}
+#lab button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
 .wheel{width:100%;aspect-ratio:1;border-radius:50%;border:3px solid var(--gold);
   background:conic-gradient(#1F4E9C 0deg 60deg,#B3261E 60deg 120deg,#2E7D32 120deg 180deg,#D9A21B 180deg 240deg,#8A93A0 240deg 300deg,#C9961F 300deg 360deg);
   box-shadow:inset 0 0 0 12px rgba(20,14,8,.45),0 12px 28px rgba(0,0,0,.45)}
 .wheelpointer{position:absolute;left:50%;top:-4px;z-index:1;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:16px solid var(--gold-bright)}
-#marchTitle{font-size:clamp(28px,7vw,40px)}
-#marchLore,#marchRule{margin:0 0 8px}
-.marchcopy{display:none}
 .sheet{width:min(480px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px 26px 22px}
 .sheet h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:40px;line-height:1.02;margin:0 0 8px;color:var(--gold-bright)}
 .sheet h2{font-size:18px;margin:18px 0 8px}
@@ -232,7 +231,6 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
   #bottomBar{left:auto;right:calc(env(safe-area-inset-right,0px) + 10px);transform:none;align-items:flex-end;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:8px;max-width:46vw}
   .hint{text-align:right}
   .dchip{width:48px;height:48px}
-  .dienum{font-size:14px}
   .hint:empty{display:none;min-height:0}
   .roster li.cur .av{width:34px;height:34px}
   .roster li.cur b{font-size:14px}
@@ -402,18 +400,10 @@ body.at-title #gearWrap{visibility:visible}
   </div>
 </div>
 
-<div class="modal" id="march" role="dialog" aria-modal="true" aria-labelledby="marchTitle">
-  <div class="sheet panel marchsheet">
-    <p class="marchkicker">The March turns</p>
-    <div class="wheelbox">
-      <div class="wheelpointer" aria-hidden="true"></div>
-      <div class="wheel" id="wheel"></div>
-    </div>
-    <div class="marchcopy" id="marchCopy" aria-hidden="true">
-      <h1 id="marchTitle"></h1>
-      <p id="marchLore"></p>
-      <p id="marchRule"></p>
-    </div>
+<div class="modal" id="march" role="dialog" aria-modal="true" aria-label="The March turns">
+  <div class="wheelbox">
+    <div class="wheelpointer" aria-hidden="true"></div>
+    <div class="wheel" id="wheel"></div>
   </div>
 </div>
 
@@ -426,10 +416,10 @@ body.at-title #gearWrap{visibility:visible}
     <p><strong>Falling in battle.</strong> Land exactly on a lone enemy troop and it falls. Its kingdom must raise a new troop at its keep. The victor presses on with a bonus march of 20 squares for any troop that can make it.</p>
     <p><strong>Shrines and gates.</strong> Grey star squares are shrines where no blood may be spilled, so troops of different kingdoms can stand there together. You may only stop on another kingdom's gate when nobody is standing on it.</p>
     <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
-    <p><strong>Doubles.</strong> Rolling doubles lets you roll again after marching. If two of your troops are locked in a phalanx, one of them marches with that double before you choose the other die. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
+    <p><strong>Doubles.</strong> Rolling doubles lets you roll again after the movement. If two of your troops are locked in a phalanx, one of them marches with that double before you choose the other die. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
     <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
     <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
-    <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Drowning Tide, the Heartfire Rising, the Wild Awakening and the Searing Seal each lengthen one kingdom's marches by two squares. The Veil of Mist hides enemy troops farther than the next square, and it hides the markers that would give those troops away. The Stones of the Pact carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite. A troop already on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
+    <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Drowning Tide, the Heartfire Rising, the Wild Awakening and the Searing Seal each lengthen one kingdom's movements by two squares. The Veil of Mist hides enemy troops farther than the next square, and it hides the markers that would give those troops away. The Stones of the Pact carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite. A troop already on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
     <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
     <button class="primary" id="btnRulesClose">Back to the board</button>
   </div>
@@ -489,13 +479,13 @@ body.at-title #gearWrap{visibility:visible}
         <h2>World events</h2>
         <p>The wheel names one of these, and it holds until the March turns again.</p>
         <h3>The Drowning Tide</h3>
-        <p>Ancient waterways burst across the old roads. Tidereach's marches are two squares longer while the water is up.</p>
+        <p>Ancient waterways burst across the old roads. Tidereach's movements are two squares longer while the water is up.</p>
         <h3>The Heartfire Rising</h3>
-        <p>Lava breaks from the scorched ruins of Corhaven. Emberhold's marches are two squares longer under the ash.</p>
+        <p>Lava breaks from the scorched ruins of Corhaven. Emberhold's movements are two squares longer under the ash.</p>
         <h3>The Wild Awakening</h3>
-        <p>Roots and thorned vines reclaim the abandoned roads. Thornwald's marches are two squares longer while the wild is awake.</p>
+        <p>Roots and thorned vines reclaim the abandoned roads. Thornwald's movements are two squares longer while the wild is awake.</p>
         <h3>The Searing Seal</h3>
-        <p>A strange golden light uncovers paths hidden for centuries. Solmere's marches are two squares longer in that light.</p>
+        <p>A strange golden light uncovers paths hidden for centuries. Solmere's movements are two squares longer in that light.</p>
         <h3>The Veil of Mist</h3>
         <p>An unnatural fog hides everything beyond a short distance. You see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
         <h3>The Stones of the Pact</h3>
@@ -530,8 +520,8 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=phalanx1"></script>
-<script src="./lib/siege-fx.js?v=siege13"></script>
+<script src="./lib/rules.js?v=move1"></script>
+<script src="./lib/siege-fx.js?v=siege14"></script>
 <script>
 (function(){
 'use strict';
@@ -593,6 +583,7 @@ renderer.setPixelRatio(displayPixelRatio());
 renderer.xr.enabled=true;
 renderer.xr.setReferenceSpaceType('local-floor');
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.localClippingEnabled=true;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(42,1,0.1,400);
 camera.position.copy(new THREE.Vector3(0,0.8,0.6).normalize().multiplyScalar(24));
@@ -741,7 +732,7 @@ staticBox(0,0.36+0.52*1.12,0,0.62*1.12,0.52*1.12,0.42*1.12);
    a gatehouse facing the kingdom's gate square, a round plaza with four troop circles,
    and trees and boulders around the outside. */
 function yardCenter(h){const[a,b]=HOUSES[h].yard;return new THREE.Vector3(a*YC,0,b*YC);}
-const basePos=[],flags=[];
+const basePos=[],flags=[],towerMarks=[];
 const PL_TOP=0.24,PLAZA_Y=0.28,TD=1.8,WH=0.6,WT=0.26;
 function texRep(t,x,y){const c=t.clone();c.needsUpdate=true;c.wrapS=c.wrapT=THREE.RepeatWrapping;c.repeat.set(x,y);return c;}
 const CM={
@@ -884,7 +875,7 @@ HOUSES.forEach((H,hi)=>{
   // towers
   const roofMat=new THREE.MeshStandardMaterial({color:H.color,roughness:0.55,flatShading:true});
   const flagMat=new THREE.MeshStandardMaterial({color:H.color,side:THREE.DoubleSide,roughness:0.8});
-  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b],k)=>buildTower(g,a*TD,b*TD,roofMat,flagMat,hi,k));
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b],k)=>{buildTower(g,a*TD,b*TD,roofMat,flagMat,hi,k);towerMarks.push({x:cp.x+a*TD,z:cp.z+b*TD,castleX:cp.x,castleZ:cp.z});});
   buildGatehouse(g,lx,lz,Math.atan2(n[0],n[1]),hi);
   // scenery: trees, bushes and boulders in the strip outside the walls
   const rnd=seeded(hi+3);
@@ -1024,12 +1015,26 @@ function makePiece(h){
   grp.renderOrder=12;
   grp.userData={inner,ring,mat};return grp;
 }
-/* destination markers */
-/* Touch screens get larger rings: they are tap targets, not just hints. */
+/* destination markers. Touch screens get a wider ring: it is a tap target, not just a hint. */
 const coarse=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
-const markerGeo=coarse?new THREE.RingGeometry(0.2,0.4,32):new THREE.RingGeometry(0.16,0.3,32);
+const labClip=new THREE.Plane(new THREE.Vector3(0,1,0),-TILE_TOP);
+const labClipUp=new THREE.Vector3();const labClipAt=new THREE.Vector3();
+const markerRingGeo=coarse?new THREE.RingGeometry(0.2,0.4,32):new THREE.RingGeometry(0.16,0.3,32);
+const markerPoleGeo=new THREE.CylinderGeometry(coarse?0.075:0.06,coarse?0.075:0.06,2.5,16);
+const markerHeadGeo=new THREE.SphereGeometry(coarse?0.17:0.14,16,12);
+const markerRingMat=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.85,side:THREE.DoubleSide,depthTest:false,depthWrite:false,fog:false});
+const markerGlowMat=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,clippingPlanes:[labClip]});
 const markers=[];
-function showMarkers(list){markers.forEach(m=>{m.visible=false;m.userData.move=null;});const lift=S.world==='ash'?0.22:0.02;list.forEach((item,i)=>{const move=item.move||null;if(move&&move.pc&&veilHides(move.pc))return;const p=item.pos||item;let m=markers[i];if(!m){m=new THREE.Mesh(markerGeo,new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,side:THREE.DoubleSide,depthWrite:false}));m.rotation.x=-Math.PI/2;m.renderOrder=8;m.userData.marker=true;board.add(m);markers.push(m);}m.userData.move=move;m.userData.baseY=p.y;m.position.set(p.x,p.y+lift,p.z);m.visible=true;});}
+function makeMarker(){
+  const g=new THREE.Group();
+  const ring=new THREE.Mesh(markerRingGeo,markerRingMat);ring.rotation.x=-Math.PI/2;ring.position.y=0.04;ring.renderOrder=39;
+  const post=new THREE.Group();
+  const pole=new THREE.Mesh(markerPoleGeo,markerGlowMat);pole.position.y=0.05;pole.renderOrder=40;
+  const head=new THREE.Mesh(markerHeadGeo,markerGlowMat);head.position.y=1.32;head.renderOrder=41;
+  post.add(pole,head);g.add(ring,post);
+  g.userData.marker=true;g.userData.post=post;board.add(g);return g;
+}
+function showMarkers(list){markers.forEach(m=>{m.visible=false;m.userData.move=null;});list.forEach((item,i)=>{const move=item.move||null;if(move&&move.pc&&veilHides(move.pc))return;const p=item.pos||item;let m=markers[i];if(!m){m=makeMarker();markers.push(m);}m.userData.move=move;m.userData.phase=i*1.1;m.position.set(p.x,p.y,p.z);m.visible=true;});}
 
 /* ================= Animation helpers ================= */
 let anims=[];
@@ -1434,8 +1439,6 @@ function renderChips(){
   ui.chips.hidden=false;
   const opts=S.phase==='choose'?options():[];
   S.pending.forEach((d,di)=>{
-    const col=document.createElement('span');col.className='diecol';
-    if(!d.bonus){const n=document.createElement('span');n.className='dienum';n.textContent=String(d.v);n.setAttribute('aria-hidden','true');col.appendChild(n);}
     const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
     const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can)b.classList.add('stuck');
     b.innerHTML=d.bonus?'+'+d.v:pipSVG(d.v);
@@ -1443,7 +1446,7 @@ function renderChips(){
     b.setAttribute('aria-pressed',String(di===S.sel&&!d.used&&S.phase==='choose'));
     b.disabled=d.used||!human||S.phase!=='choose'||!can;
     b.onclick=()=>{S.sel=di;refreshChoice();};
-    col.appendChild(b);ui.chips.appendChild(col);});
+    ui.chips.appendChild(b);});
 }
 /* Online, the top card is your seat. Locally it follows whichever human last held the device. */
 let localMe=-1;
@@ -1532,11 +1535,17 @@ function renderTurn(){
   ui.roll.hidden=true;
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
   ui.hint.textContent=tip||'';
-  renderChips();renderTally();showTurnMark();reflowPhone();if(S.world==='mist')applyVeil();
+  markReady();renderChips();renderTally();showTurnMark();reflowPhone();if(S.world==='mist')applyVeil();
   if(typeof paintViewHud==='function')paintViewHud();
   if(typeof paintXRPanel==='function')paintXRPanel();
 }
 function setHighlights(list){pieceMeshes.forEach(m=>{m.userData.ring.visible=false;m.userData.hl=false;});(list||[]).forEach(pc=>{pc.mesh.userData.ring.visible=true;pc.mesh.userData.hl=true;});}
+/* A troop still in the keep bobs when a 1 or a 6 can bring it out. */
+function markReady(){
+  const ready=new Set();
+  if(S.phase==='choose')options().forEach(o=>{if(o.pc.p<0&&o.r&&o.r.exit)ready.add(o.pc);});
+  pieceMeshes.forEach(m=>{m.userData.ready=ready.has(m.userData.piece);});
+}
 function refreshChoice(){
   const opts=options();
   if(!opts.some(o=>o.di===S.sel)&&opts.length)S.sel=opts[0].di;
@@ -2560,7 +2569,10 @@ document.addEventListener('visibilitychange',()=>{
   else connect({t:'join',id:myId,code:NET.code});
   if(NET.stale&&NET.playing&&NET.room&&NET.room.seq>NET.seen+1)snapTo(NET.room);
 });
+const markerLab=new URLSearchParams(location.search).get('lab')==='markers'||/(?:^|\/)marker-lab\.html$/i.test(decodeURIComponent(location.pathname));
+let labFaces=[];const labQuat=new THREE.Quaternion();
 (function resume(){
+  if(markerLab)return;
   const code=savedRoom();
   if(!code||location.protocol==='file:')return;
   startOnline();
@@ -2794,7 +2806,11 @@ function presentWorld(id){
     closeModal('march');
     setWorld(id,true);
     const hold=reduced?900:(WORLD_INTRO[id]||2000);
-    toast(w.name,w.rule,w.h,hold);
+    if(w.h!=null){
+      const pl=S.players.find(p=>p.h===w.h&&!p.out);
+      const yours=pl&&isMine(pl);
+      toast('+2',w.name+'. '+(yours?'Your':HOUSES[w.h].short+"'s")+' movements are two squares longer.',w.h,hold,true);
+    }else toast(w.name,w.rule,w.h,hold);
     return wait(hold);
   });
 }
@@ -2889,7 +2905,7 @@ resize(true);
 /* ================= Loop ================= */
 const reduced=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(controls)controls.enableDamping=!reduced;
-siege=CorhavenSiege.create({parent:worldFx,boardY:TILE_TOP,reduced:reduced,sun:sun});
+siege=CorhavenSiege.create({parent:worldFx,boardY:TILE_TOP,reduced:reduced,sun:sun,towers:towerMarks});
 siege.resize(canvas.clientHeight||innerHeight);
 let last=performance.now(),time=0,xrFrame=null;
 function undoBoardLift(){
@@ -2908,14 +2924,17 @@ function loop(now,frame){
   if(renderer.xr.isPresenting)updateXR(frame,dt);
   for(let i=anims.length-1;i>=0;i--){const a=anims[i];a.t+=dt*1000;const k=Math.min(1,a.t/a.d);a.fn(k);if(k>=1){anims.splice(i,1);a.res();}}
   if(world)stepDice(dt);
-  pieceMeshes.forEach(m=>{const u=m.userData;const tgt=u.hl?0.1+Math.sin(time*5)*0.06:0;u.inner.position.y+=(tgt-u.inner.position.y)*Math.min(1,dt*12);
+  pieceMeshes.forEach(m=>{const u=m.userData;const rise=u.ready&&S.phase==='choose'&&!reduced?(0.5+0.5*Math.sin(time*2.8))*0.22:0;const tgt=(u.hl?0.1+Math.sin(time*5)*0.06:0)+rise;u.inner.position.y+=(tgt-u.inner.position.y)*(u.ready?1:Math.min(1,dt*12));
     if(u.hl){u.ring.material.opacity=0.55+Math.sin(time*5)*0.35;u.mat.emissive.setHex(0x3a2a00);}else if(S.world==='sun'&&siege){const heat=siege.lanceHeat(m.position.x,m.position.z);if(heat>0.08)u.mat.emissive.setRGB(1.4*heat,0.85*heat,0.3*heat);else u.mat.emissive.setHex(0x000000);}else u.mat.emissive.setHex(0x000000);});
-  markers.forEach(mk=>{if(!mk.visible)return;mk.material.opacity=0.5+Math.sin(time*5+1)*0.3;if(S.world==='flood'&&siege&&mk.userData.baseY!=null)mk.position.y=mk.userData.baseY+siege.waterLift(mk.position.x,mk.position.z,2)+0.05;});
+  labClipUp.set(0,1,0).transformDirection(board.matrixWorld);board.localToWorld(labClipAt.set(0,TILE_TOP-0.02,0));labClip.setFromNormalAndCoplanarPoint(labClipUp,labClipAt);
+  markerGlowMat.opacity=0.62+Math.sin(time*5+1)*0.18;markerRingMat.opacity=0.72+Math.sin(time*5+1)*0.13;
+  markers.forEach(mk=>{if(!mk.visible||!mk.userData.post)return;mk.userData.post.position.y=reduced?0:(0.5+0.5*Math.sin(time*2.8+(mk.userData.phase||0)))*0.24;});
   lidPivot.rotation.x+=(lidTarget-lidPivot.rotation.x)*Math.min(1,dt*3);
   glow.intensity=(lidTarget<-1?2.2:0.55)+Math.sin(time*2)*0.12;
   torches.forEach(t=>{const f=reduced?1:0.85+Math.sin(time*11+t.seed)*0.08+Math.sin(time*23+t.seed*3)*0.06;t.light.intensity=torchBase*f;t.flame.scale.set(1,f,1);});
   if(!reduced){loop.flag=(loop.flag||0)+dt;if(loop.flag>0.08){loop.flag=0;flags.forEach(f=>{const p=f.geo.attributes.position.array;for(let i=0;i<p.length;i+=3){const x=f.orig[i];p[i+2]=Math.sin(x*9-time*5+f.phase)*0.06*(x/0.56);}f.geo.attributes.position.needsUpdate=true;});}}
   if(turnMark.visible){turnMark.position.y=turnBob.base.y+(reduced?0:Math.sin(time*2.6)*0.16);board.getWorldQuaternion(turnFace);turnMark.quaternion.copy(turnFace.invert()).multiply(camera.quaternion);}
+  if(markerLab)labFaces.forEach(g=>{const tag=g.userData.tag;if(tag){board.getWorldQuaternion(labQuat);tag.quaternion.copy(labQuat.invert()).multiply(camera.quaternion);}if(g.userData.bob)g.userData.bob.position.y=reduced?0:(0.5+0.5*Math.sin(time*2.8+(g.userData.phase||0)))*0.24;});
   coinsFx.forEach(c=>{if(c.rest)return;c.v.y-=12*dt;c.m.position.addScaledVector(c.v,dt);c.m.rotation.x+=c.spin.x*dt;c.m.rotation.y+=c.spin.y*dt;
     if(c.m.position.y<0.14){c.m.position.y=0.14;if(Math.abs(c.v.y)<1.5){c.rest=true;c.m.rotation.set(0,Math.random()*6,0);}else{c.v.y*=-0.35;c.v.x*=0.6;c.v.z*=0.6;}}});
   stepBarricades(dt);stepWorldFx(dt);if(S.world==='mist')applyVeil();
@@ -3590,6 +3609,86 @@ if(navigator.xr&&navigator.xr.isSessionSupported){
 const btnRoom=$('btnXR'),btnRoomSetup=$('btnXRSetup');
 if(btnRoom)btnRoom.onclick=()=>enterRoom();
 if(btnRoomSetup)btnRoomSetup.onclick=()=>enterRoom();
+
+/* A separate board for comparing movement marks under each event. Open marker-lab.html. */
+function labMarker(kind){
+  const g=new THREE.Group();
+  const gold=new THREE.MeshBasicMaterial({color:0xE8C56A,fog:false});
+  const bright=new THREE.MeshBasicMaterial({color:0xFFF6D0,fog:false});
+  if(kind==='ring'){
+    const m=new THREE.Mesh(new THREE.RingGeometry(0.16,0.3,32),new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.85,side:THREE.DoubleSide,depthWrite:false,fog:false}));
+    m.rotation.x=-Math.PI/2;m.position.y=0.04;g.add(m);
+  }else if(kind==='post'){
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.05,1.2,6),gold);pole.position.y=0.62;
+    const head=new THREE.Mesh(new THREE.OctahedronGeometry(0.16,0),bright);head.position.y=1.3;
+    g.add(pole,head);
+  }else if(kind==='beacon'){
+    const ring=new THREE.Mesh(new THREE.RingGeometry(0.16,0.3,32),new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.85,side:THREE.DoubleSide,depthTest:false,depthWrite:false,fog:false}));
+    ring.rotation.x=-Math.PI/2;ring.position.y=0.04;ring.renderOrder=39;
+    const post=new THREE.Group();
+    const glow=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,clippingPlanes:[labClip]});
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,2.5,16),glow);pole.position.y=0.05;pole.renderOrder=40;
+    const head=new THREE.Mesh(new THREE.SphereGeometry(0.14,16,12),glow);head.position.y=1.32;head.renderOrder=41;
+    post.add(pole,head);g.add(ring,post);g.userData.bob=post;
+  }else if(kind==='beam'){
+    const mat=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.75,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+    const beam=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.14,1.7,10,1,true),mat);beam.position.y=0.9;beam.renderOrder=40;
+    const cap=new THREE.Mesh(new THREE.SphereGeometry(0.1,12,8),mat);cap.position.y=1.78;cap.renderOrder=41;
+    g.add(beam,cap);
+  }else if(kind==='pennant'){
+    const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.035,1.25,5),gold);pole.position.y=0.64;
+    const shape=new THREE.Shape();shape.moveTo(0,0);shape.lineTo(0.46,0.13);shape.lineTo(0,0.3);shape.closePath();
+    const flag=new THREE.Mesh(new THREE.ShapeGeometry(shape),new THREE.MeshBasicMaterial({color:0xF0D48A,side:THREE.DoubleSide,fog:false,depthTest:false}));
+    flag.position.set(0.02,1.08,0);flag.renderOrder=42;g.add(pole,flag);
+  }else{
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.72,5),gold);stem.position.y=0.36;
+    const coin=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.06,20),bright);coin.position.y=0.8;
+    const halo=new THREE.Mesh(new THREE.RingGeometry(0.22,0.34,24),new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.75,side:THREE.DoubleSide,depthWrite:false,fog:false}));
+    halo.rotation.x=-Math.PI/2;halo.position.y=0.84;g.add(stem,coin,halo);
+  }
+  return g;
+}
+function labTag(text){
+  const c=document.createElement('canvas');c.width=256;c.height=64;
+  const g=c.getContext('2d');g.font='700 40px Georgia, serif';g.fillStyle='#F6E3A8';g.textAlign='center';g.textBaseline='middle';g.fillText(text,128,34);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(0.95,0.24),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false,fog:false}));
+  m.position.y=1.72;m.renderOrder=50;return m;
+}
+function startMarkerLab(){
+  document.body.classList.remove('at-title');
+  $('title').classList.remove('open');
+  document.querySelectorAll('.hud').forEach(el=>{el.style.visibility='hidden';});
+  theme.pause();themeHold=true;fxOn=false;
+  dice.forEach(d=>{d.visible=false;});
+  const root=document.createElement('div');root.id='lab';
+  root.innerHTML='<p id="labNote"></p><div class="row" id="labEvents" role="group" aria-label="World event"></div><div class="row" id="labStyles" role="group" aria-label="Movement mark"></div>';
+  document.body.appendChild(root);
+  const events=[['wild','Thorns'],['flood','Drowning Tide'],['ash','Heartfire'],['sun','Searing Seal'],['mist','Mist'],['ways','Stones'],['none','Clear']];
+  const styles=[['all','All six'],['ring','Ring'],['post','Post'],['beacon','Ring post'],['beam','Beam'],['pennant','Pennant'],['coin','Coin']];
+  const names={ring:'Ring',post:'Post',beacon:'Ring post',beam:'Beam',pennant:'Pennant',coin:'Coin'};
+  const spots=[4,13,22,31,40,49,58,67].map(trackPos);
+  let event='wild',style='all';
+  const press=(box,id)=>box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===id)));
+  const paint=()=>{
+    labFaces.forEach(g=>{g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose();}});board.remove(g);});
+    labFaces=[];
+    const kinds=style==='all'?['ring','post','beacon','beam','pennant','coin']:spots.map(()=>style);
+    const where=style==='all'?spots.slice(0,6):spots;
+    kinds.forEach((kind,i)=>{
+      const g=labMarker(kind);g.position.copy(where[i]);g.userData.phase=i*1.1;
+      if(style==='all'){const tag=labTag(names[kind]);if(kind==='beacon')tag.position.y=2.05;g.add(tag);g.userData.tag=tag;}
+      board.add(g);labFaces.push(g);
+    });
+    $('labNote').textContent=style==='all'
+      ?'Six ways to mark a landing, in order around the road. The ring post is the one in the match. Pick one, then step through the events.'
+      :'Every landing uses this mark, so you can see it under the event.';
+  };
+  const ev=$('labEvents'),st=$('labStyles');
+  events.forEach(([id,label])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.textContent=label;b.onclick=()=>{event=id;press(ev,id);setWorld(id==='none'?null:id,false);};ev.appendChild(b);});
+  styles.forEach(([id,label])=>{const b=document.createElement('button');b.type='button';b.dataset.id=id;b.textContent=label;b.onclick=()=>{style=id;press(st,id);paint();};st.appendChild(b);});
+  press(ev,event);press(st,style);setWorld(event,false);paint();
+}
+if(markerLab)startMarkerLab();
 
 })();
 </script>
