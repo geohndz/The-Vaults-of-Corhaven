@@ -72,18 +72,25 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 #meCoins{margin-top:6px;gap:5px}
 #meCoins .coin{width:9px;height:9px}
 .sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-#toast{position:fixed;z-index:6;left:50%;top:calc(env(safe-area-inset-top,0px) + 176px);transform:translate(-50%,-10px);width:min(560px,calc(100vw - 24px));padding:24px 36px 22px;text-align:center;color:var(--parch);pointer-events:none;opacity:0;visibility:hidden;
+#toast,#linkBanner{position:fixed;z-index:6;left:50%;top:calc(env(safe-area-inset-top,0px) + 176px);transform:translate(-50%,-10px);width:min(560px,calc(100vw - 24px));padding:24px 36px 22px;text-align:center;color:var(--parch);pointer-events:none;opacity:0;visibility:hidden;
   background:linear-gradient(90deg,rgba(12,10,8,0) 0%,rgba(12,10,8,.78) 16%,rgba(12,10,8,.78) 84%,rgba(12,10,8,0) 100%);
   transition:opacity .3s ease,transform .3s ease,visibility 0s linear .3s}
-#toast.show{opacity:1;transform:translate(-50%,0);visibility:visible;transition-delay:0s}
-#toast .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
-#toast .rule.t{top:9px}
-#toast .rule.b{bottom:9px}
-#toast .orn{display:block;width:34px;height:34px;margin:0 auto 10px;color:var(--c,var(--gold-bright));filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
-#toast .tt{font-weight:700;font-size:24px;line-height:1.1;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#linkBanner{z-index:8}
+body.link-bad #toast.show{opacity:0;visibility:hidden}
+#toast.show,#linkBanner.show{opacity:1;transform:translate(-50%,0);visibility:visible;transition-delay:0s}
+#toast .rule,#linkBanner .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
+#toast .rule.t,#linkBanner .rule.t{top:9px}
+#toast .rule.b,#linkBanner .rule.b{bottom:9px}
+#toast .orn,#linkBanner .orn{display:block;width:34px;height:34px;margin:0 auto 10px;color:var(--c,var(--gold-bright));filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+#toast .tt,#linkBanner .tt{font-weight:700;font-size:24px;line-height:1.1;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
 #toast.num .tt{font-size:44px;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums;line-height:1}
-#toast .st{margin-top:6px;font-size:17px;line-height:1.35;color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.9)}
-#toast .st:empty{display:none}
+#toast .st,#linkBanner .st{margin-top:6px;font-size:17px;line-height:1.35;color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#toast .st:empty,#linkBanner .st:empty{display:none}
+#linkBanner .wifi .arc{opacity:.28;animation:wifi 1.35s ease-in-out infinite}
+#linkBanner .wifi .a1{animation-delay:.15s}
+#linkBanner .wifi .a2{animation-delay:.3s}
+#linkBanner .wifi .a3{animation-delay:.45s}
+@keyframes wifi{0%,45%{opacity:.18}70%,100%{opacity:1}}
 .roster{left:calc(env(safe-area-inset-left,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);margin:0;padding:0;list-style:none;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .roster li{display:flex;align-items:center;gap:10px;padding:3px 14px 3px 3px;border-radius:14px;background:linear-gradient(90deg,rgba(20,16,12,.82),rgba(20,16,12,.28));color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.7)}
 .roster .who{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0}
@@ -205,11 +212,11 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
   #meCard .av{width:52px;height:52px;margin-bottom:5px}
   #turnName{font-size:18px}
   #meKingdom{font-size:12px}
-  #toast{top:calc(env(safe-area-inset-top,0px) + 140px);padding:18px 22px 16px}
-  #toast .orn{width:28px;height:28px;margin-bottom:6px}
-  #toast .tt{font-size:19px;letter-spacing:.1em}
+  #toast,#linkBanner{top:calc(env(safe-area-inset-top,0px) + 140px);padding:18px 22px 16px}
+  #toast .orn,#linkBanner .orn{width:28px;height:28px;margin-bottom:6px}
+  #toast .tt,#linkBanner .tt{font-size:19px;letter-spacing:.1em}
   #toast.num .tt{font-size:36px;letter-spacing:0}
-  #toast .st{font-size:15px}
+  #toast .st,#linkBanner .st{font-size:15px}
   .roster{left:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);gap:5px}
   .roster li{gap:8px;padding:2px 10px 2px 2px}
   .roster .av{width:34px;height:34px}
@@ -255,11 +262,27 @@ body.at-title #gearWrap{visibility:visible}
 .aboutbody p{margin:0 0 12px;color:var(--parch-dim)}
 .aboutbody h3{margin:16px 0 4px;color:var(--parch);font-size:18px}
 .aboutback{max-width:280px}
-@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]),.taparrow{animation:none}#toast{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
+#gate{position:fixed;inset:0;z-index:18;display:none;align-items:center;justify-content:center;background:var(--leather);
+  padding:calc(env(safe-area-inset-top,0px) + 28px) 24px calc(env(safe-area-inset-bottom,0px) + 28px)}
+#gate.open{display:flex}
+.gatecard{width:min(440px,100%);text-align:left}
+.gatecard h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:clamp(42px,9vw,68px);line-height:.95;margin:0 0 14px;color:var(--gold-bright)}
+.gatecard p{margin:0;color:var(--parch-dim);font-size:18px;max-width:36ch}
+.gatebar{width:min(280px,72vw);height:3px;margin-top:28px;background:rgba(201,161,74,.28)}
+.gatebar span{display:block;height:100%;width:100%;background:var(--gold-bright);transform:scaleX(0);transform-origin:left center}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
 </style>
 </head>
 <body class="at-title">
 <canvas id="scene" aria-label="3D ludo board" width="1589" height="1288"></canvas>
+
+<div id="gate" aria-hidden="true">
+  <div class="gatecard">
+    <h1>The march is forming</h1>
+    <p>Every kingdom steps onto the road at the same moment.</p>
+    <div class="gatebar" aria-hidden="true"><span id="gateBar"></span></div>
+  </div>
+</div>
 
 <div class="hud" id="meCard" hidden>
   <span class="avslot" id="meSlot"><span class="av" id="meAv"><span class="crest"></span></span></span>
@@ -274,6 +297,18 @@ body.at-title #gearWrap{visibility:visible}
   <svg class="orn" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2l4 11 11 4-11 4-4 11-4-11-11-4 11-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="17" cy="17" r="3.2" fill="currentColor"/></svg>
   <div class="tt"></div>
   <div class="st"></div>
+  <span class="rule b"></span>
+</div>
+<div class="hud" id="linkBanner" role="status" aria-live="polite" aria-hidden="true">
+  <span class="rule t"></span>
+  <svg class="orn wifi" viewBox="0 0 24 24" aria-hidden="true">
+    <path class="arc a3" d="M4.2 9.2a11.2 11.2 0 0 1 15.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arc a2" d="M7.2 12.4a7 7 0 0 1 9.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arc a1" d="M10 15.4a3.1 3.1 0 0 1 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <circle class="arc a0" cx="12" cy="18.5" r="1.15" fill="currentColor"/>
+  </svg>
+  <div class="tt">Connection lost</div>
+  <div class="st">Reconnecting.</div>
   <span class="rule b"></span>
 </div>
 
@@ -474,7 +509,7 @@ body.at-title #gearWrap{visibility:visible}
 <div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
   <div class="sheet panel">
     <h1 id="settingsTitle">Settings</h1>
-    <p>The theme and the effects can each sit quieter, or go silent. The levels stay where you leave them.</p>
+    <p>The theme and the effects can each sit quieter, or go silent. A change here stays on this device.</p>
     <label class="check">Theme <input type="checkbox" id="themeOn" checked></label>
     <input class="vol" id="themeVol" type="range" min="0" max="100" value="22" aria-label="Theme volume">
     <label class="check">Effects <input type="checkbox" id="fxOn" checked></label>
@@ -496,7 +531,7 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
 <script src="./lib/rules.js?v=phalanx1"></script>
-<script src="./lib/siege-fx.js?v=siege12"></script>
+<script src="./lib/siege-fx.js?v=siege13"></script>
 <script>
 (function(){
 'use strict';
@@ -549,9 +584,12 @@ const TILE_TOP=0.12,GOAL_Y=0.13,TOWER_TOP=0.82,DS=0.35;
 
 /* ================= Renderer / scene ================= */
 const canvas=document.getElementById('scene');
+const phonePower=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+const displayPixelRatio=()=>Math.min(window.devicePixelRatio||1,phonePower?1.25:2);
+const displayShadow=()=>phonePower?1024:2048;
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
 renderer.setClearColor(0x000000,0);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.setPixelRatio(displayPixelRatio());
 renderer.xr.enabled=true;
 renderer.xr.setReferenceSpaceType('local-floor');
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -571,7 +609,7 @@ const starGeo=new THREE.BufferGeometry();
 const stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xFFF4D8,size:0.7,fog:false,transparent:true,opacity:0.85}));scene.add(stars);
 scene.fog=new THREE.Fog(0xE7D6B0,40,120);
 const hemi=new THREE.HemisphereLight(0xFFF1D6,0x3A2A1C,0.7);scene.add(hemi);
-const sun=new THREE.DirectionalLight(0xFFF0D0,0.9);sun.position.set(-8,18,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+const sun=new THREE.DirectionalLight(0xFFF0D0,0.9);sun.position.set(-8,18,10);sun.castShadow=true;sun.shadow.mapSize.set(displayShadow(),displayShadow());
 Object.assign(sun.shadow.camera,{left:-11,right:11,top:11,bottom:-11,near:1,far:50});sun.shadow.bias=-0.0006;scene.add(sun);
 
 /* ================= Physics world ================= */
@@ -1026,14 +1064,41 @@ function audioCtx(){
   if(actx.state==='suspended'){const p=actx.resume();if(p)p.catch(()=>{});}
   return actx;
 }
+let themeHold=false,themeFadeToken=0;
+function themeLevel(){return(themeOn&&!winPlaying&&!themeHold)?themeVol:0;}
 function applyGains(){
-  if(themeWired&&themeGain)themeGain.gain.value=(themeOn&&!winPlaying)?themeVol:0;
-  else theme.volume=(themeOn&&!winPlaying)?themeVol:0;
+  themeFadeToken++;
+  const level=themeLevel();
+  if(themeWired&&themeGain){
+    if(actx)themeGain.gain.cancelScheduledValues(actx.currentTime);
+    themeGain.gain.value=level;
+  }else theme.volume=level;
   if(fxGain)fxGain.gain.value=fxOn?fxVol:0;
+}
+function fadeThemeGain(to,ms){
+  const token=++themeFadeToken;
+  if(ms<=0){applyGains();return;}
+  wireTheme();
+  const ctx=actx,g=themeWired&&themeGain?themeGain.gain:null;
+  if(g&&ctx&&ctx.state!=='suspended'){
+    const now=ctx.currentTime;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(Math.max(0,g.value),now);
+    g.linearRampToValueAtTime(Math.max(0,to),now+ms/1000);
+    return;
+  }
+  const from=g?g.value:(Number(theme.volume)||0),t0=performance.now();
+  const step=now=>{
+    if(token!==themeFadeToken)return;
+    const k=Math.min(1,(now-t0)/ms),v=from+(to-from)*k;
+    if(g)g.value=Math.max(0,v);else theme.volume=Math.max(0,Math.min(1,v));
+    if(k<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 function wireTheme(){
   const ctx=audioCtx();if(!ctx||themeWired||ctx.state==='suspended')return;
-  themeGain.gain.value=(themeOn&&!winPlaying)?themeVol:0;
+  themeGain.gain.value=themeLevel();
   try{
     ctx.createMediaElementSource(theme).connect(themeGain);
     theme.volume=1;theme.dataset.owned='1';themeWired=true;
@@ -1072,11 +1137,34 @@ function loadBuffers(){
 }
 const clips=new Set();
 function ensureTheme(){
+  if(themeHold)return;
   wireTheme();applyGains();
   if(!themeOn||winPlaying||themeVol<=0.001)return;
   if(!theme.paused)return;
   theme.muted=false;
   const p=theme.play();if(p)p.catch(()=>{});
+}
+function matchThemeOffset(){
+  const at=NET.room&&NET.room.game&&NET.room.game.themeAt;
+  if(typeof at!=='number')return null;
+  const elapsed=(netNow()-at)/1000;
+  if(elapsed<=0.05)return 0;
+  const dur=theme.duration;
+  if(dur&&isFinite(dur)&&dur>1)return elapsed%dur;
+  return elapsed;
+}
+function startMatchTheme(fadeIn){
+  themeHold=false;
+  if(!themeOn||themeVol<=0.001||winPlaying){applyGains();theme.pause();return;}
+  const off=matchThemeOffset();
+  wireTheme();
+  try{if(off!=null&&isFinite(off)&&Math.abs((theme.currentTime||0)-off)>0.25)theme.currentTime=off;}catch(e){}
+  theme.muted=false;
+  if(fadeIn&&!reduced){
+    if(themeWired&&themeGain)themeGain.gain.value=0;else theme.volume=0;
+  }
+  const p=theme.play();if(p)p.catch(()=>{});
+  if(fadeIn&&!reduced)fadeThemeGain(themeVol,800);else applyGains();
 }
 function stopBuffers(){liveSources.forEach(s=>{try{s.stop();}catch(e){}});liveSources.clear();}
 function stopOneShots(){
@@ -1235,7 +1323,8 @@ theme.addEventListener('canplay',()=>ensureTheme());
 /* ================= Game rules ================= */
 const S={players:[],cur:0,phase:'idle',pending:[],sel:0,dbl:false,doubles:0,gid:0,config:null,world:null,worldBag:null};
 /* Online room connection. In an online match every player but `myH` is remote and moves come from the server. */
-const NET={on:false,playing:false,ws:null,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),epoch:0,offset:0,retry:0,retryTimer:null,ended:false};
+const NET={on:false,playing:false,ws:null,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),epoch:0,offset:0,retry:0,retryTimer:null,ended:false,act:0,pending:null,pendingTimer:null,forceSnap:false,stale:false};
+let playGen=0,pumping=false,linkMode='ok',linkRtt=0,linkSent=0,linkPong=0,gateFrame=0;
 const pieceMeshes=[];
 const curP=()=>S.players[S.cur];
 const isMine=pl=>!!pl&&!pl.cpu&&!pl.out&&(!NET.on||pl.h===NET.myH);
@@ -1442,7 +1531,7 @@ function renderTurn(){
   const pl=curP();if(!pl)return;
   ui.roll.hidden=true;
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
-  ui.hint.textContent=tip||(NET.on&&NET.ws&&NET.ws.readyState!==1&&!NET.ended?'Reconnecting to the room…':'');
+  ui.hint.textContent=tip||'';
   renderChips();renderTally();showTurnMark();reflowPhone();if(S.world==='mist')applyVeil();
   if(typeof paintViewHud==='function')paintViewHud();
   if(typeof paintXRPanel==='function')paintXRPanel();
@@ -1701,7 +1790,9 @@ async function walkMove(pc,spec,alive){
     delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
     await hop(m,posOf(pc),480,1.2);if(!alive())return false;sfx.step();return true;
   }
-  const land=spec.shift?spec.land:spec.to,steps=land-pc.p,dur=steps>8?95:165;
+  let land=spec.shift?spec.land:spec.to,steps=land-pc.p,dur=steps>8?95:165;
+  if(!Number.isFinite(steps)||steps<0)steps=0;
+  if(steps>24){pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;else delete pc.at;await hop(m,posOf(pc),480,1.2);return alive();}
   for(let s=0;s<steps;s++){pc.p++;sfx.step();await hop(m,cellPos(pc.h,pc.p,pc.idx),dur,0.5);if(!alive())return false;}
   if(spec.shift&&(spec.to!==land||spec.at!=null)){
     flashWay(trackIndex(pc.h,land));
@@ -1901,16 +1992,50 @@ const netNow=()=>Date.now()+NET.offset;
 function netSend(msg){if(NET.ws&&NET.ws.readyState===1){NET.ws.send(JSON.stringify(msg));return true;}return false;}
 
 /* Opens the socket and sends `hello` (create or join) once it is up. Reconnects with backoff while a room is open. */
+function setLink(mode,title,sub){
+  const el=$('linkBanner');
+  if(mode==='ok'){
+    if(linkMode!=='ok'){linkMode='ok';el.classList.remove('show');el.setAttribute('aria-hidden','true');document.body.classList.remove('link-bad');}
+    return;
+  }
+  if(linkMode===mode)return;
+  linkMode=mode;
+  el.querySelector('.tt').textContent=title;
+  el.querySelector('.st').textContent=sub||'';
+  el.setAttribute('aria-hidden','false');
+  document.body.classList.add('link-bad');
+  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+}
+function paintLink(){
+  if(!NET.on||NET.ended){setLink('ok');return;}
+  const rs=NET.ws?NET.ws.readyState:3;
+  if(rs===1){
+    const quiet=linkPong&&linkWait&&Date.now()-linkPong>3500;
+    if(linkRtt>700||quiet)setLink('slow','Slow connection','Moves may take a moment.');
+    else setLink('ok');
+    return;
+  }
+  setLink(rs===0?'connecting':'lost',rs===0?'Connecting':'Connection lost',rs===0?'Reaching the room.':'Reconnecting.');
+}
+let linkWait=0;
 function connect(hello){
   if(location.protocol!=='http:'&&location.protocol!=='https:'){onlineError('file');return;}
   clearTimeout(NET.retryTimer);
   if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}}
   const ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/api/ws');
-  NET.ws=ws;
-  ws.onopen=()=>{NET.retry=0;ws.send(JSON.stringify(hello));if(NET.playing)renderTurn();};
+  NET.ws=ws;paintLink();
+  ws.onopen=()=>{
+    NET.retry=0;linkRtt=0;linkWait=0;linkPong=Date.now();
+    ws.send(JSON.stringify(hello));paintLink();
+    if(NET.pending)netSend(NET.pending.msg);
+    if(NET.playing&&!themeHold)startMatchTheme(false);
+    if(NET.playing)renderTurn();
+  };
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}if(ws===NET.ws)onNetMessage(m);};
   ws.onclose=()=>{
     if(ws!==NET.ws)return;
+    if(NET.playing)NET.forceSnap=true;
+    paintLink();
     if(!NET.code){NET.ws=null;onlineError('offline');return;}
     if(NET.ended||!NET.on)return;
     if(NET.playing)renderTurn();
@@ -1918,25 +2043,35 @@ function connect(hello){
     NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended)connect({t:'join',id:myId,code:NET.code});},Math.min(10000,600*Math.pow(2,NET.retry++)));
   };
 }
+setInterval(()=>{
+  if(!NET.on||NET.ended||!NET.ws||NET.ws.readyState!==1){paintLink();return;}
+  if(linkWait&&Date.now()-linkWait>5000){linkWait=0;try{NET.ws.close();}catch(e){}return;}
+  if(linkWait){paintLink();return;}
+  linkWait=Date.now();netSend({t:'ping'});paintLink();
+},2000);
 function endOnlineSocket(){
   NET.ended=true;clearTimeout(NET.retryTimer);
   if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}NET.ws=null;}
 }
 function startOnline(){
   if(NET.on)endOnlineSocket();
-  S.gid++;anims=[];rollState=null;
-  Object.assign(NET,{on:true,playing:false,ended:false,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),retry:0});
+  S.gid++;anims=[];rollState=null;playGen++;
+  clearTimeout(NET.pendingTimer);NET.pending=null;
+  closeGate();themeHold=false;
+  Object.assign(NET,{on:true,playing:false,ended:false,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),retry:0,act:0,forceSnap:false,stale:false});
   NET.epoch++;
+  paintLink();
 }
 function leaveOnline(sendLeave,msg){
   if(sendLeave)netSend({t:'leave'});
   const ws=NET.ws;
-  NET.ws=null;NET.ended=true;clearTimeout(NET.retryTimer);
+  NET.ws=null;NET.ended=true;clearTimeout(NET.retryTimer);clearTimeout(NET.pendingTimer);NET.pending=null;
   if(ws){ws.onclose=null;setTimeout(()=>{try{ws.close();}catch(e){}},sendLeave?400:0);}
   rememberRoom(null);
   const wasPlaying=NET.playing;
-  Object.assign(NET,{on:false,playing:false,code:null,pid:null,myH:null,room:null,busy:0});
-  NET.epoch++;
+  Object.assign(NET,{on:false,playing:false,code:null,pid:null,myH:null,room:null,busy:0,forceSnap:false});
+  NET.epoch++;playGen++;
+  closeGate();themeHold=false;setLink('ok');
   $('btnLeave').hidden=true;$('btnNew').hidden=false;dieClock.textContent='';dieClock.hidden=true;
   if(wasPlaying){resetBoard();ui.chips.hidden=true;say('');ui.roll.hidden=true;}
   showTitle(msg);
@@ -2074,7 +2209,7 @@ function syncFromRoom(room){
     const faces=S.pending.filter(d=>!d.bonus).map(d=>d.v);
     if(faces.length)roller.shownRoll=faces;
   }
-  S.phase=room.status==='over'?'over':g.phase;
+  if(!(NET.pending&&(S.phase==='rolling'||S.phase==='moving')))S.phase=room.status==='over'?'over':g.phase;
   if((g.world||null)!==S.world)setWorld(g.world||null);
 }
 function promptFor(pl){
@@ -2089,51 +2224,122 @@ function settleUi(snapMsg){
   else{setHighlights();showMarkers([]);renderTurn();}
   if(snapMsg){const p=curP();if(isMine(p)&&(S.phase==='roll'||S.phase==='orderRoll'))announceTurn(p,S.phase==='orderRoll'?'order':'turn');else say(promptFor(p));}
 }
+const MATCH_CUE_MS=3400;
+function openGate(themeAt){
+  const el=$('gate');el.classList.add('open');el.setAttribute('aria-hidden','false');
+  const tick=()=>{
+    const left=Math.max(0,themeAt-netNow());
+    $('gateBar').style.transform=`scaleX(${Math.max(0,Math.min(1,1-left/MATCH_CUE_MS))})`;
+    if(left>40&&el.classList.contains('open'))gateFrame=requestAnimationFrame(tick);
+  };
+  cancelAnimationFrame(gateFrame);gateFrame=requestAnimationFrame(tick);
+}
+function closeGate(){
+  cancelAnimationFrame(gateFrame);
+  const el=$('gate');el.classList.remove('open');el.setAttribute('aria-hidden','true');
+}
+function waitUntil(ts){return new Promise(res=>{const tick=()=>{if(netNow()>=ts)res();else requestAnimationFrame(tick);};tick();});}
+function finishBoard(room,announce){
+  renderTally();
+  if(room.status==='over'){if(S.phase!=='over'){const w=S.players.find(p=>p.h===room.game.winner);if(w)victory(w);}return;}
+  settleUi(announce);
+}
+/* A dropped connection used to replay the event log on top of a newer snapshot, so troops leapt around and vaulted pieces walked back out. */
+function snapTo(room){
+  playGen++;S.gid++;dropMotion();
+  NET.busy=0;NET.pending=null;clearTimeout(NET.pendingTimer);
+  NET.seen=room.seq;NET.forceSnap=false;NET.stale=false;
+  syncFromRoom(room);
+  const gen=playGen;
+  settleAll(160).then(()=>{if(gen!==playGen||!NET.on)return;finishBoard(room,true);if(NET.room&&NET.room.seq>NET.seen)onState(NET.room);});
+}
+function missedHistory(room){
+  if(!room||room.seq<=NET.seen)return false;
+  const events=room.events||[];
+  if(!events.length)return true;
+  return events[0].seq>NET.seen+1;
+}
+async function pump(){
+  if(pumping)return;
+  pumping=true;
+  const gen=playGen;
+  NET.busy=1;
+  try{
+    while(gen===playGen){
+      const room=NET.room;
+      if(!room||!room.game||room.seq<=NET.seen)break;
+      const next=(room.events||[]).find(e=>e.seq===NET.seen+1);
+      if(!next){snapTo(room);return;}
+      await playEvent(next,NET.epoch);
+      if(gen!==playGen)return;
+      NET.seen=next.seq;
+      if(NET.pending&&NET.seen>NET.pending.seq){NET.pending=null;clearTimeout(NET.pendingTimer);}
+    }
+    if(gen!==playGen)return;
+    const room=NET.room;
+    if(room&&room.game&&room.seq===NET.seen){
+      syncFromRoom(room);
+      await settleAll(120);
+      if(gen!==playGen)return;
+      finishBoard(room,false);
+    }
+  }catch(err){console.error(err);}
+  finally{
+    const mine=gen===playGen;
+    if(mine)NET.busy=0;
+    pumping=false;
+    if(mine&&NET.on&&NET.room&&NET.room.seq>NET.seen)pump();
+  }
+}
 async function enterMatch(room){
-  NET.playing=true;NET.seen=room.seq;
+  const epoch=NET.epoch;
+  NET.playing=true;NET.seen=room.seq;NET.forceSnap=false;
   const me=room.seats.find(s=>s.pid===NET.pid);NET.myH=me?me.h:null;
+  const at=room.game&&room.game.themeAt;
   ['online','title','setup','leave'].forEach(closeModal);
+  const gating=typeof at==='number'&&at-netNow()>450;
+  if(gating){
+    themeHold=true;
+    fadeThemeGain(0,reduced?0:520);
+    openGate(at);
+    setTimeout(()=>{if(themeHold)theme.pause();},reduced?0:540);
+  }
   $('btnLeave').textContent='Leave room';
   $('btnLeave').hidden=room.status!=='playing';$('btnNew').hidden=room.status==='playing';
   resetBoard();
   syncFromRoom(room);
   await settleAll(10);
-  renderTally();
-  if(room.status==='over'){const w=S.players.find(p=>p.h===room.game.winner);if(w)victory(w);return;}
-  settleUi(true);
+  if(epoch!==NET.epoch){closeGate();themeHold=false;return;}
+  const superseded=NET.room&&NET.room.seq>room.seq&&NET.seen>room.seq;
+  if(!superseded){
+    renderTally();
+    if(room.status==='over'){const w=S.players.find(p=>p.h===room.game.winner);if(w)victory(w);}
+    else settleUi(true);
+  }
+  if(gating){
+    await waitUntil(at);
+    if(epoch!==NET.epoch){closeGate();themeHold=false;return;}
+    closeGate();
+    startMatchTheme(true);
+  }else if(typeof at==='number')startMatchTheme(false);
 }
 function onState(room){
   NET.room=room;
+  if(NET.pending&&room.seq>NET.pending.seq){NET.pending=null;clearTimeout(NET.pendingTimer);}
+  paintLink();
   if(room.status==='closed'){
     if(!NET.playing)leaveOnline(false,room.closed==='host-left'?'The person who made the room left, so the room closed.':'The room closed.');
     return;
   }
   if(room.status==='lobby'){renderLobby(room);return;}
-  if(!NET.playing){const epoch=NET.epoch;NET.chain=NET.chain.then(()=>{if(epoch===NET.epoch)return enterMatch(room);});return;}
-  const fresh=room.events.filter(e=>e.seq>NET.seen);
-  const gap=fresh.length&&fresh[0].seq>NET.seen+1;
-  NET.seen=Math.max(NET.seen,room.seq);
-  const epoch=NET.epoch;
-  NET.busy++;
-  NET.chain=NET.chain.then(async()=>{
-    if(epoch!==NET.epoch)return;
-    if(!gap)for(const e of fresh){await playEvent(e,epoch);if(epoch!==NET.epoch)return;}
-  }).catch(err=>console.error(err)).then(async()=>{
-    if(epoch!==NET.epoch)return;
-    NET.busy--;
-    if(NET.busy)return;
-    const latest=NET.room;
-    if(!latest||!latest.game)return;
-    syncFromRoom(latest);
-    await settleAll(gap?10:160);
-    if(epoch!==NET.epoch)return;
-    renderTally();
-    if(latest.status==='over'){if(S.phase!=='over'||gap){const w=S.players.find(p=>p.h===latest.game.winner);if(w)victory(w);}return;}
-    settleUi(gap);
-  });
+  if(!NET.playing){enterMatch(room);return;}
+  const behind=room.seq-NET.seen;
+  if(NET.forceSnap||missedHistory(room)||behind>12||(NET.stale&&behind>1)){snapTo(room);return;}
+  pump();
 }
 function onNetMessage(m){
   if(m.now)NET.offset=m.now-Date.now();
+  if(m.t==='pong'){if(linkWait)linkRtt=Date.now()-linkWait;linkWait=0;linkPong=Date.now();paintLink();return;}
   if(m.t==='joined'){NET.code=m.code;NET.pid=m.pid;rememberRoom(m.code);return;}
   if(m.t==='state'){onState(m.room);return;}
   if(m.t==='left')return;
@@ -2143,27 +2349,48 @@ function onNetMessage(m){
       $('onlineLead').textContent='Enter the code shown on the screen of the person who made the room.';
       onlineError(m.code);return;
     }
-    if(m.during==='roll'||m.during==='move'){if(NET.room&&!NET.busy){syncFromRoom(NET.room);settleUi(false);}return;}
+    if(m.during==='roll'||m.during==='move'){
+      clearTimeout(NET.pendingTimer);NET.pending=null;
+      if(NET.room&&!NET.busy){syncFromRoom(NET.room);settleUi(false);}
+      return;
+    }
     if(!NET.playing)onlineError(m.code);
   }
 }
+function armPending(){
+  clearTimeout(NET.pendingTimer);
+  NET.pendingTimer=setTimeout(()=>{
+    const p=NET.pending;if(!p)return;
+    if(NET.seen>p.seq){NET.pending=null;return;}
+    if(NET.ws&&NET.ws.readyState===1)netSend(p.msg);
+    armPending();
+  },2000);
+}
+function sendAction(msg){
+  const full=Object.assign({act:++NET.act},msg);
+  if(!netSend(full))return false;
+  NET.pending={seq:NET.seen,msg:full};
+  armPending();
+  return true;
+}
 function requestRoll(){
   if(!NET.on)return doRoll();
-  if(!(S.phase==='roll'||S.phase==='orderRoll')||!isMine(curP())||NET.busy)return;
-  if(!netSend({t:'roll'}))return;
+  if(!(S.phase==='roll'||S.phase==='orderRoll')||!isMine(curP())||NET.busy||NET.pending)return;
+  if(!sendAction({t:'roll'}))return;
   S.phase='rolling';renderTurn();
 }
 function requestMove(opt){
   if(!NET.on)return doMove(opt);
-  if(S.phase!=='choose'||!isMine(curP())||NET.busy)return;
-  if(!netSend({t:'move',idx:opt.pc.idx,di:opt.di}))return;
+  if(S.phase!=='choose'||!isMine(curP())||NET.busy||NET.pending)return;
+  if(!sendAction({t:'move',idx:opt.pc.idx,di:opt.di}))return;
   S.phase='moving';setHighlights();showMarkers([]);renderTurn();
 }
 const playerOfH=h=>S.players.find(p=>p.h===h);
 const autoNote=(e,what)=>e.auto?`Time ran out, so ${what}. `:'';
 /* Replays one server event on the board, mirroring the local turn flow. */
 async function playEvent(e,epoch){
-  const gone=()=>epoch!==NET.epoch;
+  const gen=playGen;
+  const gone=()=>epoch!==NET.epoch||gen!==playGen;
   const pl=playerOfH(e.h);const nm=pl?shortName(pl):'';
   switch(e.type){
     case'orderTurn':
@@ -2199,7 +2426,7 @@ async function playEvent(e,epoch){
       if(!isMine(pl)&&e.vals)pl.shownRoll=[e.vals[0],e.vals[1]];
       S.phase='moving';renderTurn();sfx.bad();
       const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
-      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);await settleAll();renderTally();}
+      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);if(gone())return;await settleAll();if(gone())return;renderTally();}
       else toast('Third double',`${isMine(pl)?'You lose':nm+' loses'} the turn.`,e.h);
       await wait(1300);return;}
     case'noMove':{
@@ -2219,8 +2446,10 @@ async function playEvent(e,epoch){
         const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
         toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,e.h);
         await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+        if(gone())return;
         fallen.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
       }
+      if(gone())return;
       if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);}
       if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
       await settleAll();if(gone())return;
@@ -2230,6 +2459,7 @@ async function playEvent(e,epoch){
       if(!pl)return;
       pl.out=true;
       await Promise.all(pl.pieces.map(pc=>animate(300,k=>pc.mesh.scale.setScalar(Math.max(0.01,1-k)))));
+      if(gone())return;
       pl.pieces.forEach(removePiece);pl.pieces=[];
       if(e.h===NET.myH){leaveOnline(false,e.reason==='away'?'You were away for more than a minute, so you forfeited the match.':'');return;}
       toast(`${e.name||nm} left the realm`,e.reason==='away'?'Away too long, so they forfeited.':'',e.h);
@@ -2309,11 +2539,26 @@ function paintClock(){
   reflowPhone();
 }
 setInterval(()=>{if(NET.on&&NET.playing)paintClock();},250);
+function setRenderLoop(on){
+  if(on){last=performance.now();renderer.setAnimationLoop(loop);}
+  else if(!renderer.xr.isPresenting)renderer.setAnimationLoop(null);
+}
 document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    NET.stale=true;
+    if(!themeHold)fadeThemeGain(0,reduced?0:180);
+    setTimeout(()=>{if(document.hidden)theme.pause();},200);
+    setRenderLoop(false);
+    if(NET.on&&NET.code&&!NET.ended)netSend({t:'away'});
+    return;
+  }
+  setRenderLoop(true);
+  if(NET.playing&&!themeHold)startMatchTheme(theme.paused);
+  else if(!themeHold)ensureTheme();
   if(!NET.on||!NET.code||NET.ended)return;
-  if(document.hidden){netSend({t:'away'});return;}
   if(NET.ws&&NET.ws.readyState===1)netSend({t:'back'});
   else connect({t:'join',id:myId,code:NET.code});
+  if(NET.stale&&NET.playing&&NET.room&&NET.room.seq>NET.seen+1)snapTo(NET.room);
 });
 (function resume(){
   const code=savedRoom();
@@ -2669,7 +2914,7 @@ function loop(now,frame){
   lidPivot.rotation.x+=(lidTarget-lidPivot.rotation.x)*Math.min(1,dt*3);
   glow.intensity=(lidTarget<-1?2.2:0.55)+Math.sin(time*2)*0.12;
   torches.forEach(t=>{const f=reduced?1:0.85+Math.sin(time*11+t.seed)*0.08+Math.sin(time*23+t.seed*3)*0.06;t.light.intensity=torchBase*f;t.flame.scale.set(1,f,1);});
-  if(!reduced)flags.forEach(f=>{const p=f.geo.attributes.position.array;for(let i=0;i<p.length;i+=3){const x=f.orig[i];p[i+2]=Math.sin(x*9-time*5+f.phase)*0.06*(x/0.56);}f.geo.attributes.position.needsUpdate=true;});
+  if(!reduced){loop.flag=(loop.flag||0)+dt;if(loop.flag>0.08){loop.flag=0;flags.forEach(f=>{const p=f.geo.attributes.position.array;for(let i=0;i<p.length;i+=3){const x=f.orig[i];p[i+2]=Math.sin(x*9-time*5+f.phase)*0.06*(x/0.56);}f.geo.attributes.position.needsUpdate=true;});}}
   if(turnMark.visible){turnMark.position.y=turnBob.base.y+(reduced?0:Math.sin(time*2.6)*0.16);board.getWorldQuaternion(turnFace);turnMark.quaternion.copy(turnFace.invert()).multiply(camera.quaternion);}
   coinsFx.forEach(c=>{if(c.rest)return;c.v.y-=12*dt;c.m.position.addScaledVector(c.v,dt);c.m.rotation.x+=c.spin.x*dt;c.m.rotation.y+=c.spin.y*dt;
     if(c.m.position.y<0.14){c.m.position.y=0.14;if(Math.abs(c.v.y)<1.5){c.rest=true;c.m.rotation.set(0,Math.random()*6,0);}else{c.v.y*=-0.35;c.v.x*=0.6;c.v.z*=0.6;}}});
@@ -3304,8 +3549,8 @@ function onXREnd(){
   scene.fog=savedFog;savedFog=null;
   tableRoot.visible=true;tableRoot.position.set(0,0,0);tableRoot.quaternion.identity();tableRoot.scale.set(1,1,1);
   if(panel.parent!==scene)scene.add(panel);
-  setShadow(2048);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  setShadow(displayShadow());
+  renderer.setPixelRatio(displayPixelRatio());
   if(world)world.gravity.y=-30;
   if(controls)controls.enabled=true;
   applyTheme();userFramed=false;resize(true);

@@ -334,3 +334,29 @@ test('endgame help is off by default and never assists the leader', () => {
   R.noteVault(miss);
   assert.equal(miss.finishMiss, 0);
 });
+
+test('a match shares one moment for the theme', () => {
+  const room = lobby(2);
+  G.start(room, ids[0], 1000);
+  assert.equal(room.game.themeAt, 1000 + G.MATCH_CUE_MS);
+  assert.equal(G.publicView(room).game.themeAt, room.game.themeAt);
+});
+
+test('a repeated roll or move does not play twice', () => {
+  const room = lobby(2);
+  G.start(room, ids[0], 0);
+  const id = idOfH(room, curH(room));
+  const before = room.seq;
+  assert.equal(G.playRoll(room, id, 1, 4), null);
+  const seq = room.seq;
+  assert.ok(seq > before);
+  assert.equal(G.playRoll(room, id, 2, 4), null);
+  assert.equal(G.playRoll(room, id, 3, 3), null);
+  assert.equal(room.seq, seq);
+  assert.equal(room.events.filter((e) => e.type === 'orderRoll').length, 1);
+  const goal = room.game.pieces.find((p) => p.h === curH(room));
+  goal.p = R.GOAL;
+  const kept = room.game.pieces.map((p) => p.p);
+  assert.equal(G.playRoll(room, id, 4, 4), null);
+  assert.deepEqual(room.game.pieces.map((p) => p.p), kept);
+});

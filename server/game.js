@@ -9,6 +9,8 @@ const { GOAL, BONUS } = R;
 export const TURN_MS = 20000;
 export const AWAY_MS = 60000;
 export const MAX_SEATS = 4;
+/* Every device waits out this cue, then starts the theme from the same server instant. */
+export const MATCH_CUE_MS = 3400;
 const MAX_EVENTS = 40;
 const NAME_MAX = 16;
 const CODE_CHARS = 'ABCDEFGHJKMNPQRTUVWXYZ2346789';
@@ -134,6 +136,7 @@ export function start(room, id, now) {
     world: null,
     worldBag: [],
     diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now },
+    themeAt: now + MATCH_CUE_MS,
   };
   step(room, now, () => beginOrderGroup(room));
   return null;
@@ -340,23 +343,46 @@ function win(room, h, reason) {
 
 /* ---------------- Player actions ---------------- */
 
-export function playRoll(room, id, now) {
+/* A client retries the same act when a reply is lost. The first one plays; a repeat is a no-op. */
+function actId(act) {
+  const n = Number(act);
+  if (!Number.isInteger(n) || n < 1 || n > 1e15) return null;
+  return n;
+}
+
+function repeatedAct(seat, act) {
+  const n = actId(act);
+  if (n == null) return false;
+  if (seat.lastAct === n || (seat.lastAct != null && n < seat.lastAct)) return true;
+  return false;
+}
+
+function noteAct(seat, act) {
+  const n = actId(act);
+  if (n != null) seat.lastAct = n;
+}
+
+export function playRoll(room, id, now, act) {
   const g = room.game;
   const seat = seatOf(room, id);
   if (room.status !== 'playing' || !seat || seat.out) return 'nope';
+  if (repeatedAct(seat, act)) return null;
   if (curH(room) !== seat.h || (g.phase !== 'roll' && g.phase !== 'orderRoll')) return 'not-your-turn';
   step(room, now, () => roll(room, false));
+  noteAct(seat, act);
   return null;
 }
 
-export function playMove(room, id, idx, di, now) {
+export function playMove(room, id, idx, di, now, act) {
   const g = room.game;
   const seat = seatOf(room, id);
   if (room.status !== 'playing' || !seat || seat.out) return 'nope';
+  if (repeatedAct(seat, act)) return null;
   if (curH(room) !== seat.h || g.phase !== 'choose') return 'not-your-turn';
   const opt = R.options(g.pieces, seat.h, g.pending, g.world).find((o) => o.pc.idx === idx && o.di === di);
   if (!opt) return 'illegal';
   step(room, now, () => applyMove(room, opt, false));
+  noteAct(seat, act);
   return null;
 }
 
@@ -475,6 +501,7 @@ export function publicView(room) {
       winner: room.game.winner,
       winReason: room.game.winReason,
       world: room.game.world,
+      themeAt: room.game.themeAt,
       diceStats: room.game.diceStats ? R.diceReport(room.game.diceStats) : null,
     },
   };

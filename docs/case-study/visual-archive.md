@@ -154,6 +154,18 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 |---|------|-------------------|--------|
 | 45 | [2026-10-28-45-leave-only-human-desktop.png](./screenshots/2026-10-28-45-leave-only-human-desktop.png) | Leave match | Copy names that you are the only one left, and that leaving ends the match |
 
+## Session: 2026-11-02 — Quiet gate and connection banner
+
+**Trigger:** A live match lost the socket. Troops jumped, including ones already in the vault, the dice would not roll, and phones ran hot. The theme also started at a different point on each device, and a dropped connection was only a line of hint text.
+
+**Environment:** Local static server. The gate and the banner were opened over a local match. Online create-room still needs the deployed socket.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-02-01-march-forming-desktop.png](./screenshots/2026-11-02-01-march-forming-desktop.png) | Match gate | Silence while the road opens. The gold rule fills to the shared start, then the theme fades in together |
+| 02 | [2026-11-02-02-connection-banner-desktop.png](./screenshots/2026-11-02-02-connection-banner-desktop.png) | Connection banner, first pass | Full-width bar. Replaced the same day by the centered banner |
+| 03 | [2026-11-02-03-connection-banner-desktop.png](./screenshots/2026-11-02-03-connection-banner-desktop.png) | Connection lost | Same banner as Your turn: gold rules, pulsing wifi, tracked title. Stays for the whole interruption and leaves the gear and menu where they are |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
