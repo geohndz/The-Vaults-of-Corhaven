@@ -172,6 +172,17 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 08 | [2026-11-02-08-ring-post-cylinder-desktop.png](./screenshots/2026-11-02-08-ring-post-cylinder-desktop.png) | Marker lab, ring post | The stem is a straight cylinder of the same light. It runs down through the board, so the end stays buried while the post bobs |
 | 09 | [2026-11-02-09-ring-post-water-desktop.png](./screenshots/2026-11-02-09-ring-post-water-desktop.png) | Marker lab, ring post in the tide | The post and ring stay visible through the Drowning Tide. The stem still ends at the board |
 
+## Session: 2026-11-02 (afternoon) — Title screen as banners
+
+**Trigger:** Restyle the homepage. Drop the lead sentence, center the title, and make the actions look like the connection banner.
+
+**Environment:** Local static server. Dialog buttons (Play local, Join a room) stay the gold fill and outline. Only the title screen changed.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 10 | [2026-11-02-10-title-banners-desktop.png](./screenshots/2026-11-02-10-title-banners-desktop.png) | Title page | Centered title. Fading bands, tracked capitals. Gold hairlines appear only on the banner under the pointer |
+| 11 | [2026-11-02-11-title-banners-mobile.png](./screenshots/2026-11-02-11-title-banners-mobile.png) | Title page (390×844) | Same stack at rest, lines hidden. The long About label stays on one line |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
