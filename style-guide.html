@@ -7,9 +7,9 @@
 <link rel="stylesheet" href="./The Vaults of Corhaven_files/css2">
 <style>
 :root{
-  --leather:#2F2119;--leather-2:#46321F;--gold:#C9A14A;--gold-bright:#EBC76A;
-  --parch:#F2E7CD;--parch-dim:#CDBD99;--iron:#1C1712;--bone:#EAE0C6;--pip:#7A1A14;
-  --bg:#8DB3D6;--table:#3b2a1e;--table-2:#2a1d14;
+  --leather:#2C333C;--leather-2:#3E4854;--gold:#9AABBC;--gold-bright:#E6EDF4;
+  --parch:#E8EEF4;--parch-dim:#A9B6C4;--iron:#14181E;--bone:#E4E7EC;--pip:#7A1A14;
+  --bg:#8EA0B0;--table:#242B33;--table-2:#1A2026;
 }
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -26,7 +26,7 @@ code{font-family:inherit;color:var(--gold-bright)}
 .nav{
   position:sticky;top:0;height:100vh;overflow:auto;
   padding:28px 18px 48px;background:var(--table-2);
-  border-right:1px solid rgba(201,161,74,.35);
+  border-right:1px solid rgba(154,171,188,.35);
 }
 .brand{
   display:block;margin:0 0 18px;font-family:'Pirata One','UnifrakturCook',Georgia,serif;
@@ -103,12 +103,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .crest{display:inline-block;flex:none;width:30px;height:36px;background:var(--c,#777);clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18);position:relative}
 .turn-name{font-weight:700;font-size:19px;line-height:1.2}
 .msg{color:var(--parch-dim);font-size:15px;min-height:1.4em}
-.tally{display:flex;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(201,161,74,.35);flex-wrap:wrap}
+.tally{display:flex;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(154,171,188,.35);flex-wrap:wrap}
 .tally .t{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--parch-dim);padding:2px 6px 2px 2px;border-radius:6px}
-.tally .t.active{background:rgba(233,199,106,.14);color:var(--parch)}
+.tally .t.active{background:rgba(186,204,220,.14);color:var(--parch)}
 .tally .crest{width:16px;height:19px}
 .coins{display:flex;gap:2px}
-.coin{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(201,161,74,.5)}
+.coin{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(154,171,188,.5)}
 .coin.on{background:radial-gradient(circle at 35% 35%,#FFE9A0,#C9961F);box-shadow:0 0 5px rgba(255,210,90,.8)}
 .controls-tr{top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(env(safe-area-inset-right,0px) + 14px);display:flex;gap:8px}
 .chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35)}
@@ -117,10 +117,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .stage>.bottom-bar{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px)}
 .dice{display:flex;gap:10px;align-items:center}
 .dice[hidden]{display:none}
-.dchip{width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #8a6a3a;
+.dchip{width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #6E7C8A;
   box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;place-items:center;transition:transform .12s ease}
 .dchip svg{width:100%;height:100%;display:block}
-.dchip.bonus{width:auto;padding:0 14px;background:linear-gradient(#F3D27A,#C9961F);color:var(--iron);font-weight:700;font-size:21px;border-color:#7A5A1A}
+.dchip.bonus{width:auto;padding:0 14px;background:linear-gradient(#E6EDF4,#8B9AAB);color:var(--iron);font-weight:700;font-size:21px;border-color:#5A6672}
 .dchip[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold-bright),0 0 18px rgba(255,210,100,.7);transform:translateY(-3px)}
 .dchip.used{opacity:.3;filter:grayscale(1);cursor:default;transform:none;box-shadow:none}
 .dchip.stuck{opacity:.55}
@@ -141,14 +141,14 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sheet p{margin:0 0 10px;color:var(--parch-dim)}
 .seg{display:flex;border:1.5px solid var(--gold);border-radius:10px;overflow:hidden}
 .seg button{flex:1;padding:8px 0;background:transparent;border:0;font-size:18px;font-weight:600;color:var(--parch-dim)}
-.seg button+button{border-left:1.5px solid rgba(201,161,74,.5)}
+.seg button+button{border-left:1.5px solid rgba(154,171,188,.5)}
 .seg button[aria-checked="true"]{background:var(--gold);color:var(--iron)}
-.seat{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(201,161,74,.2)}
+.seat{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(154,171,188,.2)}
 .seat .name{flex:1;font-weight:600}
-.toggle{display:flex;border:1.5px solid rgba(201,161,74,.7);border-radius:8px;overflow:hidden}
+.toggle{display:flex;border:1.5px solid rgba(154,171,188,.7);border-radius:8px;overflow:hidden}
 .toggle button{background:transparent;border:0;padding:5px 11px;font-size:15px;color:var(--parch-dim)}
-.toggle button[aria-pressed="true"]{background:rgba(233,199,106,.9);color:var(--iron);font-weight:600}
-.primary{margin-top:20px;width:100%;padding:13px;font-size:20px;font-weight:700;background:linear-gradient(#E6C064,#B98B2E);color:var(--iron);border:2px solid #7A5A1A;border-radius:12px;box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.35)}
+.toggle button[aria-pressed="true"]{background:rgba(186,204,220,.9);color:var(--iron);font-weight:600}
+.primary{margin-top:20px;width:100%;padding:13px;font-size:20px;font-weight:700;background:linear-gradient(#D7E0E8,#8B9AAB);color:var(--iron);border:2px solid #5A6672;border-radius:12px;box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.35)}
 .secondary{margin-top:10px;width:100%;padding:11px;font-size:17px;background:transparent;border:1.5px solid var(--gold);border-radius:12px;color:var(--parch)}
 .rules p{color:var(--parch);margin:0 0 10px}
 .rules p strong{color:var(--gold-bright)}
@@ -177,7 +177,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   .sg{grid-template-columns:1fr}
   .nav{
     position:sticky;top:0;height:auto;z-index:40;display:flex;gap:14px;align-items:center;
-    overflow:auto;padding:12px 14px;border-right:0;border-bottom:1px solid rgba(201,161,74,.35);
+    overflow:auto;padding:12px 14px;border-right:0;border-bottom:1px solid rgba(154,171,188,.35);
   }
   .brand{margin:0 8px 0 0;font-size:22px;flex:none}
   .nav .group{display:none}
@@ -216,7 +216,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <main class="main">
   <p class="kicker">The Vaults of Corhaven</p>
   <h1>Interface inventory</h1>
-  <p class="lede">Every overlay piece in the game, shown in the states the match actually uses. The leather, gold, type, and wording below are the current interface, not a proposal.</p>
+  <p class="lede">Every overlay piece in the game, shown in the states the match actually uses. The slate, steel, type, and wording below are the current interface, not a proposal.</p>
   <p class="lede dim">The board, troops, and thrown dice are drawn in 3D. They are listed at the end. Dialogs sit above the corner controls: the controls are layer 5, a dialog is layer 20. There is no close icon and no click on the dimmed board. Each dialog leaves through its own button.</p>
   <hr class="rule">
   <p class="lede dim"><a href="./The Vaults of Corhaven.html">Open the game</a></p>
@@ -514,15 +514,15 @@ button{font:inherit;color:inherit;cursor:pointer}
     <p class="lead">These are the colors the overlay actually paints. Kingdom colors are also poured into the roll button and the crest.</p>
     <h3>Interface</h3>
     <div class="swatches">
-      <div class="swatch"><i style="background:linear-gradient(160deg,#46321F,#2F2119 70%)"></i><b>Panel</b><span>--leather-2 to --leather</span></div>
-      <div class="swatch"><i style="background:#2F2119"></i><b>Leather</b><span>--leather · #2F2119</span></div>
-      <div class="swatch"><i style="background:#46321F"></i><b>Leather light</b><span>--leather-2 · #46321F</span></div>
-      <div class="swatch"><i style="background:#C9A14A"></i><b>Gold</b><span>--gold · #C9A14A</span></div>
-      <div class="swatch"><i style="background:#EBC76A"></i><b>Gold bright</b><span>--gold-bright · #EBC76A</span></div>
-      <div class="swatch"><i style="background:#F2E7CD"></i><b>Parchment</b><span>--parch · #F2E7CD</span></div>
-      <div class="swatch"><i style="background:#CDBD99"></i><b>Parchment dim</b><span>--parch-dim · #CDBD99</span></div>
-      <div class="swatch"><i style="background:#1C1712"></i><b>Iron</b><span>--iron · #1C1712</span></div>
-      <div class="swatch"><i style="background:#EAE0C6"></i><b>Bone</b><span>--bone · #EAE0C6</span></div>
+      <div class="swatch"><i style="background:linear-gradient(160deg,#3E4854,#2C333C 70%)"></i><b>Panel</b><span>--leather-2 to --leather</span></div>
+      <div class="swatch"><i style="background:#2C333C"></i><b>Slate</b><span>--leather · #2C333C</span></div>
+      <div class="swatch"><i style="background:#3E4854"></i><b>Slate light</b><span>--leather-2 · #3E4854</span></div>
+      <div class="swatch"><i style="background:#9AABBC"></i><b>Steel</b><span>--gold · #9AABBC</span></div>
+      <div class="swatch"><i style="background:#E6EDF4"></i><b>Steel bright</b><span>--gold-bright · #E6EDF4</span></div>
+      <div class="swatch"><i style="background:#E8EEF4"></i><b>Mist</b><span>--parch · #E8EEF4</span></div>
+      <div class="swatch"><i style="background:#A9B6C4"></i><b>Mist dim</b><span>--parch-dim · #A9B6C4</span></div>
+      <div class="swatch"><i style="background:#14181E"></i><b>Iron</b><span>--iron · #14181E</span></div>
+      <div class="swatch"><i style="background:#E4E7EC"></i><b>Bone</b><span>--bone · #E4E7EC</span></div>
       <div class="swatch"><i style="background:#7A1A14"></i><b>Pip</b><span>--pip · #7A1A14</span></div>
       <div class="swatch"><i style="background:#FFF6DE"></i><b>Roll text</b><span>#FFF6DE</span></div>
       <div class="swatch"><i style="background:rgba(10,8,14,.55)"></i><b>Dialog scrim</b><span>rgba(10, 8, 14, .55)</span></div>
@@ -539,17 +539,17 @@ button{font:inherit;color:inherit;cursor:pointer}
     <div class="swatches">
       <div class="swatch"><i style="background:linear-gradient(#5E93CC,#E7D6B0)"></i><b>Day sky</b><span>#5E93CC to #E7D6B0</span></div>
       <div class="swatch"><i style="background:linear-gradient(#0B1030,#3A2C4A)"></i><b>Night sky</b><span>#0B1030 to #3A2C4A</span></div>
-      <div class="swatch"><i style="background:#8DB3D6"></i><b>Page, day</b><span>--bg · #8DB3D6</span></div>
-      <div class="swatch"><i style="background:#141A33"></i><b>Page, night</b><span>--bg · #141A33</span></div>
+      <div class="swatch"><i style="background:#8EA0B0"></i><b>Page, day</b><span>--bg · #8EA0B0</span></div>
+      <div class="swatch"><i style="background:#12171E"></i><b>Page, night</b><span>--bg · #12171E</span></div>
     </div>
     <h3>Mixes used inside pieces</h3>
     <div class="swatches">
-      <div class="swatch"><i style="background:linear-gradient(#E6C064,#B98B2E)"></i><b>Primary fill</b><span>#E6C064 to #B98B2E</span></div>
-      <div class="swatch"><i style="background:linear-gradient(#F3D27A,#C9961F)"></i><b>Bonus die</b><span>#F3D27A to #C9961F</span></div>
-      <div class="swatch"><i style="background:#7A5A1A"></i><b>Gold button rim</b><span>#7A5A1A</span></div>
-      <div class="swatch"><i style="background:#8a6a3a"></i><b>Die rim</b><span>#8A6A3A</span></div>
-      <div class="swatch"><i style="background:rgba(233,199,106,.9)"></i><b>Toggle on</b><span>rgba(233, 199, 106, .9)</span></div>
-      <div class="swatch"><i style="background:radial-gradient(circle at 35% 35%,#FFE9A0,#C9961F)"></i><b>Coin, in the vault</b><span>#FFE9A0 to #C9961F</span></div>
+      <div class="swatch"><i style="background:linear-gradient(#D7E0E8,#8B9AAB)"></i><b>Primary fill</b><span>#D7E0E8 to #8B9AAB</span></div>
+      <div class="swatch"><i style="background:linear-gradient(#E6EDF4,#8B9AAB)"></i><b>Bonus die</b><span>#E6EDF4 to #8B9AAB</span></div>
+      <div class="swatch"><i style="background:#5A6672"></i><b>Steel button rim</b><span>#5A6672</span></div>
+      <div class="swatch"><i style="background:#6E7C8A"></i><b>Die rim</b><span>#6E7C8A</span></div>
+      <div class="swatch"><i style="background:rgba(186,204,220,.9)"></i><b>Toggle on</b><span>rgba(186, 204, 220, .9)</span></div>
+      <div class="swatch"><i style="background:radial-gradient(circle at 35% 35%,#F4F7FA,#8B9AAB)"></i><b>Coin, in the vault</b><span>#F4F7FA to #8B9AAB</span></div>
     </div>
   </section>
 
@@ -571,7 +571,7 @@ button{font:inherit;color:inherit;cursor:pointer}
         <figcaption>Turn-card title. Pirata One, 26px, gold bright.</figcaption>
       </figure>
       <figure>
-        <div class="sky g"><div class="turn-name" style="color:#1C1712">Solmere</div></div>
+        <div class="sky g"><div class="turn-name" style="color:#14181E">Solmere</div></div>
         <figcaption>Turn name. Alegreya 19px, weight 700. On the leather it is parchment, not iron. 17px on a narrow screen.</figcaption>
       </figure>
       <figure>
@@ -785,7 +785,7 @@ button{font:inherit;color:inherit;cursor:pointer}
               <button type="button" role="radio" aria-checked="false">4</button>
             </div>
           </div>
-          <figcaption style="color:#CDBD99">Two selected.</figcaption>
+          <figcaption style="color:#A9B6C4">Two selected.</figcaption>
         </figure>
         <figure style="width:min(420px,100%)">
           <div class="panel" style="padding:16px">
@@ -795,7 +795,7 @@ button{font:inherit;color:inherit;cursor:pointer}
               <button type="button" role="radio" aria-checked="false">4</button>
             </div>
           </div>
-          <figcaption style="color:#CDBD99">Three selected.</figcaption>
+          <figcaption style="color:#A9B6C4">Three selected.</figcaption>
         </figure>
         <figure style="width:min(420px,100%)">
           <div class="panel" style="padding:16px">
@@ -805,7 +805,7 @@ button{font:inherit;color:inherit;cursor:pointer}
               <button type="button" role="radio" aria-checked="true">4</button>
             </div>
           </div>
-          <figcaption style="color:#CDBD99">Four selected. This is how a new visit starts.</figcaption>
+          <figcaption style="color:#A9B6C4">Four selected. This is how a new visit starts.</figcaption>
         </figure>
       </div>
     </div>
@@ -837,7 +837,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   <section id="buttons">
     <h2>Sheet buttons</h2>
-    <p class="lead">Class <code>primary</code> is the gold action. Class <code>secondary</code> is a gold outline on leather. Both stretch to the sheet. Primary has 20px of space above it. Secondary has 10px, except Read the chronicle, which is pulled up to 4px.</p>
+    <p class="lead">Class <code>primary</code> is the steel action. Class <code>secondary</code> is a steel outline on slate. Both stretch to the sheet. Primary has 20px of space above it. Secondary has 10px, except Read the chronicle, which is pulled up to 4px.</p>
     <div class="row">
       <figure>
         <div class="g col"><div class="panel" style="padding:8px 22px 22px">

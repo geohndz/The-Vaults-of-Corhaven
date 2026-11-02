@@ -183,6 +183,17 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 10 | [2026-11-02-10-title-banners-desktop.png](./screenshots/2026-11-02-10-title-banners-desktop.png) | Title page | Centered title. Fading bands, tracked capitals. Gold hairlines appear only on the banner under the pointer |
 | 11 | [2026-11-02-11-title-banners-mobile.png](./screenshots/2026-11-02-11-title-banners-mobile.png) | Title page (390×844) | Same stack at rest, lines hidden. The long About label stays on one line |
 
+## Session: 2026-11-02 (afternoon) — Slate and steel
+
+**Trigger:** Shift the interface from leather and brass to gray and slate. Kingdom colors and the wooden board stay.
+
+**Environment:** Local static server.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 12 | [2026-11-02-12-title-slate-desktop.png](./screenshots/2026-11-02-12-title-slate-desktop.png) | Title page | Slate field, steel type, the same fading bands |
+| 13 | [2026-11-02-13-local-setup-slate-desktop.png](./screenshots/2026-11-02-13-local-setup-slate-desktop.png) | Play local | Steel panel and button. The four kingdom crests stay red, green, gold, and blue |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
