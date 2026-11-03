@@ -194,11 +194,38 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 12 | [2026-11-02-12-title-slate-desktop.png](./screenshots/2026-11-02-12-title-slate-desktop.png) | Title page | Slate field, steel type, the same fading bands |
 | 13 | [2026-11-02-13-local-setup-slate-desktop.png](./screenshots/2026-11-02-13-local-setup-slate-desktop.png) | Play local | Steel panel and button. The four kingdom crests stay red, green, gold, and blue |
 
+## Session: 2026-11-02 (afternoon) — One room screen
+
+**Trigger:** Fold the room-code step and the kingdom step into a single lobby. The code, the name, the people, and the actions share a sidebar. The four banners fill the rest.
+
+**Environment:** Local static server. The room is a preview of the lobby renderer (code 7GH3C), because this machine has no socket.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 14 | [2026-11-02-14-combined-lobby-desktop.png](./screenshots/2026-11-02-14-combined-lobby-desktop.png) | Room lobby | Sidebar about 40%, banners about 60%. Code, name, seats as people arrive, Start and Leave pinned to the bottom. Thornwald stays lit under Mara |
+| 15 | [2026-11-02-15-combined-lobby-mobile.png](./screenshots/2026-11-02-15-combined-lobby-mobile.png) | Room lobby (390×844) | The column stacks and the sheet scrolls. This frame is the kingdoms, then Start and Leave |
+| 16 | [2026-11-02-16-lobby-full-overlay-desktop.png](./screenshots/2026-11-02-16-lobby-full-overlay-desktop.png) | Room lobby | The card is gone. The slate overlay covers the window, and the same 40/60 layout sits on it |
+| 17 | [2026-11-02-17-lobby-full-overlay-mobile.png](./screenshots/2026-11-02-17-lobby-full-overlay-mobile.png) | Room lobby (390×844) | Full-window stack. The sheet scrolls on to the rest of the banners and the buttons |
+| 18 | [2026-11-02-18-lobby-black-overlay-desktop.png](./screenshots/2026-11-02-18-lobby-black-overlay-desktop.png) | Room lobby | The slate fill is gone. The black dim covers the board, and the room info sits on top |
+| 19 | [2026-11-02-19-lobby-separator-desktop.png](./screenshots/2026-11-02-19-lobby-separator-desktop.png) | Room lobby | A hairline runs the full height between the sidebar and the banners |
+| 20 | [2026-11-02-20-lobby-taller-banners-desktop.png](./screenshots/2026-11-02-20-lobby-taller-banners-desktop.png) | Kingdom banners | The arches run longer. The scenes fill the glass and the moon stays round |
+| 21 | [2026-11-02-21-lobby-banner-buttons-desktop.png](./screenshots/2026-11-02-21-lobby-banner-buttons-desktop.png) | Room lobby actions | Start and Leave use the title banners: fading band, tracked capitals, hairlines only on hover |
+
+## Session: 2026-11-02 (afternoon) — Play local on the black overlay
+
+**Trigger:** Play local uses the same full-window treatment as the room lobby.
+
+**Environment:** Local static server.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 22 | [2026-11-02-22-local-setup-overlay-desktop.png](./screenshots/2026-11-02-22-local-setup-overlay-desktop.png) | Play local | The card is gone. A black dim covers the board. Player count sits on the left, the kingdoms on the right, and Begin and Back are title banners |
+| 23 | [2026-11-02-23-local-setup-overlay-mobile.png](./screenshots/2026-11-02-23-local-setup-overlay-mobile.png) | Play local (390×844) | The column stacks. A hairline sits above the kingdoms, and the buttons stay at the bottom |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
-- [ ] **Kingdom banners** pick step (claimed vs available)
-- [ ] **Waiting room** with seat list
+- [x] **Kingdom banners** and the **seat list** — one lobby, shots 14 and 15. A live socket still needs a pass for two people joining at once
 - [x] **Your turn** vs **waiting** (dice hidden) — mobile, evening session 02/03
 - [ ] **Toast** moment (capture, bonus march, vault)
 - [x] **Menu** expanded (Chronicle, Rules, Sound, New game) — mobile, evening session 04

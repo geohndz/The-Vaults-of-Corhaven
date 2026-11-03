@@ -1,0 +1,12 @@
+---
+description: Corhaven overlays fill the window. Do not introduce card or sheet panels for new screens.
+alwaysApply: true
+---
+
+# No cards
+
+When Geo works on **The Vaults of Corhaven**, new screens and overlays are full-window surfaces. Do not put that UI in a centered card, sheet, or bordered panel.
+
+- The overlay covers the viewport edge to edge, including safe areas. Use the black dim (`rgba(10,8,14,…)`) over the board, not a solid slate fill.
+- The content sits on that surface. Group it with space and alignment.
+- Keep existing dialogs (rules, settings, leave, join-by-code) as they are unless Geo asks to change that screen. The room lobby and Play local already use this full-window overlay.
