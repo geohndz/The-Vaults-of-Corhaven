@@ -1202,6 +1202,8 @@ const winAudio=new Audio('assets/Music/win.wav');
 winAudio.preload='auto';
 const bannerAudio=new Audio('assets/Music/Appear Magic.wav');
 bannerAudio.preload='auto';
+const startAudio=new Audio(START_SRC);
+startAudio.preload='auto';
 function loadBuffers(){
   const ctx=audioCtx();if(!ctx)return;
   STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC]).forEach(src=>{
@@ -1402,6 +1404,15 @@ const sfx={
   },
   press(src){
     if(!fxOn)return;
+    if(src===START_SRC){
+      const seek=()=>{try{startAudio.currentTime=0.198;}catch(e){}};
+      if(startAudio.readyState<1)startAudio.addEventListener('loadedmetadata',seek,{once:true});
+      seek();
+      setBase(startAudio,0.6);
+      const p=startAudio.play();
+      if(p)p.catch(()=>{startAudio.addEventListener('canplay',()=>{if(!fxOn)return;seek();const q=startAudio.play();if(q)q.catch(()=>{});},{once:true});});
+      return;
+    }
     if(pressNode){try{pressNode.stop();}catch(e){}liveSources.delete(pressNode);pressNode=null;}
     clips.forEach(a=>{if(a.dataset.kind==='press'){a.pause();clips.delete(a);}});
     const skip=0.198;
@@ -1511,9 +1522,9 @@ const say=t=>{ui.msg.textContent=t;};
 /* Banners queue up: one that arrives while another is showing waits, and the one on screen gets cut to a shorter hold. */
 const TOAST_HOLD=2800,TOAST_MIN=1500;
 let toastTimer=0,toastShownAt=0,toastBusy=false;const toastQ=[];
-function toast(title,sub,h,hold,num){
+function toast(title,sub,h,hold,num,quiet){
   say(sub?title+'. '+sub:title);
-  toastQ.push({title,sub,h,hold,num});
+  toastQ.push({title,sub,h,hold,num,quiet});
   if(!toastBusy)nextToast();
   else{clearTimeout(toastTimer);toastTimer=setTimeout(endToast,Math.max(0,TOAST_MIN-(Date.now()-toastShownAt)));}
 }
@@ -1524,13 +1535,13 @@ function nextToast(){
   el.classList.toggle('num',!!t.num);
   if(t.h==null)el.style.removeProperty('--c');else el.style.setProperty('--c',HOUSES[t.h].css);
   el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
-  sfx.banner();
+  if(!t.quiet)sfx.banner();
   const hold=t.hold||(toastQ.length?TOAST_MIN:TOAST_HOLD);
   toastTimer=setTimeout(endToast,toastQ.length?Math.min(hold,TOAST_MIN):hold);
 }
 function endToast(){ui.toast.classList.remove('show');toastTimer=setTimeout(nextToast,toastQ.length?260:0);}
 function hideToast(){clearTimeout(toastTimer);toastQ.length=0;toastBusy=false;ui.toast.classList.remove('show');}
-const phalanxToast=(h,nm)=>toast('Shields locked',`Two ${nm||HOUSES[h].short} troops form a phalanx. None may pass or land there.`,h);
+const phalanxToast=(h,nm)=>toast('Shields locked',`Two ${nm||HOUSES[h].short} troops form a phalanx. None may pass or land there.`,h,null,null,true);
 /* Who is up, told only to the player it concerns. Everyone else just sees the roster light up. */
 function announceTurn(pl,kind){
   const nm=shortName(pl);
@@ -1960,7 +1971,7 @@ async function doMove(opt){
   if(r.captures.length){
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
-    toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,pc.h);
+    toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,pc.h,null,null,true);
     await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
@@ -2626,7 +2637,7 @@ async function playEvent(e,epoch){
         sfx.capture();
         const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
         const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
-        toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,e.h);
+        toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,e.h,null,null,true);
         await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
         if(gone())return;
         fallen.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
