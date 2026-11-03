@@ -9,4 +9,4 @@ When Geo works on **The Vaults of Corhaven**, new screens and overlays are full-
 
 - The overlay covers the viewport edge to edge, including safe areas. Use the black dim (`rgba(10,8,14,…)`) over the board, not a solid slate fill.
 - The content sits on that surface. Group it with space and alignment.
-- Keep existing dialogs (rules, settings, leave, join-by-code) as they are unless Geo asks to change that screen. The room lobby and Play local already use this full-window overlay.
+- Keep existing dialogs (rules, settings, leave) as they are unless Geo asks to change that screen. The room lobby, Play local, and Join a room already use this full-window overlay.

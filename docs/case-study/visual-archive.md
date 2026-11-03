@@ -222,6 +222,17 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 22 | [2026-11-02-22-local-setup-overlay-desktop.png](./screenshots/2026-11-02-22-local-setup-overlay-desktop.png) | Play local | The card is gone. A black dim covers the board. Player count sits on the left, the kingdoms on the right, and Begin and Back are title banners |
 | 23 | [2026-11-02-23-local-setup-overlay-mobile.png](./screenshots/2026-11-02-23-local-setup-overlay-mobile.png) | Play local (390×844) | The column stacks. A hairline sits above the kingdoms, and the buttons stay at the bottom |
 
+## Session: 2026-11-03 — Join a room on the black overlay
+
+**Trigger:** Join a room was the last screen still sitting in a card.
+
+**Environment:** Local static server. The socket is not running here, so the shot is the code step before a room answers.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 24 | [2026-11-03-01-join-room-overlay-desktop.png](./screenshots/2026-11-03-01-join-room-overlay-desktop.png) | Join a room | The card is gone. The black dim covers the board. The code sits on the right, and Continue and Back are title banners |
+| 25 | [2026-11-03-02-join-room-overlay-mobile.png](./screenshots/2026-11-03-02-join-room-overlay-mobile.png) | Join a room (390×844) | The column stacks. A hairline sits above the code, and Continue and Back stay at the bottom |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

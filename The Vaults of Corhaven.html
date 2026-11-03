@@ -190,8 +190,13 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roomcode{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px;padding:8px 14px;border:1.5px dashed var(--gold);border-radius:12px;color:var(--parch-dim)}
 .roomcode b{font-size:clamp(22px,8vw,34px);letter-spacing:.16em;color:var(--gold-bright)}
 .kingdoms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:8px;align-items:start}
-#online.room{padding:0;align-items:stretch;background:rgba(10,8,14,.72);backdrop-filter:blur(2px)}
-#online.room .sheet{width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
+#online{padding:0;align-items:stretch;background:rgba(10,8,14,.72);backdrop-filter:blur(2px)}
+#online .sheet{width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
+.join{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
+.joinside{grid-column:1;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
+.joinside h1{margin-bottom:12px}
+.joinmain{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 48px) calc(env(safe-area-inset-bottom,0px) + 28px) 40px;border-left:1px solid rgba(230,237,244,.32)}
+.joinmain form{width:min(420px,100%)}
 #lobbyPane[hidden],#codePane[hidden]{display:none !important}
 .lobby{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
 .lobbyside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
@@ -271,10 +276,11 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
   .sheet h1{font-size:34px}
   .roomcode{padding:8px 10px;gap:8px}
   .kingdoms{grid-template-columns:1fr 1fr;gap:10px}
-  #online.room .sheet,#setup .sheet{height:100%;max-height:none;overflow:auto}
-  .lobby,.local{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto;min-height:100%}
-  .lobbyside,.localside{grid-column:1;grid-row:1}
-  .lobbymain,.localmain{grid-column:1;grid-row:2;padding:18px 20px;border-left:0;border-top:1px solid rgba(230,237,244,.32)}
+  #online .sheet,#setup .sheet{height:100%;max-height:none;overflow:auto}
+  .lobby,.local,.join{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto;min-height:100%}
+  .join{grid-template-rows:auto minmax(0,1fr) auto}
+  .lobbyside,.localside,.joinside{grid-column:1;grid-row:1}
+  .lobbymain,.localmain,.joinmain{grid-column:1;grid-row:2;padding:18px 20px;border-left:0;border-top:1px solid rgba(230,237,244,.32)}
   .lobbyactions,.localactions{grid-column:1;grid-row:3}
   .banner .frame{width:88%}
   .banner .kname{font-size:13px}
@@ -392,18 +398,22 @@ body.at-title #gearWrap{visibility:visible}
 </div>
 
 <div class="modal" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
-  <div class="sheet panel">
-    <div id="codePane">
-      <h1 id="onlineTitle">Join a room</h1>
-      <p id="onlineLead"></p>
-      <form id="stepCode" hidden>
-        <label for="codeInput">Room code</label>
-        <input class="field code" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
-        <button class="primary" type="submit">Continue</button>
-      </form>
-      <div id="codeFoot">
-        <p class="err" id="onlineErr" role="alert"></p>
-        <button class="secondary" id="btnOnlineBack">Back</button>
+  <div class="sheet">
+    <div id="codePane" class="join">
+      <aside class="joinside">
+        <h1 id="onlineTitle">Join a room</h1>
+        <p id="onlineLead"></p>
+      </aside>
+      <div class="joinmain">
+        <form id="stepCode" hidden>
+          <label for="codeInput">Room code</label>
+          <input class="field code" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+        </form>
+      </div>
+      <div class="localactions" id="codeFoot">
+        <div id="codeErrHold"><p class="err" id="onlineErr" role="alert"></p></div>
+        <button class="primary" id="btnCodeGo" type="submit" form="stepCode">Continue</button>
+        <button class="secondary" id="btnOnlineBack" type="button">Back</button>
       </div>
     </div>
     <div id="lobbyPane" class="lobby" hidden>
@@ -2172,7 +2182,12 @@ function setLink(mode,title,sub){
 }
 function paintLink(){
   if(!NET.on||NET.ended){setLink('ok');return;}
-  const rs=NET.ws?NET.ws.readyState:3;
+  if(!NET.ws){
+    if(!NET.code){setLink('ok');return;}
+    setLink('lost','Connection lost','Reconnecting.');
+    return;
+  }
+  const rs=NET.ws.readyState;
   if(rs===1){
     const quiet=linkPong&&linkWait&&Date.now()-linkPong>3500;
     if(linkRtt>700||quiet)setLink('slow','Slow connection','Moves may take a moment.');
@@ -2199,8 +2214,8 @@ function connect(hello){
   ws.onclose=()=>{
     if(ws!==NET.ws)return;
     if(NET.playing)NET.forceSnap=true;
+    if(!NET.code){NET.ws=null;setLink('ok');onlineError('offline');return;}
     paintLink();
-    if(!NET.code){NET.ws=null;onlineError('offline');return;}
     if(NET.ended||!NET.on)return;
     if(NET.playing)renderTurn();
     if(document.hidden)return;
@@ -2255,8 +2270,10 @@ function showStep(step,opts){
   $('onlineTitle').textContent=o.title||'Join a room';
   $('onlineLead').textContent=o.lead||'';
   $('stepCode').hidden=step!=='stepCode';
+  $('btnCodeGo').hidden=step!=='stepCode';
   $('btnOnlineBack').textContent='Back';
-  $('codeFoot').append($('onlineErr'),$('btnOnlineBack'));
+  $('codeErrHold').appendChild($('onlineErr'));
+  $('codeFoot').append($('btnOnlineBack'));
   if(!o.keepError)$('onlineErr').textContent='';
 }
 function showLobby(keepError){
