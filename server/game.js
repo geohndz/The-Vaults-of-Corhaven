@@ -31,16 +31,17 @@ export const normalizeCode = (s) => String(s || '').toUpperCase().replace(/[^A-Z
 /* Time the page needs to animate each event, so a player's 20 seconds start after the board settles. */
 function eventMs(e) {
   switch (e.type) {
-    case 'orderTurn': case 'turn': return 300;
-    case 'orderRoll': return 2400;
-    case 'orderTie': return 1500;
-    case 'order': return 2600;
+    case 'orderTurn': return 2200;
+    case 'turn': return 300;
+    case 'orderRoll': return 4500;
+    case 'orderTie': return 3000;
+    case 'order': return 4500;
     case 'roll': return 1700;
-    case 'thirdDouble': return 2300;
-    case 'noMove': return 1300;
+    case 'thirdDouble': return 4000;
+    case 'noMove': return 2800;
     case 'forfeit': return 900;
     case 'world': {
-      const intro = { flood: 5500, ash: 4200, wild: 3600, mist: 7000, sun: 4200, ways: 2000 };
+      const intro = { flood: 5500, ash: 4200, wild: 3600, mist: 7000, sun: 4200, ways: 3600 };
       return 1750 + (intro[e.id] || 2000);
     }
     case 'move': {
@@ -52,10 +53,11 @@ function eventMs(e) {
 }
 
 export function newRoom(code, now) {
-  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null };
+  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true };
 }
 
 export const isJoinable = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < MAX_SEATS;
+export const isListed = (room) => isJoinable(room) && !room.private;
 export function lobbyCard(room) {
   return {
     code: room.code,
@@ -109,6 +111,14 @@ export function setName(room, id, raw) {
   return null;
 }
 
+export function setOpts(room, id, msg) {
+  if (room.status !== 'lobby') return 'started';
+  if (id !== room.hostId) return 'not-host';
+  if (typeof msg.private === 'boolean') room.private = msg.private;
+  if (typeof msg.worlds === 'boolean') room.worlds = msg.worlds;
+  return null;
+}
+
 export function pickKingdom(room, id, h) {
   const seat = seatOf(room, id);
   if (!seat || room.status !== 'lobby' || !seat.name) return 'nope';
@@ -151,6 +161,7 @@ export function start(room, id, now) {
     winReason: null,
     world: null,
     worldBag: [],
+    worlds: room.worlds !== false,
     diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now },
     themeAt: now + MATCH_CUE_MS,
   };
@@ -268,7 +279,7 @@ function nextTurn(room) {
   }
   g.cur = to;
   /* A round is one turn each. Wrapping back, or staying on the only kingdom left, is when the March turns. */
-  if (to <= from) openWorld(room);
+  if (to <= from && g.worlds !== false) openWorld(room);
   beginTurn(room, false);
 }
 
@@ -503,6 +514,8 @@ export function publicView(room) {
     v: room.v,
     status: room.status,
     closed: room.closed,
+    private: !!room.private,
+    worlds: room.worlds !== false,
     hostPid: host ? host.pid : null,
     seats: room.seats.map(({ pid, name, h, away, awaySince, out }) => ({ pid, name, h, away, awaySince, out })),
     seq: room.seq,
@@ -519,6 +532,7 @@ export function publicView(room) {
       winner: room.game.winner,
       winReason: room.game.winReason,
       world: room.game.world,
+      worlds: room.game.worlds !== false,
       themeAt: room.game.themeAt,
       diceStats: room.game.diceStats ? R.diceReport(room.game.diceStats) : null,
     },

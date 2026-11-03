@@ -15,7 +15,7 @@ const OPEN_KEY = 'corhaven:open';
 const OPEN_CH = 'corhaven:ch:open';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const ttlFor = (room) => (room.status === 'closed' || room.status === 'over' ? CLOSED_TTL_S : ROOM_TTL_S);
-const listed = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < OPEN_MAX;
+const listed = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < OPEN_MAX && !room.private;
 
 async function redisStore(url) {
   const { default: Redis } = await import('ioredis');

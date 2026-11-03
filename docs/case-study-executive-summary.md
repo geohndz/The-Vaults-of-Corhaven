@@ -50,6 +50,14 @@ Three.js + Cannon (board/dice) · WebSocket + Redis (rooms) · Shared `lib/rules
 
 ---
 
+## First live playtest (3 Nov 2026 · **V1.1.6**)
+
+Online room, Geo hosting. Players loved the world events (especially fog) and naturally teamed up on whoever was ahead. Real people made the same clock feel faster than CPU games; after a couple of rounds the rules clicked.
+
+The opening still failed: banners left before they could be read, events had no durable “what just happened,” waiting seats thought the order roll was idle, siege effects hid pieces, the host’s turn dropped the table, and local CPU stacked barricades. **V1.2.0** holds banners longer, announces order to every seat, leaves a side hint after the beat, marks your troops on your turn, races the computer, and adds Tutorial under Play local. Host-turn disconnects are still open.
+
+---
+
 ## Honest scope note
 
 Git history in **v3** starts at **public launch** (Oct 5, 2026) with the full game already present; Oct 26–27 commits show the **online + mobile** pivot. Pre-launch exploration lives outside this repo—see development log Appendix B.

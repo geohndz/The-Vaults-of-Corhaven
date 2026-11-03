@@ -13,7 +13,7 @@ const send = (conn, msg) => { if (conn.ws.readyState === 1) conn.ws.send(JSON.st
 
 async function sendOpen(conns) {
   const store = await getStore();
-  const rooms = (await store.listOpen()).filter(G.isJoinable).map(G.lobbyCard);
+  const rooms = (await store.listOpen()).filter(G.isListed).map(G.lobbyCard);
   const msg = { t: 'rooms', rooms, now: Date.now() };
   conns.forEach((c) => send(c, msg));
 }
@@ -176,6 +176,7 @@ async function handle(conn, msg) {
   switch (t) {
     case 'name': err = await mutate(conn.code, (room) => G.setName(room, id, msg.name) || true); break;
     case 'pick': err = await mutate(conn.code, (room) => G.pickKingdom(room, id, msg.h) || true); break;
+    case 'opts': err = await mutate(conn.code, (room) => G.setOpts(room, id, msg) || true); break;
     case 'start': err = await mutate(conn.code, (room, now) => G.start(room, id, now) || true); break;
     case 'roll': err = await mutate(conn.code, (room, now) => G.playRoll(room, id, now, msg.act) || true); break;
     case 'move': err = await mutate(conn.code, (room, now) => G.playMove(room, id, msg.idx, msg.di, now, msg.act) || true); break;

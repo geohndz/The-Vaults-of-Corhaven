@@ -3,7 +3,7 @@
 **Author:** Geo Hernandez (product design & development)  
 **Repository:** `board-game/v3`  
 **Document purpose:** A factual timeline of what shipped in this repo, with design decisions, product moments, and narrative hooks for a UX/product case study.  
-**Last updated from repo:** 27 Oct 2026 (commit `11a0f89`)
+**Last updated from repo:** 3 Nov 2026 (first live user test on **V1.1.6**, `a6b122a`)
 
 **Related:** [Executive summary (1 page)](./case-study-executive-summary.md) · [Visual archive](./case-study/visual-archive.md) · [Case study folder](./case-study/README.md)
 
@@ -11,7 +11,7 @@
 
 ## Visual archive
 
-Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png), the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), the [marker lab](./case-study/screenshots/2026-11-02-04-marker-lab-thorns-desktop.png), the [ring post](./case-study/screenshots/2026-11-02-09-ring-post-water-desktop.png), the [wheel](./case-study/screenshots/2026-11-02-05-roulette-desktop.png) without its card, the [title screen](./case-study/screenshots/2026-11-02-10-title-banners-desktop.png) with banner actions, the [slate title](./case-study/screenshots/2026-11-02-12-title-slate-desktop.png), the [room lobby](./case-study/screenshots/2026-11-02-18-lobby-black-overlay-desktop.png) on the black overlay over the board, [Play local](./case-study/screenshots/2026-11-02-22-local-setup-overlay-desktop.png) on that same overlay, [Join a room](./case-study/screenshots/2026-11-03-01-join-room-overlay-desktop.png) on it as well, then [open rooms in that same layout](./case-study/screenshots/2026-11-03-03-join-open-rooms-desktop.png). **2026-11-03:** [purple Stones of the Pact](./case-study/screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) on the wheel and [on the road](./case-study/screenshots/2026-11-03-06-stones-pact-portals-desktop.png).
+Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png), the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), the [marker lab](./case-study/screenshots/2026-11-02-04-marker-lab-thorns-desktop.png), the [ring post](./case-study/screenshots/2026-11-02-09-ring-post-water-desktop.png), the [wheel](./case-study/screenshots/2026-11-02-05-roulette-desktop.png) without its card, the [title screen](./case-study/screenshots/2026-11-02-10-title-banners-desktop.png) with banner actions, the [slate title](./case-study/screenshots/2026-11-02-12-title-slate-desktop.png), the [room lobby](./case-study/screenshots/2026-11-02-18-lobby-black-overlay-desktop.png) on the black overlay over the board, [Play local](./case-study/screenshots/2026-11-02-22-local-setup-overlay-desktop.png) on that same overlay, [Join a room](./case-study/screenshots/2026-11-03-01-join-room-overlay-desktop.png) on it as well, then [open rooms in that same layout](./case-study/screenshots/2026-11-03-03-join-open-rooms-desktop.png). **2026-11-03:** [purple Stones of the Pact](./case-study/screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) on the wheel and [on the road](./case-study/screenshots/2026-11-03-06-stones-pact-portals-desktop.png). First live user test the same day is **Phase 3** below (V1.1.6). Playtest follow-up **V1.2.0:** [Learn the march](./case-study/screenshots/2026-11-03-07-learn-the-march-title-desktop.png) on the title, [order as a table banner](./case-study/screenshots/2026-11-03-08-learn-march-order-desktop.png), [barricade hint](./case-study/screenshots/2026-11-03-09-hint-sheet-barricade-desktop.png). **V1.2.2:** [leave keep with dice](./case-study/screenshots/2026-11-03-11-tutorial-leave-keep-dice-desktop.png), [March event toggles](./case-study/screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png), [victory](./case-study/screenshots/2026-11-03-14-tutorial-victory-desktop.png).
 
 ---
 
@@ -141,6 +141,58 @@ These were established at publish and treated as **constraints**, not drafts:
 
 ---
 
+### Phase 3 — First live user test (3 Nov 2026)
+
+**Build tested:** **V1.1.6** (`a6b122a`, shipped the morning of the session). Online room on the live game; Geo hosted. Several real players at once. Local CPU play was also in the mix (the barricade note).
+
+This is the first session with people who were not the designer. The Oct 27 mobile pass was a HUD/motion finding; this one is full-match comprehension, pace, and connection.
+
+#### What players struggled with
+
+| Finding | What happened | Design implication |
+|---------|----------------|--------------------|
+| **Banners too fast** | Players said they could not finish reading the toast before it left. | Hold high-signal banners longer, or let the player dismiss them. The Oct 27 “respect attention” toast model assumed a glance was enough. It was not. |
+| **No durable hint after the beat** | Confusion in the first couple of rounds: a world event, Greed, or a barricade would fire, then vanish. | After the banner, leave a small control at the side of the screen. Tap it, it slides out, and you can read what just happened and who it hits. Same pattern for the March, Greed, barricades, and the rest of the high-signal events. |
+| **Order roll is invisible if it is not your turn** | While seats were being rolled, players who were waiting thought nothing was happening. | Everyone needs a banner (or equal status) that the table is rolling for order—not only the person whose dice are up. |
+| **Shared disconnects** | The table dropped at the same time more than once. When it happened, it was on Geo’s turn (the host). | Treat as a host/turn-path reliability bug, not a one-off client glitch. Investigate WS/room persistence around the host’s action. |
+| **Pieces lost in the siege** | World effects made troops hard to pick out. | On your turn, your own pieces should glow, or carry a marker above them, so the board still reads under fog, flood, and ash. |
+| **CPU over-builds barricades** | In local play the AI stacked barricades and the match dragged. | Lower the CPU’s barricade weight so local games keep the same pace the live table found fun. |
+
+#### What landed
+
+- Players **banded together** against whoever was ahead. The race-and-eat loop is doing the social work.
+- **World events were a hit**, especially the fog.
+- Real opponents **changed how fast the game felt**. Clock time was about the same as a CPU match; it did not feel slow.
+- After a couple of rounds the rules **clicked** and play sped up. The problem is the opening, not the system once it is known.
+
+#### Creator reflection
+
+The product is already fun with people in the room. The gap is **onboarding in the first two rounds**: durable explanation of what just happened, a visible order-roll for every seat, pieces that stay findable under the siege, and banners that stay long enough to read. Connection drops on the host’s turn are a trust issue for online play, separate from teaching.
+
+#### Next: a scripted tutorial under Play local
+
+Not a full match. A predetermined walk that fades between beats, opened from the title screen under Play local, covering:
+
+1. Rolling for order  
+2. Leaving the yard on a 6 and a 1  
+3. Doubles and rolling again  
+4. Greed  
+5. Barricades  
+6. Safe squares  
+7. Choosing which die to march  
+8. +20 for a capture  
+9. +20 for reaching the vault  
+10. Each world event and who it hits  
+11. Winning  
+
+Each beat is one explanation, then a fade, then the next. That matches what testers needed: they understood the game once they had seen it, not from the toast alone.
+
+**Shipped in V1.2.0** (same day): banners hold ~5s and tap away; order is announced to every seat; a side chip slides open after world events, Greed, barricades, strikes, and the vault; your troops carry a marker on your turn; the computer would rather march than stack; Tutorial is eleven scripted beats under Play local. Host-turn disconnects are still open. Visuals: [title](./case-study/screenshots/2026-11-03-10-tutorial-title-desktop.png), [order lesson](./case-study/screenshots/2026-11-03-08-learn-march-order-desktop.png), [barricade hint](./case-study/screenshots/2026-11-03-09-hint-sheet-barricade-desktop.png).
+
+**V1.2.2** tutorial polish: dice on Leaving the keep (scripted 6 and 1); one troop walks onto the other for a barricade; strike then +20; vault uses two pieces; Show again / Back / Next; March event toggles; Victory keeps a single Back to title. Visuals: [leave keep](./case-study/screenshots/2026-11-03-11-tutorial-leave-keep-dice-desktop.png), [March toggles](./case-study/screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png), [victory](./case-study/screenshots/2026-11-03-14-tutorial-victory-desktop.png).
+
+---
+
 ## Key product decisions (case-study bullets)
 
 ### 1. One HTML surface, three modes
@@ -163,9 +215,11 @@ No dismiss-on-backdrop—players must choose “Back to the board” / “Close 
 
 Flow: title → create/join → name → **banner pick** → waiting room → march. Each step has a dedicated sheet title and lead line—reduces “what do I do?” in async invites.
 
-### 6. Event feedback model (Oct 27)
+### 6. Event feedback model (Oct 27 → challenged 3 Nov)
 
 Shift from persistent turn card messaging to **ephemeral toasts** for pivotal beats. **Design principle:** *Respect attention*—especially when waiting on others’ 20s turns.
+
+**Playtest (V1.1.6):** the glance was too short, and the first rounds still needed a durable “what just happened” readout. Next pass: keep the banner, then a side chip that slides open for the March, Greed, barricades, and the rest.
 
 ### 7. Timer fairness
 
@@ -220,8 +274,8 @@ Use these pairs for before/after visuals in Figma or screenshots from git checko
    - Online lobby + kingdom banners  
    - Turn timer + role-based HUD (Oct 27)  
    - WebXR passthrough without splitting the brand  
-5. **Outcomes** — What you’d validate with users (time-to-first-roll, comprehension of phalanx rules, drop-off in waiting room).
-6. **Reflection** — Monolith tradeoffs; what pre-v3 git doesn’t show; next experiments.
+5. **Outcomes** — First live table on **V1.1.6** (3 Nov 2026): world events and table politics landed; opening rounds, banner duration, host disconnects, and piece legibility did not. See Phase 3.
+6. **Reflection** — Teach the first two rounds (side hints + scripted tutorial under Play local); keep the siege spectacle once players can still find their troops.
 
 ---
 
@@ -252,9 +306,9 @@ Use this section in your own doc or Notion— the repo cannot supply it.
 - [ ] When did rule design start? What changed from classic Ludo?
 - [ ] Sketches / FigJam / playtest notes from before 5 Oct 2026
 - [ ] Why v3 folder name—what shipped in v1/v2?
-- [ ] User quotes or playtest observations (local vs online vs Quest)
+- [x] First live user test (3 Nov 2026, **V1.1.6**, online + local CPU notes) — Phase 3 above. Still open: Quest playtest, quoted lines if you want them later.
 - [ ] Deployment URL and analytics (if any)
-- [ ] What you’d do differently for Phase 3
+- [x] Phase 3 next work (from the 3 Nov table): slower banners, side-sheet hints, order-roll banner for every seat, on-turn piece glow, CPU barricade weight, scripted tutorial under Play local — **V1.2.0**. Still open: host-turn disconnects.
 
 ---
 

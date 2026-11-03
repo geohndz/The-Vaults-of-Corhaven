@@ -36,6 +36,22 @@ function play(room, rand, now = 1, maxSteps = 20000) {
 }
 function rng(seed) { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
 
+test('the host can hide a room and skip the March', () => {
+  const room = lobby(2);
+  assert.equal(G.setOpts(room, ids[1], { private: true }), 'not-host');
+  assert.equal(G.setOpts(room, ids[0], { private: true, worlds: false }), null);
+  assert.equal(room.private, true);
+  assert.equal(room.worlds, false);
+  assert.equal(G.isJoinable(room), true);
+  assert.equal(G.isListed(room), false);
+  G.start(room, ids[0], 0);
+  assert.equal(room.game.worlds, false);
+  play(room, rng(11));
+  assert.equal(room.status, 'over');
+  assert.equal(room.game.world, null);
+  assert.ok(!room.events.some((e) => e.type === 'world'));
+});
+
 test('a lobby with a free seat is listed without seat ids', () => {
   const room = lobby(2);
   assert.equal(G.isJoinable(room), true);
@@ -242,6 +258,16 @@ test('a portal carries you even when the pair is off your road, and never captur
   const back = R.moveResult([along], along, 4, null);
   assert.equal(back.np, 0);
   assert.equal(R.walkSpan(along, back), 4);
+});
+
+test('the computer would rather press on than stack a barricade', () => {
+  const a = { h: 0, idx: 0, p: 8 };
+  const mate = { h: 0, idx: 1, p: 12 };
+  const pieces = [a, mate];
+  const rand = () => 0;
+  const stack = { pc: a, r: { np: 12, captures: [], exit: false } };
+  const onward = { pc: a, r: { np: 16, captures: [], exit: false } };
+  assert.ok(R.cpuScore(pieces, onward, rand) > R.cpuScore(pieces, stack, rand));
 });
 
 test('world events deal every event before one can repeat', () => {

@@ -78,6 +78,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 #linkBanner{z-index:8}
 body.link-bad #toast.show{opacity:0;visibility:hidden}
 #toast.show,#linkBanner.show{opacity:1;transform:translate(-50%,0);visibility:visible;transition-delay:0s}
+#toast.show{pointer-events:auto;cursor:pointer}
 #toast .rule,#linkBanner .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
 #toast .rule.t,#linkBanner .rule.t{top:9px}
 #toast .rule.b,#linkBanner .rule.b{bottom:9px}
@@ -121,7 +122,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .taparrow{position:absolute;left:50%;bottom:calc(100% + 4px);width:16px;height:10px;color:var(--gold-bright);filter:drop-shadow(0 1px 2px rgba(0,0,0,.85));pointer-events:none;transform:translateX(-50%);animation:tapbob 1.35s cubic-bezier(.45,0,.55,1) infinite}
 .taparrow svg{display:block;width:100%;height:100%}
 @keyframes tapbob{0%,100%{transform:translateX(-50%) translateY(2px)}50%{transform:translateX(-50%) translateY(-4px)}}
-.dchip{width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #6E7C8A;
+.dchip{position:relative;overflow:visible;width:54px;height:54px;padding:5px;border-radius:11px;background:var(--bone);border:2px solid #6E7C8A;
   box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;place-items:center;transition:transform .12s ease}
 .dchip svg{width:100%;height:100%;display:block}
 .dchip.bonus{width:auto;padding:0 14px;background:linear-gradient(#E6EDF4,#8B9AAB);color:var(--iron);font-weight:700;font-size:21px;border-color:#5A6672}
@@ -222,6 +223,10 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .lobbyside label{margin-top:0}
 .lobbypeople{display:flex;flex-direction:column;min-height:0}
 .lobbypeople:empty{display:none}
+.roomopts{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.roomopts .check,.setupopts .check{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;color:var(--parch);font-weight:600;font-size:16px}
+.roomopts input,.setupopts input{width:22px;height:22px;flex:none;accent-color:#9AABBC}
+.setupopts{display:flex;flex-direction:column;gap:14px;margin-top:18px}
 .lobbyactions,.localactions{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:16px;padding:8px 32px calc(env(safe-area-inset-bottom,0px) + 28px) calc(env(safe-area-inset-left,0px) + 32px)}
 .lobbyactions .primary,.lobbyactions .secondary,.localactions .primary,.localactions .secondary{position:relative;width:100%;margin:0;padding:28px 20px 27px;border:0;border-radius:0;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%);box-shadow:none;color:var(--gold-bright);font-weight:700;font-size:clamp(13px,3.2vw,22px);letter-spacing:.12em;line-height:1.2;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9);transition:color .15s ease,background .15s ease}
 .lobbyactions .primary::before,.lobbyactions .primary::after,.lobbyactions .secondary::before,.lobbyactions .secondary::after,.localactions .primary::before,.localactions .primary::after,.localactions .secondary::before,.localactions .secondary::after{content:"";position:absolute;left:4%;right:4%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-bright) 16%,var(--gold-bright) 84%,transparent);pointer-events:none;opacity:0;transition:opacity .15s ease}
@@ -305,6 +310,9 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 }
 body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
 body.at-title #gearWrap{visibility:visible}
+body.at-lesson .hud{visibility:hidden}
+body.at-lesson #toast,body.at-lesson #hintDock,body.at-lesson #bottomBar{visibility:visible}
+body.at-lesson #bottomBar{z-index:21;pointer-events:auto}
 .titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 36px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
 .titlepage.open{display:flex;align-items:center;justify-content:center}
 .titlemain{width:min(560px,100%);text-align:center}
@@ -337,7 +345,41 @@ body.at-title #gearWrap{visibility:visible}
 .gatecard p{margin:0;color:var(--parch-dim);font-size:18px;max-width:36ch}
 .gatebar{width:min(280px,72vw);height:3px;margin-top:28px;background:rgba(154,171,188,.28)}
 .gatebar span{display:block;height:100%;width:100%;background:var(--gold-bright);transform:scaleX(0);transform-origin:left center}
-@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}}
+#hintDock{position:fixed;z-index:7;top:46%;right:0;transform:translateY(-50%);max-height:min(72vh,540px);pointer-events:none;overflow:hidden}
+body.at-lesson #hintDock{z-index:21}
+#hintDock[hidden]{display:none}
+#hintChip{pointer-events:auto;position:relative;z-index:1;display:block;writing-mode:vertical-rl;text-orientation:mixed;margin:0;padding:22px 11px;border:0;background:linear-gradient(180deg,rgba(8,12,16,.9),rgba(8,12,16,.78));color:var(--gold-bright);font-weight:700;font-size:13px;letter-spacing:.16em;line-height:1.2;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#hintChip::before,#hintChip::after{content:"";position:absolute;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);pointer-events:none}
+#hintChip::before{top:10px}
+#hintChip::after{bottom:10px}
+#hintSheet{pointer-events:none;position:absolute;right:100%;top:0;width:min(340px,calc(100vw - 52px));padding:22px 24px 18px;background:linear-gradient(180deg,rgba(8,12,16,.92),rgba(8,12,16,.82));color:var(--parch);transform:translateX(calc(100% + 36px));visibility:hidden;transition:transform .62s cubic-bezier(.22,.61,.36,1),visibility 0s linear .62s;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#hintDock.open #hintSheet{pointer-events:auto;transform:translateX(0);visibility:visible;transition:transform .62s cubic-bezier(.22,.61,.36,1),visibility 0s linear 0s}
+#hintSheet h2{margin:0 0 8px;font-size:20px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-bright)}
+#hintSheet p{margin:0 0 16px;font-size:16px;line-height:1.4;color:var(--parch)}
+#hintSheet .hintclose{display:block;margin:0;padding:10px 0 0;border:0;background:none;color:var(--gold-bright);font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+#lesson{padding:0;align-items:stretch;background:transparent;backdrop-filter:none;pointer-events:none}
+#lesson .sheet{width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
+.lesson{display:flex;width:100%;height:100%;align-items:stretch}
+.lessonside{pointer-events:auto;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;width:min(420px,44vw);padding:calc(env(safe-area-inset-top,0px) + 28px) 28px calc(env(safe-area-inset-bottom,0px) + 28px) calc(env(safe-area-inset-left,0px) + 28px);background:linear-gradient(90deg,rgba(10,8,14,.88) 0%,rgba(10,8,14,.62) 62%,rgba(10,8,14,0) 100%);transition:opacity .4s ease}
+#lesson.demo .lessonside{opacity:0;pointer-events:none}
+.lessonstep{margin:0;color:var(--gold-bright);font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.lessonside h1{margin:0 0 8px;font-size:clamp(28px,4vw,42px)}
+.lessonside p{margin:0 0 18px;max-width:36ch;color:var(--parch);text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.lessonside .localactions{position:relative;left:auto;right:auto;bottom:auto;padding:0;background:none}
+.lessonworlds{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.lessonworlds[hidden]{display:none}
+.lessonworlds button{flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch-dim);font-size:15px}
+.lessonworlds button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
+.lessonnav{display:flex;gap:8px;margin:0 0 4px}
+.lessonnav button{flex:1;margin:0;padding:12px 8px;border:0;background:none;color:var(--gold-bright);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+.lessonnav button:hover,.lessonnav button:focus-visible{color:var(--parch)}
+.lessonnav button:disabled{opacity:.4;cursor:default;color:var(--gold-bright)}
+@media (max-width:640px){
+  .lessonside{width:100%;justify-content:flex-end;padding:38vh 20px calc(env(safe-area-inset-bottom,0px) + 20px);background:linear-gradient(180deg,rgba(10,8,14,0) 0%,rgba(10,8,14,.72) 22%,rgba(10,8,14,.9) 100%)}
+  #hintSheet{width:min(300px,calc(100vw - 44px))}
+  body.at-lesson #bottomBar{left:50%;right:auto;transform:translateX(-50%);align-items:center;bottom:calc(env(safe-area-inset-bottom,0px) + 210px);max-width:none}
+}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;transition:none}#hintDock:not(.open) #hintSheet{visibility:hidden}#lesson.demo .lessonside{opacity:1}}
 </style>
 </head>
 <body class="at-title">
@@ -365,6 +407,14 @@ body.at-title #gearWrap{visibility:visible}
   <div class="tt"></div>
   <div class="st"></div>
   <span class="rule b"></span>
+</div>
+<div class="hud" id="hintDock" hidden>
+  <div id="hintSheet" role="dialog" aria-labelledby="hintSheetTitle">
+    <h2 id="hintSheetTitle"></h2>
+    <p id="hintSheetBody"></p>
+    <button type="button" class="hintclose" id="hintSheetClose">Close</button>
+  </div>
+  <button type="button" id="hintChip" aria-expanded="false" aria-controls="hintSheet"><span id="hintChipLabel"></span></button>
 </div>
 <div class="hud" id="linkBanner" role="status" aria-live="polite" aria-hidden="true">
   <span class="rule t"></span>
@@ -411,9 +461,10 @@ body.at-title #gearWrap{visibility:visible}
       <button class="primary" id="btnCreate">Create a room</button>
       <button class="secondary" id="btnJoin">Join a room</button>
       <button class="secondary" id="btnLocal">Play local</button>
+      <button class="secondary" id="btnLesson">Tutorial</button>
       <button class="secondary" id="btnStory2">About the Vaults of Corhaven</button>
     </div>
-    <p class="titlever" id="titleVer">V1.1.6</p>
+    <p class="titlever" id="titleVer">V1.2.1</p>
   </main>
 </div>
 
@@ -448,6 +499,10 @@ body.at-title #gearWrap{visibility:visible}
           <input class="field" id="nameInput" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="done">
         </form>
         <div class="lobbypeople" id="lobbyList" aria-label="Players"></div>
+        <div class="roomopts" id="roomOpts" hidden>
+          <label class="check" for="optWorlds">The March<input type="checkbox" id="optWorlds" checked></label>
+          <label class="check" for="optPrivate">Private — code only<input type="checkbox" id="optPrivate"></label>
+        </div>
       </aside>
       <div class="lobbymain">
         <div class="kingdoms" id="kingdomList" role="group" aria-label="Kingdoms"></div>
@@ -481,6 +536,9 @@ body.at-title #gearWrap{visibility:visible}
           <button role="radio" data-n="3" aria-checked="false">3</button>
           <button role="radio" data-n="4" aria-checked="true">4</button>
         </div>
+        <div class="setupopts">
+          <label class="check" for="setupWorlds">The March (world events)<input type="checkbox" id="setupWorlds" checked></label>
+        </div>
       </aside>
       <div class="localmain">
         <h2>Who rules each kingdom?</h2>
@@ -491,6 +549,34 @@ body.at-title #gearWrap{visibility:visible}
         <button class="secondary" id="btnXRSetup" hidden="">Play in the room</button>
         <button class="secondary" id="btnSetupBack">Back</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="lesson" role="dialog" aria-modal="true" aria-labelledby="lessonTitle">
+  <div class="sheet">
+    <div class="lesson">
+      <aside class="lessonside">
+        <p class="lessonstep" id="lessonStep"></p>
+        <h1 id="lessonTitle"></h1>
+        <p id="lessonBody"></p>
+        <div class="lessonworlds" id="lessonWorlds" hidden>
+          <button type="button" data-world="flood">Tide</button>
+          <button type="button" data-world="ash">Heartfire</button>
+          <button type="button" data-world="wild">Wild</button>
+          <button type="button" data-world="sun">Seal</button>
+          <button type="button" data-world="mist">Mist</button>
+          <button type="button" data-world="ways">Stones</button>
+        </div>
+        <div class="lessonnav">
+          <button type="button" id="btnLessonBack">Back</button>
+          <button type="button" id="btnLessonAgain">Show again</button>
+        </div>
+        <div class="localactions">
+          <button class="primary" id="btnLessonNext">Next</button>
+          <button class="secondary" id="btnLessonSkip">Back to title</button>
+        </div>
+      </aside>
     </div>
   </div>
 </div>
@@ -615,12 +701,12 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=move2"></script>
-<script src="./lib/siege-fx.js?v=siege16"></script>
+<script src="./lib/rules.js?v=move3"></script>
+<script src="./lib/siege-fx.js?v=siege17"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.1.6';
+const GAME_VERSION='1.3.0';
 
 /* ================= Board definition (Parchís layout) ================= */
 /* Arms are 3 lanes wide and 8 squares long. Squares are numbered 1–68, moving counterclockwise. */
@@ -1099,6 +1185,7 @@ diceBodies.forEach(b=>b.addEventListener('collide',e=>{
 /* ================= Pieces ================= */
 const pawnGeo=new THREE.LatheGeometry([[0,0],[0.3,0],[0.31,0.05],[0.27,0.1],[0.19,0.17],[0.14,0.3],[0.13,0.44],[0.21,0.49],[0.21,0.54],[0.11,0.58],[0.16,0.64],[0.175,0.74],[0.13,0.84],[0.04,0.88],[0,0.885]].map(p=>new THREE.Vector2(p[0],p[1])),32);
 const visorGeo=new THREE.BoxGeometry(0.26,0.035,0.06),ringGeo=new THREE.RingGeometry(0.33,0.43,40),bandGeo=new THREE.TorusGeometry(0.2,0.028,8,28),plumeGeo=new THREE.ConeGeometry(0.05,0.16,10);
+const beaconGeo=new THREE.SphereGeometry(0.13,16,12);
 function makePiece(h){
   const grp=new THREE.Group(),inner=new THREE.Group();grp.add(inner);
   const mat=new THREE.MeshStandardMaterial({color:HOUSES[h].color,roughness:0.38,metalness:0.2});
@@ -1108,15 +1195,19 @@ function makePiece(h){
   const plume=new THREE.Mesh(plumeGeo,M.gold);plume.position.y=0.95;inner.add(plume);
   const ring=new THREE.Mesh(ringGeo,new THREE.MeshBasicMaterial({color:0xFFD66B,transparent:true,opacity:0.9,side:THREE.DoubleSide,depthWrite:false}));
   ring.rotation.x=-Math.PI/2;ring.position.y=0.02;ring.renderOrder=8;ring.visible=false;grp.add(ring);
+  const beacon=new THREE.Mesh(beaconGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending}));
+  beacon.position.y=1.28;beacon.renderOrder=22;beacon.visible=false;grp.add(beacon);
+  const ghost=new THREE.Mesh(pawnGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0.32,depthTest:false,depthWrite:false,fog:false}));
+  ghost.renderOrder=24;ghost.visible=false;inner.add(ghost);
   grp.renderOrder=12;
-  grp.userData={inner,ring,mat};return grp;
+  grp.userData={inner,ring,mat,beacon,ghost};return grp;
 }
 /* destination markers. Touch screens get a wider ring: it is a tap target, not just a hint. */
 const coarse=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
 const labClip=new THREE.Plane(new THREE.Vector3(0,1,0),-TILE_TOP);
 const labClipUp=new THREE.Vector3();const labClipAt=new THREE.Vector3();
 const markerRingGeo=coarse?new THREE.RingGeometry(0.2,0.4,32):new THREE.RingGeometry(0.16,0.3,32);
-const markerPoleGeo=new THREE.CylinderGeometry(coarse?0.075:0.06,coarse?0.075:0.06,2.5,16);
+const markerPoleGeo=new THREE.CylinderGeometry(coarse?0.075:0.06,coarse?0.075:0.06,3.4,16);
 const markerHeadGeo=new THREE.SphereGeometry(coarse?0.17:0.14,16,12);
 const markerRingMat=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.85,side:THREE.DoubleSide,depthTest:false,depthWrite:false,fog:false});
 const markerGlowMat=new THREE.MeshBasicMaterial({color:0xFFE08A,transparent:true,opacity:0.8,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,clippingPlanes:[labClip]});
@@ -1125,8 +1216,8 @@ function makeMarker(){
   const g=new THREE.Group();
   const ring=new THREE.Mesh(markerRingGeo,markerRingMat);ring.rotation.x=-Math.PI/2;ring.position.y=0.04;ring.renderOrder=39;
   const post=new THREE.Group();
-  const pole=new THREE.Mesh(markerPoleGeo,markerGlowMat);pole.position.y=0.05;pole.renderOrder=40;
-  const head=new THREE.Mesh(markerHeadGeo,markerGlowMat);head.position.y=1.32;head.renderOrder=41;
+  const pole=new THREE.Mesh(markerPoleGeo,markerGlowMat);pole.position.y=0.12;pole.renderOrder=40;
+  const head=new THREE.Mesh(markerHeadGeo,markerGlowMat);head.position.y=2.05;head.renderOrder=41;
   post.add(pole,head);g.add(ring,post);
   g.userData.marker=true;g.userData.post=post;board.add(g);return g;
 }
@@ -1530,6 +1621,7 @@ document.addEventListener('click',e=>{
   if(btn.disabled||btn.getAttribute('aria-disabled')==='true')return;
   if(btn.id==='btnRoll'||btn.classList.contains('roll')||btn.classList.contains('rollpair'))return;
   if(btn.classList.contains('dchip')){sfx.hover();return;}
+  if(btn.closest('#hintDock')){sfx.hover();return;}
   sfx.press(btn.id==='btnStart'||btn.id==='btnBegin'?START_SRC:PRESS_SRC);
 },true);
 ['pointerdown','click','keydown','touchend'].forEach(type=>document.addEventListener(type,()=>{
@@ -1563,6 +1655,11 @@ function posOf(pc){return pc.at!=null?trackPos(pc.at):cellPos(pc.h,pc.p,pc.idx);
 function resultPos(pc,r){return r.at!=null?trackPos(r.at):cellPos(pc.h,r.np,pc.idx);}
 function moveResult(pc,v){return R.moveResult(allPieces(),pc,v,S.world);}
 function options(){const pl=curP();if(!pl)return[];return R.options(allPieces(),pl.h,S.pending,S.world);}
+function onShrine(pc){
+  if(!pc||pc.p<0||pc.p>LAST)return false;
+  const ti=R.trackIndex(pc.h,pc.p);
+  return R.SAFE.has(ti)&&R.STARTS.indexOf(ti)<0;
+}
 
 const METRICS={id:null,started:0,closed:false};
 function metricsDevice(){
@@ -1631,7 +1728,7 @@ const ui={roll:$('btnRoll'),name:$('turnName'),msg:$('turnMsg'),tally:$('tally')
 const say=t=>{ui.msg.textContent=t;};
 /* toast() is for the few moments that matter: a banner over the board for a couple of seconds. */
 /* Banners queue up: one that arrives while another is showing waits, and the one on screen gets cut to a shorter hold. */
-const TOAST_HOLD=2800,TOAST_MIN=1500;
+const TOAST_HOLD=5200,TOAST_MIN=2800;
 let toastTimer=0,toastShownAt=0,toastBusy=false;const toastQ=[];
 function toast(title,sub,h,hold,num,quiet){
   say(sub?title+'. '+sub:title);
@@ -1640,26 +1737,86 @@ function toast(title,sub,h,hold,num,quiet){
   else{clearTimeout(toastTimer);toastTimer=setTimeout(endToast,Math.max(0,TOAST_MIN-(Date.now()-toastShownAt)));}
 }
 function nextToast(){
-  const t=toastQ.shift();if(!t){toastBusy=false;return;}
+  const t=toastQ.shift();if(!t){toastBusy=false;ui.toast.setAttribute('aria-hidden','true');return;}
   const el=ui.toast;toastBusy=true;toastShownAt=Date.now();
   el.querySelector('.tt').textContent=t.title;el.querySelector('.st').textContent=t.sub||'';
   el.classList.toggle('num',!!t.num);
   if(t.h==null)el.style.removeProperty('--c');else el.style.setProperty('--c',HOUSES[t.h].css);
-  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');el.setAttribute('aria-hidden','false');
   if(!t.quiet)sfx.banner();
   const hold=t.hold||(toastQ.length?TOAST_MIN:TOAST_HOLD);
   toastTimer=setTimeout(endToast,toastQ.length?Math.min(hold,TOAST_MIN):hold);
 }
-function endToast(){ui.toast.classList.remove('show');toastTimer=setTimeout(nextToast,toastQ.length?260:0);}
-function hideToast(){clearTimeout(toastTimer);toastQ.length=0;toastBusy=false;ui.toast.classList.remove('show');}
-const phalanxToast=(h,nm)=>toast('Shields locked',`Two ${nm||HOUSES[h].short} troops form a phalanx. None may pass or land there.`,h,null,null,true);
-/* Who is up, told only to the player it concerns. Everyone else just sees the roster light up. */
+function endToast(){ui.toast.classList.remove('show');ui.toast.setAttribute('aria-hidden','true');toastTimer=setTimeout(nextToast,toastQ.length?260:0);}
+function hideToast(){clearTimeout(toastTimer);toastQ.length=0;toastBusy=false;ui.toast.classList.remove('show');ui.toast.setAttribute('aria-hidden','true');}
+ui.toast.addEventListener('click',()=>{if(toastBusy)endToast();});
+let hintPeekT=0,hintPeekClose=0,hintOverflowT=0;
+function noteHint(title,body,h,key){
+  const dock=$('hintDock');if(!dock)return;
+  $('hintChipLabel').textContent=title;
+  $('hintSheetTitle').textContent=title;
+  $('hintSheetBody').textContent=body;
+  if(h==null)dock.style.removeProperty('--c');else dock.style.setProperty('--c',HOUSES[h].css);
+  dock.hidden=false;
+  if(key&&S.hintFirst&&!S.hintFirst[key]){
+    S.hintFirst[key]=true;
+    armHintPeek();
+  }else if(!dock.classList.contains('open')){
+    $('hintChip').setAttribute('aria-expanded','false');
+  }
+}
+function armHintPeek(){
+  clearTimeout(hintPeekT);clearTimeout(hintPeekClose);
+  if(reduced){toggleHint(true);return;}
+  hintPeekT=setTimeout(()=>{
+    const dock=$('hintDock');if(!dock||dock.hidden)return;
+    toggleHint(true);
+    hintPeekClose=setTimeout(()=>{if($('hintDock')&&$('hintDock').classList.contains('open'))toggleHint(false);},2800);
+  },900);
+}
+function hideHint(){
+  const dock=$('hintDock');if(!dock)return;
+  clearTimeout(hintPeekT);clearTimeout(hintPeekClose);clearTimeout(hintOverflowT);
+  dock.hidden=true;dock.classList.remove('open');dock.style.overflow='hidden';
+  $('hintChip').setAttribute('aria-expanded','false');
+}
+function toggleHint(open){
+  const dock=$('hintDock');if(!dock||dock.hidden)return;
+  const on=open==null?!dock.classList.contains('open'):!!open;
+  if(open==null){clearTimeout(hintPeekT);clearTimeout(hintPeekClose);}
+  const sheet=$('hintSheet');
+  if(on){
+    clearTimeout(hintOverflowT);
+    dock.style.overflow='visible';
+    dock.classList.add('open');
+  }else{
+    dock.classList.remove('open');
+    const tuck=()=>{if(!dock.classList.contains('open'))dock.style.overflow='hidden';if(sheet)sheet.removeEventListener('transitionend',tuck);};
+    if(sheet)sheet.addEventListener('transitionend',tuck);
+    clearTimeout(hintOverflowT);
+    hintOverflowT=setTimeout(tuck,700);
+  }
+  $('hintChip').setAttribute('aria-expanded',String(on));
+}
+$('hintChip').onclick=()=>toggleHint();
+$('hintSheetClose').onclick=()=>toggleHint(false);
+function phalanxToast(h,nm){
+  const who=nm||HOUSES[h].short;
+  toast('Shields locked',`Two ${who} troops form a phalanx. None may pass or land there.`,h,null,null,true);
+  noteHint('Barricade',`Two ${who} troops share a square and lock shields. Nobody may pass or land there.`,h,'barricade');
+}
+/* Order is announced to the whole table. A march still only banners the player who is up. */
 function announceTurn(pl,kind){
   const nm=shortName(pl);
-  if(!isMine(pl)){say(kind==='order'?`${nm} rolls to see when the rider arrived.`:kind==='again'?`${nm} rolled doubles and rolls again.`:`${nm} is on the march.`);return;}
+  if(kind==='order'){
+    if(isMine(pl))sfx.turn();
+    toast('Rolling for order',isMine(pl)?'Every kingdom rolls. Highest total marches first.':`${nm} rolls to see when the rider arrived.`,pl.h);
+    noteHint('Rolling for order','Every kingdom rolls both dice. The highest total marches first. A tie rolls again.',pl.h,'order');
+    return;
+  }
+  if(!isMine(pl)){say(kind==='again'?`${nm} rolled doubles and rolls again.`:`${nm} is on the march.`);return;}
   sfx.turn();
-  if(kind==='order')toast('Roll for order','Roll to see when the rider reached your court.',pl.h);
-  else if(kind==='again')toast('Doubles','Roll again.',pl.h);
+  if(kind==='again')toast('Doubles','Roll again.',pl.h);
   else toast('Your turn','Roll the dice.',pl.h);
 }
 const PLACE=['first','second','third','fourth'];
@@ -1676,6 +1833,11 @@ function orderToast(list){
   toast(title,sub?sub.charAt(0).toUpperCase()+sub.slice(1):'');
 }
 function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[n].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#7A1A14"/>`).join('')}</svg>`;}
+function tapArrow(){
+  const arrow=document.createElement('span');arrow.className='taparrow';arrow.setAttribute('aria-hidden','true');
+  arrow.innerHTML='<svg viewBox="0 0 16 10"><path d="M1.2 1.4 8 8.2 14.8 1.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return arrow;
+}
 function renderChips(){
   const pl=curP(),human=isMine(pl);
   ui.chips.innerHTML='';
@@ -1685,11 +1847,7 @@ function renderChips(){
   /* Both dice are one control. An order result is a banner for us. Everyone else's roll stays beside the name. */
   if(canRoll||(spinning&&!S.pending.length)){
     ui.chips.hidden=false;
-    if(canRoll){
-      const arrow=document.createElement('span');arrow.className='taparrow';arrow.setAttribute('aria-hidden','true');
-      arrow.innerHTML='<svg viewBox="0 0 16 10"><path d="M1.2 1.4 8 8.2 14.8 1.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      ui.chips.appendChild(arrow);
-    }
+    if(canRoll)ui.chips.appendChild(tapArrow());
     const b=document.createElement('button');b.type='button';b.className='rollpair';b.disabled=spinning;
     b.setAttribute('aria-label',S.phase==='orderRoll'?'Roll for order':spinning?'Rolling':'Roll the dice');
     b.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()))requestRoll();};
@@ -1702,14 +1860,20 @@ function renderChips(){
   if(!S.pending.length||!human){ui.chips.hidden=true;return;}
   ui.chips.hidden=false;
   const opts=S.phase==='choose'?options():[];
+  const pick=!!(S.lesson&&S.lessonPick&&S.phase==='choose');
   S.pending.forEach((d,di)=>{
     const b=document.createElement('button');b.className='dchip'+(d.bonus?' bonus':'')+(d.used?' used':'');
-    const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can)b.classList.add('stuck');
+    const can=opts.some(o=>o.di===di);if(!d.used&&S.phase==='choose'&&!can&&!S.lesson)b.classList.add('stuck');
     b.innerHTML=d.bonus?'+'+d.v:pipSVG(d.v);
     b.setAttribute('aria-label',(d.bonus?'Bonus move of ':'Die showing ')+d.v+(d.used?', used':can?'':', no legal move'));
     b.setAttribute('aria-pressed',String(di===S.sel&&!d.used&&S.phase==='choose'));
-    b.disabled=d.used||!human||S.phase!=='choose'||!can;
-    b.onclick=()=>{S.sel=di;refreshChoice();};
+    b.disabled=(!pick&&S.lesson)||d.used||!human||S.phase!=='choose'||(!can&&!pick);
+    b.onclick=()=>{
+      S.sel=di;
+      if(pick){if(S.lessonArrow===di)S.lessonArrow=di===1?0:null;refreshChoice();return;}
+      refreshChoice();
+    };
+    if(pick&&S.lessonArrow===di&&!d.used)b.appendChild(tapArrow());
     ui.chips.appendChild(b);});
 }
 /* Online, the top card is your seat. Locally it follows whichever human last held the device. */
@@ -1730,14 +1894,15 @@ function seatRoll(pl){
   return'';
 }
 function clearShownRolls(){S.players.forEach(p=>{p.shownRoll=null;});}
-/* Only an order roll is announced, and only to the player who threw it. The total is the banner. The two dice sit under it. */
+/* An order total is a banner for the whole table. A march still only banners the player who threw it. */
 function announceRoll(pl,a,b,kind,auto){
-  if(kind==='order'&&isMine(pl)){
-    toast(String(a+b),(auto?'Time ran out. ':'')+`${a} and ${b}`,pl.h,undefined,true);
+  if(kind==='order'){
+    const who=isMine(pl)?'You':shortName(pl);
+    toast(String(a+b),(auto?'Time ran out. ':'')+`${who} rolled ${a} and ${b}`,pl.h,undefined,true);
     return;
   }
   if(kind==='march'&&!isMine(pl))pl.shownRoll=[a,b];
-  const words=kind==='order'?orderWords(a,b):`${a} and ${b}${a===b?', doubles':''}`;
+  const words=`${a} and ${b}${a===b?', doubles':''}`;
   const who=isMine(pl)?'You':shortName(pl);
   say((auto?`Time ran out, so the dice were rolled for ${shortName(pl)}. `:'')+`${who} rolled ${words}.`);
 }
@@ -1803,7 +1968,7 @@ function renderTurn(){
   if(typeof paintViewHud==='function')paintViewHud();
   if(typeof paintXRPanel==='function')paintXRPanel();
 }
-function setHighlights(list){pieceMeshes.forEach(m=>{m.userData.ring.visible=false;m.userData.hl=false;});(list||[]).forEach(pc=>{pc.mesh.userData.ring.visible=true;pc.mesh.userData.hl=true;});}
+function setHighlights(list){pieceMeshes.forEach(m=>{m.userData.ring.visible=false;m.userData.hl=false;});(list||[]).forEach(pc=>{pc.mesh.userData.hl=true;});}
 /* A troop still in the keep bobs when a 1 or a 6 can bring it out. */
 function markReady(){
   const ready=new Set();
@@ -1812,7 +1977,7 @@ function markReady(){
 }
 function refreshChoice(){
   const opts=options();
-  if(!opts.some(o=>o.di===S.sel)&&opts.length)S.sel=opts[0].di;
+  if(!S.lessonPick&&!opts.some(o=>o.di===S.sel)&&opts.length)S.sel=opts[0].di;
   const mine=opts.filter(o=>o.di===S.sel);
   setHighlights(mine.filter(o=>!veilHides(o.pc)).map(o=>o.pc));
   const seen=new Set();showMarkers(mine.filter(o=>!veilHides(o.pc)).filter(o=>{const k=(o.r.at!=null?'a'+o.r.at:o.r.np)+':'+o.pc.p;if(seen.has(k))return false;seen.add(k);return true;}).map(o=>({pos:resultPos(o.pc,o.r),move:o})));
@@ -1894,7 +2059,7 @@ async function fallbackRoll(forced){ // also lands online rolls on the faces the
   let sounded=false;
   await Promise.all(dice.map((d,i)=>{const from=d.position.clone();const to=new THREE.Vector3((Math.random()-.5)*6,TILE_TOP+DS,(Math.random()-.5)*6);if(Math.hypot(to.x,to.z)<1.6)to.x+=2.4;
     const q0=d.quaternion.clone();const qf=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.random()*6).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...FACE_EULER[vals[i]])));
-    return animate(1100,k=>{d.position.lerpVectors(from,to,k);d.position.y=TILE_TOP+DS+(from.y-TILE_TOP)*Math.pow(1-k,1.4)*Math.abs(Math.cos(k*Math.PI*2.5));d.quaternion.copy(q0).slerp(qf,ease(k));if(!sounded&&k>=0.2){sounded=true;sfx.dice();}});}));
+    return animate(S.lesson?2600:1100,k=>{d.position.lerpVectors(from,to,k);d.position.y=TILE_TOP+DS+(from.y-TILE_TOP)*Math.pow(1-k,1.4)*Math.abs(Math.cos(k*Math.PI*2.5));d.quaternion.copy(q0).slerp(qf,ease(k));if(!sounded&&k>=0.2){sounded=true;sfx.dice();}});}));
   return vals;
 }
 
@@ -1912,13 +2077,13 @@ function removePiece(pc){board.remove(pc.mesh);const i=pieceMeshes.indexOf(pc.me
 function resetBoard(){
   stopOneShots();ensureTheme();
   diceArmed=false;S.gid++;dropMotion();clearPieces();
-  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.phase='idle';S.world=null;S.worldBag=null;S.worlds=0;lidTarget=-0.22;
-  localMe=-1;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();closeModal('march');
+  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.phase='idle';S.world=null;S.worldBag=null;S.worlds=0;S.noWorlds=false;S.hintFirst={};S.lessonPick=false;S.lessonArrow=null;lidTarget=-0.22;
+  localMe=-1;S.lesson=false;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();hideHint();closeModal('march');closeModal('lesson');document.body.classList.remove('at-lesson');
   if(siege)siege.stop();
   clearWorldFx();applyTheme();showTurnMark();
 }
 function newGame(config){
-  resetBoard();S.config=config;
+  resetBoard();S.config=config;S.noWorlds=!setupWorlds;S.hintFirst={};
   S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now()};
   S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
   metricsStart();
@@ -1933,7 +2098,7 @@ async function decideOrder(){
   S.players.forEach((_,i)=>{if(!seen.has(i))order.push(i);});
   S.players=order.map(i=>S.players[i]);S.cur=0;S.phase='moving';S.ordering=false;
   orderToast(S.players);
-  renderTurn();await wait(2600);if(gid!==S.gid)return;
+  renderTurn();await wait(4200);if(gid!==S.gid)return;
   beginTurn(false);
 }
 async function rankGroup(ids,gid){
@@ -1945,7 +2110,9 @@ async function rankGroup(ids,gid){
   for(const grp of R.orderGroups(entries)){
     const ix=grp.map(e=>e.id);
     if(ix.length>1){
-      toast(`Tied on ${grp[0].total}`,`${ix.map(i=>HOUSES[S.players[i].h].short).join(' and ')} roll again.`);renderTurn();await wait(1500);if(gid!==S.gid)return ids;
+      toast(`Tied on ${grp[0].total}`,`${ix.map(i=>HOUSES[S.players[i].h].short).join(' and ')} roll again.`);
+      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',S.players[ix[0]].h,'tie');
+      renderTurn();await wait(2800);if(gid!==S.gid)return ids;
       out.push(...await rankGroup(ix,gid));
     }else out.push(ix[0]);
   }
@@ -1964,10 +2131,11 @@ function orderRollFor(i,gid){
 async function finishOrder(pl,a,b,gid){
   if(gid!==S.gid||!pl||pl.out)return;
   pl.orderRoll=a+b;pl.orderVals=[a,b];announceRoll(pl,a,b,'order');S.phase='moving';renderTurn();
-  await wait(1600);if(gid!==S.gid)return;
+  await wait(3000);if(gid!==S.gid)return;
   const r=S.orderRes;S.orderRes=null;if(r)r();
 }
 async function doOrderRoll(){
+  if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
   if(S.phase!=='orderRoll'||motionRoll)return;const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();
@@ -1975,6 +2143,7 @@ async function doOrderRoll(){
   await finishOrder(pl,a,b,gid);
 }
 async function beginTurn(again){
+  if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
   const pl=curP();if(!pl)return;
   if(pl.out){nextTurn();return;}
@@ -1998,8 +2167,8 @@ async function finishRoll(pl,a,b,gid,plan){
     S.phase='moving';renderTurn();
     const out=pl.pieces.filter(p=>p.p>=0&&p.p<GOAL).sort((x,y)=>y.p-x.p)[0];
     sfx.bad();
-    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
-    else toast('Third double',`${who} lose${pl.cpu?'s':''} the turn.`,pl.h);
+    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',pl.h,'greed');out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
+    else {toast('Third double',`${who} lose${pl.cpu?'s':''} the turn.`,pl.h);noteHint('Greed','A third double in a row ends the turn. If a troop is on the road, the furthest one returns to the keep.',pl.h,'greed');}
     await wait(1300);if(gid===S.gid)nextTurn();return;
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
@@ -2007,6 +2176,7 @@ async function finishRoll(pl,a,b,gid,plan){
   continueTurn();
 }
 async function doRoll(){
+  if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
   if(S.phase==='orderRoll')return doOrderRoll();
   if(S.phase!=='roll'||motionRoll)return;const gid=S.gid;const pl=curP();
@@ -2016,6 +2186,7 @@ async function doRoll(){
   await finishRoll(pl,a,b,gid,plan);
 }
 async function continueTurn(){
+  if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
   const gid=S.gid;const pl=curP();if(!pl)return;const opts=options();
   if(!opts.length){
@@ -2047,7 +2218,7 @@ async function nextTurn(){
   const gid=S.gid,from=S.cur,n=S.players.length;if(!n)return;
   let to=from;
   for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out){to=i;break;}}
-  if(to<=from){
+  if(to<=from&&!S.noWorlds){
     S.phase='world';renderTurn();
     await presentWorld(drawWorld());
     if(gid!==S.gid)return;
@@ -2093,10 +2264,12 @@ async function doMove(opt){
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
     toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,pc.h,null,null,true);
+    noteHint('A strike',`The fallen troop returns to its keep. ${HOUSES[pc.h].short} then presses on with a bonus march of ${BONUS}.`,pc.h,'strike');
     await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
-  if(pc.p===GOAL){R.noteVault(curP());sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);}
+  if(pc.p===GOAL){R.noteVault(curP());sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,pc.h,'vault');}
+  if(onShrine(pc)){toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');}
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
@@ -2155,8 +2328,10 @@ async function victory(pl){
 }
 
 /* ================= Setup ================= */
-let setupCount=4;const seatCpu=[false,false,false,false];
-try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);}}catch(e){}
+let setupCount=4,setupWorlds=true;const seatCpu=[false,false,false,false];
+try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);setupWorlds=sv.worlds!==false;}}catch(e){}
+if($('setupWorlds'))$('setupWorlds').checked=setupWorlds;
+$('setupWorlds').onchange=()=>{setupWorlds=$('setupWorlds').checked;};
 function renderSetup(){
   document.querySelectorAll('#countSeg button').forEach(b=>b.setAttribute('aria-checked',String(+b.dataset.n===setupCount)));
   const wrap=$('seats');wrap.innerHTML='';
@@ -2167,12 +2342,13 @@ function renderSetup(){
     row.appendChild(tg);wrap.appendChild(row);});
 }
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
-function openModal(id){$(id).classList.add('open');if(id==='title')document.body.classList.add('at-title');const f=$(id).querySelector('button');if(f)setTimeout(()=>f.focus(),30);}
+function openModal(id){$(id).classList.add('open');if(id==='title')document.body.classList.add('at-title');const f=[...$(id).querySelectorAll('button')].find(b=>!b.disabled&&!b.hidden&&!b.closest('[hidden]'));if(f)setTimeout(()=>f.focus(),30);}
 function closeModal(id){$(id).classList.remove('open');if(id==='title')document.body.classList.remove('at-title');}
-$('btnBegin').onclick=()=>{try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
+$('btnBegin').onclick=()=>{setupWorlds=$('setupWorlds').checked;try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,worlds:setupWorlds}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
 $('btnNew').onclick=()=>showTitle();
 $('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
 $('btnSetupBack').onclick=()=>{closeModal('setup');showTitle();};
+$('btnLesson').onclick=()=>startLesson();
 $('btnRules').onclick=()=>openModal('rules');
 $('btnStory').onclick=()=>openAbout();
 $('btnStory2').onclick=()=>openAbout();
@@ -2241,13 +2417,283 @@ ui.roll.onclick=()=>{if((S.phase==='roll'||S.phase==='orderRoll')&&isMine(curP()
 renderSetup();
 function showTitle(msg){
   if(METRICS.id)metricsEnd('abandoned');
-  if(!NET.on&&S.phase!=='idle'){resetBoard();ui.chips.hidden=true;say('');}
+  const fromLesson=S.lesson||document.body.classList.contains('at-lesson');
+  if(!NET.on&&(S.phase!=='idle'||fromLesson)){resetBoard();ui.chips.hidden=true;say('');}
   if(!NET.on)$('btnLeave').hidden=true;
-  ['setup','online','win','leave','settings'].forEach(closeModal);
+  ['setup','online','win','leave','settings','lesson'].forEach(closeModal);
+  document.body.classList.remove('at-lesson');
+  hideHint();
   $('about').classList.remove('open');
   $('titleErr').textContent=msg||'';
   openModal('title');
 }
+
+/* ================= Tutorial ================= */
+let lessonRun=null;
+function troopOf(h,idx){const pl=S.players.find(p=>p.h===h);return pl&&pl.pieces[idx];}
+function lessonAlive(){return !!(lessonRun&&lessonRun.gid===S.gid&&S.lesson);}
+function setLessonBusy(on){
+  if(!lessonRun)return;
+  lessonRun.busy=!!on;
+  const last=lessonRun.i>=LESSONS.length-1;
+  $('btnLessonNext').disabled=!!on||last;
+  $('btnLessonBack').disabled=!!on||lessonRun.i<=0;
+  $('btnLessonAgain').disabled=!!on;
+}
+async function lessonWalk(pc,to){
+  if(!pc||!lessonAlive())return;
+  const m=pc.mesh;
+  if(pc.p<0){
+    pc.p=0;sfx.step();
+    await hop(m,posOf(pc),440,1.4);
+    if(!lessonAlive())return;
+  }
+  if(to===GOAL){
+    pc.p=GOAL;sfx.home();
+    await hop(m,posOf(pc),520,1.1);
+    if(lessonAlive())await settleAll();
+    return;
+  }
+  const steps=to-pc.p;
+  const dur=steps>8?95:165;
+  while(pc.p<to){
+    pc.p++;sfx.step();
+    await hop(m,cellPos(pc.h,pc.p,pc.idx),dur,0.5);
+    if(!lessonAlive())return;
+  }
+  await settleAll();
+  if(lessonAlive())await wait(250);
+}
+function lessonOfferRoll(after,vals){
+  S.cur=0;S.phase='roll';S.pending=[];S.sel=0;
+  S.lessonAwaitRoll={h:0,vals:vals||[6,1],after};
+  renderTurn();
+}
+async function lessonWaitRoll(h,vals,kind){
+  if(!lessonAlive())return;
+  S.cur=S.players.findIndex(p=>p.h===h);
+  S.phase=kind==='order'?'orderRoll':'roll';
+  S.pending=[];
+  const pl=curP();
+  announceTurn(pl,kind==='order'?'order':kind==='again'?'again':'turn');
+  if(isMine(pl)){
+    await new Promise(res=>{
+      S.lessonAwaitRoll={h,vals,kind,after:async(a,b)=>{
+        if(!lessonAlive()){res();return;}
+        if(kind==='order'){
+          pl.orderRoll=a+b;pl.orderVals=[a,b];
+          announceRoll(pl,a,b,'order');
+          S.phase='moving';renderTurn();
+          await wait(3000);
+        }else{
+          S.pending=[{v:a},{v:b}];S.sel=0;S.phase='choose';
+          announceRoll(pl,a,b,'march');
+          renderTurn();
+          await wait(900);
+        }
+        res();
+      }};
+      renderTurn();
+    });
+    return;
+  }
+  renderTurn();
+  await wait(650);
+  if(!lessonAlive())return;
+  S.phase='rolling';renderTurn();
+  const[a,b]=await throwDice(h,vals);
+  if(!lessonAlive())return;
+  if(kind==='order'){
+    pl.orderRoll=a+b;pl.orderVals=[a,b];
+    announceRoll(pl,a,b,'order');
+    S.phase='moving';renderTurn();
+    await wait(3000);
+  }
+}
+async function doLessonRoll(){
+  const job=S.lessonAwaitRoll;
+  if(!job||!lessonAlive()||job.rolling)return;
+  job.rolling=true;
+  S.lessonAwaitRoll=null;
+  const nested=!!(lessonRun&&lessonRun.busy);
+  if(!nested)setLessonBusy(true);
+  S.phase='rolling';renderTurn();
+  const[a,b]=await throwDice(job.h!=null?job.h:0,job.vals||[6,1]);
+  if(!lessonAlive())return;
+  try{if(job.after)await job.after(a,b);}finally{
+    if(!lessonAlive())return;
+    if(!nested){
+      S.phase='idle';S.pending=[];renderChips();
+      setLessonBusy(false);
+    }
+  }
+}
+function paintWorldToggles(id){
+  document.querySelectorAll('#lessonWorlds [data-world]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.world===id)));
+}
+async function lessonShowWorld(id){
+  if(!lessonAlive()||!id)return;
+  if(S.world===id){paintWorldToggles(id);return;}
+  setWorld(id,true);sfx.spell();
+  const w=R.WORLD[id];if(!w)return;
+  toast(w.h!=null?'+2':w.name,w.h!=null?w.name+'. '+w.rule:w.rule,w.h,reduced?900:2800,!!w.h,true);
+  noteHint(w.name,w.lore+' '+w.rule,w.h,'world');
+  paintWorldToggles(id);
+  applyVeil();
+}
+async function clearLessonBoard(){
+  dropMotion();
+  setWorld(null);lidTarget=-0.22;hideToast();hideHint();
+  S.cur=0;S.phase='idle';S.pending=[];S.sel=0;S.lessonAwaitRoll=null;S.lessonPick=false;S.lessonArrow=null;S.ordering=false;
+  clearBarricades();
+  ui.chips.innerHTML='';ui.chips.hidden=true;
+  S.players.forEach(pl=>pl.pieces.forEach(pc=>{pc.p=-1;delete pc.at;pc.mesh.visible=true;pc.mesh.scale.setScalar(1);}));
+  setHighlights();showMarkers([]);
+  await settleAll(reduced?50:240);
+}
+const LESSONS=[
+  {title:'Who rides first',body:'Every kingdom rolls both dice. The highest total marches first. If two kingdoms tie, only those kingdoms roll again — the second throw seats them, and the others keep their place. Tap the dice when it is your throw.',
+    enter:async()=>{
+      await clearLessonBoard();
+      S.ordering=true;
+      await lessonWaitRoll(0,[5,3],'order');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(1,[6,5],'order');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(2,[4,5],'order');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(3,[5,3],'order');
+      if(!lessonAlive())return;
+      toast('Tied on 8','Emberhold and Tidereach roll again.');
+      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',0,'tie');
+      renderTurn();
+      await wait(2800);
+      if(!lessonAlive())return;
+      await lessonWaitRoll(0,[6,4],'order');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(3,[3,4],'order');
+      if(!lessonAlive())return;
+      const byH=h=>S.players.find(p=>p.h===h);
+      S.players=[byH(1),byH(2),byH(0),byH(3)].filter(Boolean);
+      S.cur=0;S.ordering=false;S.phase='moving';
+      orderToast(S.players);
+      renderTurn();
+      await wait(4200);
+    }},
+  {title:'Leaving the keep',body:'A 1 or a 6 sends a troop out through your gate, the coloured square beside your castle. Tap the dice.',
+    enter:async()=>{await clearLessonBoard();lessonOfferRoll(async()=>{
+      const pc=troopOf(0,0);if(!pc)return;
+      await lessonWalk(pc,0);
+      if(!lessonAlive())return;
+      if(S.pending[0])S.pending[0].used=true;renderChips();
+      await lessonWalk(pc,1);
+      if(S.pending[1])S.pending[1].used=true;renderChips();
+    });}},
+  {title:'Two dice',body:'Each die is its own march. Tap the second die to see where your troops could go, then tap the first. You can spend them on two troops, or on the same troop one after the other.',
+    enter:async()=>{
+      await clearLessonBoard();
+      const a=troopOf(0,0),b=troopOf(0,1);
+      if(a)a.p=4;if(b)b.p=9;
+      await settleAll();
+      S.lessonPick=true;S.lessonArrow=1;S.sel=1;
+      S.phase='choose';S.pending=[{v:4},{v:5}];
+      setHighlights([a,b].filter(Boolean));
+      const opts=options(),seen=new Set();
+      showMarkers(opts.filter(o=>{const k=(o.r.at!=null?'a'+o.r.at:o.r.np)+':'+o.pc.idx+':'+o.di;if(seen.has(k))return false;seen.add(k);return true;}).map(o=>({pos:resultPos(o.pc,o.r),move:o})));
+      renderTurn();
+    }},
+  {title:'Doubles',body:'Doubles let you roll again after you march. Three doubles in a row is greed: the furthest troop returns to the keep, and the turn ends. Tap the dice.',
+    enter:async()=>{
+      await clearLessonBoard();
+      const pc=troopOf(0,0);if(pc)pc.p=18;await settleAll();
+      await lessonWaitRoll(0,[4,4],'turn');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(0,[2,2],'again');
+      if(!lessonAlive())return;
+      await lessonWaitRoll(0,[5,5],'again');
+      if(!lessonAlive())return;
+      sfx.bad();
+      toast('Third double','Greed is punished: Emberhold\'s furthest troop returns to the keep.',0);
+      noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',0,'greed');
+      if(pc){pc.p=-1;await hop(pc.mesh,posOf(pc),800,3);await settleAll();}
+      if(!lessonAlive()||!lessonRun)return;
+      lessonRun.fromDoubles=true;
+      await runLessonStep(LESSONS.findIndex(s=>s.title==='Greed'));
+    }},
+  {title:'Greed',body:'A third double in a row is greed. Your furthest troop returns to the keep, and your turn ends.',
+    enter:async()=>{
+      const skip=lessonRun&&lessonRun.fromDoubles;
+      if(lessonRun)lessonRun.fromDoubles=false;
+      if(skip)return;
+      await clearLessonBoard();
+      const pc=troopOf(0,0);if(pc)pc.p=18;await settleAll();if(!pc)return;
+      toast('Third double','Greed is punished: Emberhold\'s furthest troop returns to the keep.',0);
+      noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',0,'greed');
+      sfx.bad();pc.p=-1;await hop(pc.mesh,posOf(pc),800,3);await settleAll();
+    }},
+  {title:'Barricades',body:'Two troops of the same kingdom on one square lock shields. Nobody may pass or land there. Troops of different kingdoms never form a phalanx.',
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(0,1);if(a)a.p=8;if(b)b.p=6;await settleAll();if(!a||!b)return;await lessonWalk(b,8);if(!lessonAlive())return;lockShields(0,posOf(a));phalanxToast(0);}},
+  {title:'Shrines',body:'Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=12;if(b)b.p=46;await settleAll();toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',0);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',0,'shrine');}},
+  {title:'A strike',body:'Land exactly on a lone enemy and it falls. Its kingdom must raise that troop at the keep. You then press on with a bonus march of 20.',
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint('A strike','The fallen troop returns to its keep. Emberhold then presses on with a bonus march of 20.',0,'strike');toast('Emberhold strikes Thornwald','A troop returns to the keep. Bonus march of 20.',0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
+  {title:'The vault',body:'Reaching the vault needs an exact count and earns another bonus march of 20. The passages are the seven coloured squares after the King\'s Road.',
+    enter:async()=>{await clearLessonBoard();const home=troopOf(0,0),march=troopOf(0,1);if(home)home.p=70;if(march)march.p=43;await settleAll();if(home)await lessonWalk(home,GOAL);if(!lessonAlive())return;toast('Vault reached','An Emberhold troop found the passage. Bonus march of 20.',0);noteHint('The vault','An exact count into the vault earns a bonus march of 20. The first kingdom to bring all four troops home claims the gold.',0,'vault');S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();if(march)await lessonWalk(march,63);}},
+  {title:'The March',body:'Once every kingdom has marched, a wheel picks a world event. The Drowning Tide, Heartfire, Wild Awakening and Searing Seal each give one kingdom +2. The Veil of Mist hides distant enemies. The Stones of the Pact carry you to the stone opposite.',
+    worlds:true,
+    enter:async()=>{await clearLessonBoard();[1,2,3].forEach((h,i)=>{const pc=troopOf(h,0);if(pc)pc.p=8+i*10;});const mine=troopOf(0,0);if(mine)mine.p=3;await settleAll();await lessonShowWorld('mist');}},
+  {title:'Victory',body:'The first kingdom to bring all four troops to the vault claims the gold of Corhaven.',
+    enter:async()=>{await clearLessonBoard();S.players[0].pieces.forEach(pc=>{pc.p=GOAL;});await settleAll();lidTarget=-1.9;sfx.win();toast('Emberhold claims the vault','The gold of Corhaven is theirs.',0);}}
+];
+function paintLesson(i){
+  const step=LESSONS[i],last=i===LESSONS.length-1;
+  $('lessonStep').textContent=(i+1)+' of '+LESSONS.length;
+  $('lessonTitle').textContent=step.title;
+  $('lessonBody').textContent=step.body;
+  $('lessonWorlds').hidden=!step.worlds;
+  $('btnLessonNext').textContent='Next';
+  $('btnLessonNext').hidden=last;
+  $('btnLessonBack').disabled=i<=0;
+}
+async function runLessonStep(i){
+  if(!lessonAlive())return;
+  lessonRun.i=i;
+  paintLesson(i);
+  setLessonBusy(true);
+  try{if(LESSONS[i].enter)await LESSONS[i].enter();}finally{if(lessonAlive())setLessonBusy(false);}
+}
+async function startLesson(){
+  closeModal('title');closeModal('setup');
+  resetBoard();
+  S.lesson=true;S.phase='idle';localMe=0;
+  S.players=HOUSES.map((_,h)=>({h,cpu:h!==0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
+  document.body.classList.add('at-lesson');
+  openModal('lesson');
+  lessonRun={i:0,gid:S.gid,busy:false};
+  await runLessonStep(0);
+}
+async function lessonNext(){
+  if(!lessonRun||lessonRun.busy||!lessonAlive())return;
+  if(lessonRun.i>=LESSONS.length-1){showTitle();return;}
+  await runLessonStep(lessonRun.i+1);
+}
+async function lessonBack(){
+  if(!lessonRun||lessonRun.busy||!lessonAlive()||lessonRun.i<=0)return;
+  await runLessonStep(lessonRun.i-1);
+}
+async function lessonAgain(){
+  if(!lessonRun||lessonRun.busy||!lessonAlive())return;
+  await runLessonStep(lessonRun.i);
+}
+$('btnLessonNext').onclick=()=>lessonNext();
+$('btnLessonBack').onclick=()=>lessonBack();
+$('btnLessonAgain').onclick=()=>lessonAgain();
+$('btnLessonSkip').onclick=()=>showTitle();
+$('lessonWorlds').onclick=e=>{
+  const b=e.target.closest&&e.target.closest('button[data-world]');
+  if(!b||!lessonRun||lessonRun.busy)return;
+  lessonShowWorld(b.dataset.world);
+};
 
 /* ================= Online rooms ================= */
 const ROOM_ERRORS={
@@ -2481,6 +2927,8 @@ function commitName(required){
 $('stepName').onsubmit=e=>{e.preventDefault();commitName(true);};
 $('nameInput').addEventListener('blur',()=>{if(onlineStep==='stepLobby'&&typedName())commitName(false);});
 $('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
+$('optWorlds').onchange=()=>netSend({t:'opts',worlds:$('optWorlds').checked,private:$('optPrivate').checked});
+$('optPrivate').onchange=()=>netSend({t:'opts',worlds:$('optWorlds').checked,private:$('optPrivate').checked});
 $('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else leaveOnline(false);};
 
 function seatRow(room,s){
@@ -2552,6 +3000,15 @@ function renderLobby(room){
   const allReady=ready===room.seats.length;
   $('btnStart').hidden=!isHost;
   $('btnStart').disabled=!(ready>=2&&allReady);
+  const opts=$('roomOpts');
+  if(opts){
+    opts.hidden=!isHost;
+    if(isHost){
+      const worlds=$('optWorlds'),priv=$('optPrivate');
+      if(worlds&&document.activeElement!==worlds)worlds.checked=room.worlds!==false;
+      if(priv&&document.activeElement!==priv)priv.checked=!!room.private;
+    }
+  }
 }
 
 /* ---- Match ---- */
@@ -2744,12 +3201,14 @@ function sendAction(msg){
   return true;
 }
 function requestRoll(){
+  if(S.lesson){doLessonRoll();return;}
   if(!NET.on)return doRoll();
   if(!(S.phase==='roll'||S.phase==='orderRoll')||!isMine(curP())||NET.busy||NET.pending)return;
   if(!sendAction({t:'roll'}))return;
   S.phase='rolling';renderTurn();
 }
 function requestMove(opt){
+  if(S.lesson)return;
   if(!NET.on)return doMove(opt);
   if(S.phase!=='choose'||!isMine(curP())||NET.busy||NET.pending)return;
   if(!sendAction({t:'move',idx:opt.pc.idx,di:opt.di}))return;
@@ -2771,7 +3230,9 @@ async function playEvent(e,epoch){
       pl.orderRoll=e.total;pl.orderVals=e.vals;announceRoll(pl,e.vals[0],e.vals[1],'order',e.auto);S.phase='moving';renderTurn();
       await wait(1600);return;
     case'orderTie':
-      toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);renderTurn();
+      toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);
+      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',e.hs[0],'tie');
+      renderTurn();
       await wait(1500);return;
     case'order':{
       const ranked=e.hs.map(playerOfH).filter(Boolean);
@@ -2796,8 +3257,8 @@ async function playEvent(e,epoch){
       if(!isMine(pl)&&e.vals)pl.shownRoll=[e.vals[0],e.vals[1]];
       S.phase='moving';renderTurn();sfx.bad();
       const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
-      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);if(gone())return;await settleAll();if(gone())return;renderTally();}
-      else toast('Third double',`${isMine(pl)?'You lose':nm+' loses'} the turn.`,e.h);
+      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',e.h,'greed');lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);if(gone())return;await settleAll();if(gone())return;renderTally();}
+      else {toast('Third double',`${isMine(pl)?'You lose':nm+' loses'} the turn.`,e.h);noteHint('Greed','A third double in a row ends the turn. If a troop is on the road, the furthest one returns to the keep.',e.h,'greed');}
       await wait(1300);return;}
     case'noMove':{
       S.phase='moving';renderTurn();
@@ -2815,12 +3276,14 @@ async function playEvent(e,epoch){
         const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
         const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
         toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${BONUS}.`,e.h,null,null,true);
+        noteHint('A strike',`The fallen troop returns to its keep. ${nm} then presses on with a bonus march of ${BONUS}.`,e.h,'strike');
         await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
         if(gone())return;
         fallen.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
       }
       if(gone())return;
-      if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);}
+      if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,e.h,'vault');}
+      if(onShrine(pc)){toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',e.h);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',e.h,'shrine');}
       if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();
@@ -2989,7 +3452,7 @@ canvas.addEventListener('pointerup',e=>{if(!downAt)return;const moved=Math.hypot
   const hit=pick(e);if(!hit)return;
   if(hit.die)requestRoll();else if(hit.marker)requestMove(hit.marker);else if(hit.piece)choosePiece(hit.piece);});
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;canvas.style.cursor=pick(e)?'pointer':'';});
-window.addEventListener('keydown',e=>{if(document.querySelector('.modal.open')||$('about').classList.contains('open')||!menu.hidden)return;const pl=curP();if(!isMine(pl))return;
+window.addEventListener('keydown',e=>{const lessonOpen=S.lesson&&$('lesson').classList.contains('open');if((document.querySelector('.modal.open')&&!lessonOpen)||$('about').classList.contains('open')||!menu.hidden)return;const pl=curP();if(!isMine(pl))return;
   if((e.code==='Space'||e.key==='Enter')&&(S.phase==='roll'||S.phase==='orderRoll')&&!(e.target&&e.target.closest&&e.target.closest('#diceChips'))){e.preventDefault();requestRoll();}
   if(S.phase!=='choose')return;
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){const opts=options();const dis=[...new Set(opts.map(o=>o.di))].sort();if(dis.length>1){const i=dis.indexOf(S.sel);S.sel=dis[(i+(e.key==='ArrowRight'?1:dis.length-1))%dis.length];refreshChoice();}e.preventDefault();}
@@ -3012,6 +3475,8 @@ function clearWorldFx(){
   mats.forEach(mt=>{if(mt.map)mt.map.dispose();mt.dispose();});
   worldFx.userData.kind=null;
   worldFx.userData.rings=null;
+  worldFx.userData.arcs=null;
+  worldFx.userData.waysRise=null;
 }
 function rebuildWorldFx(){
   clearWorldFx();
@@ -3022,10 +3487,11 @@ function rebuildWorldFx(){
   else if(siege)siege.start(id);
 }
 function buildWays(){
+  const buried=TILE_TOP-0.88;
   Object.keys(R.SHIFT).forEach(key=>{
     const i=+key,[a,l,k]=TRACK[i],[x,z]=anchorXZ(a,l,k);
     const g=new THREE.Group();
-    g.position.set(x,TILE_TOP+0.02,z);g.userData.portal=i;
+    g.position.set(x,buried,z);g.scale.set(1,0.04,1);g.userData.portal=i;g.userData.restY=TILE_TOP+0.02;
     const poolMat=new THREE.MeshBasicMaterial({color:0xb46cff,transparent:true,opacity:0.35,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
     const disc=new THREE.Mesh(new THREE.CircleGeometry(0.42,36),poolMat);
     disc.rotation.x=-Math.PI/2;
@@ -3039,7 +3505,28 @@ function buildWays(){
     g.add(disc,arch,archB,core);g.userData.disc=disc;g.userData.arch=arch;g.userData.archB=archB;g.userData.core=core;
     worldFx.add(g);
   });
+  const seen=new Set();
+  Object.keys(R.SHIFT).forEach(key=>{
+    const from=+key,to=R.SHIFT[from];
+    const pair=from<to?from+':'+to:to+':'+from;
+    if(seen.has(pair))return;seen.add(pair);
+    const [a1,l1,k1]=TRACK[from],[x1,z1]=anchorXZ(a1,l1,k1);
+    const [a2,l2,k2]=TRACK[to],[x2,z2]=anchorXZ(a2,l2,k2);
+    const curve=new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(x1,TILE_TOP+0.08,z1),
+      new THREE.Vector3((x1+x2)/2,2.85,(z1+z2)/2),
+      new THREE.Vector3(x2,TILE_TOP+0.08,z2)
+    );
+    const ray=new THREE.Mesh(
+      new THREE.TubeGeometry(curve,28,0.038,8,false),
+      new THREE.MeshBasicMaterial({color:0xe6c8ff,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending})
+    );
+    ray.renderOrder=18;ray.userData.arc=true;
+    worldFx.add(ray);
+  });
   worldFx.userData.rings=worldFx.children.filter(c=>c.userData.portal!==undefined);
+  worldFx.userData.arcs=worldFx.children.filter(c=>c.userData.arc);
+  worldFx.userData.waysRise=0;
 }
 function stepWorldFx(dt){
   if(siege)siege.update(dt||0);
@@ -3050,17 +3537,29 @@ function stepWorldFx(dt){
     ruinsGroup.position.y+=(sink-ruinsGroup.position.y)*Math.min(1,(dt||0)*4);
   }
   const u=worldFx.userData;
+  if(u.waysRise!=null&&u.waysRise<1){
+    u.waysRise=Math.min(1,u.waysRise+(dt||0)/2.8);
+    const k=ease(u.waysRise);
+    if(u.rings)u.rings.forEach(g=>{
+      const rest=g.userData.restY||TILE_TOP+0.02;
+      g.position.y=(TILE_TOP-0.88)+(rest-(TILE_TOP-0.88))*k;
+      g.scale.set(1,Math.max(0.04,k),1);
+    });
+    if(u.arcs)u.arcs.forEach(a=>{a.material.opacity=0.12+0.5*k;});
+  }
   if(u.rings)u.rings.forEach((g,i)=>{
     const pulse=0.55+0.45*Math.sin(time*2.6+i*1.3);
     if(!g.userData.arch)return;
-    g.userData.arch.material.opacity=0.45+0.5*pulse;
+    const shown=u.waysRise==null?1:Math.min(1,u.waysRise);
+    g.userData.arch.material.opacity=(0.45+0.5*pulse)*shown;
     g.userData.arch.rotation.z=time*(i%2?0.6:-0.6);
     g.userData.archB.rotation.z=-time*(i%2?0.45:-0.45);
-    g.userData.core.material.opacity=0.16+0.28*pulse;
+    g.userData.core.material.opacity=(0.16+0.28*pulse)*shown;
     g.userData.core.rotation.y=time*(i%2?0.8:-0.8);
-    g.userData.disc.material.opacity=0.2+0.3*pulse;
+    g.userData.disc.material.opacity=(0.2+0.3*pulse)*shown;
     g.userData.disc.scale.setScalar(0.9+0.12*pulse);
   });
+  if(u.arcs&&u.waysRise>=1)u.arcs.forEach((a,i)=>{a.material.opacity=0.42+0.22*Math.sin(time*2.1+i);});
   if(S.world==='sun')applyWorldLook();
 }
 let volcanoBody=null,volcanoKey='';
@@ -3170,7 +3669,7 @@ function spinWheel(i){
   return animate(WHEEL_SPIN,k=>{wheel.style.transform=`rotate(${turn*wheelEase(k)}deg)`;});
 }
 /* How long the board takes to change once the wheel has landed. The banner stays up for that same stretch. */
-const WORLD_INTRO={flood:5500,ash:4200,wild:3600,mist:7000,sun:4200,ways:2000};
+const WORLD_INTRO={flood:5500,ash:4200,wild:3600,mist:7000,sun:4200,ways:3600};
 /* Every event is dealt once before the bag is shuffled again, and the new bag does not open on the event that just ended. */
 function drawWorld(){
   const ids=Object.keys(R.WORLD);
@@ -3200,6 +3699,7 @@ function presentWorld(id){
       const yours=pl&&isMine(pl);
       toast('+2',w.name+'. '+(yours?'Your':HOUSES[w.h].short+"'s")+' movements are two squares longer.',w.h,hold,true,true);
     }else toast(w.name,w.rule,w.h,hold,null,true);
+    noteHint(w.name,w.lore+' '+w.rule,w.h,'world');
     return wait(hold);
   });
 }
@@ -3313,11 +3813,20 @@ function loop(now,frame){
   if(renderer.xr.isPresenting)updateXR(frame,dt);
   for(let i=anims.length-1;i>=0;i--){const a=anims[i];a.t+=dt*1000;const k=Math.min(1,a.t/a.d);a.fn(k);if(k>=1){anims.splice(i,1);a.res();}}
   if(world)stepDice(dt);
-  pieceMeshes.forEach(m=>{const u=m.userData;const rise=u.ready&&S.phase==='choose'&&!reduced?(0.5+0.5*Math.sin(time*2.8))*0.22:0;const tgt=(u.hl?0.1+Math.sin(time*5)*0.06:0)+rise;u.inner.position.y+=(tgt-u.inner.position.y)*(u.ready?1:Math.min(1,dt*12));
-    if(u.hl){u.ring.material.opacity=0.55+Math.sin(time*5)*0.35;u.mat.emissive.setHex(0x3a2a00);}else if(S.world==='sun'&&siege){const heat=siege.lanceHeat(m.position.x,m.position.z);if(heat>0.08)u.mat.emissive.setRGB(1.4*heat,0.85*heat,0.3*heat);else u.mat.emissive.setHex(0x000000);}else u.mat.emissive.setHex(0x000000);});
+  const glowPl=(!S.lesson&&S.players[S.cur])||null;
+  const glowOn=glowPl&&isMine(glowPl)&&!glowPl.out&&(S.phase==='roll'||S.phase==='choose'||S.phase==='rolling'||S.phase==='orderRoll');
+  pieceMeshes.forEach(m=>{const u=m.userData;const rise=u.ready&&S.phase==='choose'&&!reduced?(0.5+0.5*Math.sin(time*2.8))*0.22:0;const tgt=(u.hl?0.08+Math.sin(time*3.2)*0.04:0)+rise;u.inner.position.y+=(tgt-u.inner.position.y)*(u.ready?1:Math.min(1,dt*12));
+    const pc=u.piece,onRoad=pc&&pc.p>=0&&pc.p<GOAL,mineGlow=glowOn&&pc&&pc.h===glowPl.h&&(onRoad||!!u.ready);
+    const lit=!!u.hl||!!mineGlow;
+    if(u.beacon)u.beacon.visible=false;
+    if(u.ghost){u.ghost.visible=lit;if(lit)u.ghost.material.opacity=0.22+0.12*Math.sin(time*3.1);}
+    if(u.hl){u.mat.emissive.setHex(HOUSES[pc?pc.h:0].color);u.mat.emissiveIntensity=0.58+0.22*Math.sin(time*3.1);}
+    else if(mineGlow){u.mat.emissive.setHex(HOUSES[pc.h].color);u.mat.emissiveIntensity=0.42+0.18*Math.sin(time*3.1);}
+    else if(S.world==='sun'&&siege){u.mat.emissiveIntensity=1;const heat=siege.lanceHeat(m.position.x,m.position.z);if(heat>0.08)u.mat.emissive.setRGB(1.4*heat,0.85*heat,0.3*heat);else u.mat.emissive.setHex(0x000000);}
+    else{u.mat.emissiveIntensity=1;u.mat.emissive.setHex(0x000000);}});
   labClipUp.set(0,1,0).transformDirection(board.matrixWorld);board.localToWorld(labClipAt.set(0,TILE_TOP-0.02,0));labClip.setFromNormalAndCoplanarPoint(labClipUp,labClipAt);
   markerGlowMat.opacity=0.62+Math.sin(time*5+1)*0.18;markerRingMat.opacity=0.72+Math.sin(time*5+1)*0.13;
-  markers.forEach(mk=>{if(!mk.visible||!mk.userData.post)return;mk.userData.post.position.y=reduced?0:(0.5+0.5*Math.sin(time*2.8+(mk.userData.phase||0)))*0.24;});
+  markers.forEach(mk=>{if(!mk.visible||!mk.userData.post)return;mk.userData.post.position.y=reduced?0.16:0.18+(0.5+0.5*Math.sin(time*2.05+Math.PI+(mk.userData.phase||0)))*0.2;});
   lidPivot.rotation.x+=(lidTarget-lidPivot.rotation.x)*Math.min(1,dt*3);
   glow.intensity=(lidTarget<-1?2.2:0.55)+Math.sin(time*2)*0.12;
   torches.forEach(t=>{const f=reduced?1:0.85+Math.sin(time*11+t.seed)*0.08+Math.sin(time*23+t.seed*3)*0.06;t.light.intensity=torchBase*f;t.flame.scale.set(1,f,1);});

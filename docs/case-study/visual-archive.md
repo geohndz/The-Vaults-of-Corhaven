@@ -255,12 +255,42 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 28 | [2026-11-03-05-stones-pact-wheel-desktop.png](./screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) | The March wheel | The sixth slice is purple, beside mist grey, not Solmere gold |
 | 29 | [2026-11-03-06-stones-pact-portals-desktop.png](./screenshots/2026-11-03-06-stones-pact-portals-desktop.png) | Stones of the Pact | Four purple portals on 14, 31, 48 and 65 |
 
+## Session: 2026-11-03 — First live user test (no new screens)
+
+**Trigger:** First full-match table with people who were not the designer. Build **V1.1.6**. Notes and reflections live in the [development log, Phase 3](../case-study-development-log.md#phase-3--first-live-user-test-3-nov-2026). No screens captured during the session.
+
+## Session: 2026-11-03 — Playtest follow-up (V1.2.0)
+
+**Trigger:** First live table: banners too fast, opening rounds confusing, order roll looked idle, pieces lost in the siege, CPU stacked barricades. **V1.2.0** holds banners longer, announces order to every seat, leaves a side hint after the beat, marks your troops on your turn, races the computer instead of locking squares, and adds Tutorial under Play local.
+
+**Environment:** Local `node scripts/local.js`. Title, then Tutorial.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 30 | [2026-11-03-07-learn-the-march-title-desktop.png](./screenshots/2026-11-03-07-learn-the-march-title-desktop.png) | Title | First label: Learn the march, under Play local. **V1.2.0** |
+| 31 | [2026-11-03-08-learn-march-order-desktop.png](./screenshots/2026-11-03-08-learn-march-order-desktop.png) | Tutorial, 1 of 11 | Board stays in view. Rolling for order is a banner for the whole table, with a side chip to read again |
+| 32 | [2026-11-03-09-hint-sheet-barricade-desktop.png](./screenshots/2026-11-03-09-hint-sheet-barricade-desktop.png) | Barricade hint | Two Emberhold troops lock a square. The chip slides open so you can read who it hits |
+| 33 | [2026-11-03-10-tutorial-title-desktop.png](./screenshots/2026-11-03-10-tutorial-title-desktop.png) | Title | The action is Tutorial. **V1.2.1** |
+
+## Session: 2026-11-03 — Tutorial polish (V1.2.2)
+
+**Trigger:** Dice hidden in the lesson HUD; barricade spawned stacked; strike and vault skipped the +20 walk; Victory duplicated Back to title; the side chip peeked when closed and played the start-game sting.
+
+**Environment:** Local `node scripts/local.js`. Tutorial from title.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 34 | [2026-11-03-11-tutorial-leave-keep-dice-desktop.png](./screenshots/2026-11-03-11-tutorial-leave-keep-dice-desktop.png) | Leaving the keep | Roll pair on the board. The lesson roll always lands 6 and 1. Next / Back / Show again |
+| 35 | [2026-11-03-12-tutorial-hint-closed-desktop.png](./screenshots/2026-11-03-12-tutorial-hint-closed-desktop.png) | Barricade hint, closed | Chip sits on the edge. The sheet is fully off-screen |
+| 36 | [2026-11-03-13-tutorial-march-toggles-desktop.png](./screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png) | The March | Tide, Heartfire, Wild, Seal, Mist, Stones. Mist is on |
+| 37 | [2026-11-03-14-tutorial-victory-desktop.png](./screenshots/2026-11-03-14-tutorial-victory-desktop.png) | Victory | Four Emberhold troops in the vault. One Back to title. **V1.2.2** |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
 - [x] **Kingdom banners** and the **seat list** — one lobby, shots 14 and 15. A live socket still needs a pass for two people joining at once
 - [x] **Your turn** vs **waiting** (dice hidden) — mobile, evening session 02/03
-- [ ] **Toast** moment (capture, bonus march, vault)
+- [x] **Toast** moment — order banner and Shields locked, shots 31 and 32
 - [x] **Menu** expanded (Chronicle, Rules, Sound, New game) — mobile, evening session 04
 - [ ] **Rules** modal
 - [ ] **Victory** sheet (human + CPU copy)

@@ -84,6 +84,7 @@ export function merge(prev, next) {
     mode: next.mode || prev.mode,
   };
   merged.durationMs = duration(merged);
+  merged.test = !!(prev && prev.test);
   return merged;
 }
 
@@ -99,6 +100,7 @@ function avg(nums) {
 }
 
 export function summarize(matches) {
+  matches = matches.filter((m) => !m.test);
   const ended = matches.filter((m) => m.outcome && m.outcome !== 'playing');
   const vault = matches.filter((m) => m.outcome === 'vault');
   const durations = ended.map((m) => m.durationMs).filter((n) => n && n > 4000);
@@ -182,6 +184,24 @@ export async function listMatches(limit = 200) {
   if (!ids.length) return [];
   const rows = await cmd.mget(ids.map(MATCH));
   return rows.filter(Boolean).map((s) => JSON.parse(s));
+}
+
+export async function markTest(id, test) {
+  if (!ID_RE.test(String(id || ''))) return null;
+  const cmd = await redisCmd();
+  if (!cmd) {
+    const prev = mem.rows.get(id);
+    if (!prev) return null;
+    prev.test = !!test;
+    mem.rows.set(id, prev);
+    return prev;
+  }
+  const raw = await cmd.get(MATCH(id));
+  if (!raw) return null;
+  const row = JSON.parse(raw);
+  row.test = !!test;
+  await cmd.set(MATCH(id), JSON.stringify(row), 'EX', TTL);
+  return row;
 }
 
 export async function allowIp(ip) {

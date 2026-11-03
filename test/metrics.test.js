@@ -49,3 +49,12 @@ test('summarize reports averages from ended matches', () => {
   assert.equal(s.kingdoms.Emberhold.appeared, 2);
   assert.equal(s.kingdoms.Emberhold.won, 1);
 });
+
+test('summarize skips matches marked as test', () => {
+  const counted = { id: 'a', startedAt: Date.now(), endedAt: Date.now() + 600000, durationMs: 600000, mode: 'local', outcome: 'vault', completed: true, players: 2, humans: 1, computers: 1, kingdoms: ['Emberhold', 'Solmere'], winner: 'Emberhold', worlds: 1, turns: 10, device: { form: 'desktop' } };
+  const skipped = { ...counted, id: 'b', test: true, players: 4, winner: 'Thornwald', kingdoms: ['Emberhold', 'Thornwald'] };
+  const s = summarize([counted, skipped]);
+  assert.equal(s.total, 1);
+  assert.equal(s.avgPlayers, 2);
+  assert.equal(s.kingdoms.Thornwald.appeared, 0);
+});
