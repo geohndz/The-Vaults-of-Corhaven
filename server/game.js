@@ -2,6 +2,12 @@
    Every function mutates a plain room object that is stored as JSON in Redis. */
 import { randomInt } from 'node:crypto';
 import '../lib/rules.js';
+import { recordFromRoom } from './metrics.js';
+
+function noteMatch(room, outcome) {
+  if (process.env.NODE_TEST_CONTEXT) return;
+  recordFromRoom(room, outcome).catch(() => {});
+}
 
 const R = globalThis.CorhavenRules;
 const { GOAL, BONUS } = R;
@@ -48,6 +54,17 @@ function eventMs(e) {
 
 export function newRoom(code, now) {
   return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null };
+}
+
+export const isJoinable = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < MAX_SEATS;
+export function lobbyCard(room) {
+  return {
+    code: room.code,
+    taken: room.seats.length,
+    open: MAX_SEATS - room.seats.length,
+    names: room.seats.map((s) => s.name).filter(Boolean),
+    kingdoms: room.seats.map((s) => s.h).filter((h) => h != null),
+  };
 }
 
 export const seatOf = (room, id) => room.seats.find((s) => s.id === id) || null;
@@ -139,6 +156,7 @@ export function start(room, id, now) {
     themeAt: now + MATCH_CUE_MS,
   };
   step(room, now, () => beginOrderGroup(room));
+  noteMatch(room, 'playing');
   return null;
 }
 
@@ -339,6 +357,7 @@ function win(room, h, reason) {
   g.winner = h;
   g.winReason = reason;
   emit(room, { type: 'win', h, reason, diceStats: g.diceStats ? R.diceReport(g.diceStats) : null });
+  noteMatch(room, reason === 'forfeit' ? 'forfeit' : 'vault');
 }
 
 /* ---------------- Player actions ---------------- */

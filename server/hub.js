@@ -6,8 +6,34 @@ import * as G from './game.js';
 
 const ID_RE = /^[A-Za-z0-9_-]{16,64}$/;
 const local = new Map(); // room code -> { conns:Set, timer, unsub }
+const browsers = new Set();
+let openUnsub = null;
 
 const send = (conn, msg) => { if (conn.ws.readyState === 1) conn.ws.send(JSON.stringify(msg)); };
+
+async function sendOpen(conns) {
+  const store = await getStore();
+  const rooms = (await store.listOpen()).filter(G.isJoinable).map(G.lobbyCard);
+  const msg = { t: 'rooms', rooms, now: Date.now() };
+  conns.forEach((c) => send(c, msg));
+}
+
+async function watchOpen(conn) {
+  browsers.add(conn);
+  if (!openUnsub) {
+    const store = await getStore();
+    openUnsub = await store.subscribeOpen(() => { sendOpen([...browsers]).catch(() => {}); });
+  }
+  await sendOpen([conn]);
+}
+
+async function unwatchOpen(conn) {
+  browsers.delete(conn);
+  if (browsers.size || !openUnsub) return;
+  const unsub = openUnsub;
+  openUnsub = null;
+  await unsub();
+}
 
 function schedule(code, view) {
   const entry = local.get(code);
@@ -123,15 +149,26 @@ async function enter(conn, id, code) {
 async function handle(conn, msg) {
   const t = msg && msg.t;
   if (t === 'ping') return send(conn, { t: 'pong', now: Date.now() });
-  if (t === 'create' || t === 'join') {
+  if (t === 'browse' || t === 'create' || t === 'join') {
     if (!ID_RE.test(msg.id || '')) return send(conn, { t: 'error', code: 'bad-id', during: t });
+    conn.id = msg.id;
+    if (t === 'browse') {
+      if (conn.code) await unwatch(conn);
+      return watchOpen(conn);
+    }
+    await unwatchOpen(conn);
     if (t === 'create') {
       const code = await createRoom(msg.id);
       return enter(conn, msg.id, code);
     }
     const code = G.normalizeCode(msg.code);
-    if (code.length !== 5) return send(conn, { t: 'error', code: 'gone', during: 'join' });
-    return enter(conn, msg.id, code);
+    if (code.length !== 5) {
+      await watchOpen(conn);
+      return send(conn, { t: 'error', code: 'gone', during: 'join' });
+    }
+    await enter(conn, msg.id, code);
+    if (!conn.code) await watchOpen(conn);
+    return;
   }
   if (!conn.code || !conn.id) return send(conn, { t: 'error', code: 'not-in-room' });
   const id = conn.id;
@@ -173,6 +210,7 @@ export function attach(wss) {
     ws.on('close', () => {
       clearInterval(alive);
       chain = chain.then(async () => {
+        await unwatchOpen(conn);
         const code = conn.code;
         if (!code) return;
         await unwatch(conn);

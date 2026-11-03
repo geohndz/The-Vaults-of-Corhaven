@@ -36,6 +36,23 @@ function play(room, rand, now = 1, maxSteps = 20000) {
 }
 function rng(seed) { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
 
+test('a lobby with a free seat is listed without seat ids', () => {
+  const room = lobby(2);
+  assert.equal(G.isJoinable(room), true);
+  const card = G.lobbyCard(room);
+  assert.equal(card.code, 'ABCDE');
+  assert.equal(card.taken, 2);
+  assert.equal(card.open, 2);
+  assert.deepEqual(card.names, ['Player 0', 'Player 1']);
+  assert.deepEqual(card.kingdoms, [0, 1]);
+  assert.equal('id' in card, false);
+  assert.equal(JSON.stringify(card).includes(ids[0]), false);
+  const full = lobby(4);
+  assert.equal(G.isJoinable(full), false);
+  G.start(room, ids[0], 0);
+  assert.equal(G.isJoinable(room), false);
+});
+
 test('lobby enforces names, kingdoms, seats and host start', () => {
   const room = lobby(2);
   assert.equal(G.addSeat(room, ids[2]), null);

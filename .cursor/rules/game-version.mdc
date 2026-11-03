@@ -1,0 +1,31 @@
+---
+description: Classify every Corhaven change and bump the on-screen SemVer only when players would notice a real game change.
+alwaysApply: true
+---
+
+# Game version
+
+Corhaven uses SemVer on the title screen: **VMAJOR.MINOR.PATCH**. This complete playable release is **V1.0.0**.
+
+## Source of truth
+
+`GAME_VERSION` in `The Vaults of Corhaven.html` (string `'1.0.0'`). `#titleVer` is filled from it as `V` + that string. When bumping, change only that constant in the same turn.
+
+## After each task, classify once
+
+Judge what **players of the game** can see or play—not commit size, not Geo-only tools. Take the **highest** applicable bump. Do not ask Geo except when a **MAJOR** looks possible.
+
+| Bump | When |
+|------|------|
+| **MAJOR** `1.0.0` → `2.0.0` | Breaking or fundamental change: reworked movement, replaced multiplayer, new victory rules. Ask Geo first. |
+| **MINOR** `1.0.0` → `1.1.0` | One meaningful new player-facing feature: Fate Cards, World Event, kingdom, game mode, AI, spectator, new mechanic. One feature is enough. |
+| **PATCH** `1.0.0` → `1.0.1` | Fixes and polish players notice: bugs, typos, animation, spacing, icon, kingdom color, sound tweak. |
+| **None** | No player-facing game change: refactors, tests, docs, Cursor rules, dashboard/metrics, infra, case-study shots, WIP that is not playable yet. |
+
+Restyling existing UI (color, spacing, copy polish) is **PATCH**. A new playable mode or flow is **MINOR**. A feature plus a fix in one turn is one **MINOR**.
+
+## Do not
+
+- Do not bump for introducing versioning, or for work that has not landed in the playable game.
+- Do not bump twice in one turn.
+- If you bump, say in the reply: `Version → V1.0.1 (patch: …)`. If none, stay silent unless Geo asked.

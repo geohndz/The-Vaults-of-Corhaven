@@ -233,6 +233,17 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 24 | [2026-11-03-01-join-room-overlay-desktop.png](./screenshots/2026-11-03-01-join-room-overlay-desktop.png) | Join a room | The card is gone. The black dim covers the board. The code sits on the right, and Continue and Back are title banners |
 | 25 | [2026-11-03-02-join-room-overlay-mobile.png](./screenshots/2026-11-03-02-join-room-overlay-mobile.png) | Join a room (390×844) | The column stacks. A hairline sits above the code, and Continue and Back stay at the bottom |
 
+## Session: 2026-11-03 — Join lists open rooms
+
+**Trigger:** Make Join a room match Create a room: code in the sidebar, open rooms with free seats in the main column.
+
+**Environment:** `node scripts/local.js` (WebSocket). A second client held lobby `79UGM` so the list had a row.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 26 | [2026-11-03-03-join-open-rooms-desktop.png](./screenshots/2026-11-03-03-join-open-rooms-desktop.png) | Join a room | Code field on the left with Continue / Back. Open rooms on the right: code, crests, seats left |
+| 27 | [2026-11-03-04-join-open-rooms-mobile.png](./screenshots/2026-11-03-04-join-open-rooms-mobile.png) | Join a room (390×844) | Code, then a hairline, then the open-room row, then Continue and Back |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
