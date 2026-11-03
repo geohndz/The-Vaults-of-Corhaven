@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { sanitize, merge, summarize } from '../server/metrics.js';
+import { sanitize, merge, summarize, settleMatch, MATCH_LIMIT_MS } from '../server/metrics.js';
 
 test('sanitize keeps a well-formed match and drops a bad id', () => {
   const row = sanitize({
@@ -16,12 +16,33 @@ test('sanitize keeps a well-formed match and drops a bad id', () => {
     winner: 'Emberhold',
     worlds: 2,
     turns: 18,
+    playerTurns: 12,
+    rounds: 3,
+    doubles: 4,
+    greed: 1,
+    worldPicks: { ash: 2, flood: 1, nope: 9 },
     device: { form: 'phone', touch: true, xr: false, w: 390, h: 844, lang: 'en-US' },
   });
   assert.equal(row.kingdoms.length, 2);
   assert.equal(row.completed, true);
   assert.equal(row.device.form, 'phone');
+  assert.equal(row.playerTurns, 12);
+  assert.equal(row.doubles, 4);
+  assert.equal(row.greed, 1);
+  assert.equal(row.worldPicks.ash, 2);
+  assert.equal(row.worldPicks.nope, undefined);
   assert.equal(sanitize({ id: 'x', mode: 'local' }), null);
+});
+
+test('merge keeps the higher play stats so a later zero patch cannot wipe them', () => {
+  const start = sanitize({ id: 'online:ABCDE', startedAt: 100, mode: 'online', outcome: 'playing', players: 2, humans: 2, computers: 0, kingdoms: ['Emberhold', 'Tidereach'], turns: 8, playerTurns: 6, rounds: 2, doubles: 3, greed: 1, worldPicks: { ash: 2 } });
+  const late = merge(start, sanitize({ id: 'online:ABCDE', startedAt: 100, mode: 'online', outcome: 'playing', players: 2, humans: 2, computers: 0, kingdoms: ['Emberhold', 'Tidereach'], turns: 0, playerTurns: 0, rounds: 0, doubles: 0, greed: 0, worldPicks: {} }));
+  assert.equal(late.turns, 8);
+  assert.equal(late.playerTurns, 6);
+  assert.equal(late.rounds, 2);
+  assert.equal(late.doubles, 3);
+  assert.equal(late.greed, 1);
+  assert.equal(late.worldPicks.ash, 2);
 });
 
 test('merge never lets an abandon overwrite a vault', () => {
@@ -35,8 +56,8 @@ test('merge never lets an abandon overwrite a vault', () => {
 
 test('summarize reports averages from ended matches', () => {
   const matches = [
-    { id: 'a', startedAt: Date.now(), endedAt: Date.now() + 600000, durationMs: 600000, mode: 'local', outcome: 'vault', completed: true, players: 4, humans: 1, computers: 3, kingdoms: ['Emberhold', 'Thornwald', 'Solmere', 'Tidereach'], winner: 'Emberhold', worlds: 2, turns: 20, device: { form: 'desktop' } },
-    { id: 'b', startedAt: Date.now(), endedAt: Date.now() + 300000, durationMs: 300000, mode: 'online', outcome: 'abandoned', completed: false, players: 2, humans: 2, computers: 0, kingdoms: ['Emberhold', 'Solmere'], winner: null, worlds: 0, turns: 4, device: { form: 'phone' } },
+    { id: 'a', startedAt: Date.now(), endedAt: Date.now() + 600000, durationMs: 600000, mode: 'local', outcome: 'vault', completed: true, players: 4, humans: 1, computers: 3, kingdoms: ['Emberhold', 'Thornwald', 'Solmere', 'Tidereach'], winner: 'Emberhold', worlds: 2, turns: 20, playerTurns: 16, rounds: 3, doubles: 4, greed: 1, worldPicks: { ash: 2, flood: 1 }, device: { form: 'desktop' } },
+    { id: 'b', startedAt: Date.now(), endedAt: Date.now() + 300000, durationMs: 300000, mode: 'online', outcome: 'abandoned', completed: false, players: 2, humans: 2, computers: 0, kingdoms: ['Emberhold', 'Solmere'], winner: null, worlds: 0, turns: 4, playerTurns: 4, rounds: 1, doubles: 1, greed: 0, worldPicks: { mist: 1 }, device: { form: 'phone' } },
   ];
   const s = summarize(matches);
   assert.equal(s.total, 2);
@@ -46,8 +67,45 @@ test('summarize reports averages from ended matches', () => {
   assert.equal(s.avgPlayers, 3);
   assert.equal(s.avgDurationMs, 450000);
   assert.equal(s.byMode.local, 1);
+  assert.equal(s.localShare, 0.5);
+  assert.equal(s.onlineShare, 0.5);
+  assert.equal(s.avgTurns, 10);
+  assert.equal(s.avgRounds, 2);
+  assert.equal(s.doublesRate, 5 / 24);
+  assert.equal(s.greedTotal, 1);
+  assert.equal(s.worldRank.ash, 2);
+  assert.equal(s.worldRank.flood, 1);
+  assert.equal(s.worldRank.mist, 1);
+  assert.equal(s.worldRank.ways, 0);
   assert.equal(s.kingdoms.Emberhold.appeared, 2);
   assert.equal(s.kingdoms.Emberhold.won, 1);
+});
+
+test('playing matches older than an hour settle as abandoned', () => {
+  const old = Date.now() - 2 * MATCH_LIMIT_MS;
+  const row = {
+    id: 'local:stale-open-tab',
+    startedAt: old,
+    endedAt: null,
+    durationMs: null,
+    mode: 'local',
+    outcome: 'playing',
+    completed: false,
+    players: 2,
+    humans: 1,
+    computers: 1,
+    kingdoms: ['Emberhold', 'Solmere'],
+    winner: null,
+    worlds: 0,
+    turns: 3,
+    device: { form: 'desktop' },
+  };
+  const settled = settleMatch(row);
+  assert.equal(settled.outcome, 'abandoned');
+  assert.equal(settled.durationMs, MATCH_LIMIT_MS);
+  const s = summarize([row]);
+  assert.equal(s.byOutcome.abandoned, 1);
+  assert.equal(s.byOutcome.playing, 0);
 });
 
 test('summarize skips matches marked as test', () => {

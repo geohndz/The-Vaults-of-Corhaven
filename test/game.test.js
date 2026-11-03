@@ -104,6 +104,21 @@ test('a game played to the end has one winner with every troop in the vault', ()
   assert.ok(room.game.pieces.filter((p) => p.h === w).every((p) => p.p === R.GOAL));
 });
 
+test('a match that lasts an hour is closed without a winner', () => {
+  const room = lobby(2);
+  const now = 1000;
+  G.start(room, ids[0], now);
+  assert.equal(room.status, 'playing');
+  assert.ok(G.nextDue(room) <= now + G.MATCH_LIMIT_MS);
+  G.tick(room, now + 1);
+  assert.equal(room.status, 'playing');
+  assert.equal(G.tick(room, now + G.MATCH_LIMIT_MS), true);
+  assert.equal(room.status, 'over');
+  assert.equal(room.game.winReason, 'time');
+  assert.equal(room.game.winner, null);
+  assert.ok(room.events.some((e) => e.type === 'timeout'));
+});
+
 test('moves out of turn or illegal moves are refused', () => {
   const room = lobby(2);
   G.start(room, ids[0], 0);

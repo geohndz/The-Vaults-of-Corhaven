@@ -17,6 +17,7 @@ export const AWAY_MS = 60000;
 export const MAX_SEATS = 4;
 /* Every device waits out this cue, then starts the theme from the same server instant. */
 export const MATCH_CUE_MS = 3400;
+export const MATCH_LIMIT_MS = 60 * 60 * 1000;
 const MAX_EVENTS = 40;
 const NAME_MAX = 16;
 const CODE_CHARS = 'ABCDEFGHJKMNPQRTUVWXYZ2346789';
@@ -162,7 +163,7 @@ export function start(room, id, now) {
     world: null,
     worldBag: [],
     worlds: room.worlds !== false,
-    diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now },
+    diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now, doubles: 0, greed: 0, rounds: 0, playerTurns: 0, worldPicks: {} },
     themeAt: now + MATCH_CUE_MS,
   };
   step(room, now, () => beginOrderGroup(room));
@@ -230,9 +231,18 @@ function finishOrder(room) {
 
 /* ---------------- Turns ---------------- */
 
+function diceStatsOf(g) {
+  if (!g.diceStats) g.diceStats = { turns: 0, noMoves: 0, assisted: 0, started: 0, doubles: 0, greed: 0, rounds: 0, playerTurns: 0, worldPicks: {} };
+  if (!g.diceStats.worldPicks) g.diceStats.worldPicks = {};
+  return g.diceStats;
+}
+
 function beginTurn(room, again) {
   const g = room.game;
-  if (!again) g.doubles = 0;
+  if (!again) {
+    g.doubles = 0;
+    diceStatsOf(g).playerTurns = (diceStatsOf(g).playerTurns || 0) + 1;
+  }
   g.phase = 'roll';
   g.pending = [];
   emit(room, { type: 'turn', h: curH(room), again: !!again });
@@ -264,6 +274,8 @@ export function takeWorld(game, rng = (n) => randomInt(n)) {
 
 function openWorld(room) {
   const id = takeWorld(room.game);
+  const d = diceStatsOf(room.game);
+  d.worldPicks[id] = (d.worldPicks[id] || 0) + 1;
   emit(room, { type: 'world', id });
 }
 
@@ -279,7 +291,10 @@ function nextTurn(room) {
   }
   g.cur = to;
   /* A round is one turn each. Wrapping back, or staying on the only kingdom left, is when the March turns. */
-  if (to <= from && g.worlds !== false) openWorld(room);
+  if (to <= from) {
+    diceStatsOf(g).rounds = (diceStatsOf(g).rounds || 0) + 1;
+    if (g.worlds !== false) openWorld(room);
+  }
   beginTurn(room, false);
 }
 
@@ -290,13 +305,17 @@ function roll(room, auto) {
   const pl = g.players[g.cur];
   const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt);
   const [a, b] = plan.vals || [die(), die()];
-  if (!g.diceStats) g.diceStats = { turns: 0, noMoves: 0, assisted: 0, started: 0 };
-  g.diceStats.turns++;
-  if (plan.assisted) g.diceStats.assisted++;
+  const d = diceStatsOf(g);
+  d.turns++;
+  if (plan.assisted) d.assisted++;
   R.noteFinish(g.pieces, h, g.world, pl, a, b);
   g.dbl = a === b;
-  if (g.dbl) g.doubles++;
+  if (g.dbl) {
+    g.doubles++;
+    d.doubles = (d.doubles || 0) + 1;
+  }
   if (g.dbl && g.doubles === 3) {
+    d.greed = (d.greed || 0) + 1;
     const lost = g.pieces.filter((pc) => pc.h === h && pc.p >= 0 && pc.p < GOAL).sort((x, y) => y.p - x.p)[0];
     emit(room, { type: 'thirdDouble', h, vals: [a, b], idx: lost ? lost.idx : null, from: lost ? lost.p : null, auto: !!auto });
     if (lost) { lost.p = -1; delete lost.at; }
@@ -475,8 +494,31 @@ function dropFromOrder(room, h, wasTurn) {
 
 /* ---------------- Clock ---------------- */
 
+function matchStarted(room) {
+  const g = room.game;
+  if (!g) return room.created || 0;
+  return (g.diceStats && g.diceStats.started) || g.themeAt || room.created || 0;
+}
+
+function expireMatch(room, now) {
+  if (room.status !== 'playing' || !room.game) return false;
+  const started = matchStarted(room);
+  if (!started || now - started < MATCH_LIMIT_MS) return false;
+  const g = room.game;
+  room.status = 'over';
+  g.phase = 'over';
+  g.pending = [];
+  g.deadline = null;
+  g.winner = null;
+  g.winReason = 'time';
+  emit(room, { type: 'timeout' });
+  noteMatch(room, 'abandoned');
+  return true;
+}
+
 /* Applies everything that is due: away players who ran out of time, then expired turn clocks. */
 export function tick(room, now) {
+  if (expireMatch(room, now)) return true;
   let changed = false;
   for (const seat of room.seats.slice()) {
     if (!seat.away || seat.out || now - seat.awaySince < AWAY_MS) continue;
@@ -500,6 +542,10 @@ export function tick(room, now) {
 export function nextDue(room) {
   let due = Infinity;
   if (room.status === 'playing' && room.game && room.game.deadline) due = room.game.deadline;
+  if (room.status === 'playing' && room.game) {
+    const started = matchStarted(room);
+    if (started) due = Math.min(due, started + MATCH_LIMIT_MS);
+  }
   if (room.status === 'lobby' || room.status === 'playing') {
     room.seats.forEach((s) => { if (s.away && !s.out) due = Math.min(due, s.awaySince + AWAY_MS); });
   }

@@ -285,6 +285,18 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 36 | [2026-11-03-13-tutorial-march-toggles-desktop.png](./screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png) | The March | Tide, Heartfire, Wild, Seal, Mist, Stones. Mist is on |
 | 37 | [2026-11-03-14-tutorial-victory-desktop.png](./screenshots/2026-11-03-14-tutorial-victory-desktop.png) | Victory | Four Emberhold troops in the vault. One Back to title. **V1.2.2** |
 
+## Session: 2026-11-03 — Second playtest pass (V1.4.0)
+
+**Trigger:** Four-player table: dyslexia spacing, skip the order demo, rename The March, lava hiding tiles, order banner repeating, missing marker sphere, shrine with no burst, hour-long leftover local matches, disconnects.
+
+**Environment:** Local `node scripts/local.js`. Tutorial from title.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 38 | [2026-11-03-15-tutorial-order-letter-spacing-desktop.png](./screenshots/2026-11-03-15-tutorial-order-letter-spacing-desktop.png) | Who rides first | Wider letter-spacing on the lesson body. Next stays on during the order rolls |
+| 39 | [2026-11-03-16-tutorial-shrine-burst-desktop.png](./screenshots/2026-11-03-16-tutorial-shrine-burst-desktop.png) | Shrines | Grey star tiles. White burst on land (same family as barricade sparks) |
+| 40 | [2026-11-03-17-tutorial-world-events-desktop.png](./screenshots/2026-11-03-17-tutorial-world-events-desktop.png) | World events | Title renamed from The March. Tide / Heartfire / Wild / Seal / Mist / Stones cycle, Next stays on. **V1.4.0** |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

@@ -40,7 +40,7 @@ form.out{position:absolute;top:calc(env(safe-area-inset-top,0px) + 18px);right:c
 h2{margin:0 0 14px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright);font-weight:700}
 .block{margin:0 0 44px}
 .bars{display:flex;flex-direction:column;gap:10px}
-.bar{display:grid;grid-template-columns:110px minmax(0,1fr) 52px;gap:12px;align-items:center;font-size:15px}
+.bar{display:grid;grid-template-columns:minmax(148px,220px) minmax(0,1fr) 52px;gap:12px;align-items:center;font-size:15px}
 .bar b{font-weight:600}
 .bar i{display:block;height:7px;background:rgba(154,171,188,.22)}
 .bar i span{display:block;height:100%;background:var(--gold-bright);transform-origin:left center}
@@ -51,7 +51,7 @@ h2{margin:0 0 14px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
 .king span{display:block;margin-top:4px;color:var(--parch-dim);font-size:15px}
 .k0 b{color:var(--ember)} .k1 b{color:#7dce7a} .k2 b{color:var(--sol)} .k3 b{color:#7aa4e6}
 .list{display:flex;flex-direction:column;gap:0}
-.row{display:grid;grid-template-columns:minmax(120px,1.2fr) .7fr .5fr minmax(0,1.6fr) .8fr .7fr .7fr .7fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(230,237,244,.12);font-size:15px;font-variant-numeric:tabular-nums}
+.row{display:grid;grid-template-columns:minmax(120px,1.2fr) .7fr .45fr .5fr minmax(0,1.5fr) .8fr .7fr .7fr .7fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(230,237,244,.12);font-size:15px;font-variant-numeric:tabular-nums}
 .row:first-child{color:var(--parch-dim);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding-bottom:8px;border-bottom-color:rgba(230,237,244,.28)}
 .row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row.test{opacity:.55}
@@ -97,6 +97,10 @@ h2{margin:0 0 14px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
       <div class="bars" id="modes"></div>
     </div>
     <div class="block">
+      <h2>World events</h2>
+      <div class="bars" id="worlds"></div>
+    </div>
+    <div class="block">
       <h2>Device</h2>
       <div class="bars" id="devices"></div>
     </div>
@@ -137,18 +141,24 @@ function bar(label,count,total){
 }
 function paint(data){
   const s=data.stats||{},t=s.total||0,ended=s.ended||0;
+  const localVs=t?`${pct(s.localShare)} local`:'—';
   const cells=[
     ['Matches',s.total||0,s.last7Days?s.last7Days+' in the last seven days':''],
     ['Finished',ended?pct(s.completionRate):'—','Reached the vault'],
     ['Average duration',dur(s.avgDurationMs),'Among matches that ended'],
-    ['Players',n1(s.avgPlayers),'Average at the table'],
-    ['People',n1(s.avgHumans),'Average human seats'],
-    ['Computers',n1(s.avgComputers),'Average computer seats'],
-    ['Turns',n1(s.avgTurns),'Average marches recorded'],
-    ['World events',n1(s.avgWorlds),'Average times the March turned']
+    ['Local vs online',localVs,t?pct(s.onlineShare)+' online':''],
+    ['Turns',n1(s.avgTurns),'Average player turns per game'],
+    ['Rounds',n1(s.avgRounds),'Average rounds per game'],
+    ['Doubles',s.rollCount?pct(s.doublesRate):'—','Of play rolls'],
+    ['Greed',s.greedTotal||0,'Third doubles recorded']
   ];
   $('stats').innerHTML=cells.map(([k,v,sub])=>`<div class="stat"><dt>${k}</dt><dd>${v}${sub?`<small>${sub}</small>`:''}</dd></div>`).join('');
   $('modes').innerHTML=bar('Local',(s.byMode||{}).local||0,t)+bar('Online',(s.byMode||{}).online||0,t);
+  const wr=s.worldRank||{};
+  const worldNames=[['flood','Drowning Tide'],['ash','Heartfire Rising'],['wild','Wild Awakening'],['sun','Searing Seal'],['mist','Veil of Mist'],['ways','Stones of the Pact']];
+  const worldRows=worldNames.map(([id,name])=>({name,n:wr[id]||0})).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name));
+  const worldTotal=worldRows.reduce((n,r)=>n+r.n,0);
+  $('worlds').innerHTML=worldRows.map(r=>bar(r.name,r.n,worldTotal)).join('');
   const d=s.byDevice||{};
   const forms={phone:'Phone',tablet:'Tablet',desktop:'Desktop',xr:'XR'};
   $('devices').innerHTML=['phone','tablet','desktop','xr'].map(k=>bar(forms[k],d[k]||0,t)).join('');
@@ -157,17 +167,18 @@ function paint(data){
   const ks=s.kingdoms||{};
   const names=['Emberhold','Thornwald','Solmere','Tidereach'];
   $('kingdoms').innerHTML=names.map((n,i)=>{
-    const row=ks[n]||{appeared:0,won:0};
-    return `<article class="k${i}"><b>${n}</b><span>Sat ${row.appeared} · won ${row.won}</span></article>`;
+    const row=ks[n]||{appeared:0};
+    return `<article class="k${i}"><b>${n}</b><span>Sat ${row.appeared}</span></article>`;
   }).join('');
   const rows=data.matches||[];
   if(!rows.length){$('recent').innerHTML='<p class="empty">The March has not yet been recorded.</p>';return;}
-  const head=`<div class="row head"><span>When</span><span>Where</span><span>Seats</span><span>Kingdoms</span><span>Length</span><span>End</span><span>Device</span><span>Count</span></div>`;
+  const head=`<div class="row head"><span>When</span><span>Where</span><span>Seats</span><span>People</span><span>Kingdoms</span><span>Length</span><span>End</span><span>Device</span><span>Count</span></div>`;
   $('recent').innerHTML=head+rows.slice(0,40).map(m=>{
     const end=m.outcome==='vault'?'Vault':m.outcome==='forfeit'?'Forfeit':m.outcome==='abandoned'?'Left':'Playing';
     const form=m.device&&m.device.form?m.device.form[0].toUpperCase()+m.device.form.slice(1):'—';
     const id=String(m.id||'').replace(/"/g,'&quot;');
-    return `<div class="row${m.test?' test':''}"><span>${when(m.startedAt)}</span><span>${m.mode==='online'?'Online':'Local'}</span><span>${m.players||'—'}</span><span>${(m.kingdoms||[]).join(', ')||'—'}</span><span>${dur(m.durationMs)}</span><span>${end}</span><span>${form}</span><span><button class="testbtn" type="button" data-id="${id}" data-test="${m.test?'1':'0'}">${m.test?'Test':'Count'}</button></span></div>`;
+    const people=m.humans==null?'—':m.humans;
+    return `<div class="row${m.test?' test':''}"><span>${when(m.startedAt)}</span><span>${m.mode==='online'?'Online':'Local'}</span><span>${m.players||'—'}</span><span>${people}</span><span>${(m.kingdoms||[]).join(', ')||'—'}</span><span>${dur(m.durationMs)}</span><span>${end}</span><span>${form}</span><span><button class="testbtn" type="button" data-id="${id}" data-test="${m.test?'1':'0'}">${m.test?'Test':'Count'}</button></span></div>`;
   }).join('');
   $('recent').onclick=e=>{
     const b=e.target.closest&&e.target.closest('.testbtn');
