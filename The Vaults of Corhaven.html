@@ -157,7 +157,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #lab button{padding:6px 10px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch);font-size:14px}
 #lab button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
 .wheel{width:100%;aspect-ratio:1;border-radius:50%;border:3px solid var(--gold);
-  background:conic-gradient(#1F4E9C 0deg 60deg,#B3261E 60deg 120deg,#2E7D32 120deg 180deg,#D9A21B 180deg 240deg,#8A93A0 240deg 300deg,#C9961F 300deg 360deg);
+  background:conic-gradient(#1F4E9C 0deg 60deg,#B3261E 60deg 120deg,#2E7D32 120deg 180deg,#D9A21B 180deg 240deg,#8A93A0 240deg 300deg,#7A3DB5 300deg 360deg);
   box-shadow:inset 0 0 0 12px rgba(12,16,22,.45),0 12px 28px rgba(0,0,0,.45)}
 .wheelpointer{position:absolute;left:50%;top:-4px;z-index:1;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:16px solid var(--gold-bright)}
 .sheet{width:min(480px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px 26px 22px}
@@ -413,7 +413,7 @@ body.at-title #gearWrap{visibility:visible}
       <button class="secondary" id="btnLocal">Play local</button>
       <button class="secondary" id="btnStory2">About the Vaults of Corhaven</button>
     </div>
-    <p class="titlever" id="titleVer">V1.1.1</p>
+    <p class="titlever" id="titleVer">V1.1.6</p>
   </main>
 </div>
 
@@ -615,12 +615,12 @@ body.at-title #gearWrap{visibility:visible}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=move1"></script>
-<script src="./lib/siege-fx.js?v=siege14"></script>
+<script src="./lib/rules.js?v=move2"></script>
+<script src="./lib/siege-fx.js?v=siege16"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.1.1';
+const GAME_VERSION='1.1.6';
 
 /* ================= Board definition (Parchís layout) ================= */
 /* Arms are 3 lanes wide and 8 squares long. Squares are numbered 1–68, moving counterclockwise. */
@@ -1528,7 +1528,8 @@ document.addEventListener('click',e=>{
   const btn=e.target.closest&&e.target.closest('button');
   if(!btn||btn.classList.contains('banner'))return;
   if(btn.disabled||btn.getAttribute('aria-disabled')==='true')return;
-  if(btn.id==='btnCreate'){sfx.hover();return;}
+  if(btn.id==='btnRoll'||btn.classList.contains('roll')||btn.classList.contains('rollpair'))return;
+  if(btn.classList.contains('dchip')){sfx.hover();return;}
   sfx.press(btn.id==='btnStart'||btn.id==='btnBegin'?START_SRC:PRESS_SRC);
 },true);
 ['pointerdown','click','keydown','touchend'].forEach(type=>document.addEventListener(type,()=>{
@@ -2053,22 +2054,31 @@ async function nextTurn(){
   }
   S.cur=to;beginTurn(false);
 }
-/* Walk a troop along a resolved move. A shifting stone is a march to that square, then a hop to its pair. */
+/* Walk a troop along a resolved move. A shifting stone is a march to that square, then a hop to its pair.
+   A troop already on a foreign stone follows the painted track, square by square. */
 async function walkMove(pc,spec,alive){
   const m=pc.mesh;
   if(m.scale.x!==1)await animate(120,k=>m.scale.setScalar(m.scale.x+(1-m.scale.x)*k));
   if(!alive())return false;
   if(spec.exit){delete pc.at;pc.p=0;await hop(m,cellPos(pc.h,0,pc.idx),440,1.4);if(!alive())return false;sfx.step();return true;}
+  const res={np:spec.to,at:spec.at,shift:spec.shift,land:spec.land};
+  const steps=R.walkSpan(pc,res),dur=steps>8?95:165;
   if(pc.at!=null){
-    delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
-    await hop(m,posOf(pc),480,1.2);if(!alive())return false;sfx.step();return true;
+    let ti=pc.at;
+    for(let s=0;s<steps;s++){ti=(ti+1)%NTRACK;sfx.step();await hop(m,trackPos(ti),dur,0.5);if(!alive())return false;}
+    if(spec.shift&&(spec.to!==spec.land||spec.at!=null)){
+      flashWay(ti);
+      delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
+      await hop(m,posOf(pc),560,2.4);if(!alive())return false;
+    }else{
+      delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
+    }
+    return true;
   }
-  let land=spec.shift?spec.land:spec.to,steps=land-pc.p,dur=steps>8?95:165;
-  if(!Number.isFinite(steps)||steps<0)steps=0;
   if(steps>24){pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;else delete pc.at;await hop(m,posOf(pc),480,1.2);return alive();}
   for(let s=0;s<steps;s++){pc.p++;sfx.step();await hop(m,cellPos(pc.h,pc.p,pc.idx),dur,0.5);if(!alive())return false;}
-  if(spec.shift&&(spec.to!==land||spec.at!=null)){
-    flashWay(trackIndex(pc.h,land));
+  if(spec.shift&&(spec.to!==spec.land||spec.at!=null)){
+    flashWay(trackIndex(pc.h,spec.land));
     delete pc.at;pc.p=spec.to;if(spec.at!=null)pc.at=spec.at;
     await hop(m,posOf(pc),560,2.4);if(!alive())return false;
   }
@@ -3016,15 +3026,15 @@ function buildWays(){
     const i=+key,[a,l,k]=TRACK[i],[x,z]=anchorXZ(a,l,k);
     const g=new THREE.Group();
     g.position.set(x,TILE_TOP+0.02,z);g.userData.portal=i;
-    const poolMat=new THREE.MeshBasicMaterial({color:0x7ee8ff,transparent:true,opacity:0.35,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+    const poolMat=new THREE.MeshBasicMaterial({color:0xb46cff,transparent:true,opacity:0.35,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
     const disc=new THREE.Mesh(new THREE.CircleGeometry(0.42,36),poolMat);
     disc.rotation.x=-Math.PI/2;
-    const archMat=new THREE.MeshBasicMaterial({color:0xe8fcff,transparent:true,opacity:0.95,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+    const archMat=new THREE.MeshBasicMaterial({color:0xe6c8ff,transparent:true,opacity:0.95,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
     const arch=new THREE.Mesh(new THREE.TorusGeometry(0.46,0.04,12,42),archMat);
     arch.position.y=0.5;
     const archB=new THREE.Mesh(new THREE.TorusGeometry(0.46,0.028,12,42),archMat);
     archB.position.y=0.5;archB.rotation.y=Math.PI/2;
-    const core=new THREE.Mesh(new THREE.CircleGeometry(0.34,28),new THREE.MeshBasicMaterial({color:0xfff6c8,transparent:true,opacity:0.28,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
+    const core=new THREE.Mesh(new THREE.CircleGeometry(0.34,28),new THREE.MeshBasicMaterial({color:0xf2dcff,transparent:true,opacity:0.28,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide}));
     core.position.y=0.5;
     g.add(disc,arch,archB,core);g.userData.disc=disc;g.userData.arch=arch;g.userData.archB=archB;g.userData.core=core;
     worldFx.add(g);
@@ -3089,6 +3099,7 @@ function applyWorldLook(){
   else if(id==='ash'){const d=isDark();skyU.top.value.set(d?0x4A160E:0xE7A07A);skyU.bottom.value.set(d?0x2A100C:0xF0C2A4);hemi.color.set(0xFFB088);sun.color.set(0xFF8A4A);sun.intensity+=0.45;}
   else if(id==='wild'){hemi.color.set(0xD7EEC8);}
   else if(id==='mist'){scene.fog.color.set(0xC5CED6);scene.fog.near=70;scene.fog.far=150;skyU.top.value.set(0x8E9AA6);skyU.bottom.value.set(0xD5DDE4);}
+  else if(id==='ways'){hemi.color.set(0xE4D0FF);sun.color.set(0xD4B8F0);}
 }
 function viewerH(){
   if(NET.on&&NET.myH!=null)return NET.myH;
@@ -3102,12 +3113,25 @@ function enemyNear(viewer,pc){
   const ti=pieceTrack(pc);if(ti==null)return false;
   return allPieces().some(o=>{if(o.h!==viewer)return false;const ot=pieceTrack(o);if(ot==null)return false;const d=Math.abs(ti-ot);return Math.min(d,NTRACK-d)<=1;});
 }
-function veilHides(pc){return S.world==='mist'&&pc&&pc.h!==viewerH()&&!enemyNear(viewerH(),pc);}
+function fogFrontX(){
+  if(siege&&typeof siege.fogFront==='function'){
+    const f=siege.fogFront();
+    if(typeof f==='number')return f;
+  }
+  return Infinity;
+}
+/* The shader's leading edge is still clear; hide once the visible wall of fog has reached the troop. */
+function fogReached(pc){
+  if(!pc||!pc.mesh)return true;
+  return pc.mesh.position.x<=fogFrontX()-1.4;
+}
+function veilHides(pc){return S.world==='mist'&&pc&&pc.h!==viewerH()&&!enemyNear(viewerH(),pc)&&fogReached(pc);}
 function applyVeil(){
   const mist=S.world==='mist',viewer=viewerH();
   allPieces().forEach(pc=>{
     if(!pc.mesh)return;
-    pc.mesh.visible=!mist||pc.h===viewer||enemyNear(viewer,pc);
+    const hide=mist&&pc.h!==viewer&&!enemyNear(viewer,pc)&&fogReached(pc);
+    pc.mesh.visible=!hide;
     /* Fog must not swallow a troop you are allowed to see, or the dice, when the camera pulls back. */
     if(pc.mesh.userData.mat)pc.mesh.userData.mat.fog=!mist;
     if(pc.mesh.userData.ring){

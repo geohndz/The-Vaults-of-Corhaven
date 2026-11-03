@@ -235,6 +235,13 @@ test('a portal carries you even when the pair is off your road, and never captur
   const home = R.moveResult([gate], gate, 1, null);
   assert.equal(home.np, 0);
   assert.equal(home.at, undefined);
+  assert.equal(R.walkSpan(stood, step), 1);
+  assert.equal(R.walkSpan(gate, home), 1);
+  const along = piece(3, 0, 30);
+  along.at = 47;
+  const back = R.moveResult([along], along, 4, null);
+  assert.equal(back.np, 0);
+  assert.equal(R.walkSpan(along, back), 4);
 });
 
 test('world events deal every event before one can repeat', () => {

@@ -244,6 +244,17 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 26 | [2026-11-03-03-join-open-rooms-desktop.png](./screenshots/2026-11-03-03-join-open-rooms-desktop.png) | Join a room | Code field on the left with Continue / Back. Open rooms on the right: code, crests, seats left |
 | 27 | [2026-11-03-04-join-open-rooms-mobile.png](./screenshots/2026-11-03-04-join-open-rooms-mobile.png) | Join a room (390×844) | Code, then a hairline, then the open-room row, then Continue and Back |
 
+## Session: 2026-11-03 — Stones of the Pact in purple
+
+**Trigger:** The shifting stones were cyan on the road and gold on the wheel, next to Solmere. Both are purple now.
+
+**Environment:** Local `node scripts/local.js`. Wheel shown on the board. Portals from the marker lab with the chrome hidden.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 28 | [2026-11-03-05-stones-pact-wheel-desktop.png](./screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) | The March wheel | The sixth slice is purple, beside mist grey, not Solmere gold |
+| 29 | [2026-11-03-06-stones-pact-portals-desktop.png](./screenshots/2026-11-03-06-stones-pact-portals-desktop.png) | Stones of the Pact | Four purple portals on 14, 31, 48 and 65 |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

@@ -44,8 +44,7 @@ function eventMs(e) {
       return 1750 + (intro[e.id] || 2000);
     }
     case 'move': {
-      if (e.fromAt != null && !e.exit) return 500 + 480 + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
-      const span = e.exit ? 0 : Math.max(0, (e.shift ? e.land : e.to) - e.from);
+      const span = R.walkSpan({ h: e.h, p: e.from, at: e.fromAt }, { np: e.to, at: e.at, shift: e.shift, land: e.land, exit: e.exit });
       return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
     }
     default: return 0;
