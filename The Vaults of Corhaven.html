@@ -1208,6 +1208,8 @@ const AXE_SRC='assets/Music/Axe Attack 1.wav';
 const KINGDOM_SRC='assets/Music/Fantasy Positive Achievement.wav';
 const START_SRC='assets/Music/Start Game 1.wav';
 const PRESS_SRC='assets/Music/Start Game 3.wav';
+const WHEEL_SRC='assets/Music/prize-wheel.wav';
+const SPELL_SRC='assets/Music/Magic Spell 1.wav';
 const winAudio=new Audio('assets/Music/win.wav');
 winAudio.preload='auto';
 const bannerAudio=new Audio('assets/Music/Appear Magic.wav');
@@ -1216,14 +1218,14 @@ const startAudio=new Audio(START_SRC);
 startAudio.preload='auto';
 function loadBuffers(){
   const ctx=audioCtx();if(!ctx)return;
-  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC]).forEach(src=>{
+  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC,WHEEL_SRC,SPELL_SRC]).forEach(src=>{
     if(buffers.has(src))return;
     buffers.set(src,null);
     fetch(src).then(r=>r.arrayBuffer()).then(b=>ctx.decodeAudioData(b)).then(buf=>{buffers.set(src,buf);}).catch(()=>buffers.delete(src));
   });
 }
 const clips=new Set();
-let kingdomNode=null,pressNode=null;
+let kingdomNode=null,pressNode=null,wheelNode=null;
 function ensureTheme(){
   if(themeHold)return;
   wireTheme();applyGains();
@@ -1448,6 +1450,30 @@ const sfx={
     setBase(bannerAudio,0.55);
     const p=bannerAudio.play();if(p)p.catch(()=>{});
   },
+  /* prize-wheel.wav already slows; the wheel's turn is timed to its clicks. */
+  wheel(){
+    if(!fxOn||winPlaying)return;
+    if(wheelNode){try{wheelNode.stop();}catch(e){}liveSources.delete(wheelNode);wheelNode=null;}
+    clips.forEach(a=>{if(a.dataset.kind==='wheel'){a.pause();clips.delete(a);}});
+    const ctx=audioCtx();const buf=buffers.get(WHEEL_SRC);
+    if(ctx&&buf){
+      const node=ctx.createBufferSource();
+      node.buffer=buf;
+      const g=ctx.createGain();
+      g.gain.value=0.6;
+      node.connect(g);g.connect(fxGain);
+      liveSources.add(node);
+      wheelNode=node;
+      node.onended=()=>{liveSources.delete(node);if(wheelNode===node)wheelNode=null;};
+      node.start(ctx.currentTime);
+      return;
+    }
+    playClip(WHEEL_SRC,0.6,0,'wheel');
+  },
+  spell(){
+    if(!fxOn||winPlaying)return;
+    if(!playBuffer(SPELL_SRC,0.55))playClip(SPELL_SRC,0.55);
+  },
   win(){
     if(!fxOn)return;
     clipEpoch++;stopBuffers();clips.forEach(a=>a.pause());clips.clear();
@@ -1477,6 +1503,7 @@ document.addEventListener('click',e=>{
   const btn=e.target.closest&&e.target.closest('button');
   if(!btn||btn.classList.contains('banner'))return;
   if(btn.disabled||btn.getAttribute('aria-disabled')==='true')return;
+  if(btn.id==='btnCreate'){sfx.hover();return;}
   sfx.press(btn.id==='btnStart'||btn.id==='btnBegin'?START_SRC:PRESS_SRC);
 },true);
 ['pointerdown','click','keydown','touchend'].forEach(type=>document.addEventListener(type,()=>{
@@ -2975,13 +3002,25 @@ function setWorld(id,intro){
   if(S.players.length)renderTally();
   startWorldBed(id,!!intro);
 }
+/* Click times in prize-wheel.wav. Equal steps in this list are one peg; the wheel's angle follows them so it slows with the recording. */
+const WHEEL_TICKS=[0,.1,.16,.22,.279,.329,.414,.474,.539,.609,.673,.758,.843,.943,1.033,1.098,1.202,1.312,1.427,1.591,1.756,1.946,2.17,2.41,2.734,2.998,3.352,3.761,4.176,4.729];
+const WHEEL_SPIN=WHEEL_TICKS[WHEEL_TICKS.length-1]*1000;
+function wheelEase(k){
+  const t=k*WHEEL_TICKS[WHEEL_TICKS.length-1],ticks=WHEEL_TICKS;
+  if(t<=ticks[0])return 0;
+  if(t>=ticks[ticks.length-1])return 1;
+  let lo=0,hi=ticks.length-1;
+  while(hi-lo>1){const m=(lo+hi)>>1;if(ticks[m]<=t)lo=m;else hi=m;}
+  return(lo+(t-ticks[lo])/(ticks[hi]-ticks[lo]))/(ticks.length-1);
+}
 function spinWheel(i){
   const wheel=$('wheel'),turn=-(4*360+i*60+30);
   openModal('march');
-  if(reduced){wheel.style.transition='none';wheel.style.transform=`rotate(${turn}deg)`;return wait(280);}
-  wheel.style.transition='none';wheel.style.transform='rotate(0deg)';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{wheel.style.transition='transform 1.7s cubic-bezier(.12,.7,.15,1)';wheel.style.transform=`rotate(${turn}deg)`;}));
-  return wait(1750);
+  wheel.style.transition='none';
+  if(reduced){wheel.style.transform=`rotate(${turn}deg)`;return wait(280);}
+  sfx.wheel();
+  wheel.style.transform='rotate(0deg)';
+  return animate(WHEEL_SPIN,k=>{wheel.style.transform=`rotate(${turn*wheelEase(k)}deg)`;});
 }
 /* How long the board takes to change once the wheel has landed. The banner stays up for that same stretch. */
 const WORLD_INTRO={flood:5500,ash:4200,wild:3600,mist:7000,sun:4200,ways:2000};
@@ -3006,12 +3045,13 @@ function presentWorld(id){
     if(gid!==S.gid)return;
     closeModal('march');
     setWorld(id,true);
+    sfx.spell();
     const hold=reduced?900:(WORLD_INTRO[id]||2000);
     if(w.h!=null){
       const pl=S.players.find(p=>p.h===w.h&&!p.out);
       const yours=pl&&isMine(pl);
-      toast('+2',w.name+'. '+(yours?'Your':HOUSES[w.h].short+"'s")+' movements are two squares longer.',w.h,hold,true);
-    }else toast(w.name,w.rule,w.h,hold);
+      toast('+2',w.name+'. '+(yours?'Your':HOUSES[w.h].short+"'s")+' movements are two squares longer.',w.h,hold,true,true);
+    }else toast(w.name,w.rule,w.h,hold,null,true);
     return wait(hold);
   });
 }
