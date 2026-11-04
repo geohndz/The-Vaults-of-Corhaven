@@ -3,7 +3,7 @@
 | Document | Audience |
 |----------|----------|
 | [Executive summary (1 page)](../case-study-executive-summary.md) | Recruiters, hiring managers |
-| [Development log](../case-study-development-log.md) | Full timeline, decisions, structure — **first live user test (3 Nov 2026, V1.1.6)** is Phase 3 |
+| [Development log](../case-study-development-log.md) | Full timeline, decisions, structure — **first live user test (3 Nov 2026, V1.1.6)** is Phase 3; **user test round 3 (V1.4.0, 1v1)** is Phase 4 |
 | [Visual archive](./visual-archive.md) | Screenshot index by session |
 | [Screenshots](./screenshots/) | PNG assets for Figma / portfolio |
 

@@ -297,6 +297,34 @@ Screenshots captured during development sessions. Each entry ties to a **user re
 | 39 | [2026-11-03-16-tutorial-shrine-burst-desktop.png](./screenshots/2026-11-03-16-tutorial-shrine-burst-desktop.png) | Shrines | Grey star tiles. White burst on land (same family as barricade sparks) |
 | 40 | [2026-11-03-17-tutorial-world-events-desktop.png](./screenshots/2026-11-03-17-tutorial-world-events-desktop.png) | World events | Title renamed from The March. Tide / Heartfire / Wild / Seal / Mist / Stones cycle, Next stays on. **V1.4.0** |
 
+## Session: 2026-11-03 — User test round 3 (no new screens)
+
+**Trigger:** One other person, 1v1, on **V1.4.0**. Laptop and a Quest. The VR button never appeared, so the headset seat was the Quest browser. Notes live in the [development log, Phase 4](../case-study-development-log.md#phase-4--user-test-round-3-3-nov-2026). No screens captured during the session.
+
+What failed in play: the tutorial dice beat reads as moving pieces, the banner overlaps the troops, the connection dropped three times, online dot markers are still missing, the dice miss the volcano, and the trigger both clicks and orbits. Comments, left as comments: mist created uncertainty and the other events felt cosmetic; sun beams were the least preferred. They also suggested slower world-event triggers (mid-board, every other round, a shrine, a double 6).
+
+## Session: 2026-11-03 — Play in the room (V1.4.1)
+
+**Trigger:** Round 3, on a Quest. The VR control never appeared, so they played the flat page in the headset browser, and the trigger both clicked and turned the board.
+
+**Environment:** Local `python3 -m http.server 8765`. The control stays hidden until the browser reports a headset session. These shots forced a Quest Browser identity so the control could be framed. A real passthrough session was not available. **V1.4.2** no longer shows it from the browser name alone.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 41 | [2026-11-03-18-title-play-in-the-room-desktop.png](./screenshots/2026-11-03-18-title-play-in-the-room-desktop.png) | Title | Play in the room sits with the other ways in. **V1.4.1** |
+| 42 | [2026-11-03-19-room-button-on-board-desktop.png](./screenshots/2026-11-03-19-room-button-on-board-desktop.png) | In match | The same control stays on the board, under the menu, so a match does not bury it |
+
+## Session: 2026-11-03 — Your troops, and the volcano (V1.4.3)
+
+**Trigger:** Round 3, overall. The dots above the pieces were still missing online, and the dice passed through the volcano.
+
+**Environment:** Local `python3 -m http.server 8765`. The dot shot is Solmere’s turn. The volcano shot is a throw whose faces were already chosen, the same path an online roll uses, once Heartfire is up.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 43 | [2026-11-03-21-piece-dots-desktop.png](./screenshots/2026-11-03-21-piece-dots-desktop.png) | Your turn | A gold dot above each Solmere troop. The other kingdoms stay unmarked |
+| 44 | [2026-11-03-22-dice-volcano-desktop.png](./screenshots/2026-11-03-22-dice-volcano-desktop.png) | Heartfire | The dice meet the cone and finish on the road, on the faces the roll already drew |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

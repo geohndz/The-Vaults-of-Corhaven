@@ -114,8 +114,9 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .menu button:hover,.menu button:focus-visible{background:rgba(186,204,220,.16)}
 .menu button:focus-visible{outline-offset:-2px}
 @keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.97)}}
-.chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.chip{background:linear-gradient(160deg,var(--leather-2),var(--leather));border:1.5px solid var(--gold);border-radius:999px;padding:6px 14px;font-size:15px;box-shadow:0 6px 16px rgba(0,0,0,.35);color:var(--gold-bright)}
 .chip:hover{border-color:var(--gold-bright)}
+#btnXRHud[hidden],#btnXRTitle[hidden],#btnXRSetup[hidden]{display:none}
 #bottomBar{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:calc(100vw - 24px)}
 .dice{position:relative;display:flex;gap:10px;align-items:center}
 .dice[hidden]{display:none}
@@ -437,12 +438,13 @@ body.at-lesson #hintDock{z-index:21}
 
 <div class="hud" id="menuWrap">
   <button class="menuBtn" id="btnMenu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
+  <button class="chip" id="btnXRHud" hidden type="button">Play in the room</button>
   <div class="menu panel" id="menu" role="menu" aria-label="Game menu" hidden>
     <button role="menuitem" id="btnStory">About</button>
     <button role="menuitem" id="btnRules">Rules</button>
     <button role="menuitem" id="btnNew">Back to title screen</button>
     <button role="menuitem" id="btnLeave" hidden>Leave room</button>
-    <button role="menuitem" id="btnXR" hidden="">Play in the room</button>
+    <button role="menuitem" id="btnXR" hidden type="button">Play in the room</button>
   </div>
 </div>
 
@@ -461,6 +463,7 @@ body.at-lesson #hintDock{z-index:21}
       <button class="primary" id="btnCreate">Create a room</button>
       <button class="secondary" id="btnJoin">Join a room</button>
       <button class="secondary" id="btnLocal">Play local</button>
+      <button class="secondary" id="btnXRTitle" hidden type="button">Play in the room</button>
       <button class="secondary" id="btnLesson">Tutorial</button>
       <button class="secondary" id="btnStory2">About the Vaults of Corhaven</button>
     </div>
@@ -706,7 +709,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.4.0';
+const GAME_VERSION='1.4.4';
 
 /* ================= Board definition (Parchís layout) ================= */
 /* Arms are 3 lanes wide and 8 squares long. Squares are numbered 1–68, moving counterclockwise. */
@@ -770,7 +773,9 @@ const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(42,1,0.1,400);
 camera.position.copy(new THREE.Vector3(0,0.8,0.6).normalize().multiplyScalar(24));
 let controls=null;
-if(THREE.OrbitControls){controls=new THREE.OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=0.08;controls.enablePan=false;controls.minDistance=7;controls.maxDistance=42;controls.maxPolarAngle=1.3;controls.target.set(0,0,0.9);}
+/* Quest Browser turns the controller trigger into a mouse drag, so a click was also an orbit. */
+function headsetPanel(){return /OculusBrowser|\bQuest\b|Mobile VR/i.test(navigator.userAgent||'');}
+if(THREE.OrbitControls){controls=new THREE.OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=0.08;controls.enablePan=false;controls.minDistance=7;controls.maxDistance=42;controls.maxPolarAngle=1.3;controls.target.set(0,0,0.9);if(headsetPanel())controls.rotateThreshold=48;}
 camera.lookAt(0,0,0.9);
 
 const skyU={top:{value:new THREE.Color(0x5E93CC)},bottom:{value:new THREE.Color(0xE7D6B0)}};
@@ -1237,8 +1242,8 @@ function makePiece(h){
   const plume=new THREE.Mesh(plumeGeo,M.gold);plume.position.y=0.95;inner.add(plume);
   const ring=new THREE.Mesh(ringGeo,new THREE.MeshBasicMaterial({color:0xFFD66B,transparent:true,opacity:0.9,side:THREE.DoubleSide,depthWrite:false}));
   ring.rotation.x=-Math.PI/2;ring.position.y=0.02;ring.renderOrder=8;ring.visible=false;grp.add(ring);
-  const beacon=new THREE.Mesh(beaconGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0,depthTest:false,depthWrite:false,fog:false,blending:THREE.AdditiveBlending}));
-  beacon.position.y=1.28;beacon.renderOrder=22;beacon.visible=false;grp.add(beacon);
+  const beacon=new THREE.Mesh(beaconGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0,depthTest:false,depthWrite:false,fog:false}));
+  beacon.position.y=1.34;beacon.scale.setScalar(1.2);beacon.renderOrder=22;beacon.visible=false;grp.add(beacon);
   const ghost=new THREE.Mesh(pawnGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0.32,depthTest:false,depthWrite:false,fog:false}));
   ghost.renderOrder=24;ghost.visible=false;inner.add(ghost);
   grp.renderOrder=12;
@@ -1370,6 +1375,7 @@ const START_SRC='assets/Music/Start Game 1.wav';
 const PRESS_SRC='assets/Music/Start Game 3.wav';
 const WHEEL_SRC='assets/Music/prize-wheel.wav';
 const SPELL_SRC='assets/Music/Magic Spell 1.wav';
+const SHRINE_SRC='assets/Music/Holy Magic Resurrection Spell Cast 2.wav';
 const winAudio=new Audio('assets/Music/win.wav');
 winAudio.preload='auto';
 const bannerAudio=new Audio('assets/Music/Appear Magic.wav');
@@ -1378,7 +1384,7 @@ const startAudio=new Audio(START_SRC);
 startAudio.preload='auto';
 function loadBuffers(){
   const ctx=audioCtx();if(!ctx)return;
-  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC,WHEEL_SRC,SPELL_SRC]).forEach(src=>{
+  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC,WHEEL_SRC,SPELL_SRC,SHRINE_SRC]).forEach(src=>{
     if(buffers.has(src))return;
     buffers.set(src,null);
     fetch(src).then(r=>r.arrayBuffer()).then(b=>ctx.decodeAudioData(b)).then(buf=>{buffers.set(src,buf);}).catch(()=>buffers.delete(src));
@@ -1604,6 +1610,7 @@ const sfx={
     playClip(src,0.6,0,'press',0,skip);
   },
   barricade(){if(!playBuffer(CANNON_SRC,0.7))playClip(CANNON_SRC,0.7);},
+  shrine(){if(!playBuffer(SHRINE_SRC,0.55))playClip(SHRINE_SRC,0.55);},
   banner(){
     if(!fxOn||winPlaying)return;
     try{bannerAudio.currentTime=0;}catch(e){}
@@ -2099,15 +2106,38 @@ async function throwDice(h,forced){
   const origin=yc.clone().multiplyScalar(0.95).setY(3.6);
   const starts=[origin.clone().addScaledVector(perp,-0.5),origin.clone().addScaledVector(perp,0.5)];
   await Promise.all(dice.map((d,i)=>{const from=d.position.clone(),q0=d.quaternion.clone(),q1=randQuat();return animate(360,k=>{const e=ease(k);d.position.lerpVectors(from,starts[i],e);d.position.y+=Math.sin(Math.PI*k)*0.8;d.quaternion.copy(q0).slerp(q1,e);});}));
-  if(gid!==S.gid)return [1,1];
+  if(gid!==S.gid)return forced||[1,1];
   diceIntro=false;
-  if(forced||!world)return fallbackRoll(forced);
+  const strike=!!volcanoLive();
+  if(!world||(forced&&!strike))return fallbackRoll(forced);
   armDicePhysics();
   const k=impulseScale();
   dice.forEach((d,i)=>{const b=diceBodies[i];b.position.set(d.position.x,d.position.y,d.position.z);b.quaternion.set(d.quaternion.x,d.quaternion.y,d.quaternion.z,d.quaternion.w);
     const aim=inward.clone().multiplyScalar(7+Math.random()*3).addScaledVector(perp,(Math.random()-0.5)*3);
     b.velocity.set(aim.x*k,(1.5+Math.random()*2)*k,aim.z*k);b.angularVelocity.set((Math.random()-.5)*30,(Math.random()-.5)*30,(Math.random()-.5)*30);b.wakeUp();});
-  return new Promise(res=>{rollState={t:0,still:0,retries:0,res};});
+  const faces=await new Promise(res=>{rollState={t:0,still:0,retries:0,res,forced:forced?forced.slice():null,cap:forced?1.15:7};});
+  if(gid!==S.gid||!forced)return forced||faces;
+  await snapDiceFaces(forced);
+  return forced.slice();
+}
+/* The cone is in the dice's way once its lip clears the board. */
+function volcanoPoseNow(){
+  const pose=siege&&siege.volcanoPose&&siege.volcanoPose();
+  if(!pose||pose.radiusBottom<0.4)return null;
+  if(pose.y+pose.height*0.5<TILE_TOP+0.15)return null;
+  return pose;
+}
+function volcanoLive(){
+  const pose=volcanoPoseNow();
+  if(!pose||!world)return null;
+  syncVolcanoBody(pose);
+  return pose;
+}
+function diceClearOfVolcano(){
+  const pose=volcanoPoseNow();
+  if(!pose)return true;
+  const limit=pose.radiusBottom+0.35,crown=pose.y+pose.height*0.5+0.15;
+  return diceBodies.every(b=>Math.hypot(b.position.x,b.position.z)>=limit||b.position.y>crown);
 }
 function dieSettled(b){return b.sleepState===CANNON.Body.SLEEPING||(b.velocity.length()<0.06&&b.angularVelocity.length()<0.12);}
 function stepDice(dt){
@@ -2119,7 +2149,11 @@ function stepDice(dt){
   rollState.t+=dt;
   const calm=diceBodies.every((b,i)=>dice[i].userData.held||dieSettled(b));
   rollState.still=calm?rollState.still+dt:0;
-  if(rollState.still>0.3||rollState.t>7){
+  const cap=rollState.cap||7;
+  let overtime=rollState.t>cap;
+  if(overtime&&rollState.forced&&!diceClearOfVolcano()&&rollState.t<cap+0.7)overtime=false;
+  if(rollState.still>0.28||overtime){
+    if(rollState.forced){const r=rollState;rollState=null;r.res(r.forced);return;}
     const faces=dice.map(topFace);
     const cocked=faces.findIndex(f=>f.dot<0.93);
     if(cocked>=0&&rollState.retries<4){
@@ -2144,12 +2178,55 @@ function stepMotionRoll(dt){
   if(order)finishOrder(pl,vals[0],vals[1],gid);else finishRoll(pl,vals[0],vals[1],gid);
 }
 const FACE_EULER={1:[0,0,0],6:[Math.PI,0,0],2:[-Math.PI/2,0,0],5:[Math.PI/2,0,0],3:[0,0,Math.PI/2],4:[0,0,-Math.PI/2]};
+function faceQuat(val){
+  return new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.random()*6.28).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...FACE_EULER[val])));
+}
+async function snapDiceFaces(vals){
+  await Promise.all(dice.map((d,i)=>{const q0=d.quaternion.clone(),qf=faceQuat(vals[i]);return animate(180,k=>{d.quaternion.copy(q0).slerp(qf,ease(k));});}));
+  dice.forEach((_,i)=>syncDieBody(i));
+}
+function outsideVolcano(x,z,pad){
+  const pose=volcanoPoseNow();if(!pose)return null;
+  const limit=pose.radiusBottom+pad,r=Math.hypot(x,z);
+  if(r>=limit)return {x,z,pose};
+  const s=limit/Math.max(r,0.05);
+  return {x:x*s,z:z*s,pose};
+}
+function volcanoRimPoint(from,to,pose){
+  const limit=Math.max(0.4,pose.radiusBottom*0.94);
+  for(let i=1;i<=16;i++){
+    const k=i/16,x=from.x+(to.x-from.x)*k,z=from.z+(to.z-from.z)*k;
+    if(Math.hypot(x,z)<limit){
+      const pk=(i-1)/16,x0=from.x+(to.x-from.x)*pk,z0=from.z+(to.z-from.z)*pk,ang=Math.atan2(z0,x0);
+      return new THREE.Vector3(Math.cos(ang)*(pose.radiusBottom+0.2),Math.min(TILE_TOP+1.35,Math.max(TILE_TOP+DS+0.2,pose.y)),Math.sin(ang)*(pose.radiusBottom+0.2));
+    }
+  }
+  return null;
+}
 async function fallbackRoll(forced){ // also lands online rolls on the faces the room server drew
   const vals=forced||[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
   let sounded=false;
-  await Promise.all(dice.map((d,i)=>{const from=d.position.clone();const to=new THREE.Vector3((Math.random()-.5)*6,TILE_TOP+DS,(Math.random()-.5)*6);if(Math.hypot(to.x,to.z)<1.6)to.x+=2.4;
-    const q0=d.quaternion.clone();const qf=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.random()*6).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(...FACE_EULER[vals[i]])));
-    return animate(S.lesson?2600:1100,k=>{d.position.lerpVectors(from,to,k);d.position.y=TILE_TOP+DS+(from.y-TILE_TOP)*Math.pow(1-k,1.4)*Math.abs(Math.cos(k*Math.PI*2.5));d.quaternion.copy(q0).slerp(qf,ease(k));if(!sounded&&k>=0.2){sounded=true;sfx.dice();}});}));
+  await Promise.all(dice.map((d,i)=>{
+    const from=d.position.clone();
+    let tx=(Math.random()-.5)*6,tz=(Math.random()-.5)*6;
+    const clear=outsideVolcano(tx,tz,DS+0.25+(i?0.35:0));
+    if(clear){tx=clear.x;tz=clear.z;}
+    else if(Math.hypot(tx,tz)<1.6)tx+=2.4;
+    const to=new THREE.Vector3(tx,TILE_TOP+DS,tz);
+    const pose=volcanoPoseNow(),hit=pose?volcanoRimPoint(from,to,pose):null;
+    const q0=d.quaternion.clone(),qf=faceQuat(vals[i]);
+    return animate(S.lesson?2600:1100,k=>{
+      if(hit){
+        if(k<0.46){const e=k/0.46;d.position.lerpVectors(from,hit,e);d.position.y=from.y+(hit.y-from.y)*e+Math.sin(Math.PI*e)*0.2;}
+        else{const e=(k-0.46)/0.54;d.position.lerpVectors(hit,to,e);d.position.y=TILE_TOP+DS+Math.sin(Math.PI*e)*0.8;}
+      }else{
+        d.position.lerpVectors(from,to,k);
+        d.position.y=TILE_TOP+DS+(from.y-TILE_TOP)*Math.pow(1-k,1.4)*Math.abs(Math.cos(k*Math.PI*2.5));
+      }
+      d.quaternion.copy(q0).slerp(qf,ease(k));
+      if(!sounded&&k>=0.2){sounded=true;sfx.dice();}
+    });
+  }));
   return vals;
 }
 
@@ -2366,7 +2443,7 @@ async function doMove(opt){
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
   if(pc.p===GOAL){R.noteVault(curP());sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,pc.h,'vault');}
-  if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');}
+  if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');}
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
@@ -2393,7 +2470,7 @@ function lockBurst(color,pos){
   }
 }
 function lockShields(h,pos){sfx.barricade();lockBurst(HOUSES[h].color,pos);}
-function shrineBurst(pos){if(!pos)return;sfx.spell();lockBurst(0xF7F4EC,pos);}
+function shrineBurst(pos){if(!pos)return;sfx.shrine();lockBurst(0xF7F4EC,pos);}
 function stepBarricades(dt){
   for(let i=barricadeFx.length-1;i>=0;i--){
     const b=barricadeFx[i];b.age+=dt;const k=b.age/b.life;
@@ -2748,7 +2825,7 @@ const LESSONS=[
   {title:'Barricades',body:'Two troops of the same kingdom on one square lock shields. Nobody may pass or land there. Troops of different kingdoms never form a phalanx.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(0,1);if(a)a.p=8;if(b)b.p=6;await settleAll();if(!a||!b)return;await lessonWalk(b,8);if(!lessonAlive())return;lockShields(0,posOf(a));phalanxToast(0);}},
   {title:'Shrines',body:'Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',
-    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=11;if(b)b.p=46;await settleAll();if(a)await lessonWalk(a,12);if(!lessonAlive())return;if(a)shrineBurst(posOf(a));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',0);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',0,'shrine');}},
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=11;if(b)b.p=46;await settleAll();if(a)await lessonWalk(a,12);if(!lessonAlive())return;if(a)shrineBurst(posOf(a));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',0,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',0,'shrine');}},
   {title:'A strike',body:'Land exactly on a lone enemy and it falls. Its kingdom must raise that troop at the keep. You then press on with a bonus march of 20.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint('A strike','The fallen troop returns to its keep. Emberhold then presses on with a bonus march of 20.',0,'strike');toast('Emberhold strikes Thornwald','A troop returns to the keep. Bonus march of 20.',0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
   {title:'The vault',body:'Reaching the vault needs an exact count and earns another bonus march of 20. The passages are the seven coloured squares after the King\'s Road.',
@@ -2873,42 +2950,70 @@ function setLink(mode,title,sub){
   el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
   sfx.banner();
 }
+/* The room socket is closed at five minutes. Open the next one early, and keep the
+   banner down unless that new socket is still down after a couple of seconds. */
+const SOCKET_LIFE_MS=240000,SOCKET_LIFE_SPREAD_MS=20000,LINK_HOLD_MS=2000;
+let linkWait=0,linkMiss=0,linkGraceUntil=0,linkBannerTimer=0;
+function clearLinkHold(){clearTimeout(linkBannerTimer);linkBannerTimer=0;linkGraceUntil=0;}
+function holdLink(){
+  linkGraceUntil=Date.now()+LINK_HOLD_MS;
+  clearTimeout(linkBannerTimer);
+  linkBannerTimer=setTimeout(()=>{linkBannerTimer=0;paintLink();},LINK_HOLD_MS);
+}
+function clearSocketLife(){clearTimeout(NET.lifeTimer);NET.lifeTimer=null;}
+function armSocketLife(){
+  clearSocketLife();
+  NET.lifeTimer=setTimeout(()=>{
+    if(!NET.on||NET.ended||!NET.ws||NET.ws.readyState!==1)return;
+    if(NET.code)connect({t:'join',id:myId,code:NET.code});
+    else if(onlineStep==='stepCode')connect({t:'browse',id:myId});
+  },SOCKET_LIFE_MS+Math.floor(Math.random()*SOCKET_LIFE_SPREAD_MS));
+}
 function paintLink(){
   if(!NET.on||NET.ended){setLink('ok');return;}
-  if(!NET.ws){
-    if(!NET.code){setLink('ok');return;}
-    setLink('lost','Connection lost','Reconnecting.');
-    return;
-  }
-  const rs=NET.ws.readyState;
+  const rs=NET.ws?NET.ws.readyState:-1;
   if(rs===1){
+    clearLinkHold();
     const quiet=linkPong&&linkWait&&Date.now()-linkPong>8000;
     if(linkRtt>700||quiet)setLink('slow','Slow connection','Moves may take a moment.');
     else setLink('ok');
     return;
   }
+  if((NET.code||linkGraceUntil)&&Date.now()<linkGraceUntil)return;
+  if(!NET.ws){
+    if(!NET.code){setLink('ok');return;}
+    setLink('lost','Connection lost','Reconnecting.');
+    return;
+  }
   setLink(rs===0?'connecting':'lost',rs===0?'Connecting':'Connection lost',rs===0?'Reaching the room.':'Reconnecting.');
 }
-let linkWait=0,linkMiss=0;
 function connect(hello){
   if(location.protocol!=='http:'&&location.protocol!=='https:'){onlineError('file');return;}
   clearTimeout(NET.retryTimer);
+  clearSocketLife();
+  const live=!!(NET.ws&&NET.ws.readyState===1);
+  const swapping=!!(NET.code||live);
   if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}}
   const ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/api/ws');
-  NET.ws=ws;paintLink();
+  NET.ws=ws;
+  if(swapping)holdLink();else paintLink();
   ws.onopen=()=>{
     NET.retry=0;linkRtt=0;linkWait=0;linkMiss=0;linkPong=Date.now();
-    ws.send(JSON.stringify(hello));paintLink();
+    armSocketLife();
+    ws.send(JSON.stringify(hello));
+    if(document.hidden&&NET.code)netSend({t:'away'});
+    clearLinkHold();paintLink();
     if(NET.pending)netSend(NET.pending.msg);
-    if(NET.playing&&!themeHold)startMatchTheme(false);
+    if(!live&&NET.playing&&!themeHold)startMatchTheme(false);
     if(NET.playing)renderTurn();
   };
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}if(ws===NET.ws)onNetMessage(m);};
   ws.onclose=()=>{
     if(ws!==NET.ws)return;
+    clearSocketLife();
     if(NET.playing)NET.forceSnap=true;
     if(!NET.code){
-      NET.ws=null;setLink('ok');
+      NET.ws=null;clearLinkHold();setLink('ok');
       if(onlineStep==='stepCode'){
         onlineError('offline');
         NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended&&onlineStep==='stepCode'&&!NET.code)connect({t:'browse',id:myId});},Math.min(10000,600*Math.pow(2,NET.retry++)));
@@ -2916,12 +3021,11 @@ function connect(hello){
       }
       onlineError('offline');return;
     }
-    paintLink();
+    holdLink();
     if(NET.ended||!NET.on)return;
     if(NET.playing)renderTurn();
-    if(document.hidden)return;
     const wait=NET.playing?Math.min(4000,280*Math.pow(1.5,NET.retry++)):Math.min(10000,600*Math.pow(2,NET.retry++));
-    NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended)connect({t:'join',id:myId,code:NET.code});},wait);
+    NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended&&NET.code)connect({t:'join',id:myId,code:NET.code});},wait);
   };
 }
 setInterval(()=>{
@@ -2938,7 +3042,7 @@ setInterval(()=>{
   linkWait=Date.now();netSend({t:'ping'});paintLink();
 },4000);
 function endOnlineSocket(){
-  NET.ended=true;clearTimeout(NET.retryTimer);
+  NET.ended=true;clearTimeout(NET.retryTimer);clearSocketLife();clearLinkHold();
   if(NET.ws){NET.ws.onclose=null;try{NET.ws.close();}catch(e){}NET.ws=null;}
 }
 function startOnline(){
@@ -2953,7 +3057,7 @@ function startOnline(){
 function leaveOnline(sendLeave,msg){
   if(sendLeave)netSend({t:'leave'});
   const ws=NET.ws;
-  NET.ws=null;NET.ended=true;clearTimeout(NET.retryTimer);clearTimeout(NET.pendingTimer);NET.pending=null;
+  NET.ws=null;NET.ended=true;clearTimeout(NET.retryTimer);clearTimeout(NET.pendingTimer);clearSocketLife();clearLinkHold();NET.pending=null;
   if(ws){ws.onclose=null;setTimeout(()=>{try{ws.close();}catch(e){}},sendLeave?400:0);}
   rememberRoom(null);
   const wasPlaying=NET.playing;
@@ -3429,7 +3533,7 @@ async function playEvent(e,epoch){
       }
       if(gone())return;
       if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,e.h,'vault');}
-      if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',e.h);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',e.h,'shrine');}
+      if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',e.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',e.h,'shrine');}
       if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();
@@ -3601,7 +3705,7 @@ function choosePiece(pc){
 }
 let downAt=null;
 canvas.addEventListener('pointerdown',e=>{downAt={x:e.clientX,y:e.clientY,t:e.pointerType};});
-canvas.addEventListener('pointerup',e=>{if(!downAt)return;const moved=Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y);const slop=downAt.t==='mouse'?7:14;downAt=null;if(moved>slop)return;
+canvas.addEventListener('pointerup',e=>{if(!downAt)return;const moved=Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y);const slop=controls&&controls.rotateThreshold>0?controls.rotateThreshold:(downAt.t==='mouse'?7:14);downAt=null;if(moved>slop)return;
   const hit=pick(e);if(!hit)return;
   if(hit.die)requestRoll();else if(hit.marker)requestMove(hit.marker);else if(hit.piece)choosePiece(hit.piece);});
 canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;canvas.style.cursor=pick(e)?'pointer':'';});
@@ -3976,7 +4080,11 @@ function loop(now,frame){
   pieceMeshes.forEach(m=>{const u=m.userData;const rise=u.ready&&S.phase==='choose'&&!reduced?(0.5+0.5*Math.sin(time*2.8))*0.22:0;const tgt=(u.hl?0.08+Math.sin(time*3.2)*0.04:0)+rise;u.inner.position.y+=(tgt-u.inner.position.y)*(u.ready?1:Math.min(1,dt*12));
     const pc=u.piece,onRoad=pc&&pc.p>=0&&pc.p<GOAL,mineGlow=glowOn&&pc&&pc.h===glowPl.h&&(onRoad||!!u.ready);
     const lit=!!u.hl||!!mineGlow;
-    if(u.beacon)u.beacon.visible=false;
+    const mineDot=!!(glowOn&&pc&&pc.h===glowPl.h&&m.visible&&!veilHides(pc));
+    if(u.beacon){
+      u.beacon.visible=mineDot;
+      if(mineDot){u.beacon.material.opacity=0.78+0.22*Math.sin(time*3.1);u.beacon.position.y=1.34+(reduced?0:Math.sin(time*2.5+pc.idx)*0.05);}
+    }
     if(u.ghost){u.ghost.visible=lit;if(lit)u.ghost.material.opacity=0.22+0.12*Math.sin(time*3.1);}
     if(u.hl){u.mat.emissive.setHex(HOUSES[pc?pc.h:0].color);u.mat.emissiveIntensity=0.58+0.22*Math.sin(time*3.1);}
     else if(mineGlow){u.mat.emissive.setHex(HOUSES[pc.h].color);u.mat.emissiveIntensity=0.42+0.18*Math.sin(time*3.1);}
@@ -4531,7 +4639,8 @@ function pollControls(dt){
     sizeHold-=dt;
     if(sizeHold<=0){setBoardCm(boardCm+Math.sign(ls.x)*BOARD_CM_STEP);sizeHold=0.16;}
   }else sizeHold=0;
-  if(xrPlaced&&!xrPlacing){
+  const triggerDown=!!(rgp&&rgp.buttons[0]&&rgp.buttons[0].pressed)||!!(lgp&&lgp.buttons[0]&&lgp.buttons[0].pressed);
+  if(xrPlaced&&!xrPlacing&&!triggerDown){
     const rs=stickOf(rgp);
     if(Math.abs(rs.x)>0.25){
       tableRoot.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),-rs.x*dt*2.2));
@@ -4600,6 +4709,7 @@ function onXRStart(){
   renderer.setPixelRatio(1);
   applyBoardPlacement();
   if(controls)controls.enabled=false;
+  const roomHud=$('btnXRHud');if(roomHud)roomHud.hidden=true;
   if(renderer.xr.setFramebufferScaleFactor)renderer.xr.setFramebufferScaleFactor(1);
   ensureTheme();
   ensureHitSources();
@@ -4629,6 +4739,7 @@ function onXREnd(){
   renderer.setPixelRatio(displayPixelRatio());
   if(world)world.gravity.y=-30;
   if(controls)controls.enabled=true;
+  if(roomOffered)showRoomButton();
   applyTheme();userFramed=false;resize(true);
 }
 function updateXR(frame,dt){
@@ -4639,33 +4750,52 @@ function updateXR(frame,dt){
   updateViewHud(xrCam);
   updateHandPanel(xrCam);
 }
+function roomDidNotStart(){
+  const msg='The room view did not start. Stay in the Quest Browser and try again.';
+  if($('title').classList.contains('open'))$('titleErr').textContent=msg;
+  ui.hint.textContent=msg;
+}
 async function enterRoom(){
   if(xrActive||!navigator.xr)return;
-  if($('setup').classList.contains('open')||$('title').classList.contains('open')&&!NET.on)$('btnBegin').click();
-  let session;
-  try{
-    try{session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['hand-tracking']});}
-    catch(e){session=await navigator.xr.requestSession('immersive-ar',{requiredFeatures:['hit-test','local-floor']});}
-  }catch(err){
-    ui.hint.textContent='The room view did not start. Open this page in the Quest Browser after Space Setup.';
-    return;
+  const starting=$('setup').classList.contains('open')||($('title').classList.contains('open')&&!NET.on);
+  const tries=[
+    ['immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['hand-tracking']}],
+    ['immersive-ar',{optionalFeatures:['hit-test','local-floor','hand-tracking']}],
+    ['immersive-vr',{optionalFeatures:['local-floor','hand-tracking']}]
+  ];
+  let session=null;
+  for(const [mode,opts] of tries){
+    try{session=await navigator.xr.requestSession(mode,opts);break;}
+    catch(e){}
   }
+  if(!session){roomDidNotStart();return;}
+  if(starting)$('btnBegin').click();
   renderer.xr.setReferenceSpaceType('local-floor');
   try{await renderer.xr.setSession(session);}
-  catch(err){ui.hint.textContent='The room view did not start. Open this page in the Quest Browser after Space Setup.';try{session.end();}catch(e){}return;}
+  catch(err){roomDidNotStart();try{session.end();}catch(e){}return;}
   session.addEventListener('end',onXREnd);
   onXRStart();
 }
+let roomOffered=false;
 function showRoomButton(){
-  const b=$('btnXR'),s=$('btnXRSetup');
-  if(b)b.hidden=false;if(s)s.hidden=false;
+  roomOffered=true;
+  ['btnXR','btnXRSetup','btnXRTitle','btnXRHud'].forEach(id=>{const el=$(id);if(el)el.hidden=false;});
 }
-if(navigator.xr&&navigator.xr.isSessionSupported){
-  navigator.xr.isSessionSupported('immersive-ar').then(ok=>{if(ok)showRoomButton();}).catch(()=>{});
+async function offerRoom(){
+  let mode=null;
+  if(navigator.xr&&navigator.xr.isSessionSupported){
+    try{
+      if(await navigator.xr.isSessionSupported('immersive-ar'))mode='immersive-ar';
+      else if(await navigator.xr.isSessionSupported('immersive-vr'))mode='immersive-vr';
+    }catch(e){}
+  }
+  if(!mode)return;
+  showRoomButton();
 }
-const btnRoom=$('btnXR'),btnRoomSetup=$('btnXRSetup');
-if(btnRoom)btnRoom.onclick=()=>enterRoom();
-if(btnRoomSetup)btnRoomSetup.onclick=()=>enterRoom();
+offerRoom();
+window.addEventListener('pageshow',()=>offerRoom());
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')offerRoom();});
+['btnXR','btnXRSetup','btnXRTitle','btnXRHud'].forEach(id=>{const el=$(id);if(el)el.onclick=()=>enterRoom();});
 
 /* A separate board for comparing movement marks under each event. Open marker-lab.html. */
 function labMarker(kind){

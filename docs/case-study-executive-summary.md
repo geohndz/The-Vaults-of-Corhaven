@@ -56,6 +56,14 @@ Online room, Geo hosting. Players loved the world events (especially fog) and na
 
 The opening still failed: banners left before they could be read, events had no durable “what just happened,” waiting seats thought the order roll was idle, siege effects hid pieces, the host’s turn dropped the table, and local CPU stacked barricades. **V1.2.0** holds banners longer, announces order to every seat, leaves a side hint after the beat, marks your troops on your turn, races the computer, and adds Tutorial under Play local. Host-turn disconnects are still open.
 
+## User test round 3 (3 Nov 2026 · **V1.4.0**)
+
+One other person, 1v1. Laptop and a Quest. The VR button never showed, so the headset seat was the Quest browser, and the trigger both clicked and tried to rotate the board.
+
+The dice lesson still reads as movement: they tried to move pieces when the beat is only a roll. The banner now stays, and it covers the pieces. The connection dropped three times, the whole table at once: the room socket is closed at five minutes. Dots above the pieces were still missing online, and the dice did not hit the volcano. **V1.4.3** puts a kingdom-colored dot above each of your troops on your turn, and the dice strike the volcano again. **V1.4.4** opens a fresh socket before that limit and keeps the banner down unless the new one fails.
+
+On the events themselves: mist was the one that created uncertainty; the others felt cosmetic (“they’re just there”). Sun beams were the least preferred. They thought an event after every round may be too often, and offered four triggers — pieces reach the middle, every other round, landing on a shrine, a double 6. Those stay suggestions.
+
 ---
 
 ## Honest scope note

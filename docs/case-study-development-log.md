@@ -3,7 +3,7 @@
 **Author:** Geo Hernandez (product design & development)  
 **Repository:** `board-game/v3`  
 **Document purpose:** A factual timeline of what shipped in this repo, with design decisions, product moments, and narrative hooks for a UX/product case study.  
-**Last updated from repo:** 3 Nov 2026 (first live user test on **V1.1.6**, `a6b122a`)
+**Last updated from repo:** 3 Nov 2026 (user test round 3 on **V1.4.0**, 1v1, laptop and Quest browser)
 
 **Related:** [Executive summary (1 page)](./case-study-executive-summary.md) · [Visual archive](./case-study/visual-archive.md) · [Case study folder](./case-study/README.md)
 
@@ -11,7 +11,7 @@
 
 ## Visual archive
 
-Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png), the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), the [marker lab](./case-study/screenshots/2026-11-02-04-marker-lab-thorns-desktop.png), the [ring post](./case-study/screenshots/2026-11-02-09-ring-post-water-desktop.png), the [wheel](./case-study/screenshots/2026-11-02-05-roulette-desktop.png) without its card, the [title screen](./case-study/screenshots/2026-11-02-10-title-banners-desktop.png) with banner actions, the [slate title](./case-study/screenshots/2026-11-02-12-title-slate-desktop.png), the [room lobby](./case-study/screenshots/2026-11-02-18-lobby-black-overlay-desktop.png) on the black overlay over the board, [Play local](./case-study/screenshots/2026-11-02-22-local-setup-overlay-desktop.png) on that same overlay, [Join a room](./case-study/screenshots/2026-11-03-01-join-room-overlay-desktop.png) on it as well, then [open rooms in that same layout](./case-study/screenshots/2026-11-03-03-join-open-rooms-desktop.png). **2026-11-03:** [purple Stones of the Pact](./case-study/screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) on the wheel and [on the road](./case-study/screenshots/2026-11-03-06-stones-pact-portals-desktop.png). First live user test the same day is **Phase 3** below (V1.1.6). Playtest follow-up **V1.2.0:** [Learn the march](./case-study/screenshots/2026-11-03-07-learn-the-march-title-desktop.png) on the title, [order as a table banner](./case-study/screenshots/2026-11-03-08-learn-march-order-desktop.png), [barricade hint](./case-study/screenshots/2026-11-03-09-hint-sheet-barricade-desktop.png). **V1.2.2:** [leave keep with dice](./case-study/screenshots/2026-11-03-11-tutorial-leave-keep-dice-desktop.png), [March event toggles](./case-study/screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png), [victory](./case-study/screenshots/2026-11-03-14-tutorial-victory-desktop.png). **V1.4.0** second playtest: [order letter-spacing, Next on](./case-study/screenshots/2026-11-03-15-tutorial-order-letter-spacing-desktop.png), [shrine burst](./case-study/screenshots/2026-11-03-16-tutorial-shrine-burst-desktop.png), [World events cycle](./case-study/screenshots/2026-11-03-17-tutorial-world-events-desktop.png).
+Screenshots are captured after meaningful product changes (see `.cursor/rules/case-study-captures.mdc`). Current set: **[visual-archive.md](./case-study/visual-archive.md)** — initial session **2026-10-27** (title, local setup, in-game HUD, style guide, join room, chronicle). **2026-11-02:** [the march forming](./case-study/screenshots/2026-11-02-01-march-forming-desktop.png), the [connection lost banner](./case-study/screenshots/2026-11-02-03-connection-banner-desktop.png), the [marker lab](./case-study/screenshots/2026-11-02-04-marker-lab-thorns-desktop.png), the [ring post](./case-study/screenshots/2026-11-02-09-ring-post-water-desktop.png), the [wheel](./case-study/screenshots/2026-11-02-05-roulette-desktop.png) without its card, the [title screen](./case-study/screenshots/2026-11-02-10-title-banners-desktop.png) with banner actions, the [slate title](./case-study/screenshots/2026-11-02-12-title-slate-desktop.png), the [room lobby](./case-study/screenshots/2026-11-02-18-lobby-black-overlay-desktop.png) on the black overlay over the board, [Play local](./case-study/screenshots/2026-11-02-22-local-setup-overlay-desktop.png) on that same overlay, [Join a room](./case-study/screenshots/2026-11-03-01-join-room-overlay-desktop.png) on it as well, then [open rooms in that same layout](./case-study/screenshots/2026-11-03-03-join-open-rooms-desktop.png). **2026-11-03:** [purple Stones of the Pact](./case-study/screenshots/2026-11-03-05-stones-pact-wheel-desktop.png) on the wheel and [on the road](./case-study/screenshots/2026-11-03-06-stones-pact-portals-desktop.png). First live user test the same day is **Phase 3** below (V1.1.6). Playtest follow-up **V1.2.0:** [Learn the march](./case-study/screenshots/2026-11-03-07-learn-the-march-title-desktop.png) on the title, [order as a table banner](./case-study/screenshots/2026-11-03-08-learn-march-order-desktop.png), [barricade hint](./case-study/screenshots/2026-11-03-09-hint-sheet-barricade-desktop.png). **V1.2.2:** [leave keep with dice](./case-study/screenshots/2026-11-03-11-tutorial-leave-keep-dice-desktop.png), [March event toggles](./case-study/screenshots/2026-11-03-13-tutorial-march-toggles-desktop.png), [victory](./case-study/screenshots/2026-11-03-14-tutorial-victory-desktop.png). **V1.4.0** second playtest: [order letter-spacing, Next on](./case-study/screenshots/2026-11-03-15-tutorial-order-letter-spacing-desktop.png), [shrine burst](./case-study/screenshots/2026-11-03-16-tutorial-shrine-burst-desktop.png), [World events cycle](./case-study/screenshots/2026-11-03-17-tutorial-world-events-desktop.png). User test round 3 the same night (1v1, laptop and a Quest browser) is **Phase 4** below. No new screens. **V1.4.1:** [Play in the room on the title](./case-study/screenshots/2026-11-03-18-title-play-in-the-room-desktop.png) and [on the board](./case-study/screenshots/2026-11-03-19-room-button-on-board-desktop.png).
 
 ---
 
@@ -193,6 +193,50 @@ Each beat is one explanation, then a fade, then the next. That matches what test
 
 ---
 
+### Phase 4 — User test round 3 (3 Nov 2026)
+
+**Build tested:** **V1.4.0**. One other person, 1v1. One seat on a laptop, the other on a Quest. The in-game VR button never appeared, so the headset seat was the Quest browser.
+
+This is a narrower table than round 1: one opponent, two devices, after the tutorial and the V1.4.0 pass. Some notes are things that failed in play. Some are how the game felt. The cadence notes at the end are ideas they offered.
+
+#### What failed in the session
+
+| Finding | What they said |
+|---------|----------------|
+| **Dice lesson teaches the wrong verb** | In the tutorial’s dice portion it was not clear that you only roll. They tried to move the pieces. |
+| **Banner covers the board** | The notification stays up, takes too much space, and overlaps the pieces. Round 1 needed longer to read. This complaint is the size and where it sits. |
+| **Connection dropped three times** | The 1v1 dropped three times in one sitting. Online trust is still open, now with a single opponent. |
+| **Markers still missing online** | The dots above the pieces did not show. **V1.2.0** was meant to mark your troops on your turn, and the four-player pass already reported a missing marker. Online, they are still absent. |
+| **Dice miss the volcano** | During ash, the dice did not collide with the volcano. The 28 Oct pass had the dice striking the cone. |
+| **Trigger clicks and orbits** | In the headset browser, the trigger selected and also tried to rotate the board, so clicking a piece or a die was hard. |
+| **No VR entry** | The VR button did not show. They played in the Quest’s browser. The board was never placed in the room. |
+
+#### Comments on how the game felt
+
+- They pointed at the **mist** because it created a feeling of uncertainty. The other world events felt cosmetic. Their words: “they’re just there.” Round 1 had called the fog a hit. This player liked the mist for the uncertainty, and described the rest as atmosphere.
+- **Sun beams** (the sun lances, the Searing Seal) were the least preferred world event.
+
+#### How often a world event should fire
+
+They thought an event after every round may be too often. These are their suggestions. The session did not choose one.
+
+- After pieces reach the middle
+- Every other round
+- When someone lands on a shrine
+- When someone rolls a double 6
+
+#### Creator reflection
+
+The opening gap narrowed to one beat: the dice portion still reads as if you march the pieces. Online, the drops continue, and the markers promised since **V1.2.0** are still missing. The banner now stays, and it covers the troops. Mist and the sun beams are taste. The four cadence ideas stay theirs until a later rules pass. VR entry failed before passthrough could be judged; the trigger conflict is from playing the flat board inside the headset browser.
+
+**V1.4.1:** Play in the room is on the title and on the board. **V1.4.2** shows it only when the browser can start a headset session (`immersive-ar`, or `immersive-vr` if the room mode is unavailable). In the flat Quest panel the trigger has to travel before the board turns, so a click can land. [Title](./case-study/screenshots/2026-11-03-18-title-play-in-the-room-desktop.png), [on the board](./case-study/screenshots/2026-11-03-19-room-button-on-board-desktop.png). Passthrough on a headset is still unconfirmed.
+
+**V1.4.3:** On your turn a kingdom-colored dot sits above each of your troops, including online and the ones still in the yard. While the volcano is up, the throw uses the cone’s collider, then shows the faces the room already drew. [Dots](./case-study/screenshots/2026-11-03-21-piece-dots-desktop.png), [dice on the cone](./case-study/screenshots/2026-11-03-22-dice-volcano-desktop.png).
+
+**V1.4.4:** The room socket is closed at five minutes, which is why a whole table dropped together three or four times a match. Each seat opens a fresh socket before that, a few seconds apart, and the connection banner stays down unless the new socket fails.
+
+---
+
 ## Key product decisions (case-study bullets)
 
 ### 1. One HTML surface, three modes
@@ -220,6 +264,8 @@ Flow: title → create/join → name → **banner pick** → waiting room → ma
 Shift from persistent turn card messaging to **ephemeral toasts** for pivotal beats. **Design principle:** *Respect attention*—especially when waiting on others’ 20s turns.
 
 **Playtest (V1.1.6):** the glance was too short, and the first rounds still needed a durable “what just happened” readout. Next pass: keep the banner, then a side chip that slides open for the March, Greed, barricades, and the rest.
+
+**Playtest round 3 (V1.4.0):** the banner now stays. This player said it takes too much of the board and sits on the pieces. Duration and footprint are separate problems.
 
 ### 7. Timer fairness
 
@@ -274,7 +320,7 @@ Use these pairs for before/after visuals in Figma or screenshots from git checko
    - Online lobby + kingdom banners  
    - Turn timer + role-based HUD (Oct 27)  
    - WebXR passthrough without splitting the brand  
-5. **Outcomes** — First live table on **V1.1.6** (3 Nov 2026): world events and table politics landed; opening rounds, banner duration, host disconnects, and piece legibility did not. See Phase 3.
+5. **Outcomes** — First live table on **V1.1.6** (3 Nov 2026): world events and table politics landed; opening rounds, banner duration, host disconnects, and piece legibility did not. See Phase 3. Round 3 the same night (**V1.4.0**, 1v1, laptop and Quest browser): dice lesson still reads as movement, the banner covers the pieces, the table dropped together on the five-minute socket limit, mist was the event with stakes, sun beams the least preferred. **V1.4.3** puts the dots back on your turn and sends the dice into the volcano. **V1.4.4** refreshes the room socket before that close. Cadence ideas stay suggestions. See Phase 4.
 6. **Reflection** — Teach the first two rounds (side hints + scripted tutorial under Play local); keep the siege spectacle once players can still find their troops.
 
 ---
@@ -306,7 +352,8 @@ Use this section in your own doc or Notion— the repo cannot supply it.
 - [ ] When did rule design start? What changed from classic Ludo?
 - [ ] Sketches / FigJam / playtest notes from before 5 Oct 2026
 - [ ] Why v3 folder name—what shipped in v1/v2?
-- [x] First live user test (3 Nov 2026, **V1.1.6**, online + local CPU notes) — Phase 3 above. Still open: Quest playtest, quoted lines if you want them later.
+- [x] First live user test (3 Nov 2026, **V1.1.6**, online + local CPU notes) — Phase 3 above. Quoted lines still open if you want them later.
+- [x] User test round 3 (3 Nov 2026, **V1.4.0**, 1v1, laptop + Quest browser) — Phase 4 above. **V1.4.2** shows Play in the room only when a headset session is available, and keeps a trigger click from turning the board. **V1.4.3** marks your troops on your turn and makes the dice strike the volcano. **V1.4.4** refreshes the room socket before the five-minute close. Passthrough on a headset is still unconfirmed.
 - [ ] Deployment URL and analytics (if any)
 - [x] Phase 3 next work (from the 3 Nov table): slower banners, side-sheet hints, order-roll banner for every seat, on-turn piece glow, CPU barricade weight, scripted tutorial under Play local — **V1.2.0**. Still open: host-turn disconnects.
 

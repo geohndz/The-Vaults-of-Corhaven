@@ -82,7 +82,11 @@
 				LEFT: THREE.MOUSE.ROTATE,
 				MIDDLE: THREE.MOUSE.DOLLY,
 				RIGHT: THREE.MOUSE.PAN
-			}; // Touch fingers
+			};
+			// Pixels the pointer must travel before a drag orbits. 0 keeps a mouse click immediate.
+			this.rotateThreshold = 0;
+
+			// Touch fingers
 
 			this.touches = {
 				ONE: THREE.TOUCH.ROTATE,
@@ -292,6 +296,7 @@
 			const panOffset = new THREE.Vector3();
 			let zoomChanged = false;
 			const rotateStart = new THREE.Vector2();
+			let rotateArmed = true;
 			const rotateEnd = new THREE.Vector2();
 			const rotateDelta = new THREE.Vector2();
 			const panStart = new THREE.Vector2();
@@ -448,6 +453,7 @@
 			function handleMouseDownRotate( event ) {
 
 				rotateStart.set( event.clientX, event.clientY );
+				rotateArmed = !( scope.rotateThreshold > 0 );
 
 			}
 
@@ -466,6 +472,14 @@
 			function handleMouseMoveRotate( event ) {
 
 				rotateEnd.set( event.clientX, event.clientY );
+				if ( ! rotateArmed ) {
+
+					if ( rotateEnd.distanceTo( rotateStart ) < scope.rotateThreshold ) return;
+					rotateArmed = true;
+					rotateStart.copy( rotateEnd );
+					return;
+
+				}
 				rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
 				const element = scope.domElement;
 				rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height

@@ -5,6 +5,9 @@ import { getStore } from './store.js';
 import * as G from './game.js';
 
 const ID_RE = /^[A-Za-z0-9_-]{16,64}$/;
+/* Vercel closes the socket at five minutes. A client opens the next one first.
+   Hold the away mark so that swap does not look like the player left. */
+const AWAY_HOLD_MS = 2000;
 const local = new Map(); // room code -> { conns:Set, timer, unsub }
 const browsers = new Set();
 let openUnsub = null;
@@ -215,7 +218,9 @@ export function attach(wss) {
         const code = conn.code;
         if (!code) return;
         await unwatch(conn);
-        if (!conn.left && conn.id) await mutate(code, (room, now) => G.setAway(room, conn.id, true, now, conn.connId));
+        if (conn.left || !conn.id) return;
+        await new Promise((resolve) => setTimeout(resolve, AWAY_HOLD_MS));
+        await mutate(code, (room, now) => G.setAway(room, conn.id, true, now, conn.connId));
       }).catch((e) => console.error('room close failed', e));
     });
   });
