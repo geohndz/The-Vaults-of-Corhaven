@@ -41,10 +41,8 @@ function eventMs(e) {
     case 'thirdDouble': return 4000;
     case 'noMove': return 2800;
     case 'forfeit': return 900;
-    case 'world': {
-      const intro = { flood: 5500, ash: 4200, wild: 3600, mist: 7000, sun: 4200, ways: 3600 };
-      return 1750 + (intro[e.id] || 2000);
-    }
+    case 'world': return e.change ? (e.id ? 7000 : 2600) : 0;
+    case 'finish': return 2600;
     case 'move': {
       const span = R.walkSpan({ h: e.h, p: e.from, at: e.fromAt }, { np: e.to, at: e.at, shift: e.shift, land: e.land, exit: e.exit });
       return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
@@ -54,7 +52,7 @@ function eventMs(e) {
 }
 
 export function newRoom(code, now) {
-  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true };
+  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true, ranked: false };
 }
 
 export const isJoinable = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < MAX_SEATS;
@@ -117,6 +115,7 @@ export function setOpts(room, id, msg) {
   if (id !== room.hostId) return 'not-host';
   if (typeof msg.private === 'boolean') room.private = msg.private;
   if (typeof msg.worlds === 'boolean') room.worlds = msg.worlds;
+  if (typeof msg.ranked === 'boolean') room.ranked = msg.ranked;
   return null;
 }
 
@@ -161,8 +160,9 @@ export function start(room, id, now) {
     winner: null,
     winReason: null,
     world: null,
-    worldBag: [],
     worlds: room.worlds !== false,
+    ranked: !!room.ranked,
+    places: [],
     diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now, doubles: 0, greed: 0, rounds: 0, playerTurns: 0, worldPicks: {} },
     themeAt: now + MATCH_CUE_MS,
   };
@@ -248,36 +248,22 @@ function beginTurn(room, again) {
   emit(room, { type: 'turn', h: curH(room), again: !!again });
 }
 
-/* Deals every world event once, then shuffles again. A fresh bag does not open on the event that just ended. */
-export function takeWorld(game, rng = (n) => randomInt(n)) {
-  const ids = Object.keys(R.WORLD);
-  if (!Array.isArray(game.worldBag) || !game.worldBag.length) {
-    const bag = ids.slice();
-    for (let i = bag.length - 1; i > 0; i--) {
-      const j = rng(i + 1);
-      const t = bag[i];
-      bag[i] = bag[j];
-      bag[j] = t;
-    }
-    const last = bag.length - 1;
-    if (game.world && bag[last] === game.world && last > 0) {
-      const j = rng(last);
-      const t = bag[last];
-      bag[last] = bag[j];
-      bag[j] = t;
-    }
-    game.worldBag = bag;
+/* Every round is announced so each seat can count it. change is true only when the mist arrives or lifts. */
+function turnWorld(room, rounds) {
+  const g = room.game;
+  const id = R.worldAfter(rounds);
+  const change = id !== (g.world || null);
+  g.world = id;
+  if (change && id) {
+    const d = diceStatsOf(g);
+    d.worldPicks[id] = (d.worldPicks[id] || 0) + 1;
   }
-  game.world = game.worldBag.pop();
-  return game.world;
+  emit(room, { type: 'world', id, change });
 }
 
-function openWorld(room) {
-  const id = takeWorld(room.game);
-  const d = diceStatsOf(room.game);
-  d.worldPicks[id] = (d.worldPicks[id] || 0) + 1;
-  emit(room, { type: 'world', id });
-}
+const isHome = (g, h) => Array.isArray(g.places) && g.places.includes(h);
+/* Kingdoms still on the road: not forfeited, and not already placed in a ranked match. */
+const racers = (room) => room.game.players.filter((p) => !isOut(room, p.h) && !isHome(room.game, p.h));
 
 function nextTurn(room) {
   const g = room.game;
@@ -287,15 +273,28 @@ function nextTurn(room) {
   let to = from;
   for (let k = 1; k <= g.players.length; k++) {
     const i = (g.cur + k) % g.players.length;
-    if (!isOut(room, g.players[i].h)) { to = i; break; }
+    if (!isOut(room, g.players[i].h) && !isHome(g, g.players[i].h)) { to = i; break; }
   }
   g.cur = to;
-  /* A round is one turn each. Wrapping back, or staying on the only kingdom left, is when the March turns. */
+  /* A round is one turn each. Wrapping back, or staying on the only kingdom left, ends it. */
   if (to <= from) {
     diceStatsOf(g).rounds = (diceStatsOf(g).rounds || 0) + 1;
-    if (g.worlds !== false) openWorld(room);
+    if (g.worlds !== false) turnWorld(room, diceStatsOf(g).rounds);
   }
   beginTurn(room, false);
+}
+
+/* Ranked play: a kingdom with every troop home takes the next place, and the rest march on until one is left. */
+function placeKingdom(room, h) {
+  const g = room.game;
+  g.places.push(h);
+  emit(room, { type: 'finish', h, place: g.places.length });
+  const left = racers(room);
+  if (left.length <= 1) {
+    left.forEach((p) => g.places.push(p.h));
+    return win(room, g.places[0], 'vault');
+  }
+  nextTurn(room);
 }
 
 function roll(room, auto) {
@@ -373,7 +372,7 @@ function applyMove(room, opt, auto) {
   const goal = pc.p === GOAL;
   if (goal) { R.noteVault(g.players.find((p) => p.h === pc.h)); g.pending.push({ v: BONUS, bonus: true }); }
   emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
-  if (g.pieces.filter((x) => x.h === pc.h).every((x) => x.p === GOAL)) return win(room, pc.h, 'vault');
+  if (R.allHome(g.pieces, pc.h)) return g.ranked ? placeKingdom(room, pc.h) : win(room, pc.h, 'vault');
   continueTurn(room);
 }
 
@@ -385,7 +384,7 @@ function win(room, h, reason) {
   g.deadline = null;
   g.winner = h;
   g.winReason = reason;
-  emit(room, { type: 'win', h, reason, diceStats: g.diceStats ? R.diceReport(g.diceStats) : null });
+  emit(room, { type: 'win', h, reason, places: g.places && g.places.length ? g.places.slice() : null, diceStats: g.diceStats ? R.diceReport(g.diceStats) : null });
   noteMatch(room, reason === 'forfeit' ? 'forfeit' : 'vault');
 }
 
@@ -462,8 +461,12 @@ function forfeit(room, seat, reason, now) {
   g.pieces = g.pieces.filter((pc) => pc.h !== h);
   step(room, now, () => {
     emit(room, { type: 'forfeit', h, name: seat.name, reason });
-    const remaining = g.players.filter((p) => !isOut(room, p.h));
+    const remaining = racers(room);
     if (remaining.length <= 1) {
+      if (g.places && g.places.length) {
+        remaining.forEach((p) => g.places.push(p.h));
+        return win(room, g.places[0], 'vault');
+      }
       if (remaining.length) return win(room, remaining[0].h, 'forfeit');
       room.status = 'closed';
       room.closed = 'empty';
@@ -562,6 +565,7 @@ export function publicView(room) {
     closed: room.closed,
     private: !!room.private,
     worlds: room.worlds !== false,
+    ranked: !!room.ranked,
     hostPid: host ? host.pid : null,
     seats: room.seats.map(({ pid, name, h, away, awaySince, out }) => ({ pid, name, h, away, awaySince, out })),
     seq: room.seq,
@@ -579,6 +583,8 @@ export function publicView(room) {
       winReason: room.game.winReason,
       world: room.game.world,
       worlds: room.game.worlds !== false,
+      ranked: !!room.game.ranked,
+      places: room.game.places || [],
       themeAt: room.game.themeAt,
       diceStats: room.game.diceStats ? R.diceReport(room.game.diceStats) : null,
     },

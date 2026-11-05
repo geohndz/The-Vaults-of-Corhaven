@@ -325,6 +325,25 @@ What failed in play: the tutorial dice beat reads as moving pieces, the banner o
 | 43 | [2026-11-03-21-piece-dots-desktop.png](./screenshots/2026-11-03-21-piece-dots-desktop.png) | Your turn | A gold dot above each Solmere troop. The other kingdoms stay unmarked |
 | 44 | [2026-11-03-22-dice-volcano-desktop.png](./screenshots/2026-11-03-22-dice-volcano-desktop.png) | Heartfire | The dice meet the cone and finish on the road, on the faces the roll already drew |
 
+## Session: 2026-11-04 — User test round 4 (no new screens)
+
+**Trigger:** Round 4 on **V1.4.4**, with a teacher sitting in. Notes live in the [development log, Phase 5](../case-study-development-log.md#phase-5--user-test-round-4-4-nov-2026). No screens captured during the session.
+
+What made play harder: the pieces look alike, world events and banners move too fast, the volcano is the hardest event to read, and the sun beams' scorch hides the road. After the tutorial, players asked what gets a troop out of the keep and how Geo was getting bonus moves. What landed: easy to get into, the sounds and the hop, and mist, sun beams and the Stones. Requests: second and third place, a color blind or high-contrast mode, and from the teacher, a grittier board in darker crimson.
+
+## Session: 2026-11-05 — Mist only, and ranked play (V1.5.0)
+
+**Trigger:** Round 4. Five of the six world events hid the road, the troops, or what to tap. The wheel and those five come out of play. The mist, the event players asked for, now arrives on its own after every third round and lifts after the next. Players also asked to keep playing for second and third.
+
+**Environment:** Local `node scripts/local.js`. The mist and victory shots are an all-computer local match, with the round count and three kingdoms moved forward so the moments arrive sooner.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 45 | [2026-11-05-01-play-local-ranked-toggle-desktop.png](./screenshots/2026-11-05-01-play-local-ranked-toggle-desktop.png) | Play local | Mist every third round replaces The March (world events). Ranked sits under it, off by default |
+| 46 | [2026-11-05-02-mist-third-round-desktop.png](./screenshots/2026-11-05-02-mist-third-round-desktop.png) | Round 3 | The mist arrives with its banner and the side chip. No wheel opens first |
+| 47 | [2026-11-05-03-ranked-victory-places-desktop.png](./screenshots/2026-11-05-03-ranked-victory-places-desktop.png) | Victory, ranked | One row per place, crest and name. The roster behind reads “2nd place” and “3rd place” |
+| 48 | [2026-11-05-04-room-lobby-ranked-toggle-desktop.png](./screenshots/2026-11-05-04-room-lobby-ranked-toggle-desktop.png) | Room lobby, host | The same two toggles beside Private. The server keeps the ranked choice for the room |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)

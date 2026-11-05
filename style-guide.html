@@ -875,7 +875,7 @@ button{font:inherit;color:inherit;cursor:pointer}
           <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
           <p><strong>Doubles.</strong> Rolling doubles lets you roll again after the movement. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
           <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
-          <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
+          <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven. In a ranked match the others march on, and the next kingdoms home take second and third.</p>
           <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
           <button class="primary" type="button">Back to the board</button>
         </div>
@@ -949,15 +949,17 @@ button{font:inherit;color:inherit;cursor:pointer}
       <li><q>{Kingdom} claims the gold of Corhaven.</q></li>
     </ul>
 
-    <h3>The March</h3>
+    <h3>The mist</h3>
     <ul>
-      <li><q>The March turns.</q> <span class="who">once every kingdom has marched</span></li>
-      <li><q>The Drowning Tide. Tidereach's marches are two squares longer.</q></li>
-      <li><q>The Heartfire Rising. Emberhold's marches are two squares longer.</q></li>
-      <li><q>The Wild Awakening. Thornwald's marches are two squares longer.</q></li>
-      <li><q>The Searing Seal. Solmere's marches are two squares longer.</q></li>
-      <li><q>The Veil of Mist. You see your own troops, and an enemy only on the next square.</q></li>
-      <li><q>The Stones of the Pact. Land on 14, 31, 48 or 65 and you are carried to the paired stone.</q></li>
+      <li><q>The Veil of Mist. You see your own troops, and an enemy only on the next square.</q> <span class="who">after every third round</span></li>
+      <li><q>The mist lifts. Every troop on the road is in sight again.</q> <span class="who">after the next round</span></li>
+    </ul>
+
+    <h3>Ranked play</h3>
+    <ul>
+      <li><q>{Kingdom} takes {first|second|third} place. All four troops reached the vault. The others march on for the places behind.</q> <span class="who">or “You take…”</span></li>
+      <li>Tally: <q>{Kingdom} · 1st place</q></li>
+      <li>Victory sheet: one row per place, <q>1st</q> to <q>4th</q>, then <q>Left</q> for a kingdom that forfeited first</li>
     </ul>
 
     <h3>Tally</h3>

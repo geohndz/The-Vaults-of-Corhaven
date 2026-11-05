@@ -151,21 +151,20 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .hint:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(10,8,14,.55);backdrop-filter:blur(2px)}
 .modal.open{display:flex}
-#march{background:transparent;backdrop-filter:none}
-.wheelbox{position:relative;width:min(280px,72vw);margin:0 auto;filter:drop-shadow(0 14px 22px rgba(0,0,0,.5))}
 #lab{position:fixed;z-index:40;left:14px;top:14px;width:min(440px,calc(100vw - 28px));display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:rgba(14,18,24,.9);border:1px solid var(--gold);border-radius:12px;color:var(--parch)}
 #lab p{margin:0;font-size:14px;line-height:1.35;color:var(--parch-dim)}
 #lab .row{display:flex;flex-wrap:wrap;gap:6px}
 #lab button{padding:6px 10px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch);font-size:14px}
 #lab button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
-.wheel{width:100%;aspect-ratio:1;border-radius:50%;border:3px solid var(--gold);
-  background:conic-gradient(#1F4E9C 0deg 60deg,#B3261E 60deg 120deg,#2E7D32 120deg 180deg,#D9A21B 180deg 240deg,#8A93A0 240deg 300deg,#7A3DB5 300deg 360deg);
-  box-shadow:inset 0 0 0 12px rgba(12,16,22,.45),0 12px 28px rgba(0,0,0,.45)}
-.wheelpointer{position:absolute;left:50%;top:-4px;z-index:1;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:16px solid var(--gold-bright)}
 .sheet{width:min(480px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px 26px 22px}
 .sheet h1{font-family:'Pirata One','UnifrakturCook',Georgia,serif;font-weight:400;font-size:40px;line-height:1.02;margin:0 0 8px;color:var(--gold-bright)}
 .sheet h2{font-size:18px;margin:18px 0 8px}
 .sheet p{margin:0 0 10px;color:var(--parch-dim)}
+.places{list-style:none;margin:4px 0 16px;padding:0;display:grid;gap:8px}
+.places li{display:flex;align-items:center;gap:12px;color:var(--parch)}
+.places .crest{width:22px;height:26px}
+.places b{min-width:3.2em;color:var(--gold-bright)}
+.places .left{opacity:.55}
 .seg{display:flex;border:1.5px solid var(--gold);border-radius:10px;overflow:hidden}
 .seg button{flex:1;padding:8px 0;background:transparent;border:0;font-size:18px;font-weight:600;color:var(--parch-dim)}
 .seg button+button{border-left:1.5px solid rgba(154,171,188,.5)}
@@ -367,10 +366,6 @@ body.at-lesson #hintDock{z-index:21}
 .lessonside h1{margin:0 0 8px;font-size:clamp(28px,4vw,42px)}
 .lessonside p{margin:0 0 18px;max-width:34ch;color:var(--parch);font-size:18px;line-height:1.62;letter-spacing:.07em;word-spacing:.14em;text-shadow:0 1px 2px rgba(0,0,0,.85)}
 .lessonside .localactions{position:relative;left:auto;right:auto;bottom:auto;padding:0;background:none}
-.lessonworlds{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
-.lessonworlds[hidden]{display:none}
-.lessonworlds button{flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--parch-dim);font-size:15px}
-.lessonworlds button[aria-pressed="true"]{background:var(--gold);color:var(--iron);font-weight:700}
 .lessonnav{display:flex;gap:8px;margin:0 0 4px}
 .lessonnav button{flex:1;margin:0;padding:12px 8px;border:0;background:none;color:var(--gold-bright);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9)}
 .lessonnav button:hover,.lessonnav button:focus-visible{color:var(--parch)}
@@ -380,7 +375,7 @@ body.at-lesson #hintDock{z-index:21}
   #hintSheet{width:min(300px,calc(100vw - 44px))}
   body.at-lesson #bottomBar{left:50%;right:auto;transform:translateX(-50%);align-items:center;bottom:calc(env(safe-area-inset-bottom,0px) + 210px);max-width:none}
 }
-@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,.wheel,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;transition:none}#hintDock:not(.open) #hintSheet{visibility:hidden}#lesson.demo .lessonside{opacity:1}}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;transition:none}#hintDock:not(.open) #hintSheet{visibility:hidden}#lesson.demo .lessonside{opacity:1}}
 </style>
 </head>
 <body class="at-title">
@@ -503,7 +498,8 @@ body.at-lesson #hintDock{z-index:21}
         </form>
         <div class="lobbypeople" id="lobbyList" aria-label="Players"></div>
         <div class="roomopts" id="roomOpts" hidden>
-          <label class="check" for="optWorlds">The March<input type="checkbox" id="optWorlds" checked></label>
+          <label class="check" for="optWorlds">Mist every third round<input type="checkbox" id="optWorlds" checked></label>
+          <label class="check" for="optRanked">Ranked — play on for 2nd and 3rd<input type="checkbox" id="optRanked"></label>
           <label class="check" for="optPrivate">Private — code only<input type="checkbox" id="optPrivate"></label>
         </div>
       </aside>
@@ -540,7 +536,8 @@ body.at-lesson #hintDock{z-index:21}
           <button role="radio" data-n="4" aria-checked="true">4</button>
         </div>
         <div class="setupopts">
-          <label class="check" for="setupWorlds">The March (world events)<input type="checkbox" id="setupWorlds" checked></label>
+          <label class="check" for="setupWorlds">Mist every third round<input type="checkbox" id="setupWorlds" checked></label>
+          <label class="check" for="setupRanked">Ranked — play on for 2nd and 3rd<input type="checkbox" id="setupRanked"></label>
         </div>
       </aside>
       <div class="localmain">
@@ -563,14 +560,6 @@ body.at-lesson #hintDock{z-index:21}
         <p class="lessonstep" id="lessonStep"></p>
         <h1 id="lessonTitle"></h1>
         <p id="lessonBody"></p>
-        <div class="lessonworlds" id="lessonWorlds" hidden>
-          <button type="button" data-world="flood">Tide</button>
-          <button type="button" data-world="ash">Heartfire</button>
-          <button type="button" data-world="wild">Wild</button>
-          <button type="button" data-world="sun">Seal</button>
-          <button type="button" data-world="mist">Mist</button>
-          <button type="button" data-world="ways">Stones</button>
-        </div>
         <div class="lessonnav">
           <button type="button" id="btnLessonBack">Back</button>
           <button type="button" id="btnLessonAgain">Show again</button>
@@ -581,13 +570,6 @@ body.at-lesson #hintDock{z-index:21}
         </div>
       </aside>
     </div>
-  </div>
-</div>
-
-<div class="modal" id="march" role="dialog" aria-modal="true" aria-label="The March turns">
-  <div class="wheelbox">
-    <div class="wheelpointer" aria-hidden="true"></div>
-    <div class="wheel" id="wheel"></div>
   </div>
 </div>
 
@@ -602,8 +584,8 @@ body.at-lesson #hintDock{z-index:21}
     <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
     <p><strong>Doubles.</strong> Rolling doubles lets you roll again after the movement. If two of your troops are locked in a phalanx, one of them marches with that double before you choose the other die. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
     <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
-    <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven.</p>
-    <p><strong>The March.</strong> Once every kingdom has marched, the Sundered March turns. A wheel picks one event, and it holds until the March turns again. The Drowning Tide, the Heartfire Rising, the Wild Awakening and the Searing Seal each lengthen one kingdom's movements by two squares. The Veil of Mist hides enemy troops farther than the next square, and it hides the markers that would give those troops away. The Stones of the Pact carry a troop that lands on square 14, 31, 48 or 65 to the stone opposite. A troop already on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
+    <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven. In a ranked match the others march on, and the next kingdoms home take second and third.</p>
+    <p><strong>The Veil of Mist.</strong> After every third round the mist rolls in, and it lifts after the next round. While it is up you see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
     <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
     <button class="primary" id="btnRulesClose">Back to the board</button>
   </div>
@@ -617,7 +599,7 @@ body.at-lesson #hintDock{z-index:21}
       <button type="button" data-lore="kingdoms" aria-pressed="false">The kingdoms</button>
       <button type="button" data-lore="march" aria-pressed="false">The Sundered March</button>
       <button type="button" data-lore="kings" aria-pressed="false">The kings</button>
-      <button type="button" data-lore="events" aria-pressed="false">World events</button>
+      <button type="button" data-lore="events" aria-pressed="false">The Veil of Mist</button>
     </nav>
     <div class="aboutbody">
       <section data-lore="chronicle">
@@ -645,7 +627,7 @@ body.at-lesson #hintDock{z-index:21}
         <h2>The Sundered March</h2>
         <p>The March is the ring of land around the dead city. No kingdom claims it. The Pact of Four Stones forbade armies from entering, and for a hundred years they obeyed, because the ground itself did not.</p>
         <p>The old King's Road still runs there: sixty-eight squares around the ruins, counted the long way, past shrines where no blood may be spilled and past the four gates that open back into the keeps. Each kingdom's hidden passage leaves that road and drops seven squares to its own vault.</p>
-        <p>The road does not stay quiet. Once every kingdom has marched, the March turns. A wheel chooses one weather, and that weather holds until every kingdom has marched again. The Drowning Tide, the Heartfire Rising, the Wild Awakening, the Searing Seal, the Veil of Mist, or the Stones of the Pact. The troops are already on the road when it happens. They march through it.</p>
+        <p>The road does not stay quiet. Every third time the kingdoms have all marched, a mist comes down over the March and hides the road beyond a few paces. It lifts once every kingdom has marched again. The troops are already on the road when it happens. They march through it.</p>
       </section>
       <section data-lore="kings" hidden>
         <h2>The kings</h2>
@@ -660,20 +642,8 @@ body.at-lesson #hintDock{z-index:21}
         <p>Lirra took the letter to the salt stairs, where the wind pulls paper apart, and let it go. She has posted her troops on the roads that lead into the March and called it a watch against smugglers. The vault, if it is there, will have to pay her to pass.</p>
       </section>
       <section data-lore="events" hidden>
-        <h2>World events</h2>
-        <p>The wheel names one of these, and it holds until the March turns again.</p>
-        <h3>The Drowning Tide</h3>
-        <p>Ancient waterways burst across the old roads. Tidereach's movements are two squares longer while the water is up.</p>
-        <h3>The Heartfire Rising</h3>
-        <p>Lava breaks from the scorched ruins of Corhaven. Emberhold's movements are two squares longer under the ash.</p>
-        <h3>The Wild Awakening</h3>
-        <p>Roots and thorned vines reclaim the abandoned roads. Thornwald's movements are two squares longer while the wild is awake.</p>
-        <h3>The Searing Seal</h3>
-        <p>A strange golden light uncovers paths hidden for centuries. Solmere's movements are two squares longer in that light.</p>
-        <h3>The Veil of Mist</h3>
-        <p>An unnatural fog hides everything beyond a short distance. You see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
-        <h3>The Stones of the Pact</h3>
-        <p>Four stones on the road, squares 14, 31, 48 and 65, trade places with the stone opposite. Land on one and you are carried to its pair. A troop already standing on the stone you enter stays there. An enemy on the stone you arrive at falls.</p>
+        <h2>The Veil of Mist</h2>
+        <p>An unnatural fog hides everything beyond a short distance. It comes down after every third round and lifts after the next. While it holds, you see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
       </section>
     </div>
     <button class="secondary aboutback" id="btnAboutBack" type="button">Back</button>
@@ -696,6 +666,7 @@ body.at-lesson #hintDock{z-index:21}
   <div class="sheet panel">
     <h1 id="winTitle">Victory</h1>
     <p id="winText"></p>
+    <ol class="places" id="winPlaces" aria-label="Places" hidden></ol>
     <button class="primary" id="btnAgain">Play again</button>
     <button class="secondary" id="btnChange">Change players</button>
   </div>
@@ -704,12 +675,12 @@ body.at-lesson #hintDock{z-index:21}
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=move3"></script>
+<script src="./lib/rules.js?v=mist1"></script>
 <script src="./lib/siege-fx.js?v=siege18"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.4.4';
+const GAME_VERSION='1.5.0';
 
 /* ================= Board definition (Parchís layout) ================= */
 /* Arms are 3 lanes wide and 8 squares long. Squares are numbered 1–68, moving counterclockwise. */
@@ -1373,7 +1344,6 @@ const AXE_SRC='assets/Music/Axe Attack 1.wav';
 const KINGDOM_SRC='assets/Music/Fantasy Positive Achievement.wav';
 const START_SRC='assets/Music/Start Game 1.wav';
 const PRESS_SRC='assets/Music/Start Game 3.wav';
-const WHEEL_SRC='assets/Music/prize-wheel.wav';
 const SPELL_SRC='assets/Music/Magic Spell 1.wav';
 const SHRINE_SRC='assets/Music/Holy Magic Resurrection Spell Cast 2.wav';
 const winAudio=new Audio('assets/Music/win.wav');
@@ -1384,14 +1354,14 @@ const startAudio=new Audio(START_SRC);
 startAudio.preload='auto';
 function loadBuffers(){
   const ctx=audioCtx();if(!ctx)return;
-  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC,WHEEL_SRC,SPELL_SRC,SHRINE_SRC]).forEach(src=>{
+  STEP_SRCS.concat(DICE_SRCS,[TURN_SRC,HOVER_SRC,CANNON_SRC,AXE_SRC,KINGDOM_SRC,START_SRC,PRESS_SRC,SPELL_SRC,SHRINE_SRC]).forEach(src=>{
     if(buffers.has(src))return;
     buffers.set(src,null);
     fetch(src).then(r=>r.arrayBuffer()).then(b=>ctx.decodeAudioData(b)).then(buf=>{buffers.set(src,buf);}).catch(()=>buffers.delete(src));
   });
 }
 const clips=new Set();
-let kingdomNode=null,pressNode=null,wheelNode=null;
+let kingdomNode=null,pressNode=null;
 function ensureTheme(){
   if(themeHold)return;
   wireTheme();applyGains();
@@ -1617,26 +1587,6 @@ const sfx={
     setBase(bannerAudio,0.55);
     const p=bannerAudio.play();if(p)p.catch(()=>{});
   },
-  /* prize-wheel.wav already slows; the wheel's turn is timed to its clicks. */
-  wheel(){
-    if(!fxOn||winPlaying)return;
-    if(wheelNode){try{wheelNode.stop();}catch(e){}liveSources.delete(wheelNode);wheelNode=null;}
-    clips.forEach(a=>{if(a.dataset.kind==='wheel'){a.pause();clips.delete(a);}});
-    const ctx=audioCtx();const buf=buffers.get(WHEEL_SRC);
-    if(ctx&&buf){
-      const node=ctx.createBufferSource();
-      node.buffer=buf;
-      const g=ctx.createGain();
-      g.gain.value=0.6;
-      node.connect(g);g.connect(fxGain);
-      liveSources.add(node);
-      wheelNode=node;
-      node.onended=()=>{liveSources.delete(node);if(wheelNode===node)wheelNode=null;};
-      node.start(ctx.currentTime);
-      return;
-    }
-    playClip(WHEEL_SRC,0.6,0,'wheel');
-  },
   spell(){
     if(!fxOn||winPlaying)return;
     if(!playBuffer(SPELL_SRC,0.55))playClip(SPELL_SRC,0.55);
@@ -1683,7 +1633,7 @@ document.addEventListener('click',e=>{
 },true));
 
 /* ================= Game rules ================= */
-const S={players:[],cur:0,phase:'idle',pending:[],sel:0,dbl:false,doubles:0,gid:0,config:null,world:null,worldBag:null};
+const S={players:[],cur:0,phase:'idle',pending:[],sel:0,dbl:false,doubles:0,gid:0,config:null,world:null,ranked:false,places:[]};
 /* Online room connection. In an online match every player but `myH` is remote and moves come from the server. */
 const NET={on:false,playing:false,ws:null,code:null,pid:null,myH:null,room:null,seen:0,busy:0,chain:Promise.resolve(),epoch:0,offset:0,retry:0,retryTimer:null,ended:false,act:0,pending:null,pendingTimer:null,forceSnap:false,stale:false};
 let playGen=0,pumping=false,linkMode='ok',linkRtt=0,linkSent=0,linkPong=0,gateFrame=0;
@@ -1985,6 +1935,7 @@ function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES
 function orderWords(a,b){return a===b?`double ${a}s, ${a+b} in all`:`${a} and ${b}, ${a+b} in all`;}
 /* The order keeps its total beside every seat. A march shows the two faces beside the other players only. */
 function seatRoll(pl){
+  if(pl.rank)return' · '+['','1st','2nd','3rd','4th'][pl.rank]+' place';
   if(pl.place)return' · '+['','1st','2nd','3rd','4th'][pl.place];
   if(S.ordering&&pl.orderRoll)return' · '+pl.orderRoll;
   if(!isMine(pl)&&pl.shownRoll&&pl.shownRoll.length)return' · '+pl.shownRoll.join(' · ');
@@ -2244,13 +2195,13 @@ function removePiece(pc){board.remove(pc.mesh);const i=pieceMeshes.indexOf(pc.me
 function resetBoard(){
   stopOneShots();ensureTheme();
   diceArmed=false;S.gid++;dropMotion();clearPieces();
-  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.orderAnnounced=false;S.phase='idle';S.world=null;S.worldBag=null;S.worlds=0;S.noWorlds=false;S.hintFirst={};S.lessonPick=false;S.lessonArrow=null;lidTarget=-0.22;
-  localMe=-1;S.lesson=false;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();hideHint();closeModal('march');closeModal('lesson');document.body.classList.remove('at-lesson');
+  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.orderAnnounced=false;S.phase='idle';S.world=null;S.worlds=0;S.noWorlds=false;S.ranked=false;S.places=[];S.hintFirst={};S.lessonPick=false;S.lessonArrow=null;lidTarget=-0.22;
+  localMe=-1;S.lesson=false;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();hideHint();closeModal('lesson');document.body.classList.remove('at-lesson');
   if(siege)siege.stop();
   clearWorldFx();applyTheme();showTurnMark();
 }
 function newGame(config){
-  resetBoard();S.config=config;S.noWorlds=!setupWorlds;S.hintFirst={};
+  resetBoard();S.config=config;S.noWorlds=!setupWorlds;S.ranked=setupRanked;S.hintFirst={};
   S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now(),doubles:0,greed:0,rounds:0,playerTurns:0,worldPicks:{}};
   S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
   metricsStart();
@@ -2314,7 +2265,7 @@ async function beginTurn(again){
   if(guardMatchHour())return;
   if(noHumanLeft()){showTitle();return;}
   const pl=curP();if(!pl)return;
-  if(pl.out){nextTurn();return;}
+  if(pl.out||pl.rank){nextTurn();return;}
   const gid=S.gid;if(!again){S.doubles=0;bumpStat('playerTurns');}
   clearShownRolls();
   S.phase='roll';S.pending=[];setHighlights();showMarkers([]);
@@ -2388,16 +2339,39 @@ async function nextTurn(){
   if(noHumanLeft()){showTitle();return;}
   const gid=S.gid,from=S.cur,n=S.players.length;if(!n)return;
   let to=from;
-  for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out){to=i;break;}}
+  for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out&&!S.players[i].rank){to=i;break;}}
   if(to<=from){
     bumpStat('rounds');
-    if(!S.noWorlds){
+    endOfRound();
+    const id=S.noWorlds?null:R.worldAfter(diceStatsOf().rounds);
+    if(id!==S.world){
       S.phase='world';renderTurn();
-      await presentWorld(drawWorld());
+      await presentWorld(id);
       if(gid!==S.gid)return;
     }
   }
   S.cur=to;beginTurn(false);
+}
+/* The order places beside each name only matter until everyone has marched once. */
+function endOfRound(){S.players.forEach(pl=>{pl.place=0;});renderTally();}
+const racing=()=>S.players.filter(p=>!p.out&&!p.rank);
+/* Ranked play, locally: the kingdom takes the next place, and the rest march on until one is left. */
+async function placeKingdom(pl){
+  const gid=S.gid;
+  S.places.push(pl.h);pl.rank=S.places.length;
+  S.pending=[];S.dbl=false;showMarkers([]);setHighlights();
+  const left=racing();
+  if(left.length<=1){left.forEach(p=>{S.places.push(p.h);p.rank=S.places.length;});return victory(S.players.find(p=>p.h===S.places[0]));}
+  announcePlace(pl);
+  S.phase='moving';renderTurn();
+  await wait(2600);if(gid!==S.gid)return;
+  nextTurn();
+}
+function announcePlace(pl){
+  const place=PLACE[pl.rank-1]||'next';
+  sfx.home();
+  toast(isMine(pl)?`You take ${place} place`:`${shortName(pl)} takes ${place} place`,'All four troops reached the vault. The others march on for the places behind.',pl.h,3400);
+  renderTally();
 }
 /* Walk a troop along a resolved move. A shifting stone is a march to that square, then a hop to its pair.
    A troop already on a foreign stone follows the painted track, square by square. */
@@ -2447,7 +2421,7 @@ async function doMove(opt){
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
-  if(curP().pieces.every(p=>p.p===GOAL))return victory(curP());
+  if(curP().pieces.every(p=>p.p===GOAL))return S.ranked?placeKingdom(curP()):victory(curP());
   const nb=S.pending.findIndex(x=>!x.used);if(nb>=0)S.sel=nb;
   continueTurn();
 }
@@ -2494,18 +2468,38 @@ async function victory(pl){
     :isMine(pl)?`All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.`
     :NET.on?`All four of ${displayName(pl)}'s ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, they now stand above every kingdom in the realm.`
     :`All four ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, ${HOUSES[pl.h].name} now stands above every kingdom in the realm.`;
+  renderPlaces();
   $('btnAgain').textContent=NET.on?'Back to the title':'Play again';
   $('btnChange').hidden=NET.on;
   if(NET.on){$('btnLeave').hidden=true;$('btnNew').hidden=false;}
   openModal('win');
   if(NET.on)endOnlineSocket();
 }
+/* A ranked match lists every place. A kingdom that forfeited before it was placed comes last. */
+function renderPlaces(){
+  const list=$('winPlaces');list.innerHTML='';
+  list.hidden=S.places.length<2;
+  if(list.hidden)return;
+  const humans=S.players.filter(p=>!p.cpu);
+  const meH=NET.on?NET.myH:humans.length===1?humans[0].h:null;
+  const row=(label,pl,left)=>{
+    const li=document.createElement('li');if(left)li.className='left';
+    const b=document.createElement('b');b.textContent=label;
+    const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',HOUSES[pl.h].css);
+    const name=document.createElement('span');name.textContent=displayName(pl)+(meH===pl.h?' (you)':'');
+    li.append(b,crest,name);list.appendChild(li);
+  };
+  S.places.forEach((h,i)=>{const pl=S.players.find(p=>p.h===h);if(pl)row(['1st','2nd','3rd','4th'][i],pl,false);});
+  S.players.filter(p=>!S.places.includes(p.h)).forEach(pl=>row('Left',pl,true));
+}
 
 /* ================= Setup ================= */
-let setupCount=4,setupWorlds=true;const seatCpu=[false,false,false,false];
-try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);setupWorlds=sv.worlds!==false;}}catch(e){}
-if($('setupWorlds'))$('setupWorlds').checked=setupWorlds;
+let setupCount=4,setupWorlds=true,setupRanked=false;const seatCpu=[false,false,false,false];
+try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);setupWorlds=sv.worlds!==false;setupRanked=!!sv.ranked;}}catch(e){}
+$('setupWorlds').checked=setupWorlds;
+$('setupRanked').checked=setupRanked;
 $('setupWorlds').onchange=()=>{setupWorlds=$('setupWorlds').checked;};
+$('setupRanked').onchange=()=>{setupRanked=$('setupRanked').checked;};
 function renderSetup(){
   document.querySelectorAll('#countSeg button').forEach(b=>b.setAttribute('aria-checked',String(+b.dataset.n===setupCount)));
   const wrap=$('seats');wrap.innerHTML='';
@@ -2518,7 +2512,7 @@ function renderSetup(){
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
 function openModal(id){$(id).classList.add('open');if(id==='title')document.body.classList.add('at-title');const f=[...$(id).querySelectorAll('button')].find(b=>!b.disabled&&!b.hidden&&!b.closest('[hidden]'));if(f)setTimeout(()=>f.focus(),30);}
 function closeModal(id){$(id).classList.remove('open');if(id==='title')document.body.classList.remove('at-title');}
-$('btnBegin').onclick=()=>{setupWorlds=$('setupWorlds').checked;try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,worlds:setupWorlds}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
+$('btnBegin').onclick=()=>{setupWorlds=$('setupWorlds').checked;setupRanked=$('setupRanked').checked;try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,worlds:setupWorlds,ranked:setupRanked}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
 $('btnNew').onclick=()=>showTitle();
 $('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
 $('btnSetupBack').onclick=()=>{closeModal('setup');showTitle();};
@@ -2711,19 +2705,6 @@ async function doLessonRoll(){
     }
   }
 }
-function paintWorldToggles(id){
-  document.querySelectorAll('#lessonWorlds [data-world]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.world===id)));
-}
-async function lessonShowWorld(id){
-  if(!lessonAlive()||!id)return;
-  if(S.world===id){paintWorldToggles(id);return;}
-  setWorld(id,true);sfx.spell();
-  const w=R.WORLD[id];if(!w)return;
-  toast(w.h!=null?'+2':w.name,w.h!=null?w.name+'. '+w.rule:w.rule,w.h,reduced?900:2800,!!w.h,true);
-  noteHint(w.name,w.lore+' '+w.rule,w.h,'world');
-  paintWorldToggles(id);
-  applyVeil();
-}
 async function clearLessonBoard(){
   dropMotion();
   setWorld(null);lidTarget=-0.22;hideToast();hideHint();
@@ -2830,21 +2811,16 @@ const LESSONS=[
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint('A strike','The fallen troop returns to its keep. Emberhold then presses on with a bonus march of 20.',0,'strike');toast('Emberhold strikes Thornwald','A troop returns to the keep. Bonus march of 20.',0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
   {title:'The vault',body:'Reaching the vault needs an exact count and earns another bonus march of 20. The passages are the seven coloured squares after the King\'s Road.',
     enter:async()=>{await clearLessonBoard();const home=troopOf(0,0),march=troopOf(0,1);if(home)home.p=70;if(march)march.p=43;await settleAll();if(home)await lessonWalk(home,GOAL);if(!lessonAlive())return;toast('Vault reached','An Emberhold troop found the passage. Bonus march of 20.',0);noteHint('The vault','An exact count into the vault earns a bonus march of 20. The first kingdom to bring all four troops home claims the gold.',0,'vault');S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();if(march)await lessonWalk(march,63);}},
-  {title:'World events',body:'After every kingdom has marched, a wheel picks a world event. Watch each one, or tap a name to see it again. Tide, Heartfire, Wild and Seal each give one kingdom +2. Mist hides distant enemies. Stones carry you to the stone opposite.',
-    worlds:true,freeNav:true,
+  {title:'The mist',body:'After every third round the mist rolls in, and it lifts after the next round. You still see all of your own troops, but an enemy only when it stands on the next square.',
+    freeNav:true,
     enter:async()=>{
       await clearLessonBoard();
       [1,2,3].forEach((h,i)=>{const pc=troopOf(h,0);if(pc)pc.p=8+i*10;});
       const mine=troopOf(0,0);if(mine)mine.p=3;await settleAll();
-      if(lessonRun)lessonRun.worldHold=null;
-      for(const id of Object.keys(R.WORLD)){
-        if(!lessonAlive())return;
-        if(lessonRun&&lessonRun.worldHold)break;
-        await lessonShowWorld(id);
-        await wait(reduced?700:2600);
-      }
+      if(!lessonAlive())return;
+      await presentWorld('mist');
     }},
-  {title:'Victory',body:'The first kingdom to bring all four troops to the vault claims the gold of Corhaven.',
+  {title:'Victory',body:'The first kingdom to bring all four troops to the vault claims the gold of Corhaven. In a ranked match the others play on for second and third.',
     enter:async()=>{await clearLessonBoard();S.players[0].pieces.forEach(pc=>{pc.p=GOAL;});await settleAll();lidTarget=-1.9;sfx.win();toast('Emberhold claims the vault','The gold of Corhaven is theirs.',0);}}
 ];
 function paintLesson(i){
@@ -2852,7 +2828,6 @@ function paintLesson(i){
   $('lessonStep').textContent=(i+1)+' of '+LESSONS.length;
   $('lessonTitle').textContent=step.title;
   $('lessonBody').textContent=step.body;
-  $('lessonWorlds').hidden=!step.worlds;
   $('btnLessonNext').textContent='Next';
   $('btnLessonNext').hidden=last;
   $('btnLessonBack').disabled=i<=0;
@@ -2899,13 +2874,6 @@ $('btnLessonNext').onclick=()=>lessonNext();
 $('btnLessonBack').onclick=()=>lessonBack();
 $('btnLessonAgain').onclick=()=>lessonAgain();
 $('btnLessonSkip').onclick=()=>showTitle();
-$('lessonWorlds').onclick=e=>{
-  const b=e.target.closest&&e.target.closest('button[data-world]');
-  if(!b||!lessonRun||(lessonRun.busy&&!(LESSONS[lessonRun.i]&&LESSONS[lessonRun.i].freeNav)))return;
-  if(lessonRun)lessonRun.worldHold=b.dataset.world;
-  lessonShowWorld(b.dataset.world);
-};
-
 /* ================= Online rooms ================= */
 const ROOM_ERRORS={
   gone:'No room has that code. Check it with the person who made the room.',
@@ -3173,8 +3141,10 @@ function commitName(required){
 $('stepName').onsubmit=e=>{e.preventDefault();commitName(true);};
 $('nameInput').addEventListener('blur',()=>{if(onlineStep==='stepLobby'&&typedName())commitName(false);});
 $('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
-$('optWorlds').onchange=()=>netSend({t:'opts',worlds:$('optWorlds').checked,private:$('optPrivate').checked});
-$('optPrivate').onchange=()=>netSend({t:'opts',worlds:$('optWorlds').checked,private:$('optPrivate').checked});
+const sendRoomOpts=()=>netSend({t:'opts',worlds:$('optWorlds').checked,ranked:$('optRanked').checked,private:$('optPrivate').checked});
+$('optWorlds').onchange=sendRoomOpts;
+$('optRanked').onchange=sendRoomOpts;
+$('optPrivate').onchange=sendRoomOpts;
 $('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else leaveOnline(false);};
 
 function seatRow(room,s){
@@ -3250,8 +3220,9 @@ function renderLobby(room){
   if(opts){
     opts.hidden=!isHost;
     if(isHost){
-      const worlds=$('optWorlds'),priv=$('optPrivate');
+      const worlds=$('optWorlds'),ranked=$('optRanked'),priv=$('optPrivate');
       if(worlds&&document.activeElement!==worlds)worlds.checked=room.worlds!==false;
+      if(ranked&&document.activeElement!==ranked)ranked.checked=!!room.ranked;
       if(priv&&document.activeElement!==priv)priv.checked=!!room.private;
     }
   }
@@ -3281,6 +3252,11 @@ function syncFromRoom(room){
   }
   if(!(NET.pending&&(S.phase==='rolling'||S.phase==='moving')))S.phase=room.status==='over'?'over':g.phase;
   if((g.world||null)!==S.world)setWorld(g.world||null);
+  syncPlaces(g);
+}
+function syncPlaces(g){
+  S.ranked=!!g.ranked;S.places=(g.places||[]).slice();
+  S.players.forEach(pl=>{const i=S.places.indexOf(pl.h);pl.rank=i>=0?i+1:0;});
 }
 function promptFor(pl){
   if(!pl)return'';const mine=isMine(pl),nm=shortName(pl);
@@ -3486,8 +3462,16 @@ async function playEvent(e,epoch){
       orderToast(S.players);
       renderTurn();await wait(2600);return;}
     case'world':
-      bumpStat('rounds');
-      await presentWorld(e.id);return;
+      bumpStat('rounds');endOfRound();
+      if((e.id||null)!==S.world)await presentWorld(e.id||null);
+      return;
+    case'finish':
+      if(!pl)return;
+      S.ranked=true;
+      if(!S.places.includes(e.h))S.places.push(e.h);
+      pl.rank=e.place;S.pending=[];showMarkers([]);setHighlights();S.phase='moving';
+      announcePlace(pl);renderTurn();
+      await wait(2600);return;
     case'turn':
       clearShownRolls();
       S.cur=S.players.indexOf(pl);S.pending=[];S.phase='roll';setHighlights();showMarkers([]);
@@ -3558,6 +3542,7 @@ async function playEvent(e,epoch){
     case'win':
       S.phase='over';S.pending=[];
       if(e.diceStats)R.lastReport=e.diceStats;
+      if(e.places)syncPlaces({ranked:true,places:e.places});
       if(NET.room){const w=playerOfH(e.h);if(w)await victory(w);}
       return;
   }
@@ -3909,61 +3894,28 @@ function setWorld(id,intro){
   if(S.players.length)renderTally();
   startWorldBed(id,!!intro);
 }
-/* Click times in prize-wheel.wav. Equal steps in this list are one peg; the wheel's angle follows them so it slows with the recording. */
-const WHEEL_TICKS=[0,.1,.16,.22,.279,.329,.414,.474,.539,.609,.673,.758,.843,.943,1.033,1.098,1.202,1.312,1.427,1.591,1.756,1.946,2.17,2.41,2.734,2.998,3.352,3.761,4.176,4.729];
-const WHEEL_SPIN=WHEEL_TICKS[WHEEL_TICKS.length-1]*1000;
-function wheelEase(k){
-  const t=k*WHEEL_TICKS[WHEEL_TICKS.length-1],ticks=WHEEL_TICKS;
-  if(t<=ticks[0])return 0;
-  if(t>=ticks[ticks.length-1])return 1;
-  let lo=0,hi=ticks.length-1;
-  while(hi-lo>1){const m=(lo+hi)>>1;if(ticks[m]<=t)lo=m;else hi=m;}
-  return(lo+(t-ticks[lo])/(ticks[hi]-ticks[lo]))/(ticks.length-1);
-}
-function spinWheel(i){
-  const wheel=$('wheel'),turn=-(4*360+i*60+30);
-  openModal('march');
-  wheel.style.transition='none';
-  if(reduced){wheel.style.transform=`rotate(${turn}deg)`;return wait(280);}
-  sfx.wheel();
-  wheel.style.transform='rotate(0deg)';
-  return animate(WHEEL_SPIN,k=>{wheel.style.transform=`rotate(${turn*wheelEase(k)}deg)`;});
-}
-/* How long the board takes to change once the wheel has landed. The banner stays up for that same stretch. */
-const WORLD_INTRO={flood:5500,ash:4200,wild:3600,mist:7000,sun:4200,ways:3600};
-/* Every event is dealt once before the bag is shuffled again, and the new bag does not open on the event that just ended. */
-function drawWorld(){
-  const ids=Object.keys(R.WORLD);
-  if(!S.worldBag||!S.worldBag.length){
-    const bag=ids.slice();
-    for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=bag[i];bag[i]=bag[j];bag[j]=t;}
-    const last=bag.length-1;
-    if(S.world&&bag[last]===S.world){const j=Math.floor(Math.random()*last);const t=bag[last];bag[last]=bag[j];bag[j]=t;}
-    S.worldBag=bag;
-  }
-  return S.worldBag.pop();
-}
+/* How long the board takes to change. The banner stays up for that same stretch. */
+const WORLD_INTRO={mist:7000};
+const MIST_LIFT_MS=2600;
+/* The mist rolls in, or lifts when id is null. */
 function presentWorld(id){
-  const w=R.WORLD[id];if(!w)return Promise.resolve();
-  const gid=S.gid;
-  S.players.forEach(pl=>{pl.place=0;});renderTally();
+  const w=id?R.WORLD[id]:null;
+  if(id&&!w)return Promise.resolve();
+  if(!w){
+    if(!S.world)return Promise.resolve();
+    setWorld(null);
+    toast('The mist lifts','Every troop on the road is in sight again.',null,reduced?900:MIST_LIFT_MS,null,true);
+    return wait(reduced?900:MIST_LIFT_MS);
+  }
   primeWorldBed(id);
-  return spinWheel(Object.keys(R.WORLD).indexOf(id)).then(()=>{
-    if(gid!==S.gid)return;
-    closeModal('march');
-    setWorld(id,true);
-    S.worlds=(S.worlds||0)+1;
-    bumpWorldPick(id);
-    sfx.spell();
-    const hold=reduced?900:(WORLD_INTRO[id]||2000);
-    if(w.h!=null){
-      const pl=S.players.find(p=>p.h===w.h&&!p.out);
-      const yours=pl&&isMine(pl);
-      toast('+2',w.name+'. '+(yours?'Your':HOUSES[w.h].short+"'s")+' movements are two squares longer.',w.h,hold,true,true);
-    }else toast(w.name,w.rule,w.h,hold,null,true);
-    noteHint(w.name,w.lore+' '+w.rule,w.h,'world');
-    return wait(hold);
-  });
+  setWorld(id,true);
+  S.worlds=(S.worlds||0)+1;
+  bumpWorldPick(id);
+  sfx.spell();
+  const hold=reduced?900:(WORLD_INTRO[id]||2000);
+  toast(w.name,w.rule,null,hold,null,true);
+  noteHint(w.name,w.lore+' '+w.rule+' It lifts after the next round.',null,'world');
+  return wait(hold);
 }
 
 /* ================= Theme ================= */

@@ -64,6 +64,12 @@ The dice lesson still reads as movement: they tried to move pieces when the beat
 
 On the events themselves: mist was the one that created uncertainty; the others felt cosmetic (“they’re just there”). Sun beams were the least preferred. They thought an event after every round may be too often, and offered four triggers — pieces reach the middle, every other round, landing on a shrine, a double 6. Those stay suggestions.
 
+## User test round 4 (4 Nov 2026 · **V1.4.4**)
+
+The first round with no connection or marker failures. Players found it easy to get into, liked the sounds (the hop most of all), and picked mist, the sun beams and the Stones of the Pact as their favorite events.
+
+What remains is legibility and pace. The pieces need to be more distinct: they share one shape, and three of the four kingdom colors are dark, with red and green hard to tell apart for color-blind players. World events and banners felt too fast, the volcano was the hardest event to read, and the sun beams' scorch marks hid the road. After the tutorial, players still asked what it takes to leave the keep (the lesson always rolls a 6 and a 1 together, so it never shows that either one is enough) and how Geo was getting bonus moves (the +2 and +20 happen on someone else's turn without a mark on the board). They asked for a mode that plays on to second and third place and a color blind mode. They also noted that some events do far less than others: four of the six only add two squares to one kingdom. A teacher asked for a grittier board in darker crimson to match the lore.
+
 ---
 
 ## Honest scope note

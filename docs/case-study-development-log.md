@@ -3,7 +3,7 @@
 **Author:** Geo Hernandez (product design & development)  
 **Repository:** `board-game/v3`  
 **Document purpose:** A factual timeline of what shipped in this repo, with design decisions, product moments, and narrative hooks for a UX/product case study.  
-**Last updated from repo:** 3 Nov 2026 (user test round 3 on **V1.4.0**, 1v1, laptop and Quest browser)
+**Last updated from repo:** 4 Nov 2026 (user test round 4 on **V1.4.4**, with a teacher's notes on the board)
 
 **Related:** [Executive summary (1 page)](./case-study-executive-summary.md) · [Visual archive](./case-study/visual-archive.md) · [Case study folder](./case-study/README.md)
 
@@ -237,6 +237,69 @@ The opening gap narrowed to one beat: the dice portion still reads as if you mar
 
 ---
 
+### Phase 5 — User test round 4 (4 Nov 2026)
+
+**Build tested:** **V1.4.4**, the live build after the socket refresh. A teacher sat in and gave notes on the art direction.
+
+This is the first round with no connection or marker failures in the notes. What is left is legibility, pace, and teaching. Players also asked for a mode, an accessibility setting, and a change to the board's color.
+
+#### What made play harder
+
+| Finding | What they said | What the build does today |
+|---------|----------------|---------------------------|
+| **Pieces look alike** | They asked for the pieces to be more distinct. | Every troop is the same pawn, gold band, visor, and plume. Only the body color changes. Emberhold red (`#B3261E`), Thornwald green (`#2E7D32`) and Tidereach blue (`#1F4E9C`) are all dark, and red and green collapse for the most common color blindness. |
+| **World events move too fast** | The events transition too fast. | A new event is dealt every round, and play resumes once the board has changed (3.6 to 7 seconds). Round 3 thought every round may be too often. |
+| **Info banner too fast** | The banner goes by too fast. | Round 1 said the same, and round 3 said the banner stayed too long and too large. A lone banner holds 5.2 seconds, but when several queue, each is cut to 2.8. Busy moments, the ones with the most to read, get the least time. |
+| **Volcano hardest to see** | The Heartfire Rising was the hardest event to read. | Round 2 also said the lava hid tiles. |
+| **Sun beams burn the road** | Scorch marks from the sun lances make the board harder to see. | The char stays on the tiles for the rest of the event, and the sky dims. |
+| **Tutorial not clear enough** | After the tutorial, players asked what they need to bring a troop out of the keep, and how Geo was getting bonus moves. | See the two questions below. |
+
+#### The two tutorial questions
+
+**“What do I need to get a troop out of the keep?”** The rule is a 1 or a 6 on either die. The lesson always rolls a 6 and a 1 together, and one die takes the troop out while the other moves it a square. With both exit faces on the table, the demo cannot show that either one is enough, or that one die is spent just walking out. Since Phase 3 the log itself has called this beat “a 6 and a 1.”
+
+**“How are you getting the bonus moves?”** The game has three things a player could read as a bonus move, and they look different:
+
+- **+20** after a strike or a vault. It appears as a `+20` chip in the roller’s tray and in a banner. Off-turn the tray is hidden, so the banner is the only cue, and that banner is one of the ones cut short when several queue.
+- **+2** from Tide, Heartfire, Wild or the Seal. The die still shows its face, and only a small `+2` badge on the avatar marks it. The troop simply walks two squares further than the die says. It also drops back to the plain count when the longer move is illegal.
+- **Doubles**, a second roll after the march.
+
+The question does not say which they saw. In both cases, the move happened on someone else’s turn and nothing on the board explained it.
+
+#### What landed
+
+- **Easy to get into.**
+- **World events**, especially **mist**, **sun beams** and the **Stones of the Pact**. Mist is the favorite for the third round running. The sun beams were loved here and least preferred in round 3. Here the complaint was what the beams leave on the road.
+- **Sounds** overall, and the **hop** in particular.
+
+#### Comments and requests
+
+- **Second and third place.** A mode where the match keeps going after the first kingdom reaches the vault. Today the match ends on the first winner.
+- **Color blind mode**, or a high-contrast mode.
+- **Not every event is as destructive as the others.** Four of the six (Tide, Heartfire, Wild, Seal) only add two squares to one kingdom's moves. Mist and the Stones change what you can see or where you land. Round 3 put it as “they’re just there.”
+
+#### From the teacher
+
+- Make the board colors **grittier** to match the lore, with **darker crimson** tones.
+
+#### Creator reflection
+
+The connection and marker work from round 3 held. What is left is legibility. Pieces only differ by a dark hue, effects cover the road, and banners shorten exactly when there is more to read. The teacher wants a darker crimson board, and players want more contrast. Both can be done if the board darkens and the pieces carry contrast through shape and outline, not hue alone. Emberhold red on a crimson board is the case to test first.
+
+Both tutorial questions are about moves that need explaining in the moment. The keep beat rolls both exit faces at once, so it never shows that one is enough. The +2 and the +20 happen on other people’s turns without a mark on the board. The tutorial can fix the first. The second needs the board to say why a troop went further than its die.
+
+For the second time, a player has said that four of the six events only change one rule. Mist and the Stones are the two that change the board, and they are the favorites. Pace and weight of the events are probably one problem. If each event did more, it could come less often and stay longer.
+
+#### Decision: if it is not visible, it is not usable
+
+Round 4 kept pointing at the same cost. The events were the most impressive thing on the board, and they were also what hid the road, the troops, and where to tap. Geo chose legibility: players should never be confused about what to click or where to go.
+
+**Shipped in V1.5.0:** the wheel and five of the six events are out of play. The mist stays, because players asked for it in three rounds out of four. It no longer comes from a wheel. It arrives on its own after every third round and lifts after the next, with a banner each way. The toggle reads “Mist every third round.” A new event system is planned for a later version. The effects for the other five stay in `lib/siege-fx.js` for the marker lab.
+
+**Shipped:** ranked play, a toggle under the mist in Play local and in the room lobby. A kingdom with every troop home takes the next place and leaves the turn order. The rest march on until one is left, and the victory sheet lists every place. Visuals: [Play local](./case-study/screenshots/2026-11-05-01-play-local-ranked-toggle-desktop.png), [mist on round 3](./case-study/screenshots/2026-11-05-02-mist-third-round-desktop.png), [ranked victory](./case-study/screenshots/2026-11-05-03-ranked-victory-places-desktop.png), [room lobby](./case-study/screenshots/2026-11-05-04-room-lobby-ranked-toggle-desktop.png).
+
+---
+
 ## Key product decisions (case-study bullets)
 
 ### 1. One HTML surface, three modes
@@ -266,6 +329,8 @@ Shift from persistent turn card messaging to **ephemeral toasts** for pivotal be
 **Playtest (V1.1.6):** the glance was too short, and the first rounds still needed a durable “what just happened” readout. Next pass: keep the banner, then a side chip that slides open for the March, Greed, barricades, and the rest.
 
 **Playtest round 3 (V1.4.0):** the banner now stays. This player said it takes too much of the board and sits on the pieces. Duration and footprint are separate problems.
+
+**Playtest round 4 (V1.4.4):** too fast again. A lone banner holds 5.2 seconds, but a queue cuts each to 2.8, so the busiest moments are the hardest to read. A single fixed hold cannot satisfy rounds 1, 3 and 4 together.
 
 ### 7. Timer fairness
 
@@ -320,7 +385,7 @@ Use these pairs for before/after visuals in Figma or screenshots from git checko
    - Online lobby + kingdom banners  
    - Turn timer + role-based HUD (Oct 27)  
    - WebXR passthrough without splitting the brand  
-5. **Outcomes** — First live table on **V1.1.6** (3 Nov 2026): world events and table politics landed; opening rounds, banner duration, host disconnects, and piece legibility did not. See Phase 3. Round 3 the same night (**V1.4.0**, 1v1, laptop and Quest browser): dice lesson still reads as movement, the banner covers the pieces, the table dropped together on the five-minute socket limit, mist was the event with stakes, sun beams the least preferred. **V1.4.3** puts the dots back on your turn and sends the dice into the volcano. **V1.4.4** refreshes the room socket before that close. Cadence ideas stay suggestions. See Phase 4.
+5. **Outcomes** — First live table on **V1.1.6** (3 Nov 2026): world events and table politics landed; opening rounds, banner duration, host disconnects, and piece legibility did not. See Phase 3. Round 3 the same night (**V1.4.0**, 1v1, laptop and Quest browser): dice lesson still reads as movement, the banner covers the pieces, the table dropped together on the five-minute socket limit, mist was the event with stakes, sun beams the least preferred. **V1.4.3** puts the dots back on your turn and sends the dice into the volcano. **V1.4.4** refreshes the room socket before that close. Cadence ideas stay suggestions. See Phase 4. Round 4 (**V1.4.4**, 4 Nov) had no connection failures: easy to get into, sounds and the hop liked, mist, sun beams and the Stones favored. Open: pieces too alike, events and banners too fast, volcano and scorch hide the road, tutorial still leaves basic questions. Requests: second and third place, a color blind mode, a grittier crimson board. See Phase 5.
 6. **Reflection** — Teach the first two rounds (side hints + scripted tutorial under Play local); keep the siege spectacle once players can still find their troops.
 
 ---
@@ -354,6 +419,7 @@ Use this section in your own doc or Notion— the repo cannot supply it.
 - [ ] Why v3 folder name—what shipped in v1/v2?
 - [x] First live user test (3 Nov 2026, **V1.1.6**, online + local CPU notes) — Phase 3 above. Quoted lines still open if you want them later.
 - [x] User test round 3 (3 Nov 2026, **V1.4.0**, 1v1, laptop + Quest browser) — Phase 4 above. **V1.4.2** shows Play in the room only when a headset session is available, and keeps a trigger click from turning the board. **V1.4.3** marks your troops on your turn and makes the dice strike the volcano. **V1.4.4** refreshes the room socket before the five-minute close. Passthrough on a headset is still unconfirmed.
+- [x] User test round 4 (4 Nov 2026, **V1.4.4**, with a teacher) — Phase 5 above. Shipped from it: world events cut to the mist on a three-round schedule, and ranked play. Tutorial questions recorded: getting out of the keep, and Geo’s bonus moves. Not recorded: how many players, and which devices.
 - [ ] Deployment URL and analytics (if any)
 - [x] Phase 3 next work (from the 3 Nov table): slower banners, side-sheet hints, order-roll banner for every seat, on-turn piece glow, CPU barricade weight, scripted tutorial under Play local — **V1.2.0**. Still open: host-turn disconnects.
 

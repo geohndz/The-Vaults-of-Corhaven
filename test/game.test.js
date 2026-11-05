@@ -285,19 +285,63 @@ test('the computer would rather press on than stack a barricade', () => {
   assert.ok(R.cpuScore(pieces, onward, rand) > R.cpuScore(pieces, stack, rand));
 });
 
-test('world events deal every event before one can repeat', () => {
-  const game = { world: null, worldBag: [] };
-  let s = 11;
-  const rng = (n) => { s = (s * 9301 + 49297) % 233280; return Math.floor((s / 233280) * n); };
-  const seen = [];
-  for (let i = 0; i < 18; i++) seen.push(G.takeWorld(game, rng));
-  const ids = Object.keys(R.WORLD);
-  for (let round = 0; round < 3; round++) {
-    const slice = seen.slice(round * 6, round * 6 + 6);
-    assert.equal(new Set(slice).size, 6);
-    ids.forEach((id) => assert.ok(slice.includes(id)));
-  }
-  for (let i = 6; i < seen.length; i += 6) assert.notEqual(seen[i], seen[i - 1]);
+test('the mist rolls in after every third round and lifts after the next', () => {
+  const seen = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(R.worldAfter);
+  assert.deepEqual(seen, [null, null, 'mist', null, null, 'mist', null, null, 'mist']);
+  assert.equal(R.worldAfter(0), null);
+});
+
+test('online play deals only the mist, and only when the schedule changes it', () => {
+  const room = lobby(3);
+  G.start(room, ids[0], 0);
+  play(room, rng(5));
+  const worlds = room.events.filter((e) => e.type === 'world');
+  assert.ok(worlds.length, 'rounds are announced');
+  worlds.forEach((e) => assert.ok(e.id === null || e.id === 'mist'));
+  const picks = room.game.diceStats.worldPicks;
+  assert.deepEqual(Object.keys(picks).filter((id) => picks[id]), Object.keys(picks).length ? ['mist'] : []);
+});
+
+test('a ranked match plays on until one kingdom is left, and places every finisher in order', () => {
+  const room = lobby(4);
+  assert.equal(G.setOpts(room, ids[0], { ranked: true }), null);
+  G.start(room, ids[0], 0);
+  assert.equal(room.game.ranked, true);
+  play(room, rng(7), 1, 60000);
+  assert.equal(room.status, 'over');
+  const g = room.game;
+  assert.equal(g.places.length, 4);
+  assert.equal(new Set(g.places).size, 4);
+  assert.equal(g.winner, g.places[0]);
+  const finishes = room.events.filter((e) => e.type === 'finish');
+  assert.ok(finishes.length, 'the last finish is still in the event log');
+  finishes.forEach((e) => assert.equal(e.h, g.places[e.place - 1]));
+  g.places.slice(0, 3).forEach((h) => assert.ok(R.allHome(g.pieces, h)));
+  assert.deepEqual(G.publicView(room).game.places, g.places);
+});
+
+test('a placed kingdom is skipped, and a forfeit that leaves one racer ends a ranked match', () => {
+  const room = lobby(3);
+  G.setOpts(room, ids[0], { ranked: true });
+  G.start(room, ids[0], 0);
+  const g = room.game;
+  g.ordering = false;
+  g.cur = 0;
+  const first = g.players[0].h;
+  g.pieces.forEach((pc) => { if (pc.h === first) pc.p = pc.idx === 0 ? R.GOAL - 1 : R.GOAL; });
+  g.phase = 'choose';
+  g.pending = [{ v: 1 }, { v: 3 }];
+  const opt = R.options(g.pieces, first, g.pending, g.world).find((o) => o.r.np === R.GOAL);
+  assert.equal(G.playMove(room, idOfH(room, first), opt.pc.idx, opt.di, 10), null);
+  assert.deepEqual(g.places, [first]);
+  assert.equal(room.status, 'playing');
+  assert.notEqual(curH(room), first);
+  const leaver = g.players.find((p) => p.h !== first && p.h !== curH(room)).h;
+  G.leave(room, idOfH(room, leaver), 20);
+  assert.equal(room.status, 'over');
+  assert.equal(g.winner, first);
+  assert.equal(g.places.length, 2);
+  assert.equal(g.places[0], first);
 });
 
 test('a turn order is seated from the totals of one roll, and a tiebreak cannot move anyone else', () => {
