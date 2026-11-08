@@ -298,6 +298,8 @@ Round 4 kept pointing at the same cost. The events were the most impressive thin
 
 **Shipped:** ranked play, a toggle under the mist in Play local and in the room lobby. A kingdom with every troop home takes the next place and leaves the turn order. The rest march on until one is left, and the victory sheet lists every place. Visuals: [Play local](./case-study/screenshots/2026-11-05-01-play-local-ranked-toggle-desktop.png), [mist on round 3](./case-study/screenshots/2026-11-05-02-mist-third-round-desktop.png), [ranked victory](./case-study/screenshots/2026-11-05-03-ranked-victory-places-desktop.png), [room lobby](./case-study/screenshots/2026-11-05-04-room-lobby-ranked-toggle-desktop.png).
 
+**V1.5.1:** the teacher’s note, a grittier board in darker crimson. The kingdoms take a darker palette: Emberhold `#7F2F27`, Thornwald `#3B3A29`, Solmere `#944A08`, Tidereach `#494B54`. The frame and slab are stained crimson, the table is darker, and the road is rougher, aged stone, still light enough for the numbers. [Board](./case-study/screenshots/2026-11-05-05-crimson-board-kingdoms-desktop.png). Open question from the same round: all four colors are dark, and Thornwald and Tidereach troops read near black side by side, which works against “make pieces distinct” and the color blind request.
+
 ---
 
 ## Key product decisions (case-study bullets)

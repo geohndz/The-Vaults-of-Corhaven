@@ -542,7 +542,7 @@ body.at-lesson #hintDock{z-index:21}
       </aside>
       <div class="localmain">
         <h2>Who rules each kingdom?</h2>
-        <div id="seats"><div class="seat"><span class="crest" style="--c:#B3261E"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#2E7D32"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#D9A21B"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#1F4E9C"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
+        <div id="seats"><div class="seat"><span class="crest" style="--c:#7F2F27"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#3B3A29"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#944A08"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#494B54"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
       </div>
       <div class="localactions">
         <button class="primary" id="btnBegin">Begin the game</button>
@@ -680,7 +680,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.5.0';
+const GAME_VERSION='1.5.2';
 
 /* ================= Board definition (Parchís layout) ================= */
 /* Arms are 3 lanes wide and 8 squares long. Squares are numbered 1–68, moving counterclockwise. */
@@ -719,10 +719,10 @@ const NTRACK=TRACK.length;     // 68
 const LAST=R.LAST,GOAL=R.GOAL; // progress: 0..63 track, 64..70 home path, 71 treasure
 
 const HOUSES=[
-  {name:'Emberhold', short:'Emberhold',  color:0xB3261E,css:'#B3261E',start:0, yard:[-1,1], goalDir:[-1,0],homeArm:'L'},
-  {name:'Thornwald',short:'Thornwald',color:0x2E7D32,css:'#2E7D32',start:17,yard:[1,1],  goalDir:[0,1], homeArm:'B'},
-  {name:'Solmere',  short:'Solmere', color:0xD9A21B,css:'#D9A21B',start:34,yard:[1,-1], goalDir:[1,0], homeArm:'R'},
-  {name:'Tidereach',short:'Tidereach', color:0x1F4E9C,css:'#1F4E9C',start:51,yard:[-1,-1],goalDir:[0,-1],homeArm:'T'},
+  {name:'Emberhold', short:'Emberhold',  color:0x7F2F27,css:'#7F2F27',start:0, yard:[-1,1], goalDir:[-1,0],homeArm:'L'},
+  {name:'Thornwald',short:'Thornwald',color:0x3B3A29,css:'#3B3A29',start:17,yard:[1,1],  goalDir:[0,1], homeArm:'B'},
+  {name:'Solmere',  short:'Solmere', color:0x944A08,css:'#944A08',start:34,yard:[1,-1], goalDir:[1,0], homeArm:'R'},
+  {name:'Tidereach',short:'Tidereach', color:0x494B54,css:'#494B54',start:51,yard:[-1,-1],goalDir:[0,-1],homeArm:'T'},
 ];
 const SEATS={2:[0,2],3:[0,1,2],4:[0,1,2,3]};
 const BONUS=R.BONUS,SAFE=R.SAFE;
@@ -788,7 +788,7 @@ function starPath(g,cx,cy,R,r){g.beginPath();for(let i=0;i<10;i++){const a=-Math
 function tileTex(wide,bg,num,opt){
   const w=wide?256:110,h=wide?110:256;
   return canvasTex(w,h,(g)=>{
-    speckle(g,w,h,bg,0.16);
+    speckle(g,w,h,bg,0.26);
     g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=9;g.strokeRect(3,3,w-6,h-6);
     g.strokeStyle='rgba(0,0,0,.22)';g.lineWidth=3;g.strokeRect(11,11,w-22,h-22);
     const m=Math.min(w,h);
@@ -820,11 +820,11 @@ function tileInkTex(wide,num,star){
 const M={
   stone:new THREE.MeshStandardMaterial({color:0xA59C8B,map:wallTex,roughness:0.92}),
   tower:new THREE.MeshStandardMaterial({color:0xB3AA98,map:wallTex,roughness:0.9}),
-  wood:new THREE.MeshStandardMaterial({color:0xffffff,map:woodTex,roughness:0.75}),
-  darkWood:new THREE.MeshStandardMaterial({color:0x6a4a33,map:woodTex,roughness:0.8}),
+  wood:new THREE.MeshStandardMaterial({color:0x8E3E35,map:woodTex,roughness:0.85}),
+  darkWood:new THREE.MeshStandardMaterial({color:0x4A1D19,map:woodTex,roughness:0.88}),
   gold:new THREE.MeshStandardMaterial({color:0xE0B14A,roughness:0.3,metalness:0.85,emissive:0x3a2600,emissiveIntensity:0.4}),
   iron:new THREE.MeshStandardMaterial({color:0x3b3833,roughness:0.6,metalness:0.6}),
-  tileSide:new THREE.MeshStandardMaterial({color:0x9F968A,roughness:0.95}),
+  tileSide:new THREE.MeshStandardMaterial({color:0x6F6157,roughness:0.95}),
 };
 function houseMat(h,lerpTo,amt,extra){const c=new THREE.Color(HOUSES[h].color);if(lerpTo!==undefined)c.lerp(new THREE.Color(lerpTo),amt);return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.8},extra||{}));}
 
@@ -836,7 +836,7 @@ const tableRoot=new THREE.Group();
 tableRoot.add(board);board.add(worldFx);scene.add(tableRoot);
 let tableMesh=null;
 {const tt=woodTex.clone();tt.needsUpdate=true;tt.repeat.set(10,10);tt.wrapS=tt.wrapT=THREE.RepeatWrapping;
- tableMesh=new THREE.Mesh(new THREE.CircleGeometry(60,48),new THREE.MeshStandardMaterial({color:0x3b2a1e,map:tt,roughness:0.9}));
+ tableMesh=new THREE.Mesh(new THREE.CircleGeometry(60,48),new THREE.MeshStandardMaterial({color:0x24110F,map:tt,roughness:0.92}));
  tableMesh.rotation.x=-Math.PI/2;tableMesh.position.y=-0.56;tableMesh.receiveShadow=true;scene.add(tableMesh);}
 const frame=new THREE.Mesh(new THREE.BoxGeometry(2*HALF+1.2,0.42,2*HALF+1.2),M.darkWood);frame.position.y=-0.35;frame.receiveShadow=true;frame.castShadow=true;board.add(frame);
 const slab=new THREE.Mesh(new THREE.BoxGeometry(2*HALF+0.2,0.5,2*HALF+0.2),M.wood);slab.position.y=-0.25;slab.receiveShadow=true;board.add(slab);
@@ -859,7 +859,7 @@ function addCornerTile(arm,lane,num,bg){
   const tex=canvasTex(cw,chh,g=>{
     g.fillStyle='#000';g.fillRect(0,0,cw,chh);
     g.save();g.beginPath();poly.forEach(([x,z],i)=>{const px=(x-minX)*PPU,py=(z-minZ)*PPU;i?g.lineTo(px,py):g.moveTo(px,py);});g.closePath();g.clip();
-    speckle(g,cw,chh,bg,0.16);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.7)';g.stroke();g.restore();
+    speckle(g,cw,chh,bg,0.26);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.7)';g.stroke();g.restore();
     const fs=Math.round(T*PPU*0.5);g.font=`700 ${fs}px Georgia,'Times New Roman',serif`;g.textAlign='center';g.textBaseline='middle';
     const tx=(ax-minX)*PPU,ty=(az-minZ)*PPU+4;g.lineWidth=7;g.strokeStyle='#fff';g.strokeText(String(num),tx,ty);g.fillStyle='rgba(58,44,30,.85)';g.fillText(String(num),tx,ty);});
   const shape=new THREE.Shape();poly.forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));
@@ -883,13 +883,13 @@ function addCornerTile(arm,lane,num,bg){
   const inkMesh=new THREE.Mesh(inkGeo,new THREE.MeshBasicMaterial({map:ink,transparent:true,opacity:0.96,depthWrite:false,fog:false,side:THREE.DoubleSide}));
   inkMesh.position.y=TILE_TOP+0.016;inkMesh.renderOrder=8;tileInk.add(inkMesh);
 }
-const creamShades=['#EFE8D8','#E9E1CF','#F2ECDE','#E6DDCA'];
+const creamShades=['#D6CBB8','#CFC3AE','#DAD0BE','#CABDA6'];
 TRACK.forEach(([arm,lane,k],i)=>{
   const wide=armDims(arm)[0]>armDims(arm)[1];const hs=HOUSES.findIndex(h=>h.start===i);
   let tex;
   const star=hs>=0||SAFE.has(i);
   if(hs>=0)tex=tileTex(wide,HOUSES[hs].css,i+1,{star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
-  else if(SAFE.has(i))tex=tileTex(wide,'#9C9486',i+1,{star:true,starFill:'rgba(245,238,222,.55)',numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
+  else if(SAFE.has(i))tex=tileTex(wide,'#857A6E',i+1,{star:true,starFill:'rgba(245,238,222,.55)',numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
   else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4]);return;}
   else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
   addTile(arm,lane,k,new THREE.MeshStandardMaterial({map:tex,roughness:0.88}));
@@ -2417,7 +2417,7 @@ async function doMove(opt){
     r.captures.forEach(()=>S.pending.push({v:BONUS,bonus:true}));
   }
   if(pc.p===GOAL){R.noteVault(curP());sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${BONUS}.`,pc.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,pc.h,'vault');}
-  if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');}
+  if(onShrine(pc)){shrineBurst(posOf(pc));if(isMine(curP())){toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');}}
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
@@ -3158,10 +3158,10 @@ function seatRow(room,s){
 }
 function bannerSvg(h){
   const skies=[
-    ['#F2B2A4','#8E2A22','#2A0C0A'],
-    ['#C6E2A4','#2E7D32','#102414'],
-    ['#FFF3C4','#E0B44A','#6A4A10'],
-    ['#D4E8F8','#3D74B8','#0C2444']
+    ['#E3A396','#7F2F27','#240B09'],
+    ['#CFCBA6','#3B3A29','#121209'],
+    ['#F6D3A0','#944A08','#3A1C02'],
+    ['#D2D5DE','#494B54','#15161B']
   ];
   const scenes=[
     `<path fill="#1A0908" d="M16 124V86h6V74h8v12h6v38zM34 124V60h8V46h12v14h8v64zM62 124V90h5V76h8v14h5v34z"/><rect x="40" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="47" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="43.5" y="80" width="3.2" height="5" fill="#F6D48A"/><rect x="21" y="96" width="3" height="4" fill="#E07040"/>`,
@@ -3517,7 +3517,7 @@ async function playEvent(e,epoch){
       }
       if(gone())return;
       if(e.goal){sfx.home();S.pending.push({v:BONUS,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${BONUS}.`,e.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${BONUS}. The first kingdom to bring all four troops home claims the gold.`,e.h,'vault');}
-      if(onShrine(pc)){shrineBurst(posOf(pc));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',e.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',e.h,'shrine');}
+      if(onShrine(pc)){shrineBurst(posOf(pc));if(isMine(pl)){toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',e.h,null,null,true);noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',e.h,'shrine');}}
       if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();

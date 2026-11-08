@@ -343,6 +343,7 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 46 | [2026-11-05-02-mist-third-round-desktop.png](./screenshots/2026-11-05-02-mist-third-round-desktop.png) | Round 3 | The mist arrives with its banner and the side chip. No wheel opens first |
 | 47 | [2026-11-05-03-ranked-victory-places-desktop.png](./screenshots/2026-11-05-03-ranked-victory-places-desktop.png) | Victory, ranked | One row per place, crest and name. The roster behind reads “2nd place” and “3rd place” |
 | 48 | [2026-11-05-04-room-lobby-ranked-toggle-desktop.png](./screenshots/2026-11-05-04-room-lobby-ranked-toggle-desktop.png) | Room lobby, host | The same two toggles beside Private. The server keeps the ranked choice for the room |
+| 49 | [2026-11-05-05-crimson-board-kingdoms-desktop.png](./screenshots/2026-11-05-05-crimson-board-kingdoms-desktop.png) | In match, order roll | **V1.5.1.** New kingdom colors: Emberhold `#7F2F27`, Thornwald `#3B3A29`, Solmere `#944A08`, Tidereach `#494B54`. Crimson-stained frame and slab, a darker table, and rougher stone on the road, after the teacher’s note. Thornwald and Tidereach troops both read near black |
 
 ### Still to capture (when WS / production available)
 
