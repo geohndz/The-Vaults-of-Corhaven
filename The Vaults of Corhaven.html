@@ -399,15 +399,15 @@ body.at-lesson #bottomBar{z-index:21;pointer-events:auto}
 #gate .gatecopy{margin:22px auto 0;max-width:min(38ch,88vw);color:var(--parch-dim);font-size:clamp(15px,2vw,17px);line-height:1.5;text-shadow:0 1px 2px rgba(0,0,0,.85)}
 #gate .gatebar{width:min(320px,68vw);height:3px;margin:32px auto 0;background:rgba(154,171,188,.28)}
 #gate .gatebar span{display:block;height:100%;width:100%;background:var(--gold-bright);transform:scaleX(0);transform-origin:left center}
-#hintDock{position:fixed;z-index:14;top:46%;right:0;transform:translateY(-50%);max-height:min(72vh,540px);pointer-events:none;overflow:hidden}
+#hintDock{position:fixed;z-index:14;top:calc(env(safe-area-inset-top,0px) + 12px);right:0;display:flex;flex-direction:column;align-items:flex-end;max-width:min(360px,calc(100vw - 16px));max-height:min(70vh,520px);pointer-events:none;overflow:hidden}
 body.at-lesson #hintDock{z-index:21}
 #hintDock[hidden]{display:none}
-#hintChip{pointer-events:auto;position:relative;z-index:1;display:block;writing-mode:vertical-rl;text-orientation:mixed;margin:0;padding:22px 11px;border:0;background:linear-gradient(180deg,rgba(8,12,16,.9),rgba(8,12,16,.78));color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
-#hintChip::before,#hintChip::after{content:"";position:absolute;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);pointer-events:none}
-#hintChip::before{top:10px}
-#hintChip::after{bottom:10px}
-#hintSheet{pointer-events:none;position:absolute;right:100%;top:0;width:min(340px,calc(100vw - 52px));padding:22px 24px 18px;background:linear-gradient(180deg,rgba(8,12,16,.92),rgba(8,12,16,.82));color:var(--parch);transform:translateX(calc(100% + 36px));visibility:hidden;transition:transform .62s cubic-bezier(.22,.61,.36,1),visibility 0s linear .62s;text-shadow:0 1px 2px rgba(0,0,0,.9)}
-#hintDock.open #hintSheet{pointer-events:auto;transform:translateX(0);visibility:visible;transition:transform .62s cubic-bezier(.22,.61,.36,1),visibility 0s linear 0s}
+#hintChip{pointer-events:auto;position:relative;z-index:2;order:1;display:block;margin:0;padding:11px 22px;border:0;background:linear-gradient(180deg,rgba(8,12,16,.9),rgba(8,12,16,.78));color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#hintChip::before,#hintChip::after{content:"";position:absolute;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);pointer-events:none}
+#hintChip::before{top:8px}
+#hintChip::after{bottom:8px}
+#hintSheet{pointer-events:none;order:2;position:relative;z-index:1;width:min(340px,calc(100vw - 24px));margin-top:6px;padding:22px 24px 18px;background:linear-gradient(180deg,rgba(8,12,16,.92),rgba(8,12,16,.82));color:var(--parch);transform:translateY(-10px) scale(.985);transform-origin:top right;opacity:0;visibility:hidden;transition:transform .62s cubic-bezier(.22,.61,.36,1),opacity .45s ease,visibility 0s linear .62s;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+#hintDock.open #hintSheet{pointer-events:auto;transform:translateY(0) scale(1);opacity:1;visibility:visible;transition:transform .62s cubic-bezier(.22,.61,.36,1),opacity .45s ease,visibility 0s linear 0s}
 #hintSheet h2{margin:0 0 8px;color:var(--gold-bright)}
 #hintSheet p{margin:0 0 16px;color:var(--parch)}
 #hintSheet .hintclose{display:block;margin:0;padding:10px 0 0;border:0;background:none;color:var(--gold-bright)}
@@ -429,7 +429,7 @@ body.at-lesson #hintDock{z-index:21}
   #hintSheet{width:min(300px,calc(100vw - 44px))}
   body.at-lesson #bottomBar{left:50%;right:auto;transform:translateX(-50%);align-items:center;bottom:calc(env(safe-area-inset-bottom,0px) + 210px);max-width:none}
 }
-@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;transition:none}#hintDock:not(.open) #hintSheet{visibility:hidden}#lesson.demo .lessonside{opacity:1}}
+@media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;opacity:1;transition:none}#hintDock:not(.open) #hintSheet{opacity:0;visibility:hidden}#lesson.demo .lessonside{opacity:1}}
 </style>
 </head>
 <body class="at-title at-lobby">
@@ -463,12 +463,12 @@ body.at-lesson #hintDock{z-index:21}
   <span class="rule b"></span>
 </div>
 <div class="hud" id="hintDock" hidden>
+  <button type="button" id="hintChip" aria-expanded="false" aria-controls="hintSheet"><span id="hintChipLabel"></span></button>
   <div id="hintSheet" role="dialog" aria-labelledby="hintSheetTitle">
     <h2 id="hintSheetTitle"></h2>
     <p id="hintSheetBody"></p>
     <button type="button" class="hintclose" id="hintSheetClose">Close</button>
   </div>
-  <button type="button" id="hintChip" aria-expanded="false" aria-controls="hintSheet"><span id="hintChipLabel"></span></button>
 </div>
 <div class="hud" id="linkBanner" role="status" aria-live="polite" aria-hidden="true">
   <span class="rule t"></span>
@@ -868,13 +868,13 @@ body.at-lesson #hintDock{z-index:21}
 <script src="./lib/rules.js?v=fate2"></script>
 <script src="./lib/siege-fx.js?v=siege18"></script>
 <script src="./lib/smoke-embers.js?v=5"></script>
-<script src="./lib/fate-view.js?v=fate6"></script>
+<script src="./lib/fate-view.js?v=fate7"></script>
 <script src="./lib/game-modes.js?v=ia1"></script>
 <script src="./lib/player-profile.js?v=ia1"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.8.1';
+const GAME_VERSION='1.8.2';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1845,6 +1845,14 @@ let playGen=0,pumping=false,linkMode='ok',linkRtt=0,linkSent=0,linkPong=0,gateFr
 const pieceMeshes=[];
 const curP=()=>S.players[S.cur];
 const isMine=pl=>!!pl&&!pl.cpu&&!pl.out&&(!NET.on||pl.h===NET.myH);
+function fatePeekH(){
+  if(NET.on&&NET.myH!=null)return NET.myH;
+  const humans=S.players.filter(p=>!p.cpu&&!p.out);
+  if(humans.length===1)return humans[0].h;
+  const pl=curP();
+  if(pl&&!pl.cpu&&!pl.out)return pl.h;
+  return humans[0]?humans[0].h:null;
+}
 function displayName(pl){if(!pl)return'';return pl.name||HOUSES[pl.h].name+(pl.cpu?' (computer)':'');}
 const shortName=pl=>pl.name||HOUSES[pl.h].short;
 const allPieces=()=>S.players.flatMap(pl=>pl.pieces);
@@ -1874,14 +1882,14 @@ function ensureFate(){
   return S.fate;
 }
 function handIds(h){return ((ensureFate().hands[h])||[]).map(c=>c.id);}
-function showHand(h){
+function showHand(){
   if(!fateView||fateView.dealing())return;
-  const who=h==null?curP():(playerOfH(h)||curP());
-  if(!who)return;
-  const key=who.h+':'+handIds(who.h).join(',');
+  const h=fatePeekH();
+  if(h==null)return;
+  const key=h+':'+handIds(h).join(',');
   if(key===shownHand)return;
   shownHand=key;
-  fateView.setHand(handIds(who.h));
+  fateView.setHand(handIds(h));
 }
 function dropCards(list){
   const fate=ensureFate();
@@ -1889,9 +1897,10 @@ function dropCards(list){
 }
 async function playBurns(list,h){
   if(!fateView||!list||!list.length)return;
-  const mine=h==null?(curP()?curP().h:null):h;
+  const watch=h!=null?h:fatePeekH();
+  if(watch==null)return;
   for(const s of list){
-    if(s.h!==mine||fateView.dealing())continue;
+    if(s.h!==watch||fateView.dealing())continue;
     await fateView.burn(s.id);
   }
   shownHand='';
@@ -1920,12 +1929,8 @@ async function offerFateLocal(h,gid){
   const ids=held.map(c=>c.id);
   let choice=null;
   if(pl&&pl.cpu){
-    await fateView.deal(offer,ids,false);
-    if(gid!==S.gid)return true;
-    await wait(700);
     if(gid!==S.gid)return true;
     choice=R.bestFate(offer,held,allPieces(),h);
-    if(choice)await fateView.commit(choice.pick,choice.drop);
   }else{
     choice=await fateView.deal(offer,ids,true);
     if(!choice&&gid===S.gid){
@@ -2652,7 +2657,7 @@ async function beginTurn(again){
     const tick=R.fateTick(fate.hands,{turn:{h:pl.h,count:fate.turns[pl.h]}});
     fate.hands=tick.hands;
     const mine=tick.spent.filter(s=>s.h===pl.h);
-    if(mine.length&&fateView&&!fateView.dealing()){
+    if(mine.length&&fateView&&!fateView.dealing()&&pl.h===fatePeekH()){
       shownHand='';
       fateView.setHand(before);
       for(const s of mine)await fateView.burn(s.id);
@@ -2761,9 +2766,10 @@ async function nextTurn(){
       spent=spent.concat(mist.spent);
     }
     S.cur=to;
-    const mine=spent.filter(s=>curP()&&s.h===curP().h);
-    if(mine.length&&fateView&&!fateView.dealing()){
-      const now=handIds(curP().h);
+    const plNow=curP();
+    const mine=spent.filter(s=>plNow&&s.h===plNow.h);
+    if(mine.length&&fateView&&!fateView.dealing()&&plNow&&plNow.h===fatePeekH()){
+      const now=handIds(plNow.h);
       const show=now.slice();
       mine.forEach(s=>{if(show.indexOf(s.id)<0)show.push(s.id);});
       shownHand='';
@@ -3891,9 +3897,11 @@ function promptFor(pl){
 function settleUi(snapMsg){
   if(snapMsg&&S.phase==='fate'&&S.fate&&S.fate.offer&&fateView&&!fateView.dealing()){
     const offer=S.fate.offer,pl=playerOfH(offer.h);
-    fateView.deal(offer.ids,handIds(offer.h),isMine(pl)).then(choice=>{
-      if(choice&&isMine(pl))sendAction({t:'fate',pick:choice.pick,drop:choice.drop});
-    });
+    if(isMine(pl)){
+      fateView.deal(offer.ids,handIds(offer.h),true).then(choice=>{
+        if(choice)sendAction({t:'fate',pick:choice.pick,drop:choice.drop});
+      });
+    }
   }
   if(S.phase==='choose'&&isMine(curP())){refreshChoice();}
   else if(S.phase==='decree'&&isMine(curP())){setHighlights(decreeTroops(curP()));showMarkers([]);renderTurn();}
@@ -4126,7 +4134,7 @@ async function playEvent(e,epoch){
         const fate=ensureFate();
         fate.turns[e.h]=(fate.turns[e.h]||0)+1;
         const burns=(e.burn||[]).filter(s=>s.h===e.h);
-        if(burns.length&&fateView&&!fateView.dealing()){
+        if(burns.length&&fateView&&!fateView.dealing()&&e.h===fatePeekH()){
           const show=handIds(e.h);
           burns.forEach(s=>{if(show.indexOf(s.id)<0)show.push(s.id);});
           shownHand='';
@@ -4221,12 +4229,11 @@ async function playEvent(e,epoch){
         if(gone())return;
         if(choice)sendAction({t:'fate',pick:choice.pick,drop:choice.drop});
         else if(fateView.dealing())fateView.reset();
-      }else await fateView.deal(ids,held,false);
+      }
       return;}
     case'fateKept':{
       const fate=ensureFate();
       const offer=fate.offer&&fate.offer.h===e.h?fate.offer.ids:null;
-      if(!isMine(pl)&&fateView){await fateView.commit(e.pick,e.drop);if(gone())return;}
       if(offer){
         const result=R.fateAccept(fate.hands[e.h]||[],offer,e.pick,e.drop||null,(id)=>{
           fate.seq++;
@@ -4236,7 +4243,7 @@ async function playEvent(e,epoch){
       }
       fate.offer=null;shownHand='';
       if(e.decree){S.phase='decree';say(promptFor(pl));renderTurn();return;}
-      S.phase='moving';showHand(e.h);return;}
+      S.phase='moving';shownHand='';showHand();return;}
     case'decree':{
       const troop=pl.pieces.find(p=>p.idx===e.idx);if(!troop)return;
       S.phase='moving';setHighlights();showMarkers([]);renderTurn();
