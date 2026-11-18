@@ -26,15 +26,35 @@ function play(room, rand, now = 1, maxSteps = 20000) {
     now += 50;
     if (g.phase === 'roll' || g.phase === 'orderRoll') assert.equal(G.playRoll(room, id, now), null);
     else if (g.phase === 'choose') {
-      const opts = R.options(g.pieces, curH(room), g.pending, g.world);
+      const opts = R.options(g.pieces, curH(room), g.pending, g.world, g.fate && g.fate.hands);
+      if (!opts.length && g.canReroll) { assert.equal(G.playReroll(room, id, now), null); continue; }
       assert.ok(opts.length, 'choose phase always has a legal move');
       const o = opts[Math.floor(rand() * opts.length)];
       assert.equal(G.playMove(room, id, o.pc.idx, o.di, now), null);
+    } else if (g.phase === 'fate') {
+      const offer = g.fate.offer;
+      const choice = R.bestFate(offer.ids, g.fate.hands[offer.h], g.pieces, offer.h);
+      assert.equal(G.playFate(room, idOfH(room, offer.h), choice.pick, choice.drop, now), null);
+    } else if (g.phase === 'decree') {
+      const troop = g.pieces.find((p) => p.h === curH(room) && p.p < 0);
+      assert.ok(troop, 'a decree needs a troop in the keep');
+      assert.equal(G.playDecree(room, id, troop.idx, now), null);
     } else assert.fail('unexpected phase ' + g.phase);
   }
   return now;
 }
 function rng(seed) { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+
+test('the host can set gauntlet mode and the open-room card shows it', () => {
+  const room = lobby(2);
+  assert.equal(G.setOpts(room, ids[0], { mode: 'gauntlet' }), null);
+  assert.equal(room.mode, 'gauntlet');
+  assert.equal(room.ranked, true);
+  assert.equal(room.worlds, true);
+  const card = G.lobbyCard(room);
+  assert.equal(card.mode, 'gauntlet');
+  assert.equal(card.modeLabel, 'Gauntlet');
+});
 
 test('the host can hide a room and skip the March', () => {
   const room = lobby(2);
@@ -468,4 +488,51 @@ test('a repeated roll or move does not play twice', () => {
   const kept = room.game.pieces.map((p) => p.p);
   assert.equal(G.playRoll(room, id, 4, 4), null);
   assert.deepEqual(room.game.pieces.map((p) => p.p), kept);
+});
+
+test('landing on a shrine deals four fates, and only that seat may keep one', () => {
+  const room = lobby(2);
+  G.start(room, ids[0], 0);
+  let now = 1;
+  while (room.game.ordering && now < 8000) {
+    assert.equal(G.playRoll(room, idOfH(room, curH(room)), now), null);
+    now += 80;
+  }
+  assert.equal(room.game.ordering, false);
+  const g = room.game;
+  const h = curH(room);
+  const pc = g.pieces.find((p) => p.h === h && p.idx === 0);
+  pc.p = 5;
+  g.phase = 'choose';
+  g.pending = [{ v: 2 }, { v: 3, used: true }];
+  g.deadline = now + 20000;
+  const seat = idOfH(room, h);
+  const other = idOfH(room, g.players.find((p) => p.h !== h).h);
+  assert.equal(G.playMove(room, other, pc.idx, 0, now), 'not-your-turn');
+  assert.equal(G.playMove(room, seat, pc.idx, 0, now), null);
+  assert.equal(pc.p, 7);
+  assert.equal(g.phase, 'fate');
+  assert.equal(g.fate.offer.h, h);
+  assert.equal(g.fate.offer.ids.length, 4);
+  assert.equal(G.playFate(room, other, g.fate.offer.ids[0], null, now + 10), 'not-your-turn');
+  assert.equal(G.playFate(room, seat, 'nope', null, now + 10), 'illegal');
+  const choice = R.bestFate(g.fate.offer.ids, g.fate.hands[h], g.pieces, h);
+  assert.equal(G.playFate(room, seat, choice.pick, choice.drop, now + 20), null);
+  if (g.phase === 'decree') {
+    const troop = g.pieces.find((p) => p.h === h && p.p < 0);
+    assert.equal(G.playDecree(room, seat, troop.idx, now + 30), null);
+  } else assert.ok(g.fate.hands[h].some((c) => c.id === choice.pick));
+  assert.equal(g.fate.offer, null);
+  const view = G.publicView(room);
+  assert.ok(view.game.fate);
+  assert.equal(view.game.fate.offer, null);
+  assert.equal(view.game.fate.hands[h].length, g.fate.hands[h].length);
+  const holder = curH(room);
+  g.phase = 'fate';
+  g.fate.hands[holder] = (g.fate.hands[holder] || []).filter((c) => !['favor', 'phantom', 'grace', 'burden'].includes(c.id));
+  g.fate.offer = { h: holder, ids: ['favor', 'phantom', 'grace', 'burden'] };
+  g.deadline = now + 40;
+  G.tick(room, g.deadline + 1);
+  assert.notEqual(g.phase, 'fate');
+  assert.ok(room.events.some((e) => e.type === 'fateKept' && e.auto));
 });

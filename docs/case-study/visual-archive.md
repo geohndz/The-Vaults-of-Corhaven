@@ -392,6 +392,20 @@ What made play harder: the pieces look alike, world events and banners move too 
 |---|------|-------------------|--------|
 | 01 | [2026-11-18-01-libertinus-type-specimen-desktop.png](./screenshots/2026-11-18-01-libertinus-type-specimen-desktop.png) | Style guide · Type | Full typescale specimen (titles through system) |
 | 02 | [2026-11-18-02-title-libertinus-desktop.png](./screenshots/2026-11-18-02-title-libertinus-desktop.png) | Title page | Serif Display splash title + primary/secondary actions |
+| 03 | [2026-11-18-03-title-expedition-layout-desktop.png](./screenshots/2026-11-18-03-title-expedition-layout-desktop.png) | Title page | Valley art + lockup logo; Expedition-style lower menu with brush highlight |
+
+---
+
+## Session: 2026-11-18 — Navigation IA restructure (V1.7.0)
+
+**Trigger:** Play-first title, Online hub (Public / Create / Join), shared game-mode picker, Profile username persistence, create-room settings before lobby.
+
+**Environment:** Local static server (`python3 -m http.server 8765`), 1920×1080 viewport.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 04 | [2026-11-18-04-title-ia-play-desktop.png](./screenshots/2026-11-18-04-title-ia-play-desktop.png) | Title | Play primary; Tutorial and About secondary; Profile + Settings corners |
+| 05 | [2026-11-18-05-play-menu-desktop.png](./screenshots/2026-11-18-05-play-menu-desktop.png) | Play overlay | Online vs Local Game branch under full-window dim |
 
 ---
 

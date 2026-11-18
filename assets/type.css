@@ -377,19 +377,6 @@ body {
   letter-spacing: 0.1em;
 }
 
-.titlemain h1 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(calc(108px * 0.85), calc(108 * 100vw / 1920), calc(108px * 1.25));
-  line-height: clamp(calc(135px * 0.85), calc(135 * 100vw / 1920), calc(135px * 1.25));
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin: 0 0 40px;
-  color: var(--gold-bright);
-  text-align: center;
-  text-wrap: balance;
-}
-
 .sheet h1,
 .gatecard h1,
 .aboutinner h1,
@@ -459,7 +446,6 @@ body {
 
 .roll,
 .primary,
-.titlemain .titleactions button,
 .lobbyactions .primary,
 .lobbyactions .secondary,
 .localactions .primary,

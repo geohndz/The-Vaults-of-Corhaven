@@ -42,6 +42,10 @@ function eventMs(e) {
     case 'noMove': return 2800;
     case 'forfeit': return 900;
     case 'world': return e.change ? (e.id ? 7000 : 2600) : 0;
+    case 'fate': return 7000;
+    case 'fateKept': return e.decree ? 2400 : 1600;
+    case 'decree': return 900;
+    case 'reroll': return 1700;
     case 'finish': return 2600;
     case 'move': {
       const span = R.walkSpan({ h: e.h, p: e.from, at: e.fromAt }, { np: e.to, at: e.at, shift: e.shift, land: e.land, exit: e.exit });
@@ -51,19 +55,44 @@ function eventMs(e) {
   }
 }
 
+const KNOWN_MODES = new Set(['normal', 'gauntlet']);
+
+export function modeLabel(room) {
+  if (room && room.mode === 'gauntlet') return 'Gauntlet';
+  if (room && room.ranked) return 'Gauntlet';
+  return 'Normal';
+}
+
+function applyMode(room, mode) {
+  if (!KNOWN_MODES.has(mode)) return;
+  room.mode = mode;
+  if (mode === 'gauntlet') {
+    room.worlds = true;
+    room.ranked = true;
+  } else {
+    room.worlds = true;
+    room.ranked = false;
+  }
+}
+
 export function newRoom(code, now) {
-  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true, ranked: false };
+  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true, ranked: false, mode: 'normal' };
 }
 
 export const isJoinable = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < MAX_SEATS;
 export const isListed = (room) => isJoinable(room) && !room.private;
 export function lobbyCard(room) {
+  const mode = room.mode || (room.ranked ? 'gauntlet' : 'normal');
   return {
     code: room.code,
     taken: room.seats.length,
     open: MAX_SEATS - room.seats.length,
     names: room.seats.map((s) => s.name).filter(Boolean),
     kingdoms: room.seats.map((s) => s.h).filter((h) => h != null),
+    mode,
+    modeLabel: modeLabel(room),
+    ranked: !!room.ranked,
+    worlds: room.worlds !== false,
   };
 }
 
@@ -114,8 +143,14 @@ export function setOpts(room, id, msg) {
   if (room.status !== 'lobby') return 'started';
   if (id !== room.hostId) return 'not-host';
   if (typeof msg.private === 'boolean') room.private = msg.private;
-  if (typeof msg.worlds === 'boolean') room.worlds = msg.worlds;
-  if (typeof msg.ranked === 'boolean') room.ranked = msg.ranked;
+  if (typeof msg.mode === 'string') applyMode(room, msg.mode);
+  else {
+    if (typeof msg.worlds === 'boolean') room.worlds = msg.worlds;
+    if (typeof msg.ranked === 'boolean') room.ranked = msg.ranked;
+    if (typeof msg.ranked === 'boolean' || typeof msg.worlds === 'boolean') {
+      room.mode = room.ranked ? 'gauntlet' : 'normal';
+    }
+  }
   return null;
 }
 
@@ -161,6 +196,8 @@ export function start(room, id, now) {
     winReason: null,
     world: null,
     worlds: room.worlds !== false,
+    fate: { hands: R.emptyHands(), seq: 0, turns: [0, 0, 0, 0], offer: null },
+    canReroll: false,
     ranked: !!room.ranked,
     places: [],
     diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now, doubles: 0, greed: 0, rounds: 0, playerTurns: 0, worldPicks: {} },
@@ -237,28 +274,50 @@ function diceStatsOf(g) {
   return g.diceStats;
 }
 
+function fateState(g) {
+  if (!g.fate) g.fate = { hands: R.emptyHands(), seq: 0, turns: [0, 0, 0, 0], offer: null };
+  return g.fate;
+}
+const handsOf = (g) => fateState(g).hands;
+
 function beginTurn(room, again) {
   const g = room.game;
+  const h = curH(room);
+  let burn = g.fateBurn || [];
+  g.fateBurn = null;
   if (!again) {
     g.doubles = 0;
     diceStatsOf(g).playerTurns = (diceStatsOf(g).playerTurns || 0) + 1;
+    const fate = fateState(g);
+    fate.turns[h] = (fate.turns[h] || 0) + 1;
+    const tick = R.fateTick(fate.hands, { turn: { h, count: fate.turns[h] } });
+    fate.hands = tick.hands;
+    burn = burn.concat(tick.spent);
   }
+  g.canReroll = false;
   g.phase = 'roll';
   g.pending = [];
-  emit(room, { type: 'turn', h: curH(room), again: !!again });
+  emit(room, { type: 'turn', h, again: !!again, burn });
 }
 
 /* Every round is announced so each seat can count it. change is true only when the mist arrives or lifts. */
 function turnWorld(room, rounds) {
   const g = room.game;
   const id = R.worldAfter(rounds);
-  const change = id !== (g.world || null);
+  const prev = g.world || null;
+  const change = id !== prev;
   g.world = id;
   if (change && id) {
     const d = diceStatsOf(g);
     d.worldPicks[id] = (d.worldPicks[id] || 0) + 1;
   }
-  emit(room, { type: 'world', id, change });
+  let burn = [];
+  if (change && (id === 'mist') !== (prev === 'mist')) {
+    const tick = R.fateTick(handsOf(g), { mist: id === 'mist' });
+    fateState(g).hands = tick.hands;
+    burn = tick.spent;
+  }
+  emit(room, { type: 'world', id, change, burn });
 }
 
 const isHome = (g, h) => Array.isArray(g.places) && g.places.includes(h);
@@ -279,8 +338,15 @@ function nextTurn(room) {
   /* A round is one turn each. Wrapping back, or staying on the only kingdom left, ends it. */
   if (to <= from) {
     diceStatsOf(g).rounds = (diceStatsOf(g).rounds || 0) + 1;
-    if (g.worlds !== false) turnWorld(room, diceStatsOf(g).rounds);
+    const tick = R.fateTick(handsOf(g), { round: diceStatsOf(g).rounds });
+    fateState(g).hands = tick.hands;
+    if (g.worlds !== false) {
+      turnWorld(room, diceStatsOf(g).rounds);
+      const ev = room.events[room.events.length - 1];
+      if (ev && ev.type === 'world') ev.burn = tick.spent.concat(ev.burn || []);
+    } else g.fateBurn = tick.spent;
   }
+  g.cur = to;
   beginTurn(room, false);
 }
 
@@ -302,12 +368,12 @@ function roll(room, auto) {
   if (g.phase === 'orderRoll') return orderRoll(room, auto);
   const h = curH(room);
   const pl = g.players[g.cur];
-  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt);
+  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
   const [a, b] = plan.vals || [die(), die()];
   const d = diceStatsOf(g);
   d.turns++;
   if (plan.assisted) d.assisted++;
-  R.noteFinish(g.pieces, h, g.world, pl, a, b);
+  R.noteFinish(g.pieces, h, g.world, pl, a, b, handsOf(g));
   g.dbl = a === b;
   if (g.dbl) {
     g.doubles++;
@@ -325,10 +391,16 @@ function roll(room, auto) {
   continueTurn(room);
 }
 
+function holdingChance(g, h) {
+  return g.pending.length > 0 && g.pending.every((d) => !d.used) && g.pending.some((d) => !d.bonus) && R.holds(R.handOf(handsOf(g), h), 'chance');
+}
+
 function continueTurn(room) {
   const g = room.game;
   const h = curH(room);
-  const opts = R.options(g.pieces, h, g.pending, g.world);
+  const opts = R.options(g.pieces, h, g.pending, g.world, handsOf(g));
+  if (holdingChance(g, h)) { g.canReroll = true; g.phase = 'choose'; return; }
+  g.canReroll = false;
   if (!opts.length) {
     const left = g.pending.filter((d) => !d.used);
     const usedDie = g.pending.some((d) => d.used && !d.bonus);
@@ -337,14 +409,14 @@ function continueTurn(room) {
       if (!g.diceStats) g.diceStats = { turns: 0, noMoves: 0, assisted: 0, started: 0 };
       g.diceStats.noMoves++;
     }
-    if (left.length) emit(room, { type: 'noMove', h, vals: [...new Set(left.map((d) => d.v))], bonusOnly: left.length === 1 && !!left[0].bonus });
+    if (left.length) emit(room, { type: 'noMove', h, vals: [...new Set(left.map((d) => d.v))], bonusOnly: left.length === 1 && !!left[0].bonus, bonus: left.length === 1 && left[0].bonus ? left[0].v : null });
     return endTurn(room);
   }
   if (g.dbl) {
-    const open = R.phalanxDouble(g.pieces, h, g.pending, g.world);
+    const open = R.phalanxDouble(g.pieces, h, g.pending, g.world, handsOf(g));
     if (open) return applyMove(room, open, false);
   }
-  const uniq = new Set(opts.map((o) => g.pending[o.di].v + ':' + o.pc.p));
+  const uniq = new Set(opts.map((o) => o.v + ':' + o.pc.p));
   if (uniq.size === 1) return applyMove(room, opts[0], false);
   g.phase = 'choose';
 }
@@ -356,11 +428,32 @@ function endTurn(room) {
   else nextTurn(room);
 }
 
+function settleFate(g, h, info) {
+  const resolved = R.fateResolve(handsOf(g), h, info);
+  fateState(g).hands = resolved.hands;
+  return resolved;
+}
+
+function offerFate(room, pc) {
+  const g = room.game;
+  if (!R.landedShrine(pc)) return false;
+  const fate = fateState(g);
+  const offer = R.fateOffer(fate.hands[pc.h] || [], () => randomInt(0x100000000) / 0x100000000, {
+    pieces: g.pieces, h: pc.h, worldId: g.world, hands: fate.hands, mistOn: g.worlds !== false,
+  });
+  if (!offer.length) return false;
+  g.phase = 'fate';
+  fate.offer = { h: pc.h, ids: offer };
+  emit(room, { type: 'fate', h: pc.h, offer });
+  return true;
+}
+
 function applyMove(room, opt, auto) {
   const g = room.game;
   const { pc, di, r } = opt;
   const d = g.pending[di];
   d.used = true;
+  g.canReroll = false;
   if (!d.bonus) R.noteDry(g.players.find((p) => p.h === pc.h), true);
   const from = pc.p;
   const fromAt = pc.at != null ? pc.at : null;
@@ -368,11 +461,14 @@ function applyMove(room, opt, auto) {
   if (r.at != null) pc.at = r.at;
   else delete pc.at;
   const captures = r.captures.map((o) => ({ h: o.h, idx: o.idx, from: o.p }));
-  r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: BONUS, bonus: true }); });
+  const spared = (r.spared || []).map((o) => ({ h: o.h, idx: o.idx }));
   const goal = pc.p === GOAL;
-  if (goal) { R.noteVault(g.players.find((p) => p.h === pc.h)); g.pending.push({ v: BONUS, bonus: true }); }
-  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null });
+  const resolved = settleFate(g, pc.h, { favor: !!opt.favor, pilgrim: !!r.pilgrim, spared: spared.map((o) => o.h), captures: captures.length, goal });
+  r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: resolved.captureBonus, bonus: true }); });
+  if (goal) { R.noteVault(g.players.find((p) => p.h === pc.h)); g.pending.push({ v: resolved.vaultBonus, bonus: true }); }
+  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, spared, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null, spent: resolved.spent, captureBonus: captures.length ? resolved.captureBonus : null, vaultBonus: goal ? resolved.vaultBonus : null });
   if (R.allHome(g.pieces, pc.h)) return g.ranked ? placeKingdom(room, pc.h) : win(room, pc.h, 'vault');
+  if (offerFate(room, pc)) return;
   continueTurn(room);
 }
 
@@ -426,11 +522,123 @@ export function playMove(room, id, idx, di, now, act) {
   if (room.status !== 'playing' || !seat || seat.out) return 'nope';
   if (repeatedAct(seat, act)) return null;
   if (curH(room) !== seat.h || g.phase !== 'choose') return 'not-your-turn';
-  const opt = R.options(g.pieces, seat.h, g.pending, g.world).find((o) => o.pc.idx === idx && o.di === di);
+  const opt = R.options(g.pieces, seat.h, g.pending, g.world, handsOf(g)).find((o) => o.pc.idx === idx && o.di === di);
   if (!opt) return 'illegal';
   step(room, now, () => applyMove(room, opt, false));
   noteAct(seat, act);
   return null;
+}
+
+function acceptFate(room, pick, drop, auto) {
+  const g = room.game;
+  const fate = fateState(g);
+  const offer = fate.offer;
+  if (!offer || g.phase !== 'fate') return 'not-your-turn';
+  const h = offer.h;
+  const result = R.fateAccept(fate.hands[h] || [], offer.ids, pick, drop || null, (id) => {
+    fate.seq += 1;
+    return R.fateStamp(id, fate.seq, fate.turns[h] || 0, diceStatsOf(g).rounds || 0, g.world === 'mist');
+  });
+  if (!result) return 'illegal';
+  fate.hands[h] = result.hand;
+  fate.offer = null;
+  emit(room, { type: 'fateKept', h, pick, drop: result.dropped, hand: result.hand.map((c) => c.id), decree: result.instant === 'decree', auto: !!auto });
+  if (result.instant === 'decree') { g.phase = 'decree'; return null; }
+  continueTurn(room);
+  return null;
+}
+
+function applyDecree(room, idx, auto) {
+  const g = room.game;
+  if (g.phase !== 'decree') return 'not-your-turn';
+  const h = curH(room);
+  const pc = g.pieces.find((p) => p.h === h && p.idx === idx);
+  if (!pc) return 'illegal';
+  const r = R.moveResult(g.pieces, pc, 1, g.world, handsOf(g));
+  if (!r || !r.exit) return 'illegal';
+  const from = pc.p;
+  pc.p = r.np;
+  delete pc.at;
+  const captures = r.captures.map((o) => ({ h: o.h, idx: o.idx, from: o.p }));
+  const spared = (r.spared || []).map((o) => ({ h: o.h, idx: o.idx }));
+  const resolved = settleFate(g, h, { spared: spared.map((o) => o.h), captures: captures.length, goal: false });
+  r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: resolved.captureBonus, bonus: true }); });
+  emit(room, { type: 'decree', h, idx, from, captures, spared, spent: resolved.spent, captureBonus: captures.length ? resolved.captureBonus : null, auto: !!auto });
+  continueTurn(room);
+  return null;
+}
+
+function reroll(room, auto) {
+  const g = room.game;
+  const h = curH(room);
+  if (g.phase !== 'choose' || !g.canReroll || !R.holds(R.handOf(handsOf(g), h), 'chance')) return 'illegal';
+  if (g.pending.some((d) => d.used)) return 'illegal';
+  handsOf(g)[h] = (handsOf(g)[h] || []).filter((c) => c.id !== 'chance');
+  g.canReroll = false;
+  if (g.dbl) {
+    g.doubles = Math.max(0, g.doubles - 1);
+    const stats = diceStatsOf(g);
+    stats.doubles = Math.max(0, (stats.doubles || 0) - 1);
+  }
+  const pl = g.players[g.cur];
+  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
+  const [a, b] = plan.vals || [die(), die()];
+  if (plan.assisted) diceStatsOf(g).assisted++;
+  R.noteFinish(g.pieces, h, g.world, pl, a, b, handsOf(g));
+  g.dbl = a === b;
+  if (g.dbl) {
+    g.doubles++;
+    diceStatsOf(g).doubles = (diceStatsOf(g).doubles || 0) + 1;
+  }
+  emit(room, { type: 'reroll', h, vals: [a, b], dbl: g.dbl, auto: !!auto, spent: [{ h, id: 'chance' }] });
+  if (g.dbl && g.doubles === 3) {
+    diceStatsOf(g).greed = (diceStatsOf(g).greed || 0) + 1;
+    const lost = g.pieces.filter((p) => p.h === h && p.p >= 0 && p.p < GOAL).sort((x, y) => y.p - x.p)[0];
+    emit(room, { type: 'thirdDouble', h, vals: [a, b], idx: lost ? lost.idx : null, from: lost ? lost.p : null, auto: !!auto });
+    if (lost) { lost.p = -1; delete lost.at; }
+    nextTurn(room);
+    return null;
+  }
+  g.pending = [{ v: a }, { v: b }];
+  continueTurn(room);
+  return null;
+}
+
+export function playFate(room, id, pick, drop, now, act) {
+  const g = room.game;
+  const seat = seatOf(room, id);
+  if (room.status !== 'playing' || !seat || seat.out || !g) return 'nope';
+  if (repeatedAct(seat, act)) return null;
+  const offer = g.fate && g.fate.offer;
+  if (!offer || g.phase !== 'fate' || offer.h !== seat.h) return 'not-your-turn';
+  let err = null;
+  step(room, now, () => { err = acceptFate(room, pick, drop, false); });
+  if (!err) noteAct(seat, act);
+  return err;
+}
+
+export function playDecree(room, id, idx, now, act) {
+  const g = room.game;
+  const seat = seatOf(room, id);
+  if (room.status !== 'playing' || !seat || seat.out || !g) return 'nope';
+  if (repeatedAct(seat, act)) return null;
+  if (g.phase !== 'decree' || curH(room) !== seat.h) return 'not-your-turn';
+  let err = null;
+  step(room, now, () => { err = applyDecree(room, idx, false); });
+  if (!err) noteAct(seat, act);
+  return err;
+}
+
+export function playReroll(room, id, now, act) {
+  const g = room.game;
+  const seat = seatOf(room, id);
+  if (room.status !== 'playing' || !seat || seat.out || !g) return 'nope';
+  if (repeatedAct(seat, act)) return null;
+  if (curH(room) !== seat.h) return 'not-your-turn';
+  let err = null;
+  step(room, now, () => { err = reroll(room, false); });
+  if (!err) noteAct(seat, act);
+  return err;
 }
 
 export function setAway(room, id, away, now, connId) {
@@ -532,8 +740,18 @@ export function tick(room, now) {
     const g = room.game;
     if (room.status !== 'playing' || !g || !g.deadline || now < g.deadline) break;
     if (g.phase === 'roll' || g.phase === 'orderRoll') step(room, now, () => roll(room, true));
-    else if (g.phase === 'choose') {
-      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending, g.world));
+    else if (g.phase === 'fate') {
+      const offer = fateState(g).offer;
+      const choice = offer && R.bestFate(offer.ids, handsOf(g)[offer.h], g.pieces, offer.h);
+      step(room, now, () => (choice ? acceptFate(room, choice.pick, choice.drop, true) : (g.deadline = null)));
+    } else if (g.phase === 'decree') {
+      const h = curH(room);
+      const troop = g.pieces.find((p) => p.h === h && p.p < 0 && R.moveResult(g.pieces, p, 1, g.world, handsOf(g)));
+      step(room, now, () => (troop ? applyDecree(room, troop.idx, true) : continueTurn(room)));
+    } else if (g.phase === 'choose' && g.canReroll && !R.options(g.pieces, curH(room), g.pending, g.world, handsOf(g)).length) {
+      step(room, now, () => reroll(room, true));
+    } else if (g.phase === 'choose') {
+      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending, g.world, handsOf(g)));
       step(room, now, () => (opt ? applyMove(room, opt, true) : continueTurn(room)));
     } else g.deadline = null;
     changed = true;
@@ -566,6 +784,8 @@ export function publicView(room) {
     private: !!room.private,
     worlds: room.worlds !== false,
     ranked: !!room.ranked,
+    mode: room.mode || (room.ranked ? 'gauntlet' : 'normal'),
+    modeLabel: modeLabel(room),
     hostPid: host ? host.pid : null,
     seats: room.seats.map(({ pid, name, h, away, awaySince, out }) => ({ pid, name, h, away, awaySince, out })),
     seq: room.seq,
@@ -583,6 +803,8 @@ export function publicView(room) {
       winReason: room.game.winReason,
       world: room.game.world,
       worlds: room.game.worlds !== false,
+      fate: room.game.fate ? { hands: room.game.fate.hands, offer: room.game.fate.offer, turns: room.game.fate.turns, seq: room.game.fate.seq } : null,
+      canReroll: !!room.game.canReroll,
       ranked: !!room.game.ranked,
       places: room.game.places || [],
       themeAt: room.game.themeAt,

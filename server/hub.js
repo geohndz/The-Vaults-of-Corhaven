@@ -183,6 +183,9 @@ async function handle(conn, msg) {
     case 'start': err = await mutate(conn.code, (room, now) => G.start(room, id, now) || true); break;
     case 'roll': err = await mutate(conn.code, (room, now) => G.playRoll(room, id, now, msg.act) || true); break;
     case 'move': err = await mutate(conn.code, (room, now) => G.playMove(room, id, msg.idx, msg.di, now, msg.act) || true); break;
+    case 'fate': err = await mutate(conn.code, (room, now) => G.playFate(room, id, msg.pick, msg.drop, now, msg.act) || true); break;
+    case 'decree': err = await mutate(conn.code, (room, now) => G.playDecree(room, id, msg.idx, now, msg.act) || true); break;
+    case 'reroll': err = await mutate(conn.code, (room, now) => G.playReroll(room, id, now, msg.act) || true); break;
     case 'away': err = await mutate(conn.code, (room, now) => G.setAway(room, id, true, now)); break;
     case 'back': err = await mutate(conn.code, (room, now) => G.setAway(room, id, false, now)); break;
     case 'leave': {

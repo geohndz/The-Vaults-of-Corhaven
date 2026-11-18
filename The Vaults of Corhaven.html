@@ -3,6 +3,15 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Vaults of Corhaven</title>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('corhaven-profile')||'null');
+    var n=p&&p.username?String(p.username).replace(/\s+/g,' ').trim():'';
+    if(n)document.documentElement.classList.add('name-ready');
+  }catch(e){}
+})();
+</script>
 <audio id="theme" src="assets/Music/main-theme.m4a" loop autoplay preload="auto"></audio>
 <script>
 (function(){
@@ -191,8 +200,6 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roomcode{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px;padding:8px 14px;border:1.5px dashed var(--gold);border-radius:12px;color:var(--parch-dim)}
 .roomcode b{font-size:clamp(22px,8vw,34px);letter-spacing:.16em;color:var(--gold-bright)}
 .kingdoms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:8px;align-items:start}
-#online{padding:0;align-items:stretch;background:rgba(10,8,14,.72);backdrop-filter:blur(2px)}
-#online .sheet{width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
 .join{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
 .joinside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .joinside h1{margin-bottom:0}
@@ -211,7 +218,56 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .openroom .who{grid-column:1 / -1;color:var(--parch-dim);font-size:15px}
 .openroom:hover,.openroom:focus-visible{color:var(--parch)}
 .openroom:hover .spots,.openroom:focus-visible .spots{color:var(--parch)}
-#lobbyPane[hidden],#codePane[hidden]{display:none !important}
+#lobbyPane[hidden],#codePane[hidden],#onlineHubPane[hidden],#modePaneOnline[hidden],#createSettingsPane[hidden],#publicBlockPane[hidden],#localModePane[hidden],#setupSeatsPane[hidden]{display:none !important}
+.modeselect{display:flex;flex-direction:column;gap:10px;width:100%;margin:8px 0 0}
+.modepick{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;margin:0;padding:16px 18px;border:1px solid rgba(154,171,188,.28);border-radius:0;background:rgba(8,12,16,.45);color:var(--parch);text-align:left;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.modepick:hover:not(:disabled),.modepick:focus-visible:not(:disabled){border-color:rgba(230,237,244,.45);background:rgba(62,72,84,.35)}
+.modepick[aria-checked="true"]{border-color:var(--gold-bright);background:rgba(62,72,84,.5);box-shadow:inset 0 0 0 1px rgba(242,245,248,.12)}
+.modepick:disabled,.modepick[aria-disabled="true"]{opacity:.55;cursor:default}
+.modepick .mode-name{font-family:var(--font-display);font-size:clamp(22px,2.6vw,28px);letter-spacing:.06em;color:var(--gold-bright)}
+.modepick .mode-desc{font-size:15px;line-height:1.45;color:var(--parch-dim);max-width:42ch}
+.modepick .mode-soon{font-size:13px;color:#ffb8a8;letter-spacing:.04em;text-transform:uppercase}
+.roommeta{margin:0;color:var(--parch-dim);font-size:15px;line-height:1.5}
+.roommeta strong{color:var(--parch);font-weight:600}
+.roommode{margin:0;padding:0;font-size:15px;font-weight:600;color:var(--gold-bright)}
+.openroom .mode{font-size:14px;color:var(--parch-dim);grid-column:2;text-align:right}
+#play,#online,#setup,#profile.menu-page{position:fixed;padding:0;align-items:stretch;overflow:hidden;background:#050608}
+.menu-page .menubackdrop{position:absolute;inset:0;z-index:0;overflow:hidden}
+.menu-page .menubg{width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:saturate(1.04) contrast(1.03)}
+.menu-page .menuveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,10,.5) 0%,rgba(4,6,10,.18) 36%,rgba(4,6,10,.42) 62%,rgba(2,3,6,.78) 100%),radial-gradient(ellipse 92% 70% at 50% 40%,transparent 8%,rgba(3,4,8,.5) 100%)}
+.menu-page .sheet{position:relative;z-index:1;width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
+.menu-page .join,.menu-page .lobby,.menu-page .local{position:relative;z-index:1}
+.menu-page .sheet::before{content:"";position:absolute;z-index:0;inset:0 auto 0 0;width:40%;background:rgba(7,10,14,.93);border-right:1px solid rgba(230,237,244,.16);pointer-events:none}
+.menu-page .joinside,.menu-page .localside,.menu-page .lobbyside,.menu-page .localactions,.menu-page .lobbyactions{position:relative;z-index:1}
+.menu-page .joinside p,.menu-page .localside p,.menu-page .lobbyside p{color:var(--parch-dim);text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.menu-page .localactions .primary,.menu-page .localactions .secondary,.menu-page .lobbyactions .primary,.menu-page .lobbyactions .secondary{background:linear-gradient(90deg,rgba(8,12,16,.72) 0%,rgba(8,12,16,.8) 50%,rgba(8,12,16,.72) 100%)}
+.menu-page .localactions .primary:hover,.menu-page .localactions .primary:focus-visible,.menu-page .localactions .secondary:hover,.menu-page .localactions .secondary:focus-visible,.menu-page .lobbyactions .primary:hover,.menu-page .lobbyactions .primary:focus-visible,.menu-page .lobbyactions .secondary:hover,.menu-page .lobbyactions .secondary:focus-visible{background:linear-gradient(90deg,rgba(62,72,84,.5) 0%,rgba(90,102,114,.72) 50%,rgba(62,72,84,.5) 100%)}
+body.at-lobby canvas#scene,body.at-lobby .hud{visibility:hidden}
+body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
+.titlecorners{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(env(safe-area-inset-right,0px) + 16px);display:flex;gap:10px}
+.titleicon{width:44px;height:44px;margin:0;padding:0;border:1.5px solid rgba(230,237,244,.35);border-radius:999px;background:rgba(8,12,16,.55);color:var(--parch);font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.titleicon:hover,.titleicon:focus-visible{color:#fff;border-color:var(--gold-bright)}
+.titleitem--primary{color:var(--gold-bright);font-size:clamp(calc(44px * 0.51),calc(26.4 * 100vw / 1920),calc(42px))}
+.titlepage.intro .titlelogo{opacity:0;pointer-events:none;transform:translate(-50%,14px);transition:opacity .55s ease,transform .55s ease}
+.titlepage.intro .titlemenu,.titlepage.intro .titlecorners,.titlepage.intro .titlever,.titlepage.intro #titleErr{opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.titlepage.title-revealed .titlelogo{opacity:1;pointer-events:none;transform:translate(-50%,0)}
+.titlepage.title-revealed .titlemenu,.titlepage.title-revealed .titlecorners,.titlepage.title-revealed .titlever{opacity:1;pointer-events:auto;transform:translateY(0)}
+.nameintro{position:absolute;z-index:2;left:50%;top:clamp(72px,14vh,160px);width:95vw;max-width:95vw;transform:translate(-50%,0);text-align:center;color:var(--parch);transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s}
+.nameintro[hidden]{display:none !important}
+.titlepage.intro-leaving .nameintro{opacity:0;transform:translate(-50%,-18px);pointer-events:none;visibility:hidden}
+.nameintro-banner{position:relative;margin:0 auto;padding:22px clamp(24px,5vw,48px) 20px;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.78) 8%,rgba(8,12,16,.78) 92%,rgba(8,12,16,0) 100%)}
+.nameintro-banner .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
+.nameintro-banner .rule.t{top:9px}
+.nameintro-banner .rule.b{bottom:9px}
+.nameintro-logo{display:block;width:min(220px,46vw);height:auto;margin:0 auto 10px;filter:drop-shadow(0 8px 28px rgba(0,0,0,.75))}
+.nameintro-blurb{margin:0 auto 16px;max-width:min(72ch,88vw);color:var(--parch-dim);font-size:15px;line-height:1.5;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.nameintro-label{display:block;margin:0 0 6px;font-weight:600;font-size:15px;color:var(--parch);text-align:left;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+#nameIntroForm{display:flex;flex-direction:column;gap:10px;align-items:stretch;margin:0 auto;max-width:min(360px,88vw)}
+#nameIntroInput{width:100%;margin:0;text-align:left;font-size:17px}
+.nameintro-cta{position:relative;width:100%;margin:0;padding:18px 20px 17px;border:0;border-radius:0;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%);color:var(--gold-bright);font-family:var(--font-display);font-size:clamp(13px,1.8vw,17px);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+.nameintro-cta:hover,.nameintro-cta:focus-visible{color:var(--parch)}
+#nameIntroErr{margin:10px 0 0;min-height:1.3em}
+@media (prefers-reduced-motion:reduce){.titlepage.intro .titlelogo{transform:translate(-50%,0)}.titlepage.intro .titlemenu,.titlepage.intro .titlecorners,.titlepage.intro .titlever,.nameintro,.titlepage.intro-leaving .nameintro{transition:none;transform:none}}
 .lobby{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
 .lobbyside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .lobbymain{grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 40px) calc(env(safe-area-inset-bottom,0px) + 28px) 24px;border-left:1px solid rgba(230,237,244,.32)}
@@ -227,7 +283,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roomopts input,.setupopts input{width:22px;height:22px;flex:none;accent-color:#9AABBC}
 .setupopts{display:flex;flex-direction:column;gap:14px;margin-top:18px}
 .lobbyactions,.localactions{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:16px;padding:8px 32px calc(env(safe-area-inset-bottom,0px) + 28px) calc(env(safe-area-inset-left,0px) + 32px)}
-.lobbyactions .primary,.lobbyactions .secondary,.localactions .primary,.localactions .secondary{position:relative;width:100%;margin:0;padding:28px 20px 27px;border:0;border-radius:0;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%);box-shadow:none;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9);transition:color .15s ease,background .15s ease}
+.lobbyactions .primary,.lobbyactions .secondary,.localactions .primary,.localactions .secondary{position:relative;width:100%;margin:0;padding:28px 20px 27px;border:0;border-radius:0;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%);box-shadow:none;color:var(--gold-bright);font-family:var(--font-display);font-weight:400;font-size:clamp(calc(38px * 0.51),calc(22.8 * 100vw / 1920),calc(36px));letter-spacing:.08em;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9);transition:color .15s ease,background .15s ease}
 .lobbyactions .primary::before,.lobbyactions .primary::after,.lobbyactions .secondary::before,.lobbyactions .secondary::after,.localactions .primary::before,.localactions .primary::after,.localactions .secondary::before,.localactions .secondary::after{content:"";position:absolute;left:4%;right:4%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-bright) 16%,var(--gold-bright) 84%,transparent);pointer-events:none;opacity:0;transition:opacity .15s ease}
 .lobbyactions .primary::before,.lobbyactions .secondary::before,.localactions .primary::before,.localactions .secondary::before{top:11px}
 .lobbyactions .primary::after,.lobbyactions .secondary::after,.localactions .primary::after,.localactions .secondary::after{bottom:11px}
@@ -237,8 +293,6 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .lobbyactions .primary:disabled,.localactions .primary:disabled{opacity:.45;cursor:default}
 .lobbyactions .primary:disabled:hover,.lobbyactions .primary:disabled:focus-visible,.localactions .primary:disabled:hover,.localactions .primary:disabled:focus-visible{color:var(--gold-bright);background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%)}
 .lobbyactions .primary:disabled::before,.lobbyactions .primary:disabled::after,.lobbyactions .primary:disabled:hover::before,.lobbyactions .primary:disabled:hover::after,.localactions .primary:disabled::before,.localactions .primary:disabled::after,.localactions .primary:disabled:hover::before,.localactions .primary:disabled:hover::after{opacity:0}
-#setup{padding:0;align-items:stretch;background:rgba(10,8,14,.72);backdrop-filter:blur(2px)}
-#setup .sheet{width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
 .local{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
 .localside{grid-column:1;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .localside h1{margin-bottom:12px}
@@ -294,24 +348,36 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
   .openroom .crests{grid-column:1}
   .lobbyactions,.localactions{grid-column:1;grid-row:3}
   .banner .frame{width:88%}
+  .menu-page .sheet::before{width:100%;border-right:0;border-bottom:1px solid rgba(230,237,244,.14)}
 }
-body.at-title canvas#scene,body.at-title .hud{visibility:hidden}
-body.at-title #gearWrap{visibility:visible}
 body.at-lesson .hud{visibility:hidden}
 body.at-lesson #toast,body.at-lesson #hintDock,body.at-lesson #bottomBar{visibility:visible}
 body.at-lesson #bottomBar{z-index:21;pointer-events:auto}
-.titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 36px) 24px calc(env(safe-area-inset-bottom,0px) + 36px)}
-.titlepage.open{display:flex;align-items:center;justify-content:center}
-.titlemain{width:min(560px,100%);text-align:center}
-.titlemain .titleactions{display:flex;flex-direction:column;gap:16px;margin-top:4px}
-.titlemain .titlever{margin:28px 0 0;color:var(--parch-dim);text-shadow:0 1px 2px rgba(0,0,0,.7)}
-.titlemain .titleactions button{position:relative;width:100%;margin:0;padding:28px 20px 27px;border:0;border-radius:0;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.62) 16%,rgba(8,12,16,.78) 50%,rgba(8,12,16,.62) 84%,rgba(8,12,16,0) 100%);box-shadow:none;color:var(--gold-bright);text-shadow:0 1px 2px rgba(0,0,0,.9);transition:color .15s ease,background .15s ease}
-.titlemain .titleactions button::before,.titlemain .titleactions button::after{content:"";position:absolute;left:4%;right:4%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-bright) 16%,var(--gold-bright) 84%,transparent);pointer-events:none;opacity:0;transition:opacity .15s ease}
-.titlemain .titleactions button::before{top:11px}
-.titlemain .titleactions button::after{bottom:11px}
-.titlemain .titleactions button:hover,.titlemain .titleactions button:focus-visible{color:var(--parch);background:linear-gradient(90deg,rgba(62,72,84,0) 0%,rgba(62,72,84,.42) 16%,rgba(90,102,114,.7) 50%,rgba(62,72,84,.42) 84%,rgba(62,72,84,0) 100%)}
-.titlemain .titleactions button:hover::before,.titlemain .titleactions button:hover::after,.titlemain .titleactions button:focus-visible::before,.titlemain .titleactions button:focus-visible::after{opacity:1}
-.titlemain .titleactions button:active{transform:translateY(1px)}
+.titlepage{position:fixed;inset:0;z-index:15;display:none;overflow:hidden;background:#050608;color:var(--parch)}
+.titlepage.open{display:block}
+.titlebackdrop{position:absolute;inset:0;z-index:0;overflow:hidden}
+.titlefx{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;display:block}
+.titlebg{width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:saturate(1.05) contrast(1.04)}
+.titleveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,10,.42) 0%,rgba(4,6,10,.12) 32%,rgba(4,6,10,.38) 58%,rgba(2,3,6,.82) 100%),radial-gradient(ellipse 95% 75% at 50% 38%,transparent 10%,rgba(3,4,8,.55) 100%)}
+.titlemain{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:100%;min-height:100dvh;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 20px calc(env(safe-area-inset-bottom,0px) + 22px)}
+.titlelogo{position:absolute;top:clamp(56px,11vh,128px);left:50%;transform:translate(-50%,0);width:min(760px,94vw);height:auto;pointer-events:none;user-select:none;filter:drop-shadow(0 10px 40px rgba(0,0,0,.72));transition:opacity .55s ease,transform .55s ease}
+#titleErr{margin:0 0 10px;max-width:36ch;color:#ffb8a8;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.titlemenu{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.9vh,12px);width:min(100%,440px);margin-top:auto;padding-top:min(46vh,420px)}
+.titleitem{position:relative;z-index:0;margin:0;padding:12px 56px;border:0;background:transparent;color:rgba(236,240,246,.92);font-family:var(--font-display);font-weight:400;font-size:clamp(calc(38px * 0.51),calc(22.8 * 100vw / 1920),calc(36px));line-height:1.05;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-shadow:0 2px 12px rgba(0,0,0,.85);transition:color .18s ease,transform .18s ease}
+.titleitem::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:min(420px,92vw);height:2.2em;transform:translate(-50%,-50%) skewX(-8deg);background:radial-gradient(ellipse 85% 100% at 50% 50%,rgba(8,10,14,.88) 0%,rgba(8,10,14,.55) 45%,rgba(8,10,14,0) 78%);opacity:0;transition:opacity .2s ease,filter .2s ease;filter:blur(.4px)}
+.titleitem::after{content:"";position:absolute;z-index:-1;left:8%;right:8%;bottom:4px;height:1px;background:linear-gradient(90deg,transparent,rgba(230,237,244,.35) 20%,rgba(230,237,244,.35) 80%,transparent);opacity:0;transition:opacity .2s ease}
+.titleitem:hover,.titleitem:focus-visible{color:#fff}
+.titleitem:hover::before,.titleitem:focus-visible::before,.titleitem.titlepick::before{opacity:1}
+.titleitem:hover::after,.titleitem:focus-visible::after,.titleitem.titlepick::after{opacity:.7}
+.titleitem:active{transform:translateY(1px)}
+.titleitem:focus-visible{outline:none}
+.titlemain .titlever{margin:18px 0 0;color:rgba(232,238,244,.55);opacity:.9}
+@media (max-width:640px){
+  .titlelogo{top:clamp(48px,9vh,96px);width:min(100%,96vw)}
+  .titlemenu{padding-top:min(40vh,340px);gap:6px}
+  .titleitem{padding:10px 36px;font-size:clamp(calc(30px * 0.51),calc(18 * 100vw / 1920),calc(28.5px));letter-spacing:.06em}
+}
+@media (prefers-reduced-motion:reduce){.titleitem{transition:none}}
 .aboutpage{position:fixed;inset:0;z-index:15;display:none;overflow:auto;background:var(--leather);padding:calc(env(safe-area-inset-top,0px) + 72px) 24px calc(env(safe-area-inset-bottom,0px) + 28px)}
 .aboutpage.open{display:block}
 .aboutinner{width:min(720px,100%);margin:0 auto}
@@ -323,14 +389,16 @@ body.at-lesson #bottomBar{z-index:21;pointer-events:auto}
 .aboutbody p{margin:0 0 12px;color:var(--parch-dim)}
 .aboutbody h3{margin:16px 0 4px;color:var(--parch)}
 .aboutback{max-width:280px}
-#gate{position:fixed;inset:0;z-index:18;display:none;align-items:center;justify-content:center;background:var(--leather);
-  padding:calc(env(safe-area-inset-top,0px) + 28px) 24px calc(env(safe-area-inset-bottom,0px) + 28px)}
+#gate{position:fixed;inset:0;z-index:18;display:none;flex-direction:column;overflow:hidden;background:#050608;padding:0}
 #gate.open{display:flex}
-.gatecard{width:min(440px,100%);text-align:left}
-.gatecard h1{margin:0 0 14px}
-.gatecard p{margin:0;color:var(--parch-dim);max-width:36ch}
-.gatebar{width:min(280px,72vw);height:3px;margin-top:28px;background:rgba(154,171,188,.28)}
-.gatebar span{display:block;height:100%;width:100%;background:var(--gold-bright);transform:scaleX(0);transform-origin:left center}
+#gate .gatebackdrop{position:absolute;inset:0;z-index:0;overflow:hidden}
+#gate .gatebg{width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:saturate(1.05) contrast(1.04)}
+#gate .gateveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,10,.42) 0%,rgba(4,6,10,.12) 32%,rgba(4,6,10,.38) 58%,rgba(2,3,6,.82) 100%),radial-gradient(ellipse 95% 75% at 50% 38%,transparent 10%,rgba(3,4,8,.55) 100%)}
+#gate .gatemain{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(env(safe-area-inset-top,0px) + 24px) 20px calc(env(safe-area-inset-bottom,0px) + 28px)}
+#gate .gatelogo{width:min(920px,92vw);height:auto;pointer-events:none;user-select:none;filter:drop-shadow(0 10px 40px rgba(0,0,0,.72))}
+#gate .gatecopy{margin:22px auto 0;max-width:min(38ch,88vw);color:var(--parch-dim);font-size:clamp(15px,2vw,17px);line-height:1.5;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+#gate .gatebar{width:min(320px,68vw);height:3px;margin:32px auto 0;background:rgba(154,171,188,.28)}
+#gate .gatebar span{display:block;height:100%;width:100%;background:var(--gold-bright);transform:scaleX(0);transform-origin:left center}
 #hintDock{position:fixed;z-index:14;top:46%;right:0;transform:translateY(-50%);max-height:min(72vh,540px);pointer-events:none;overflow:hidden}
 body.at-lesson #hintDock{z-index:21}
 #hintDock[hidden]{display:none}
@@ -364,13 +432,17 @@ body.at-lesson #hintDock{z-index:21}
 @media (prefers-reduced-motion: reduce){.roll,.dchip,.banner .art,.av,.roster b,#hintSheet,.lessonside{transition:none}.menu:not([hidden]),.taparrow,#linkBanner .wifi .arc{animation:none}#linkBanner .wifi .arc{opacity:1}#toast,#linkBanner{transform:translate(-50%,0);transition:opacity .2s ease,visibility 0s linear .2s}#hintSheet{transform:none;transition:none}#hintDock:not(.open) #hintSheet{visibility:hidden}#lesson.demo .lessonside{opacity:1}}
 </style>
 </head>
-<body class="at-title">
+<body class="at-title at-lobby">
 <canvas id="scene" aria-label="3D ludo board" width="1589" height="1288"></canvas>
 
 <div id="gate" aria-hidden="true">
-  <div class="gatecard">
-    <h1>The march is forming</h1>
-    <p>Every kingdom steps onto the road at the same moment.</p>
+  <div class="gatebackdrop" aria-hidden="true">
+    <img class="gatebg" src="assets/title-background.png" alt="" width="5460" height="3072" decoding="async">
+    <div class="gateveil"></div>
+  </div>
+  <div class="gatemain">
+    <img class="gatelogo" src="assets/main-logo.svg" alt="The Vaults of Corhaven" width="276" height="192" decoding="async">
+    <p class="gatecopy">Every kingdom steps onto the road at the same moment.</p>
     <div class="gatebar" aria-hidden="true"><span id="gateBar"></span></div>
   </div>
 </div>
@@ -439,23 +511,147 @@ body.at-lesson #hintDock{z-index:21}
 </div>
 
 <div class="titlepage open" id="title">
+  <div class="titlebackdrop" aria-hidden="true">
+    <img class="titlebg" src="assets/title-background.png" alt="" width="5460" height="3072" decoding="async" fetchpriority="high">
+    <div class="titleveil"></div>
+  </div>
+  <canvas id="titleFx" class="titlefx" aria-hidden="true"></canvas>
   <main class="titlemain">
-    <h1 id="titleTitle">The Vaults of Corhaven</h1>
-    <p class="err" id="titleErr" role="alert"></p>
-    <div class="titleactions">
-      <button class="primary" id="btnCreate">Create a room</button>
-      <button class="secondary" id="btnJoin">Join a room</button>
-      <button class="secondary" id="btnLocal">Play local</button>
-      <button class="secondary" id="btnXRTitle" hidden type="button">Play in the room</button>
-      <button class="secondary" id="btnLesson">Tutorial</button>
-      <button class="secondary" id="btnStory2">About the Vaults of Corhaven</button>
+    <div id="nameIntro" class="nameintro" role="dialog" aria-modal="true" aria-labelledby="nameIntroBlurb" hidden>
+      <div class="nameintro-banner">
+        <span class="rule t" aria-hidden="true"></span>
+        <img class="nameintro-logo" src="assets/main-logo.svg" alt="" width="276" height="192" decoding="async">
+        <p class="nameintro-blurb" id="nameIntroBlurb">Four kingdoms race the Sundered March. Bring every troop to your vault before the gold belongs to another realm.</p>
+        <form id="nameIntroForm" autocomplete="on">
+          <label class="nameintro-label" for="nameIntroInput">Name</label>
+          <input class="field" id="nameIntroInput" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="go" placeholder="How you appear online">
+          <button class="nameintro-cta" type="submit" id="btnNameIntro">Continue</button>
+        </form>
+        <p class="err" id="nameIntroErr" role="alert"></p>
+        <span class="rule b" aria-hidden="true"></span>
+      </div>
     </div>
-    <p class="titlever" id="titleVer">V1.2.1</p>
+    <div class="titlecorners" aria-label="Account and settings">
+      <button class="titleicon" type="button" id="btnTitleProfile" title="Profile" aria-label="Profile">You</button>
+      <button class="titleicon" type="button" id="btnTitleSettings" title="Settings" aria-label="Settings">⚙</button>
+    </div>
+    <img class="titlelogo" src="assets/main-logo.svg" alt="The Vaults of Corhaven" width="276" height="192" decoding="async" fetchpriority="high">
+    <p class="err" id="titleErr" role="alert"></p>
+    <nav class="titlemenu" aria-label="Main menu">
+      <button class="titleitem titleitem--primary" type="button" id="btnPlay">Play</button>
+      <button class="titleitem" type="button" id="btnLesson">Tutorial</button>
+      <button class="titleitem" type="button" id="btnStory2">About Corhäven</button>
+      <button class="titleitem" type="button" id="btnXRTitle" hidden>Play in the Room</button>
+    </nav>
+    <p class="titlever type-ui-fine" id="titleVer">V1.2.1</p>
   </main>
 </div>
 
-<div class="modal" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+<div class="modal menu-page" id="play" role="dialog" aria-modal="true" aria-labelledby="playTitle">
+  <div class="menubackdrop" aria-hidden="true">
+    <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async" fetchpriority="high">
+    <div class="menuveil"></div>
+  </div>
   <div class="sheet">
+    <div class="join">
+      <aside class="joinside">
+        <h1 id="playTitle">Play</h1>
+        <p>Choose how you want to march for the vault.</p>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="playFoot">
+        <button class="primary" type="button" id="btnPlayOnline">Online</button>
+        <button class="primary" type="button" id="btnPlayLocal">Local Game</button>
+        <button class="secondary" type="button" id="btnPlayBack">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal menu-page" id="profile" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="menubackdrop" aria-hidden="true">
+    <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async">
+    <div class="menuveil"></div>
+  </div>
+  <div class="sheet">
+    <div class="join">
+      <aside class="joinside">
+        <h1 id="profileTitle">Profile</h1>
+        <p id="profileLead">Your name appears in rooms and on the roster when you play online.</p>
+        <form id="profileForm">
+          <label for="profileName">Username</label>
+          <input class="field" id="profileName" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="done">
+        </form>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="profileFoot">
+        <p class="err" id="profileErr" role="alert"></p>
+        <button class="primary" type="submit" form="profileForm" id="btnProfileSave">Save</button>
+        <button class="secondary" type="button" id="btnProfileBack">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal menu-page" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+  <div class="menubackdrop" aria-hidden="true">
+    <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async">
+    <div class="menuveil"></div>
+  </div>
+  <div class="sheet">
+    <div id="onlineHubPane" class="join" hidden>
+      <aside class="joinside">
+        <h1 id="hubTitle">Online</h1>
+        <p>Play with others over the internet.</p>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="hubFoot">
+        <button class="primary" type="button" id="btnHubPublic">Public Match</button>
+        <button class="primary" type="button" id="btnHubCreate">Create a Room</button>
+        <button class="primary" type="button" id="btnHubJoin">Join a Room</button>
+        <button class="secondary" type="button" id="btnHubBack">Back</button>
+      </div>
+    </div>
+    <div id="modePaneOnline" class="join" hidden>
+      <aside class="joinside">
+        <h1 id="modeOnlineTitle">Select game mode</h1>
+        <p id="modeOnlineLead">Everyone in this match uses the same rules.</p>
+        <div class="modeselect" id="modeListOnline" role="radiogroup" aria-labelledby="modeOnlineTitle"></div>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="modeOnlineFoot">
+        <p class="err" id="modeOnlineErr" role="alert"></p>
+        <button class="primary" type="button" id="btnModeOnlineContinue">Continue</button>
+        <button class="secondary" type="button" id="btnModeOnlineBack">Back</button>
+      </div>
+    </div>
+    <div id="createSettingsPane" class="join" hidden>
+      <aside class="joinside">
+        <h1 id="createSettingsTitle">Room settings</h1>
+        <p class="roommode" id="createModeSummary"></p>
+        <button class="secondary" type="button" id="btnCreateChangeMode" style="margin:0;padding:12px 0;width:auto;background:transparent">Change mode</button>
+        <p class="roommeta">Up to <strong>four players</strong> may join this room.</p>
+        <div class="roomopts">
+          <label class="check" for="createPrivate">Private — code only<input type="checkbox" id="createPrivate"></label>
+        </div>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="createSettingsFoot">
+        <div id="createErrHold"><p class="err" id="createSettingsErr" role="alert"></p></div>
+        <button class="primary" type="button" id="btnCreateRoomGo">Create room</button>
+        <button class="secondary" type="button" id="btnCreateSettingsBack">Back</button>
+      </div>
+    </div>
+    <div id="publicBlockPane" class="join" hidden>
+      <aside class="joinside">
+        <h1 id="publicBlockTitle">Public Match</h1>
+        <p>Matchmaking is not available yet. Use Create a Room or Join a Room to play online today.</p>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="publicBlockFoot">
+        <button class="secondary" type="button" id="btnPublicBlockBack">Back</button>
+      </div>
+    </div>
     <div id="codePane" class="join">
       <aside class="joinside">
         <h1 id="onlineTitle">Join a room</h1>
@@ -480,16 +676,8 @@ body.at-lesson #hintDock{z-index:21}
     <div id="lobbyPane" class="lobby" hidden>
       <aside class="lobbyside">
         <div class="roomcode"><span>Room code</span><b id="roomCode"></b></div>
-        <form id="stepName">
-          <label for="nameInput">Your name</label>
-          <input class="field" id="nameInput" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="done">
-        </form>
+        <p class="roommode" id="lobbyModeLabel"></p>
         <div class="lobbypeople" id="lobbyList" aria-label="Players"></div>
-        <div class="roomopts" id="roomOpts" hidden>
-          <label class="check" for="optWorlds">Mist every third round<input type="checkbox" id="optWorlds" checked></label>
-          <label class="check" for="optRanked">Ranked — play on for 2nd and 3rd<input type="checkbox" id="optRanked"></label>
-          <label class="check" for="optPrivate">Private — code only<input type="checkbox" id="optPrivate"></label>
-        </div>
       </aside>
       <div class="lobbymain">
         <div class="kingdoms" id="kingdomList" role="group" aria-label="Kingdoms"></div>
@@ -511,21 +699,35 @@ body.at-lesson #hintDock{z-index:21}
   </div>
 </div>
 
-<div class="modal" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+<div class="modal menu-page" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+  <div class="menubackdrop" aria-hidden="true">
+    <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async">
+    <div class="menuveil"></div>
+  </div>
   <div class="sheet">
-    <div class="local">
+    <div id="localModePane" class="join" hidden>
+      <aside class="joinside">
+        <h1 id="localModeTitle">Select game mode</h1>
+        <p>Local play on this device.</p>
+        <div class="modeselect" id="modeListLocal" role="radiogroup" aria-labelledby="localModeTitle"></div>
+      </aside>
+      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="localactions" id="localModeFoot">
+        <button class="primary" type="button" id="btnModeLocalContinue">Continue</button>
+        <button class="secondary" type="button" id="btnModeLocalBack">Back</button>
+      </div>
+    </div>
+    <div class="local" id="setupSeatsPane">
       <aside class="localside">
         <h1 id="setupTitle">Play local</h1>
+        <p class="roommode" id="localModeSummary">Normal</p>
+        <button class="secondary" type="button" id="btnLocalChangeMode" style="margin:0 0 8px;padding:12px 0;width:auto;background:transparent">Change mode</button>
         <p>Everyone plays on this device. Set any kingdom to the computer.</p>
         <h2>How many players?</h2>
         <div class="seg" role="radiogroup" id="countSeg">
           <button role="radio" data-n="2" aria-checked="false">2</button>
           <button role="radio" data-n="3" aria-checked="false">3</button>
           <button role="radio" data-n="4" aria-checked="true">4</button>
-        </div>
-        <div class="setupopts">
-          <label class="check" for="setupWorlds">Mist every third round<input type="checkbox" id="setupWorlds" checked></label>
-          <label class="check" for="setupRanked">Ranked — play on for 2nd and 3rd<input type="checkbox" id="setupRanked"></label>
         </div>
       </aside>
       <div class="localmain">
@@ -665,11 +867,14 @@ body.at-lesson #hintDock{z-index:21}
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
 <script src="./lib/rules.js?v=fate2"></script>
 <script src="./lib/siege-fx.js?v=siege18"></script>
+<script src="./lib/smoke-embers.js?v=5"></script>
 <script src="./lib/fate-view.js?v=fate5"></script>
+<script src="./lib/game-modes.js?v=ia1"></script>
+<script src="./lib/player-profile.js?v=ia1"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.6.4';
+const GAME_VERSION='1.8.0';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -2371,6 +2576,7 @@ function resetBoard(){
   clearWorldFx();applyTheme();showTurnMark();
 }
 function newGame(config){
+  setMatchView(true);
   resetBoard();S.config=config;S.noWorlds=!setupWorlds;S.ranked=setupRanked;S.hintFirst={};
   S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now(),doubles:0,greed:0,rounds:0,playerTurns:0,worldPicks:{}};
   S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
@@ -2733,14 +2939,29 @@ function renderPlaces(){
   S.players.filter(p=>!S.places.includes(p.h)).forEach(pl=>row('Left',pl,true));
 }
 
-/* ================= Setup ================= */
+/* ================= Setup & navigation ================= */
+const MODES=CorhavenGameModes;
+const PROFILE=CorhavenProfile;
 let setupCount=4,setupWorlds=true,setupRanked=false;const seatCpu=[false,false,false,false];
-try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);setupWorlds=sv.worlds!==false;setupRanked=!!sv.ranked;}}catch(e){}
-$('setupWorlds').checked=setupWorlds;
-$('setupRanked').checked=setupRanked;
-$('setupWorlds').onchange=()=>{setupWorlds=$('setupWorlds').checked;};
-$('setupRanked').onchange=()=>{setupRanked=$('setupRanked').checked;};
+let selectedModeId=MODES.DEFAULT_ID,flowContext=null,pendingRoomOpts=null,profileContinue=null;
+try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);if(sv.mode&&MODES.byId(sv.mode).available)selectedModeId=sv.mode;else{setupWorlds=sv.worlds!==false;setupRanked=!!sv.ranked;selectedModeId=setupRanked?'gauntlet':'normal';}}}catch(e){}
+function applySelectedModeToLocal(){const m=MODES.byId(selectedModeId);if(!m.available)return;setupWorlds=!!m.worlds;setupRanked=!!m.ranked;const sum=$('localModeSummary');if(sum)sum.textContent=m.label;}
+function renderModeList(boxId,onPick){
+  const box=$(boxId);if(!box)return;
+  box.innerHTML='';
+  MODES.MODES.forEach(m=>{
+    const b=document.createElement('button');b.type='button';b.className='modepick';b.dataset.mode=m.id;
+    b.setAttribute('role','radio');b.setAttribute('aria-checked',String(m.id===selectedModeId));
+    const name=document.createElement('span');name.className='mode-name';name.textContent=m.label;b.appendChild(name);
+    const desc=document.createElement('span');desc.className='mode-desc';desc.textContent=m.desc;b.appendChild(desc);
+    if(!m.available){b.disabled=true;b.setAttribute('aria-disabled','true');const soon=document.createElement('span');soon.className='mode-soon';soon.textContent='Not available yet';b.appendChild(soon);}
+    else b.onclick=()=>{selectedModeId=m.id;renderModeList(boxId,onPick);if(onPick)onPick();};
+    box.appendChild(b);
+  });
+}
+function modeLabelOfRoom(room){if(!room)return MODES.labelOf(selectedModeId);return room.modeLabel||MODES.labelOf(MODES.inferMode(room));}
 function renderSetup(){
+  applySelectedModeToLocal();
   document.querySelectorAll('#countSeg button').forEach(b=>b.setAttribute('aria-checked',String(+b.dataset.n===setupCount)));
   const wrap=$('seats');wrap.innerHTML='';
   SEATS[setupCount].forEach(h=>{const row=document.createElement('div');row.className='seat';
@@ -2749,13 +2970,120 @@ function renderSetup(){
     [['Human',false],['Computer',true]].forEach(([lab,val])=>{const b=document.createElement('button');b.textContent=lab;b.setAttribute('aria-pressed',String(seatCpu[h]===val));b.onclick=()=>{seatCpu[h]=val;renderSetup();};tg.appendChild(b);});
     row.appendChild(tg);wrap.appendChild(row);});
 }
+function showLocalModePane(){ $('localModePane').hidden=false;$('setupSeatsPane').hidden=true;renderModeList('modeListLocal');}
+function showLocalSetupPane(){applySelectedModeToLocal();$('localModePane').hidden=true;$('setupSeatsPane').hidden=false;renderSetup();}
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
-function openModal(id){$(id).classList.add('open');if(id==='title')document.body.classList.add('at-title');const f=[...$(id).querySelectorAll('button')].find(b=>!b.disabled&&!b.hidden&&!b.closest('[hidden]'));if(f)setTimeout(()=>f.focus(),30);}
-function closeModal(id){$(id).classList.remove('open');if(id==='title')document.body.classList.remove('at-title');}
-$('btnBegin').onclick=()=>{setupWorlds=$('setupWorlds').checked;setupRanked=$('setupRanked').checked;try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,worlds:setupWorlds,ranked:setupRanked}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
+const TITLE_FX={run:0,ready:false,renderer:null,scene:null,camera:null,api:null,last:0,time:0};
+function resizeTitleFx(){
+  const canvas=$('titleFx');
+  if(!canvas||!TITLE_FX.renderer||!TITLE_FX.camera)return;
+  const w=canvas.clientWidth,h=canvas.clientHeight;
+  if(!w||!h)return;
+  TITLE_FX.renderer.setSize(w,h,false);
+  TITLE_FX.camera.aspect=w/h;
+  TITLE_FX.camera.updateProjectionMatrix();
+}
+function stopTitleFx(){if(TITLE_FX.run){cancelAnimationFrame(TITLE_FX.run);TITLE_FX.run=0;}}
+function ensureTitleFx(){
+  if(TITLE_FX.ready||!window.CorhavenSmokeEmbers)return;
+  const canvas=$('titleFx');if(!canvas)return;
+  TITLE_FX.renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,premultipliedAlpha:true});
+  TITLE_FX.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  TITLE_FX.renderer.setClearColor(0x000000,0);
+  TITLE_FX.scene=new THREE.Scene();
+  TITLE_FX.camera=new THREE.PerspectiveCamera(50,1,0.1,200);
+  TITLE_FX.camera.position.z=10;
+  TITLE_FX.api=CorhavenSmokeEmbers.createSmokeEmbers(TITLE_FX.scene,TITLE_FX.camera);
+  TITLE_FX.api.initParticles();
+  TITLE_FX.ready=true;
+  window.addEventListener('resize',resizeTitleFx,{passive:true});
+}
+function titleFxReduced(){
+  return !!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function startTitleFx(){
+  if(titleFxReduced()||!$('title').classList.contains('open')||!document.body.classList.contains('at-title'))return;
+  ensureTitleFx();
+  if(!TITLE_FX.ready)return;
+  stopTitleFx();
+  resizeTitleFx();
+  TITLE_FX.last=performance.now();
+  const tick=(now)=>{
+    if(!document.body.classList.contains('at-title')||!$('title').classList.contains('open')){TITLE_FX.run=0;return;}
+    const dt=Math.min(0.1,(now-TITLE_FX.last)/1000);
+    TITLE_FX.last=now;
+    TITLE_FX.time+=dt;
+    TITLE_FX.api.world.step(1/60,dt,3);
+    TITLE_FX.api.updateParticles(dt,TITLE_FX.time);
+    TITLE_FX.renderer.render(TITLE_FX.scene,TITLE_FX.camera);
+    TITLE_FX.run=requestAnimationFrame(tick);
+  };
+  TITLE_FX.run=requestAnimationFrame(tick);
+}
+function setMatchView(inMatch){document.body.classList.toggle('at-lobby',!inMatch);}
+function openModal(id){$(id).classList.add('open');if(id==='title'){document.body.classList.add('at-title');startTitleFx();}const f=[...$(id).querySelectorAll('button')].find(b=>!b.disabled&&!b.hidden&&!b.closest('[hidden]'));if(f)setTimeout(()=>f.focus(),30);}
+function closeModal(id){$(id).classList.remove('open');if(id==='title'){document.body.classList.remove('at-title');stopTitleFx();}}
+function openProfile(backToTitle){
+  $('profileErr').textContent='';
+  $('profileName').value=PROFILE.getUsername();
+  if(backToTitle)profileContinue=null;
+  openModal('profile');
+  setTimeout(()=>$('profileName').focus(),40);
+}
+function withProfile(fn){return fn();}
+function finishNameIntro(){
+  const t=$('title');
+  const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const done=()=>{
+    t.classList.remove('intro','intro-leaving');
+    t.classList.add('title-revealed');
+    $('nameIntro').hidden=true;
+    document.documentElement.classList.add('name-ready');
+    setTimeout(()=>$('btnPlay').focus(),60);
+  };
+  if(rm){done();return;}
+  t.classList.add('intro-leaving');
+  setTimeout(done,420);
+}
+function initNameIntro(){
+  const ready=document.documentElement.classList.contains('name-ready')||PROFILE.hasUsername();
+  const t=$('title'),ni=$('nameIntro');
+  if(ready){
+    t.classList.remove('intro');
+    t.classList.add('title-revealed');
+    if(ni)ni.hidden=true;
+    return;
+  }
+  t.classList.add('intro');
+  t.classList.remove('title-revealed');
+  if(ni){
+    ni.hidden=false;
+    $('nameIntroInput').value='';
+    $('nameIntroErr').textContent='';
+    setTimeout(()=>$('nameIntroInput').focus(),100);
+  }
+}
+$('nameIntroForm').onsubmit=e=>{
+  e.preventDefault();
+  const r=PROFILE.setUsername($('nameIntroInput').value);
+  if(!r.ok){$('nameIntroErr').textContent=roomError(r.code);return;}
+  $('nameIntroErr').textContent='';
+  finishNameIntro();
+};
+$('profileForm').onsubmit=e=>{e.preventDefault();const r=PROFILE.setUsername($('profileName').value);if(!r.ok){$('profileErr').textContent=roomError(r.code);return;}$('profileErr').textContent='';document.documentElement.classList.add('name-ready');closeModal('profile');const next=profileContinue;profileContinue=null;if(next)next();};
+initNameIntro();
+$('btnProfileBack').onclick=()=>{profileContinue=null;closeModal('profile');};
+$('btnTitleProfile').onclick=()=>openProfile(true);
+$('btnPlay').onclick=()=>{closeModal('title');openModal('play');};
+$('btnPlayBack').onclick=()=>{closeModal('play');openModal('title');};
+$('btnPlayOnline').onclick=()=>withProfile(()=>{closeModal('play');openOnlineHub();});
+$('btnPlayLocal').onclick=()=>{closeModal('play');closeModal('title');showLocalModePane();openModal('setup');};
+$('btnModeLocalContinue').onclick=()=>{const m=MODES.byId(selectedModeId);if(!m.available)return;showLocalSetupPane();};
+$('btnModeLocalBack').onclick=()=>{closeModal('setup');openModal('play');};
+$('btnLocalChangeMode').onclick=()=>showLocalModePane();
+$('btnBegin').onclick=()=>{applySelectedModeToLocal();try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,mode:selectedModeId,worlds:setupWorlds,ranked:setupRanked}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
 $('btnNew').onclick=()=>showTitle();
-$('btnLocal').onclick=()=>{closeModal('title');renderSetup();openModal('setup');};
-$('btnSetupBack').onclick=()=>{closeModal('setup');showTitle();};
+$('btnSetupBack').onclick=()=>{closeModal('setup');openModal('play');};
 $('btnLesson').onclick=()=>startLesson();
 $('btnRules').onclick=()=>openModal('rules');
 $('btnStory').onclick=()=>openAbout();
@@ -2805,7 +3133,7 @@ document.addEventListener('keydown',e=>{
 });
 $('btnRulesClose').onclick=()=>closeModal('rules');
 $('btnAgain').onclick=()=>{closeModal('win');if(NET.on){leaveOnline(false);return;}newGame(S.config);};
-$('btnChange').onclick=()=>{closeModal('win');renderSetup();openModal('setup');};
+$('btnChange').onclick=()=>{closeModal('win');showLocalSetupPane();openModal('setup');};
 const menu=$('menu'),btnMenu=$('btnMenu');
 const menuItems=()=>[...menu.querySelectorAll('button')].filter(b=>!b.hidden);
 function setMenu(open,refocus){
@@ -2826,15 +3154,22 @@ $('btnReroll').onclick=()=>requestReroll();
 $('btnPass').onclick=()=>requestPass();
 renderSetup();
 function showTitle(msg){
+  setMatchView(false);
   if(METRICS.id)metricsEnd('abandoned');
   const fromLesson=S.lesson||document.body.classList.contains('at-lesson');
   if(!NET.on&&(S.phase!=='idle'||fromLesson)){resetBoard();ui.chips.hidden=true;say('');}
   if(!NET.on)$('btnLeave').hidden=true;
-  ['setup','online','win','leave','settings','lesson'].forEach(closeModal);
+  ['setup','online','win','leave','settings','lesson','play','profile'].forEach(closeModal);
   document.body.classList.remove('at-lesson');
   hideHint();
   $('about').classList.remove('open');
   $('titleErr').textContent=msg||'';
+  const t=$('title');
+  t.classList.remove('intro','intro-leaving');
+  if(PROFILE.hasUsername()||document.documentElement.classList.contains('name-ready')){
+    t.classList.add('title-revealed');
+    $('nameIntro').hidden=true;
+  }
   openModal('title');
 }
 
@@ -3086,6 +3421,7 @@ async function runLessonStep(i){
 }
 async function startLesson(){
   closeModal('title');closeModal('setup');
+  setMatchView(true);
   resetBoard();
   S.lesson=true;S.phase='idle';localMe=0;
   S.players=HOUSES.map((_,h)=>({h,cpu:h!==0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
@@ -3281,55 +3617,101 @@ function leaveOnline(sendLeave,msg){
 
 /* ---- Lobby screens ---- */
 let onlineStep=null,pendingPick=null;
-function showStep(step,opts){
-  onlineStep=step;
-  closeModal('title');if(!$('online').classList.contains('open'))openModal('online');
+const ONLINE_PANES=['onlineHubPane','modePaneOnline','createSettingsPane','publicBlockPane','codePane','lobbyPane'];
+function hideAllOnlinePanes(){ONLINE_PANES.forEach(id=>{const el=$(id);if(el)el.hidden=true;});}
+function showOnlinePane(pane,opts){
+  onlineStep=pane;
+  closeModal('title');closeModal('play');
+  if(!$('online').classList.contains('open'))openModal('online');
+  hideAllOnlinePanes();
   const o=opts||{};
-  $('online').classList.remove('room');
-  $('online').removeAttribute('aria-label');
-  $('online').setAttribute('aria-labelledby','onlineTitle');
-  $('codePane').hidden=false;
-  $('lobbyPane').hidden=true;
-  $('onlineTitle').textContent=o.title||'Join a room';
-  $('onlineLead').textContent=o.lead||'';
-  $('stepCode').hidden=step!=='stepCode';
-  $('btnCodeGo').hidden=step!=='stepCode';
-  $('openRooms').hidden=step!=='stepCode';
-  $('btnOnlineBack').textContent='Back';
-  $('codeErrHold').appendChild($('onlineErr'));
-  $('codeFoot').append($('btnOnlineBack'));
-  if(!o.keepError)$('onlineErr').textContent='';
+  const map={hub:'onlineHubPane',mode:'modePaneOnline',createSettings:'createSettingsPane',publicBlock:'publicBlockPane',stepCode:'codePane',stepLobby:'lobbyPane'};
+  const id=map[pane];if(id&&$(id))$(id).hidden=false;
+  const inLobby=pane==='stepLobby';
+  $('online').classList.toggle('room',inLobby);
+  if(inLobby){$('online').removeAttribute('aria-labelledby');$('online').setAttribute('aria-label','Your room');}
+  else{$('online').classList.remove('room');$('online').removeAttribute('aria-label');$('online').setAttribute('aria-labelledby',pane==='hub'?'hubTitle':'onlineTitle');}
+  if(pane==='stepCode'){
+    $('onlineTitle').textContent=o.title||'Join a room';
+    $('onlineLead').textContent=o.lead||'Enter the code from the person who made the room, or pick a room that still has a seat.';
+    $('stepCode').hidden=false;$('btnCodeGo').hidden=false;$('openRooms').hidden=false;
+    $('btnOnlineBack').textContent='Back';
+    $('codeErrHold').appendChild($('onlineErr'));
+    $('codeFoot').append($('btnOnlineBack'));
+    if(!o.keepError)$('onlineErr').textContent='';
+  }
+  if(pane==='stepLobby'){
+    $('roomCode').textContent=NET.code||'';
+    $('btnOnlineBack').textContent='Leave room';
+    $('lobbyErrHold').appendChild($('onlineErr'));
+    $('lobbyActions').append($('btnStart'),$('btnOnlineBack'));
+    if(!o.keepError)$('onlineErr').textContent='';
+  }
+  if(pane==='createSettings'){
+    $('createModeSummary').textContent=MODES.labelOf(selectedModeId);
+    $('createPrivate').checked=!!o.private;
+    if(!o.keepError)$('createSettingsErr').textContent='';
+  }
+  if(pane==='mode')renderModeList('modeListOnline');
 }
-function showLobby(keepError){
-  onlineStep='stepLobby';
-  closeModal('title');if(!$('online').classList.contains('open'))openModal('online');
-  $('online').classList.add('room');
-  $('online').removeAttribute('aria-labelledby');
-  $('online').setAttribute('aria-label','Your room');
-  $('codePane').hidden=true;
-  $('lobbyPane').hidden=false;
-  $('roomCode').textContent=NET.code||'';
-  $('btnOnlineBack').textContent='Leave room';
-  $('lobbyErrHold').appendChild($('onlineErr'));
-  $('lobbyActions').append($('btnStart'),$('btnOnlineBack'));
-  if(!keepError)$('onlineErr').textContent='';
-}
+function showStep(step,opts){showOnlinePane(step,opts);}
+function showLobby(keepError){showOnlinePane('stepLobby',{keepError});}
 function onlineError(code){
-  if(!NET.code&&onlineStep!=='stepCode'){leaveOnline(false,roomError(code));return;}
+  if(!NET.code&&onlineStep!=='stepCode'){if(onlineStep==='createSettings'){$('createSettingsErr').textContent=roomError(code);return;}leaveOnline(false,roomError(code));return;}
   $('onlineErr').textContent=roomError(code);
 }
-$('btnCreate').onclick=()=>{
+function openOnlineHub(){startOnline();flowContext=null;showOnlinePane('hub');}
+function leaveOnlinePreLobby(){leaveOnline(false);hideAllOnlinePanes();closeModal('online');openModal('play');}
+(function bindTitleMenu(){
+  const menu=$('title')?.querySelector('.titlemenu');
+  if(!menu)return;
+  const items=()=>[...menu.querySelectorAll('.titleitem')].filter(b=>!b.hidden);
+  menu.addEventListener('focusin',e=>{
+    if(!(e.target instanceof HTMLElement)||!e.target.classList.contains('titleitem'))return;
+    items().forEach(b=>b.classList.toggle('titlepick',b===e.target));
+  });
+  menu.addEventListener('mouseleave',()=>items().forEach(b=>b.classList.remove('titlepick')));
+  menu.addEventListener('keydown',e=>{
+    const list=items();const i=list.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'&&i>=0){e.preventDefault();list[(i+1)%list.length].focus();}
+    else if(e.key==='ArrowUp'&&i>=0){e.preventDefault();list[(i-1+list.length)%list.length].focus();}
+  });
+})();
+$('btnTitleSettings')?.addEventListener('click',()=>$('btnGear').click());
+$('btnHubBack').onclick=()=>leaveOnlinePreLobby();
+$('btnHubPublic').onclick=()=>withProfile(()=>showOnlinePane('publicBlock'));
+$('btnHubCreate').onclick=()=>withProfile(()=>{flowContext='create';selectedModeId=MODES.DEFAULT_ID;showOnlinePane('mode');});
+$('btnHubJoin').onclick=()=>withProfile(()=>{
   startOnline();
-  showStep(null,{title:'Create a room',lead:'Making a room…'});
-  connect({t:'create',id:myId});
-};
-$('btnJoin').onclick=()=>{
-  startOnline();
-  showStep('stepCode',{lead:'Enter the code from the person who made the room, or pick a room that still has a seat.'});
+  showOnlinePane('stepCode');
   $('codeInput').value='';
   renderRooms([]);
   connect({t:'browse',id:myId});
   setTimeout(()=>$('codeInput').focus(),40);
+});
+$('btnModeOnlineBack').onclick=()=>{
+  if(flowContext==='create')showOnlinePane('hub');
+  else if(flowContext==='public')showOnlinePane('publicBlock');
+  else showOnlinePane('hub');
+};
+$('btnModeOnlineContinue').onclick=()=>{
+  const m=MODES.byId(selectedModeId);
+  if(!m.available){$('modeOnlineErr').textContent='That mode is not available yet.';return;}
+  $('modeOnlineErr').textContent='';
+  if(flowContext==='create')showOnlinePane('createSettings');
+  else showOnlinePane('hub');
+};
+$('btnCreateChangeMode').onclick=()=>showOnlinePane('mode');
+$('btnCreateSettingsBack').onclick=()=>showOnlinePane('mode');
+$('btnPublicBlockBack').onclick=()=>showOnlinePane('hub');
+$('btnCreateRoomGo').onclick=()=>{
+  const opts=MODES.applyToRoomOpts(selectedModeId);if(!opts){$('createSettingsErr').textContent='That mode is not available yet.';return;}
+  opts.private=$('createPrivate').checked;
+  pendingRoomOpts=opts;
+  $('createSettingsErr').textContent='';
+  $('onlineLead').textContent='Making a room…';
+  startOnline();
+  connect({t:'create',id:myId});
 };
 $('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);});
 function joinCode(code){
@@ -3365,29 +3747,27 @@ function renderRooms(rooms){
       crests.appendChild(c);
     }
     b.appendChild(crests);
+    const mode=document.createElement('span');mode.className='mode';mode.textContent=r.modeLabel||(r.ranked?'Gauntlet':'Normal');b.appendChild(mode);
     const spots=document.createElement('span');spots.className='spots';spots.textContent=open;b.appendChild(spots);
     const who=document.createElement('span');who.className='who';who.textContent=names;b.appendChild(who);
     b.onclick=()=>joinCode(r.code);
     box.appendChild(b);
   });
 }
-function typedName(){return $('nameInput').value.replace(/\s+/g,' ').trim();}
+function profileName(){return PROFILE.getUsername();}
 function commitName(required){
-  const name=typedName();
+  const name=profileName();
   const me=NET.room&&NET.room.seats.find(s=>s.pid===NET.pid);
-  if(!name){if(required)$('onlineErr').textContent=roomError('name-empty');return false;}
+  if(!name){
+    if(required){$('onlineErr').textContent=roomError('name-empty');openProfile(false);}
+    return false;
+  }
   $('onlineErr').textContent='';
   if(!me||me.name!==name)netSend({t:'name',name});
   return true;
 }
-$('stepName').onsubmit=e=>{e.preventDefault();commitName(true);};
-$('nameInput').addEventListener('blur',()=>{if(onlineStep==='stepLobby'&&typedName())commitName(false);});
 $('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
-const sendRoomOpts=()=>netSend({t:'opts',worlds:$('optWorlds').checked,ranked:$('optRanked').checked,private:$('optPrivate').checked});
-$('optWorlds').onchange=sendRoomOpts;
-$('optRanked').onchange=sendRoomOpts;
-$('optPrivate').onchange=sendRoomOpts;
-$('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else leaveOnline(false);};
+$('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else{leaveOnline(false);hideAllOnlinePanes();closeModal('online');openModal('play');}};
 
 function seatRow(room,s){
   const row=document.createElement('div');row.className='seat';
@@ -3423,9 +3803,8 @@ function renderLobby(room){
   const isHost=me.pid===room.hostPid;
   const first=onlineStep!=='stepLobby';
   showLobby(!first);
-  const input=$('nameInput');
-  if(first){input.value=me.name||'';if(!me.name)setTimeout(()=>input.focus(),40);}
-  else if(document.activeElement!==input&&me.name)input.value=me.name;
+  if(first||!me.name)commitName(!!PROFILE.hasUsername());
+  const modeEl=$('lobbyModeLabel');if(modeEl)modeEl.textContent=modeLabelOfRoom(room);
   const people=$('lobbyList');people.innerHTML='';
   room.seats.forEach(s=>people.appendChild(seatRow(room,s)));
   const list=$('kingdomList');list.innerHTML='';
@@ -3442,10 +3821,10 @@ function renderLobby(room){
     b.appendChild(frame);
     const pname=document.createElement('span');pname.className='pname';pname.textContent=holder?holder.name:'';b.appendChild(pname);
     if(!holder)b.onclick=()=>{
-      if(!typedName()){$('onlineErr').textContent=roomError('name-empty');return;}
+      if(!profileName()){openProfile(false);return;}
       pendingPick=h;
       if(!commitName(true)){pendingPick=null;return;}
-      if(me.name===typedName()){pendingPick=null;netSend({t:'pick',h});}
+      if(me.name===profileName()){pendingPick=null;netSend({t:'pick',h});}
     };
     list.appendChild(b);
   });
@@ -3458,16 +3837,6 @@ function renderLobby(room){
   const allReady=ready===room.seats.length;
   $('btnStart').hidden=!isHost;
   $('btnStart').disabled=!(ready>=2&&allReady);
-  const opts=$('roomOpts');
-  if(opts){
-    opts.hidden=!isHost;
-    if(isHost){
-      const worlds=$('optWorlds'),ranked=$('optRanked'),priv=$('optPrivate');
-      if(worlds&&document.activeElement!==worlds)worlds.checked=room.worlds!==false;
-      if(ranked&&document.activeElement!==ranked)ranked.checked=!!room.ranked;
-      if(priv&&document.activeElement!==priv)priv.checked=!!room.private;
-    }
-  }
 }
 
 /* ---- Match ---- */
@@ -3533,6 +3902,7 @@ function settleUi(snapMsg){
 }
 const MATCH_CUE_MS=3400;
 function openGate(themeAt){
+  setMatchView(false);
   const el=$('gate');el.classList.add('open');el.setAttribute('aria-hidden','false');
   const tick=()=>{
     const left=Math.max(0,themeAt-netNow());
@@ -3544,6 +3914,7 @@ function openGate(themeAt){
 function closeGate(){
   cancelAnimationFrame(gateFrame);
   const el=$('gate');el.classList.remove('open');el.setAttribute('aria-hidden','true');
+  if(NET.playing)setMatchView(true);
 }
 function waitUntil(ts){return new Promise(res=>{const tick=()=>{if(netNow()>=ts)res();else requestAnimationFrame(tick);};tick();});}
 function finishBoard(room,announce){
@@ -3600,6 +3971,7 @@ async function pump(){
 }
 async function enterMatch(room){
   const epoch=NET.epoch;
+  setMatchView(false);
   NET.playing=true;NET.seen=room.seq;NET.forceSnap=false;S.orderAnnounced=false;
   const me=room.seats.find(s=>s.pid===NET.pid);NET.myH=me?me.h:null;
   const at=room.game&&room.game.themeAt;
@@ -3629,7 +4001,10 @@ async function enterMatch(room){
     if(epoch!==NET.epoch){closeGate();themeHold=false;return;}
     closeGate();
     startMatchTheme(true);
-  }else if(typeof at==='number')startMatchTheme(false);
+  }else{
+    if(typeof at==='number')startMatchTheme(false);
+    setMatchView(true);
+  }
 }
 function onState(room){
   NET.room=room;
@@ -3648,7 +4023,11 @@ function onState(room){
 function onNetMessage(m){
   if(m.now)NET.offset=m.now-Date.now();
   if(m.t==='pong'){if(linkWait)linkRtt=Date.now()-linkWait;linkWait=0;linkMiss=0;linkPong=Date.now();paintLink();return;}
-  if(m.t==='joined'){NET.code=m.code;NET.pid=m.pid;rememberRoom(m.code);return;}
+  if(m.t==='joined'){
+    NET.code=m.code;NET.pid=m.pid;rememberRoom(m.code);
+    if(pendingRoomOpts){const opts=Object.assign({},pendingRoomOpts);pendingRoomOpts=null;netSend(Object.assign({t:'opts'},opts));commitName(false);}
+    return;
+  }
   if(m.t==='rooms'){if(onlineStep==='stepCode')renderRooms(m.rooms||[]);return;}
   if(m.t==='state'){onState(m.room);return;}
   if(m.t==='left')return;
@@ -3994,7 +4373,7 @@ let labFaces=[];const labQuat=new THREE.Quaternion();
   const code=savedRoom();
   if(!code||location.protocol==='file:')return;
   startOnline();
-  showStep(null,{title:'Rejoining room',lead:`Rejoining room ${code}…`});
+  showStep('stepCode',{title:'Rejoining room',lead:`Rejoining room ${code}…`});
   connect({t:'join',id:myId,code});
 })();
 
@@ -4425,6 +4804,7 @@ function loop(now,frame){
   renderer.render(scene,camera);
 }
 renderer.setAnimationLoop(loop);
+startTitleFx();
 
 /* ================= WebXR room ================= */
 let boardCm=58,settingsOpen=false;
@@ -5160,6 +5540,7 @@ function labTag(text){
 }
 function startMarkerLab(){
   document.body.classList.remove('at-title');
+  setMatchView(true);
   $('title').classList.remove('open');
   document.querySelectorAll('.hud').forEach(el=>{el.style.visibility='hidden';});
   theme.pause();themeHold=true;fxOn=false;
