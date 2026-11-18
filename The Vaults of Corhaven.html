@@ -35,6 +35,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,700;1,400&family=Libertinus+Serif+Display&family=Libertinus+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://use.typekit.net" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/ceb3jhf.css">
 <link href="assets/type.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
 <style>
@@ -224,7 +226,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .modepick:hover:not(:disabled),.modepick:focus-visible:not(:disabled){border-color:rgba(230,237,244,.45);background:rgba(62,72,84,.35)}
 .modepick[aria-checked="true"]{border-color:var(--gold-bright);background:rgba(62,72,84,.5);box-shadow:inset 0 0 0 1px rgba(242,245,248,.12)}
 .modepick:disabled,.modepick[aria-disabled="true"]{opacity:.55;cursor:default}
-.modepick .mode-name{font-family:var(--font-display);font-size:clamp(22px,2.6vw,28px);letter-spacing:.06em;color:var(--gold-bright)}
+.modepick .mode-name{font-family:var(--font-cinder);font-size:clamp(22px,2.6vw,28px);letter-spacing:.06em;color:var(--gold-bright)}
 .modepick .mode-desc{font-size:15px;line-height:1.45;color:var(--parch-dim);max-width:42ch}
 .modepick .mode-soon{font-size:13px;color:#ffb8a8;letter-spacing:.04em;text-transform:uppercase}
 .roommeta{margin:0;color:var(--parch-dim);font-size:15px;line-height:1.5}
@@ -363,7 +365,7 @@ body.at-lesson #bottomBar{z-index:21;pointer-events:auto}
 .titlelogo{position:absolute;top:clamp(56px,11vh,128px);left:50%;transform:translate(-50%,0);width:min(760px,94vw);height:auto;pointer-events:none;user-select:none;filter:drop-shadow(0 10px 40px rgba(0,0,0,.72));transition:opacity .55s ease,transform .55s ease}
 #titleErr{margin:0 0 10px;max-width:36ch;color:#ffb8a8;text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .titlemenu{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.9vh,12px);width:min(100%,440px);margin-top:auto;padding-top:min(46vh,420px)}
-.titleitem{position:relative;z-index:0;margin:0;padding:12px 56px;border:0;background:transparent;color:rgba(236,240,246,.92);font-family:var(--font-display);font-weight:400;font-size:clamp(calc(38px * 0.51),calc(22.8 * 100vw / 1920),calc(36px));line-height:1.05;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-shadow:0 2px 12px rgba(0,0,0,.85);transition:color .18s ease,transform .18s ease}
+.titleitem{position:relative;z-index:0;margin:0;padding:12px 56px;border:0;background:transparent;color:rgba(236,240,246,.92);font-family:var(--font-cinder);font-weight:400;font-size:clamp(calc(38px * 0.51),calc(22.8 * 100vw / 1920),calc(36px));line-height:1.05;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-shadow:0 2px 12px rgba(0,0,0,.85);transition:color .18s ease,transform .18s ease}
 .titleitem::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:min(420px,92vw);height:2.2em;transform:translate(-50%,-50%) skewX(-8deg);background:radial-gradient(ellipse 85% 100% at 50% 50%,rgba(8,10,14,.88) 0%,rgba(8,10,14,.55) 45%,rgba(8,10,14,0) 78%);opacity:0;transition:opacity .2s ease,filter .2s ease;filter:blur(.4px)}
 .titleitem::after{content:"";position:absolute;z-index:-1;left:8%;right:8%;bottom:4px;height:1px;background:linear-gradient(90deg,transparent,rgba(230,237,244,.35) 20%,rgba(230,237,244,.35) 80%,transparent);opacity:0;transition:opacity .2s ease}
 .titleitem:hover,.titleitem:focus-visible{color:#fff}
@@ -874,16 +876,18 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.8.2';
+const GAME_VERSION='1.8.3';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
+const TYPE_CINDER='"cinder",sans-serif';
 function typeFont(w,px,fam){return w+' '+Math.round(px)+'px '+fam;}
 try{
   const F=document.fonts;
   if(F){
     F.load('700 22px '+TYPE_SANS);F.load('400 28px '+TYPE_SANS);F.load('700 35px '+TYPE_SANS);
-    F.load('400 55px '+TYPE_DISPLAY);F.load('italic 400 28px '+TYPE_SERIF);F.load('400 35px '+TYPE_SERIF);
+    F.load('400 55px '+TYPE_DISPLAY);F.load('400 55px '+TYPE_CINDER);F.load('400 44px '+TYPE_CINDER);
+    F.load('italic 400 28px '+TYPE_SERIF);F.load('400 35px '+TYPE_SERIF);
   }
 }catch(e){}
 

@@ -1,6 +1,7 @@
-/* Corhaven typography — Libertinus, 1080p (1920×1080) reference scale */
+/* Corhaven typography — Libertinus + Adobe Cinder, 1080p (1920×1080) reference scale */
 
 :root {
+  --font-cinder: "cinder", sans-serif;
   --font-display: 'Libertinus Serif Display', 'Libertinus Serif', Georgia, serif;
   --font-serif: 'Libertinus Serif', Georgia, 'Times New Roman', serif;
   --font-sans: 'Libertinus Sans', system-ui, sans-serif;
@@ -40,7 +41,7 @@ html[data-text-size="small"] {
 }
 
 .type-title-screen {
-  font-family: var(--font-display);
+  font-family: var(--font-cinder);
   font-weight: 400;
   font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
   line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
@@ -66,10 +67,20 @@ html[data-text-size="small"] {
 
 /* ——— Kingdom ——— */
 .type-ui-kingdom-name {
-  font-family: var(--font-sans);
-  font-weight: 700;
+  font-family: var(--font-cinder);
+  font-weight: 400;
   font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
   line-height: clamp(calc(48px * 0.85), calc(48 * 100vw / 1920), calc(48px * 1.25));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Title-screen / mode-picker labels (game modes) */
+.type-ui-game-mode {
+  font-family: var(--font-cinder);
+  font-weight: 400;
+  font-size: clamp(calc(38px * 0.85), calc(38 * 100vw / 1920), calc(48px * 1.25));
+  line-height: 1.05;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -292,7 +303,7 @@ html[data-text-size="small"] {
 
 /* Sheet / modal headings map to screen title */
 .type-title-sheet {
-  font-family: var(--font-display);
+  font-family: var(--font-cinder);
   font-weight: 400;
   font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
   line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
@@ -339,7 +350,15 @@ body {
 }
 
 #meKingdom,
-.banner .kname,
+.banner .kname {
+  font-family: var(--font-cinder);
+  font-weight: 400;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .joinmain h2,
 .type-ui-status-label {
   font-family: var(--font-sans);
@@ -384,7 +403,7 @@ body {
 .localside h1,
 .lobbyside h1,
 .lessonside h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-cinder);
   font-weight: 400;
   font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
   line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
