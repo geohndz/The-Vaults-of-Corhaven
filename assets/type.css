@@ -1,0 +1,550 @@
+/* Corhaven typography — Libertinus, 1080p (1920×1080) reference scale */
+
+:root {
+  --font-display: 'Libertinus Serif Display', 'Libertinus Serif', Georgia, serif;
+  --font-serif: 'Libertinus Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Libertinus Sans', system-ui, sans-serif;
+
+  /* Proportional scale: 1.0 at 1920px width, floor 0.85, cap 1.25 */
+  --type-ui: clamp(0.85, calc(100vw / 1920), 1.25);
+
+  --type-lore-max: min(900px, 92vw);
+}
+
+html[data-text-size="large"] {
+  --type-ui: clamp(0.95, 100vw / 1920, 1.35);
+}
+
+html[data-text-size="small"] {
+  --type-ui: clamp(0.75, 100vw / 1920, 1.1);
+}
+
+/* Case */
+.case-upper { text-transform: uppercase; }
+.case-title { text-transform: none; }
+.case-sentence { text-transform: none; }
+
+.type-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ——— Titles ——— */
+.type-title-splash {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(108px * 0.85), calc(108 * 100vw / 1920), calc(108px * 1.25));
+  line-height: clamp(calc(135px * 0.85), calc(135 * 100vw / 1920), calc(135px * 1.25));
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.type-title-screen {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
+  line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
+  letter-spacing: 0.02em;
+}
+
+.type-title-victory-head {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  line-height: clamp(calc(80px * 0.85), calc(80 * 100vw / 1920), calc(80px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-body-victory {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  line-height: clamp(calc(48px * 0.85), calc(48 * 100vw / 1920), calc(48px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Kingdom ——— */
+.type-ui-kingdom-name {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
+  line-height: clamp(calc(48px * 0.85), calc(48 * 100vw / 1920), calc(48px * 1.25));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.type-ui-kingdom-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(38px * 0.85), calc(38 * 100vw / 1920), calc(38px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Gameplay ——— */
+.type-ui-turn-overlay {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(86px * 0.85), calc(86 * 100vw / 1920), calc(86px * 1.25));
+  line-height: clamp(calc(86px * 0.85), calc(86 * 100vw / 1920), calc(86px * 1.25));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.type-ui-dice-num {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  line-height: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.type-ui-status-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.type-ui-turn-msg {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-body-event {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  line-height: clamp(calc(46px * 0.85), calc(46 * 100vw / 1920), calc(46px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Board ——— */
+.type-board-space-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(24px * 0.85), calc(24 * 100vw / 1920), calc(24px * 1.25));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.type-board-tooltip-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(34px * 0.85), calc(34 * 100vw / 1920), calc(34px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-board-tooltip-flavor {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(38px * 0.85), calc(38 * 100vw / 1920), calc(38px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Buttons ——— */
+.type-ui-btn-primary {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  line-height: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  letter-spacing: 0.02em;
+}
+
+.type-ui-btn-secondary {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Story ——— */
+.type-ui-dialogue-speaker {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.type-body-dialogue {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(39px * 0.85), calc(39 * 100vw / 1920), calc(39px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-title-lore-chapter {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
+  line-height: clamp(calc(53px * 0.85), calc(53 * 100vw / 1920), calc(53px * 1.25));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.type-body-lore-subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-body-lore {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(40px * 0.85), calc(40 * 100vw / 1920), calc(40px * 1.25));
+  letter-spacing: 0;
+  max-width: var(--type-lore-max);
+}
+
+/* ——— Help ——— */
+.type-ui-tutorial-tip {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(38px * 0.85), calc(38 * 100vw / 1920), calc(38px * 1.25));
+  letter-spacing: 0;
+}
+
+/* ——— Stats ——— */
+.type-stats-table-header {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.type-stats-table-cell {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.type-stats-headline {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
+  line-height: clamp(calc(48px * 0.85), calc(48 * 100vw / 1920), calc(48px * 1.25));
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ——— System ——— */
+.type-ui-settings {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-ui-confirm {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(39px * 0.85), calc(39 * 100vw / 1920), calc(39px * 1.25));
+  letter-spacing: 0;
+}
+
+.type-ui-fine {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+  letter-spacing: 0;
+}
+
+/* Turn card product title (in-HUD, smaller than screen titles) */
+.type-ui-product-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
+  line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
+  letter-spacing: 0.02em;
+}
+
+/* Sheet / modal headings map to screen title */
+.type-title-sheet {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
+  line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
+  letter-spacing: 0.02em;
+}
+
+/* ===== Game surface bindings ===== */
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  -webkit-font-smoothing: antialiased;
+}
+
+.msg,
+#toast .st,
+#linkBanner .st,
+.openroom .spots,
+.openroom .who,
+.seat .who small,
+.hint,
+.err {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+.msg,
+.openroom .spots,
+.openroom .who,
+.seat .who small {
+  color: var(--parch-dim);
+}
+
+#turnName {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+#meKingdom,
+.banner .kname,
+.joinmain h2,
+.type-ui-status-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#toast .tt,
+#linkBanner .tt {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+#toast.num .tt {
+  font-size: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  line-height: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+#toast.your-turn .tt,
+#toast.turn-overlay .tt {
+  font-size: clamp(calc(86px * 0.85), calc(86 * 100vw / 1920), calc(86px * 1.25));
+  line-height: clamp(calc(86px * 0.85), calc(86 * 100vw / 1920), calc(86px * 1.25));
+  letter-spacing: 0.1em;
+}
+
+.titlemain h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(108px * 0.85), calc(108 * 100vw / 1920), calc(108px * 1.25));
+  line-height: clamp(calc(135px * 0.85), calc(135 * 100vw / 1920), calc(135px * 1.25));
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 40px;
+  color: var(--gold-bright);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.sheet h1,
+.gatecard h1,
+.aboutinner h1,
+.joinside h1,
+.localside h1,
+.lobbyside h1,
+.lessonside h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25));
+  line-height: clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25));
+  letter-spacing: 0.02em;
+  margin: 0 0 8px;
+  color: var(--gold-bright);
+}
+
+.gatecard p,
+.aboutbody p,
+.sheet p,
+.roomopts .check,
+.setupopts .check {
+  font-family: var(--font-sans);
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+}
+
+.aboutbody section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
+  line-height: clamp(calc(53px * 0.85), calc(53 * 100vw / 1920), calc(53px * 1.25));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aboutbody h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(40px * 0.85), calc(40 * 100vw / 1920), calc(40px * 1.25));
+}
+
+.titlemain .titlever {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.banner .kname {
+  font-size: clamp(calc(44px * 0.85), calc(44 * 100vw / 1920), calc(44px * 1.25));
+  line-height: clamp(calc(48px * 0.85), calc(48 * 100vw / 1920), calc(48px * 1.25));
+  letter-spacing: 0.08em;
+}
+
+.banner .pname,
+.roster b,
+.seat .who,
+.seat .name {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+  letter-spacing: 0;
+}
+
+.roll,
+.primary,
+.titlemain .titleactions button,
+.lobbyactions .primary,
+.lobbyactions .secondary,
+.localactions .primary,
+.localactions .secondary {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  line-height: clamp(calc(35px * 0.85), calc(35 * 100vw / 1920), calc(35px * 1.25));
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.secondary,
+#hintSheet .hintclose,
+.lessonnav button {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.chip,
+.menu button,
+.seg button,
+.toggle button,
+.aboutnav button,
+#hintSheet p,
+#hintSheet h2,
+.lessonside p,
+.lessonstep {
+  font-family: var(--font-sans);
+}
+
+.chip,
+.menu button {
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+}
+
+.sheet h2,
+.seg button,
+.field,
+.setupopts .check,
+.roomopts .check {
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(36px * 0.85), calc(36 * 100vw / 1920), calc(36px * 1.25));
+}
+
+.dchip.bonus {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(69px * 0.85), calc(69 * 100vw / 1920), calc(69px * 1.25));
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.roomcode b,
+.openroom .code,
+.field.code {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+#hintSheet h2,
+.lessonstep,
+#hintChip {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(calc(22px * 0.85), calc(22 * 100vw / 1920), calc(22px * 1.25));
+  line-height: clamp(calc(26px * 0.85), calc(26 * 100vw / 1920), calc(26px * 1.25));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#hintSheet p,
+.lessonside p {
+  font-size: clamp(calc(28px * 0.85), calc(28 * 100vw / 1920), calc(28px * 1.25));
+  line-height: clamp(calc(38px * 0.85), calc(38 * 100vw / 1920), calc(38px * 1.25));
+}
+
+.lessonside p {
+  font-family: var(--font-serif);
+  max-width: var(--type-lore-max);
+}

@@ -345,6 +345,30 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 48 | [2026-11-05-04-room-lobby-ranked-toggle-desktop.png](./screenshots/2026-11-05-04-room-lobby-ranked-toggle-desktop.png) | Room lobby, host | The same two toggles beside Private. The server keeps the ranked choice for the room |
 | 49 | [2026-11-05-05-crimson-board-kingdoms-desktop.png](./screenshots/2026-11-05-05-crimson-board-kingdoms-desktop.png) | In match, order roll | **V1.5.1.** New kingdom colors: Emberhold `#7F2F27`, Thornwald `#3B3A29`, Solmere `#944A08`, Tidereach `#494B54`. Crimson-stained frame and slab, a darker table, and rougher stone on the road, after the teacher’s note. Thornwald and Tidereach troops both read near black |
 
+## Session: 2026-11-08 — Fate cards on a shrine (V1.6.0)
+
+**Trigger:** Landing on a shrine deals four Fate cards. The kingdom keeps one. A hand holds two, and the kept card peeks from the left.
+
+**Environment:** Local `python3 -m http.server 8765`. Emberhold’s troop was walked onto the star so the deal could be framed without waiting out the order roll.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 50 | [2026-11-08-01-fate-deal-desktop.png](./screenshots/2026-11-08-01-fate-deal-desktop.png) | Shrine deal | Four cards on the black dim over the board. “The shrine offers four fates. Choose one.” |
+| 51 | [2026-11-08-02-fate-read-desktop.png](./screenshots/2026-11-08-02-fate-read-desktop.png) | Card, read | The Wanderer, curse red, Cinzel and EB Garamond, Done under the face |
+| 52 | [2026-11-08-03-fate-hand-desktop.png](./screenshots/2026-11-08-03-fate-hand-desktop.png) | Hand peek | The kept card sits on the left edge. The remaining die is still to play |
+
+## Session: 2026-11-08 — Fate cards in a row (V1.6.1)
+
+**Trigger:** The shrine tip stays readable over the deal. A hand and a deal each hold one capture bonus. Cards sit side by side.
+
+**Environment:** Local `python3 -m http.server 8765`. Emberhold already held two fates, then landed on the star.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 53 | [2026-11-08-04-fate-row-under-tip-desktop.png](./screenshots/2026-11-08-04-fate-row-under-tip-desktop.png) | Shrine deal | Four fates in one row. The shrine tip sits on the right, over the last card. The hand is a pair at the lower left |
+| 54 | [2026-11-08-05-fate-replace-row-desktop.png](./screenshots/2026-11-08-05-fate-replace-row-desktop.png) | Full hand | Three fates in one row. Give one up. The tip stays readable beside the last card |
+| 55 | [2026-11-08-06-fate-hand-right-desktop.png](./screenshots/2026-11-08-06-fate-hand-right-desktop.png) | Hand, right edge | The held pair peeks from the right, under the shrine tip, the way the prototype parks a hand |
+
 ### Still to capture (when WS / production available)
 
 - [ ] Online **Create room** (room code + share strip)
@@ -355,6 +379,19 @@ What made play harder: the pieces look alike, world events and banners move too 
 - [ ] **Rules** modal
 - [ ] **Victory** sheet (human + CPU copy)
 - [ ] **Quest / passthrough** (if case study covers XR)
+
+---
+
+## Session: 2026-11-18 — Libertinus typography (phase 1)
+
+**Trigger:** Visual revamp kickoff — replace Pirata One/Alegreya with Libertinus typescale; shared `assets/type.css`; interface inventory specimen.
+
+**Environment:** Local static server (`python3 -m http.server 8765`), 1920×1080 viewport.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-18-01-libertinus-type-specimen-desktop.png](./screenshots/2026-11-18-01-libertinus-type-specimen-desktop.png) | Style guide · Type | Full typescale specimen (titles through system) |
+| 02 | [2026-11-18-02-title-libertinus-desktop.png](./screenshots/2026-11-18-02-title-libertinus-desktop.png) | Title page | Serif Display splash title + primary/secondary actions |
 
 ---
 
