@@ -2,5 +2,11 @@
   "rewrites": [
     { "source": "/", "destination": "/The%20Vaults%20of%20Corhaven.html" },
     { "source": "/dashboard", "destination": "/api/dashboard" }
+  ],
+  "headers": [
+    {
+      "source": "/The Vaults of Corhaven_files/css2",
+      "headers": [{ "key": "Content-Type", "value": "text/css; charset=utf-8" }]
+    }
   ]
 }

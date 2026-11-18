@@ -48,7 +48,9 @@ const server = http.createServer(async (req, res) => {
   }
   try {
     const body = await readFileAsync(file);
-    res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream' });
+    const ext = extname(file);
+    const ctype = types[ext] || (file.endsWith('/css2') || file.endsWith('\\css2') ? 'text/css; charset=utf-8' : null);
+    res.writeHead(200, { 'Content-Type': ctype || 'application/octet-stream' });
     res.end(body);
   } catch {
     res.writeHead(404); res.end();
