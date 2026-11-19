@@ -406,6 +406,16 @@ What made play harder: the pieces look alike, world events and banners move too 
 |---|------|-------------------|--------|
 | 04 | [2026-11-18-04-title-ia-play-desktop.png](./screenshots/2026-11-18-04-title-ia-play-desktop.png) | Title | Play primary; Tutorial and About secondary; Profile + Settings corners |
 | 05 | [2026-11-18-05-play-menu-desktop.png](./screenshots/2026-11-18-05-play-menu-desktop.png) | Play overlay | Online vs Local Game branch under full-window dim |
+| 06 | [2026-11-18-06-title-brush-play-desktop.png](./screenshots/2026-11-18-06-title-brush-play-desktop.png) | Title page | Ornate white brush SVG stretch-fit behind hover/keyboard focus; black label type |
+| 07 | [2026-11-18-07-title-brush-padding-desktop.png](./screenshots/2026-11-18-07-title-brush-padding-desktop.png) | Title page | Brush stretches past the label; side padding sits inside the stroke |
+| 08 | [2026-11-18-08-title-brush-slim-desktop.png](./screenshots/2026-11-18-08-title-brush-slim-desktop.png) | Title page | Brush height follows the label; side padding stays wide |
+| 09 | [2026-11-18-09-play-sidebar-choices-desktop.png](./screenshots/2026-11-18-09-play-sidebar-choices-desktop.png) | Play overlay | Online and Local Game sit under the description, centered in the sidebar; Back stays at the bottom |
+| 10 | [2026-11-18-10-play-sidebar-centered-desktop.png](./screenshots/2026-11-18-10-play-sidebar-centered-desktop.png) | Play overlay | Title and description centered with the choices in the sidebar |
+| 11 | [2026-11-18-11-play-title-caps-desktop.png](./screenshots/2026-11-18-11-play-title-caps-desktop.png) | Play overlay | Screen titles render in all caps |
+| 12 | [2026-11-18-12-play-no-description-desktop.png](./screenshots/2026-11-18-12-play-no-description-desktop.png) | Play overlay | Description removed; Online and Local Game sit under the title |
+| 13 | [2026-11-18-13-play-sidebar-narrow-desktop.png](./screenshots/2026-11-18-13-play-sidebar-narrow-desktop.png) | Play overlay | Sidebar narrowed to 30% of the window, capped at 520px |
+| 14 | [2026-11-18-14-play-title-gap-desktop.png](./screenshots/2026-11-18-14-play-title-gap-desktop.png) | Play overlay | Space under the title opened about 70% before Online and Local Game |
+| 15 | [2026-11-18-15-button-brush-taller-desktop.png](./screenshots/2026-11-18-15-button-brush-taller-desktop.png) | Play overlay | Hover stroke on text buttons is about 50% taller above and below the label |
 
 ---
 
