@@ -43,7 +43,7 @@ function eventMs(e) {
     case 'forfeit': return 900;
     case 'world': return e.change ? (e.id ? 7000 : 2600) : 0;
     case 'fate': return 7000;
-    case 'fateKept': return e.decree ? 2400 : 1600;
+    case 'fateKept': return (e.decree ? 2400 : 1600) + (e.wander ? 1200 : 0);
     case 'decree': return 900;
     case 'reroll': return 1700;
     case 'finish': return 2600;
@@ -443,8 +443,8 @@ function offerFate(room, pc) {
   });
   if (!offer.length) return false;
   g.phase = 'fate';
-  fate.offer = { h: pc.h, ids: offer };
-  emit(room, { type: 'fate', h: pc.h, offer });
+  fate.offer = { h: pc.h, idx: pc.idx, ids: offer };
+  emit(room, { type: 'fate', h: pc.h, idx: pc.idx, offer });
   return true;
 }
 
@@ -529,6 +529,37 @@ export function playMove(room, id, idx, di, now, act) {
   return null;
 }
 
+function shrineTroop(room, h, idx) {
+  const pieces = room.game.pieces;
+  if (idx != null) {
+    const named = pieces.find((p) => p.h === h && p.idx === idx);
+    if (named && R.landedShrine(named)) return named;
+  }
+  return pieces.find((p) => p.h === h && R.landedShrine(p)) || null;
+}
+
+function wanderLand(room, h, idx) {
+  const pc = shrineTroop(room, h, idx);
+  if (!pc) return null;
+  const land = R.wanderSquare(room.game.pieces, pc, () => randomInt(0x100000000) / 0x100000000);
+  if (!land) return null;
+  const from = pc.p;
+  const fromAt = pc.at != null ? pc.at : null;
+  pc.p = land.np;
+  delete pc.at;
+  return { idx: pc.idx, from, fromAt, to: land.np };
+}
+
+function decreeChoices(room) {
+  const g = room.game;
+  const h = curH(room);
+  return g.pieces.filter((p) => {
+    if (p.h !== h || p.p >= 0) return false;
+    const r = R.moveResult(g.pieces, p, 1, g.world, handsOf(g));
+    return !!(r && r.exit);
+  });
+}
+
 function acceptFate(room, pick, drop, auto) {
   const g = room.game;
   const fate = fateState(g);
@@ -542,8 +573,12 @@ function acceptFate(room, pick, drop, auto) {
   if (!result) return 'illegal';
   fate.hands[h] = result.hand;
   fate.offer = null;
-  emit(room, { type: 'fateKept', h, pick, drop: result.dropped, hand: result.hand.map((c) => c.id), decree: result.instant === 'decree', auto: !!auto });
-  if (result.instant === 'decree') { g.phase = 'decree'; return null; }
+  const wander = result.instant === 'wanderer' ? wanderLand(room, h, offer.idx) : null;
+  const troops = result.instant === 'decree' ? decreeChoices(room) : null;
+  const needsChoice = !!(troops && troops.length !== 1);
+  emit(room, { type: 'fateKept', h, pick, drop: result.dropped, hand: result.hand.map((c) => c.id), decree: needsChoice, wander, auto: !!auto });
+  if (needsChoice) { g.phase = 'decree'; return null; }
+  if (troops && troops.length === 1) { g.phase = 'decree'; return applyDecree(room, troops[0].idx, auto); }
   continueTurn(room);
   return null;
 }

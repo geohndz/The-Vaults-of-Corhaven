@@ -148,19 +148,19 @@
 (async function () {
   // ---------------------------------------------------------------- data
   const CARDS = [
-    { id: 1,  cat: "Blessing", title: "The King’s Favor",   duration: "Until your next turn.", desc: "Add +1 to your first die that produces a legal move. Does not affect bonus marches." },
-    { id: 2,  cat: "Blessing", title: "Phantom March",      duration: "Until your next turn.", desc: "Your troops may pass through enemy phalanxes, but cannot land on them." },
-    { id: 3,  cat: "Blessing", title: "The Unbroken",       duration: "Until your next capture or until your next turn.", desc: "The next time one of your troops would be captured, it remains on its square instead. Similar to how phalanxes work on shrines, the troop is protected from capture. The blessing then ends." },
-    { id: 4,  cat: "Blessing", title: "Wayfarer’s Grace",   duration: "One round.", desc: "Your troops may pass through your own phalanxes, but cannot land on them." },
-    { id: 5,  cat: "Blessing", title: "True Sight",         duration: "One Mist round.", desc: "You can see all enemy troops through the Veil of Mist." },
+    { id: 1,  cat: "Blessing", title: "The King’s Favor",   duration: "Until that die is played, or your next turn ends.", desc: "Add +1 to your first die that produces a legal move. Bonus marches are unchanged." },
+    { id: 2,  cat: "Blessing", title: "Phantom March",      duration: "Through your next turn.", desc: "Your troops may pass through enemy phalanxes, but cannot land on them." },
+    { id: 3,  cat: "Blessing", title: "The Unbroken",       duration: "Until it saves a troop, or your next turn ends.", desc: "The next time one of your troops would be captured, it stays on its square." },
+    { id: 4,  cat: "Blessing", title: "Wayfarer’s Grace",   duration: "Through your next turn.", desc: "Your troops may pass through your own phalanxes, but cannot land on them." },
+    { id: 5,  cat: "Blessing", title: "True Sight",         duration: "One Mist round.", desc: "You can see every enemy troop through the Veil of Mist." },
     { id: 6,  cat: "Tactical", title: "The Hunter’s Mark",  duration: "Until your next capture.", desc: "Your next capture grants a bonus march of 30 instead of 20." },
-    { id: 7,  cat: "Tactical", title: "Second Chance",      duration: "Until used.", desc: "You may use the reroll button once to reroll both dice instead of just one." },
-    { id: 8,  cat: "Tactical", title: "Royal Decree",       duration: "Instant.", desc: "Bring one troop out of your keep without requiring a 1 or 6. Your gate must have room." },
-    { id: 9,  cat: "Tactical", title: "The Pilgrim",        duration: "Until your next vault arrival.", desc: "Your next troop entering its home passage receives +2 movement on its first passage move." },
-    { id: 10, cat: "Curse",    title: "The King’s Burden",  duration: "Until your next turn.", desc: "Your next bonus march is reduced from 20 to 10 squares." },
-    { id: 11, cat: "Curse",    title: "Broken Formation",   duration: "One round.", desc: "You cannot form new phalanxes. Existing phalanxes remain intact." },
-    { id: 12, cat: "Curse",    title: "The Wanderer",       duration: "Until your next capture.", desc: "Your next capture grants a bonus march of 10 instead of 20." },
-    { id: 13, cat: "Curse",    title: "Sealed Gates",       duration: "One round.", desc: "You cannot bring troops out of your keep." }
+    { id: 7,  cat: "Tactical", title: "Second Chance",      duration: "Until used.", desc: "Reroll both dice once, before a troop is chosen." },
+    { id: 8,  cat: "Tactical", title: "Royal Decree",       duration: "Instant.", desc: "Bring one troop out of your keep without a 1 or a 6. Your gate must have room." },
+    { id: 9,  cat: "Tactical", title: "The Pilgrim",        duration: "Until that passage move.", desc: "Your next troop entering its home passage receives +2 movement on its first passage move." },
+    { id: 10, cat: "Curse",    title: "The King’s Burden",  duration: "Until your next bonus march, or your next turn ends.", desc: "Your next bonus march is 10 squares instead of 20." },
+    { id: 11, cat: "Curse",    title: "Broken Formation",   duration: "Through your next turn.", desc: "You cannot form new phalanxes. Existing phalanxes stay as they are." },
+    { id: 12, cat: "Curse",    title: "The Wanderer",       duration: "Instant.", desc: "The troop on the shrine is carried to a random empty square on its road." },
+    { id: 13, cat: "Curse",    title: "Sealed Gates",       duration: "Through your next turn.", desc: "You cannot bring troops out of your keep." }
   ];
   const CAT = {
     Blessing: { label: "BLESSING", light: "#e6bd5e", color: "#b8892b", dark: "#6b4c10" },

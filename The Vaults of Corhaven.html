@@ -136,6 +136,8 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
   box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 -3px 0 rgba(0,0,0,.12);display:grid;place-items:center;transition:transform .12s ease}
 .dchip svg{width:100%;height:100%;display:block}
 .dchip.bonus{width:auto;padding:0 14px;background:linear-gradient(#E6EDF4,#8B9AAB);color:var(--iron);font-weight:700;font-size:21px;border-color:#5A6672}
+.dchip.reroll{display:grid;place-items:center;background:linear-gradient(#F3E2A8,#C4A15A);border-color:#F6E3AD;color:#1d1505}
+.dchip.reroll svg{width:68%;height:68%}
 .dchip[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold-bright),0 0 18px rgba(200,216,230,.7);transform:translateY(-3px)}
 .dchip.used{opacity:.3;filter:grayscale(1);cursor:default;transform:none;box-shadow:none}
 .dchip.stuck{opacity:.55}
@@ -150,7 +152,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .dchip.showdie{cursor:default;pointer-events:none}
 .dieclock{font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold-bright);text-shadow:0 1px 3px rgba(0,0,0,.9)}
 .dieclock[hidden]{display:none}
-.roll[hidden]{display:none}
+#btnRoll[hidden],#btnReroll[hidden],#btnPass[hidden],.roll[hidden]{display:none}
 .hint{font-size:14px;color:var(--parch);text-shadow:0 1px 3px rgba(0,0,0,.9);text-align:center}
 .hint:empty{display:none}
 .modal{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(10,8,14,.55);backdrop-filter:blur(2px)}
@@ -851,7 +853,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.8.23';
+const GAME_VERSION='1.9.0';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1894,14 +1896,16 @@ function applyKept(h,offer,choice){
   fate.hands[h]=result.hand;
   fate.offer=null;
   shownHand='';
-  return result.instant==='decree'?'decree':true;
+  return result.instant||true;
 }
-async function offerFateLocal(h,gid){
-  if(!fateView||S.lesson)return false;
+async function offerFateLocal(pc,gid){
+  if(!fateView||S.lesson||!pc)return false;
+  const h=pc.h;
   const fate=ensureFate();
   const held=fate.hands[h]||[];
   const offer=R.fateOffer(held,Math.random,{pieces:allPieces(),h,worldId:S.world,hands:fate.hands,mistOn:!S.noWorlds});
   if(!offer.length)return false;
+  fate.offer={h,idx:pc.idx,ids:offer};
   S.phase='fate';renderTurn();
   noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',h,'shrine');
   const pl=playerOfH(h);
@@ -1918,7 +1922,18 @@ async function offerFateLocal(h,gid){
     }
   }
   if(gid!==S.gid||!choice)return true;
-  return applyKept(h,offer,choice);
+  const kept=applyKept(h,offer,choice);
+  if(kept==='wanderer')await playWander(pc,gid);
+  return kept;
+}
+async function playWander(pc,gid){
+  const land=R.wanderSquare(allPieces(),pc,Math.random);
+  if(!land||gid!==S.gid)return;
+  delete pc.at;pc.p=land.np;
+  toast('The Wanderer','The troop on the shrine is carried to another square.',pc.h);
+  await hop(pc.mesh,posOf(pc),720,2.2);
+  if(gid!==S.gid)return;
+  await settleAll();
 }
 function decreeTroops(pl){
   return (pl?pl.pieces:[]).filter(pc=>{if(pc.p>=0)return false;const r=moveResult(pc,1);return !!(r&&r.exit);});
@@ -1927,7 +1942,7 @@ function chooseDecree(gid){
   const pl=curP();if(!pl)return Promise.resolve(null);
   const troops=decreeTroops(pl);
   if(!troops.length)return Promise.resolve(null);
-  if(pl.cpu)return wait(450).then(()=>gid===S.gid?troops[0]:null);
+  if(troops.length===1||pl.cpu)return wait(pl.cpu?450:0).then(()=>gid===S.gid?troops[0]:null);
   S.phase='decree';
   setHighlights(troops);
   say('The decree. Choose a troop in the keep.');
@@ -2228,6 +2243,7 @@ function orderToast(list){
   toast(title,sub?sub.charAt(0).toUpperCase()+sub.slice(1):'');
 }
 function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[n].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#7A1A14"/>`).join('')}</svg>`;}
+function rerollSVG(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3M4.5 12a7.5 7.5 0 0 1 12.8-5.3"/><path fill="currentColor" d="M18.2 4.6v4.4h-4.4M5.8 19.4v-4.4h4.4"/></svg>';}
 function tapArrow(){
   const arrow=document.createElement('span');arrow.className='taparrow';arrow.setAttribute('aria-hidden','true');
   arrow.innerHTML='<svg viewBox="0 0 16 10"><path d="M1.2 1.4 8 8.2 14.8 1.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -2264,13 +2280,21 @@ function renderChips(){
     b.setAttribute('aria-pressed',String(di===S.sel&&!d.used&&S.phase==='choose'));
     b.disabled=(!pick&&S.lesson)||d.used||!human||S.phase!=='choose'||(!can&&!pick);
     b.onclick=()=>{
-      S.sel=di;
+      S.sel=di;S.dieHeld=true;
       if(pick){if(S.lessonArrow===di)S.lessonArrow=di===1?0:null;refreshChoice();return;}
       refreshChoice();
     };
     if(opts.some(o=>o.di===di&&o.favor)){const tag=document.createElement('span');tag.className='favortag';tag.textContent='+1';b.appendChild(tag);}
     if(pick&&S.lessonArrow===di&&!d.used)b.appendChild(tapArrow());
     ui.chips.appendChild(b);});
+  const fresh=!S.dieHeld&&S.canReroll&&human&&S.phase==='choose'&&S.pending.length&&S.pending.every(d=>!d.used)&&S.pending.some(d=>!d.bonus);
+  if(fresh){
+    const b=document.createElement('button');b.type='button';b.className='dchip reroll';
+    b.innerHTML=rerollSVG();
+    b.setAttribute('aria-label','Reroll both dice');
+    b.onclick=()=>requestReroll();
+    ui.chips.appendChild(b);
+  }
 }
 /* Online, the top card is your seat. Locally it follows whichever human last held the device. */
 let localMe=-1;
@@ -2360,9 +2384,8 @@ function renderTurn(){
   const pl=curP();if(!pl)return;
   ui.roll.hidden=true;
   const rerollBtn=$('btnReroll'),passBtn=$('btnPass');
-  const offerReroll=!!(S.canReroll&&isMine(pl)&&S.phase==='choose');
-  if(rerollBtn)rerollBtn.hidden=!offerReroll;
-  if(passBtn)passBtn.hidden=!(offerReroll&&!NET.on&&!options().length);
+  if(rerollBtn)rerollBtn.hidden=true;
+  if(passBtn)passBtn.hidden=true;
   if(fateView&&!fateView.dealing())showHand();
   const tip=typeof xrInstruction==='function'?xrInstruction():'';
   ui.hint.textContent=tip||'';
@@ -2690,10 +2713,10 @@ async function continueTurn(){
   const gid=S.gid;const pl=curP();if(!pl)return;const opts=options();
   const fresh=S.pending.length&&S.pending.every(d=>!d.used)&&S.pending.some(d=>!d.bonus);
   const chance=!!(fresh&&R.holds(R.handOf(fateHands(),pl.h),'chance'));
-  S.canReroll=chance;
+  S.dieHeld=false;S.canReroll=chance;
   if(!opts.length){
     if(chance&&pl.cpu)return doReroll();
-    if(chance){S.phase='choose';setHighlights();showMarkers([]);renderTurn();say('No legal move. Reroll both, or end the turn.');return;}
+    if(chance){S.phase='choose';setHighlights();showMarkers([]);renderTurn();say('No legal move. Reroll both.');return;}
     const left=S.pending.filter(d=>!d.used);
     const usedDie=S.pending.some(d=>d.used&&!d.bonus);
     R.noteDry(pl,usedDie);
@@ -2836,7 +2859,7 @@ async function doMove(opt){
   if(gid!==S.gid)return;
   if(onShrine(pc)){
     shrineBurst(posOf(pc));
-    const dealt=await offerFateLocal(pc.h,gid);
+    const dealt=await offerFateLocal(pc,gid);
     if(gid!==S.gid)return;
     if(dealt==='decree'){
       const troop=await chooseDecree(gid);
@@ -3839,7 +3862,11 @@ function syncFromRoom(room){
   S.players.forEach(pl=>{pl.pieces=pl.pieces.filter(pc=>{if(want.has(pc.h+':'+pc.idx))return true;removePiece(pc);return false;});});
   g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;if(sp.at!=null)pc.at=sp.at;else delete pc.at;});
   S.players.forEach(pl=>pl.pieces.sort((a,b)=>a.idx-b.idx));
-  S.cur=g.cur;S.pending=g.pending.map(d=>Object.assign({},d));S.dbl=g.dbl;S.ordering=g.ordering;
+  S.cur=g.cur;
+  const nextPending=g.pending.map(d=>Object.assign({},d));
+  const pendingSig=list=>(list||[]).map(d=>[d.v,d.used?1:0,d.bonus?1:0].join(':')).join('|');
+  if(pendingSig(nextPending)!==pendingSig(S.pending))S.dieHeld=false;
+  S.pending=nextPending;S.dbl=g.dbl;S.ordering=g.ordering;
   S.players.forEach(pl=>{pl.shownRoll=null;});
   const roller=S.players[g.cur];
   if(roller&&!isMine(roller)&&!g.ordering){
@@ -3853,7 +3880,7 @@ function syncFromRoom(room){
       hands:g.fate.hands.map(h=>(h||[]).map(c=>Object.assign({},c))),
       seq:g.fate.seq||0,
       turns:(g.fate.turns||[0,0,0,0]).slice(),
-      offer:g.fate.offer?{h:g.fate.offer.h,ids:(g.fate.offer.ids||[]).slice()}:null
+      offer:g.fate.offer?{h:g.fate.offer.h,idx:g.fate.offer.idx,ids:(g.fate.offer.ids||[]).slice()}:null
     };
   }
   S.canReroll=!!g.canReroll;
@@ -3869,7 +3896,7 @@ function promptFor(pl){
   if(S.phase==='roll')return mine?'Your turn. Roll the dice.':`${nm} is on the march.`;
   if(S.phase==='fate')return mine?'The shrine offers four fates. Choose one.':`${nm} is choosing a fate.`;
   if(S.phase==='decree')return mine?'The decree. Choose a troop in the keep.':`${nm} is choosing a troop in the keep.`;
-  if(S.phase==='choose'&&S.canReroll)return mine?(options().length?'Reroll both, or pick a die and a troop.':(NET.on?'No legal move. Reroll both.':'No legal move. Reroll both, or end the turn.')):`${nm} may reroll both dice.`;
+  if(S.phase==='choose'&&S.canReroll)return mine?(options().length?'Reroll both, or pick a die and a troop.':'No legal move. Reroll both.'):`${nm} may reroll both dice.`;
   if(S.phase==='choose')return mine?'Pick a die, then tap a glowing troop.':`${nm} is choosing a troop.`;
   return'';
 }
@@ -4128,7 +4155,7 @@ async function playEvent(e,epoch){
     case'roll':
       S.cur=S.players.indexOf(pl);S.phase='rolling';renderTurn();say('');
       await throwDice(e.h,e.vals);if(gone())return;
-      S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dbl=e.dbl;S.phase='moving';
+      S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dieHeld=false;S.dbl=e.dbl;S.phase='moving';
       bumpStat('turns');if(e.dbl)bumpStat('doubles');
       announceRoll(pl,e.vals[0],e.vals[1],'march',e.auto);renderTurn();
       await wait(350);return;
@@ -4198,7 +4225,7 @@ async function playEvent(e,epoch){
       renderTurn();
       noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',e.h,'shrine');
       const ids=Array.isArray(e.offer)?e.offer:(e.offer&&e.offer.ids)||[];
-      fate.offer={h:e.h,ids};
+      fate.offer={h:e.h,idx:e.idx,ids};
       const held=handIds(e.h);
       if(!fateView)return;
       if(isMine(pl)){
@@ -4221,6 +4248,16 @@ async function playEvent(e,epoch){
         if(result)fate.hands[e.h]=result.hand;
       }
       fate.offer=null;shownHand='';
+      if(e.wander&&pl){
+        const troop=pl.pieces.find(p=>p.idx===e.wander.idx);
+        if(troop){
+          delete troop.at;troop.p=e.wander.to;
+          toast('The Wanderer','The troop on the shrine is carried to another square.',e.h);
+          await hop(troop.mesh,posOf(troop),720,2.2);
+          if(gone())return;
+          await settleAll();
+        }
+      }
       if(e.decree){S.phase='decree';say(promptFor(pl));renderTurn();return;}
       S.phase='moving';shownHand='';showHand();return;}
     case'decree':{
@@ -4250,7 +4287,7 @@ async function playEvent(e,epoch){
       if(gone())return;
       S.phase='rolling';renderTurn();
       await throwDice(e.h,e.vals);if(gone())return;
-      S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dbl=!!e.dbl;
+      S.pending=[{v:e.vals[0]},{v:e.vals[1]}];S.sel=0;S.dieHeld=false;S.dbl=!!e.dbl;
       if(e.dbl)S.doubles++;
       if(e.dbl&&S.doubles<3)bumpStat('doubles');
       announceRoll(pl,e.vals[0],e.vals[1],'march',e.auto);

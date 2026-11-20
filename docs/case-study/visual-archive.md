@@ -417,6 +417,18 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 14 | [2026-11-18-14-play-title-gap-desktop.png](./screenshots/2026-11-18-14-play-title-gap-desktop.png) | Play overlay | Space under the title opened about 70% before Online and Local Game |
 | 15 | [2026-11-18-15-button-brush-taller-desktop.png](./screenshots/2026-11-18-15-button-brush-taller-desktop.png) | Play overlay | Hover stroke on text buttons is about 50% taller above and below the label |
 
+## Session: 2026-11-20 — Fate clocks, Wanderer, Second Chance chip (V1.9.0)
+
+**Trigger:** Fate cards drawn at the end of a round were expiring before they could be used. The Wanderer and King's Burden both shrank the bonus march. Second Chance was three buttons under the dice, and the side hand did not open on tap.
+
+**Environment:** Local static server, phone-width viewport (430×674).
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-20-01-second-chance-reroll-chip-mobile.png](./screenshots/2026-11-20-01-second-chance-reroll-chip-mobile.png) | Dice row | Gold reroll chip beside both faces; Roll / Reroll both / End the turn stay hidden |
+| 02 | [2026-11-20-02-fate-hand-hover-mobile.png](./screenshots/2026-11-20-02-fate-hand-hover-mobile.png) | Side hand | Kept card eases out and glows; King's Favor marks the legal die +1 |
+| 03 | [2026-11-20-03-fate-hand-open-mobile.png](./screenshots/2026-11-20-03-fate-hand-open-mobile.png) | Side hand, opened | A tap on the peek opens the card. Card art still carries the previous duration line |
+
 ---
 
 ## How new entries get added

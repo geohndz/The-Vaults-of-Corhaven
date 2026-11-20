@@ -521,6 +521,8 @@ test('landing on a shrine deals four fates, and only that seat may keep one', ()
   if (g.phase === 'decree') {
     const troop = g.pieces.find((p) => p.h === h && p.p < 0);
     assert.equal(G.playDecree(room, seat, troop.idx, now + 30), null);
+  } else if (R.fateCard(choice.pick).instant) {
+    assert.equal(g.fate.hands[h].some((c) => c.id === choice.pick), false);
   } else assert.ok(g.fate.hands[h].some((c) => c.id === choice.pick));
   assert.equal(g.fate.offer, null);
   const view = G.publicView(room);

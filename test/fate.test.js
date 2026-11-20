@@ -34,15 +34,16 @@ test('a deal never offers two fates that rewrite the same bonus', () => {
     let n = s + 1;
     const rng = () => { n = (n * 17 + 3) % 97; return n / 97; };
     const offer = R.fateOffer([], rng, { pieces: [pc(0, -1)], h: 0, worldId: null, hands: R.emptyHands(), mistOn: true });
-    const bonus = offer.filter((id) => id === 'mark' || id === 'wanderer' || id === 'burden');
+    const bonus = offer.filter((id) => id === 'mark' || id === 'burden');
     assert.ok(bonus.length <= 1, offer.join(','));
   }
   const held = [{ id: 'mark', seq: 1 }];
   const next = R.fateOffer(held, () => 0.4, { pieces: [pc(0, -1)], h: 0, worldId: null, hands: hands(0, held), mistOn: true });
-  assert.equal(next.includes('mark') || next.includes('wanderer') || next.includes('burden'), false);
-  assert.equal(R.fateAccept(held, ['wanderer'], 'wanderer', null, (id) => ({ id, seq: 2 })), null);
-  const swapped = R.fateAccept([{ id: 'mark', seq: 1 }, { id: 'favor', seq: 2 }], ['wanderer'], 'wanderer', 'mark', (id) => ({ id, seq: 3 }));
-  assert.deepEqual(swapped.hand.map((c) => c.id), ['favor', 'wanderer']);
+  assert.equal(next.includes('mark') || next.includes('burden'), false);
+  assert.equal(R.fateClashes('mark', 'wanderer'), false);
+  const kept = R.fateAccept([{ id: 'mark', seq: 1 }, { id: 'favor', seq: 2 }], ['wanderer'], 'wanderer', null, (id) => ({ id, seq: 3 }));
+  assert.equal(kept.instant, 'wanderer');
+  assert.deepEqual(kept.hand.map((c) => c.id), ['mark', 'favor']);
   assert.equal(R.fateClashes('mark', 'burden'), true);
   assert.equal(R.fateClashes('mark', 'favor'), false);
 });
@@ -133,12 +134,10 @@ test('The Pilgrim adds two on the move into the passage', () => {
 });
 
 test('capture and vault bonuses follow the card that was drawn later', () => {
-  const mark = hands(0, [{ id: 'mark', seq: 2 }, { id: 'wanderer', seq: 1 }, { id: 'burden', seq: 3, born: 1 }]);
+  const mark = hands(0, [{ id: 'mark', seq: 2 }, { id: 'burden', seq: 3, born: 1 }]);
   const strike = R.fateResolve(mark, 0, { captures: 1 });
   assert.equal(strike.captureBonus, 30);
-  assert.deepEqual(strike.hands[0].map((c) => c.id), ['wanderer', 'burden']);
-  const curse = R.fateResolve(hands(0, [{ id: 'wanderer', seq: 4 }]), 0, { captures: 1 });
-  assert.equal(curse.captureBonus, 10);
+  assert.deepEqual(strike.hands[0].map((c) => c.id), ['burden']);
   const burden = R.fateResolve(hands(0, [{ id: 'burden', seq: 1, born: 1 }]), 0, { goal: true, pilgrim: false });
   assert.equal(burden.vaultBonus, 10);
   assert.equal(burden.hands[0].length, 0);
@@ -146,18 +145,16 @@ test('capture and vault bonuses follow the card that was drawn later', () => {
   assert.equal(home.hands[0].length, 0);
 });
 
-test('clocks end a card on the next turn, the next round, or the mist', () => {
+test('a card lasts through the next turn, and True Sight follows the mist', () => {
   const held = hands(0, [
     { id: 'favor', seq: 1, born: 1 },
-    { id: 'grace', seq: 2, untilRound: 1 },
+    { id: 'grace', seq: 2, born: 1 },
     { id: 'sight', seq: 3, mist: 'wait' },
   ]);
-  const still = R.fateTick(held, { turn: { h: 0, count: 1 }, round: 0 });
+  const still = R.fateTick(held, { turn: { h: 0, count: 2 } });
   assert.equal(still.hands[0].length, 3);
-  const turned = R.fateTick(held, { turn: { h: 0, count: 2 } });
-  assert.deepEqual(turned.spent.map((s) => s.id), ['favor']);
-  const rounded = R.fateTick(held, { round: 1 });
-  assert.deepEqual(rounded.spent.map((s) => s.id), ['grace']);
+  const turned = R.fateTick(held, { turn: { h: 0, count: 3 } });
+  assert.deepEqual(turned.spent.map((s) => s.id).sort(), ['favor', 'grace']);
   const woke = R.fateTick(held, { mist: true });
   assert.equal(woke.hands[0].find((c) => c.id === 'sight').mist, 'live');
   assert.equal(R.fateSees(woke.hands[0]), true);
@@ -169,11 +166,34 @@ test('the computer keeps the stronger card and drops a curse to make room', () =
   const pick = R.bestFate(['burden', 'mark'], [], [pc(0, 4)], 0);
   assert.equal(pick.pick, 'mark');
   assert.equal(pick.drop, null);
-  const full = [{ id: 'burden', seq: 1 }, { id: 'wanderer', seq: 2 }];
+  const full = [{ id: 'burden', seq: 1 }, { id: 'broken', seq: 2 }];
   const swap = R.bestFate(['mark'], full, [pc(0, 4)], 0);
   assert.equal(swap.pick, 'mark');
-  assert.ok(swap.drop === 'burden' || swap.drop === 'wanderer');
+  assert.equal(swap.drop, 'burden');
   const decree = R.bestFate(['decree', 'burden'], full, [pc(0, -1)], 0);
   assert.equal(decree.pick, 'decree');
   assert.equal(decree.drop, null);
+});
+
+test('the Wanderer carries the shrine troop to an empty square on its road', () => {
+  const troop = pc(0, 7);
+  const blocker = pc(0, 10, 1);
+  const seen = new Set();
+  for (let i = 0; i < 64; i++) {
+    const land = R.wanderSquare([troop, blocker], troop, () => i / 64);
+    assert.ok(land);
+    assert.notEqual(land.np, 7);
+    assert.notEqual(land.np, 10);
+    const ti = R.trackIndex(0, land.np);
+    assert.equal(R.SAFE.has(ti) && R.STARTS.indexOf(ti) < 0, false);
+    assert.equal(land.np > R.LAST, false);
+    seen.add(land.np > 7 ? 'ahead' : 'behind');
+  }
+  assert.ok(seen.has('ahead'));
+  assert.ok(seen.has('behind'));
+  const packed = [troop];
+  for (let p = 0; p <= R.LAST; p++) if (p !== 7) packed.push(pc(0, p, p + 1));
+  assert.equal(R.wanderSquare(packed, troop, () => 0), null);
+  const used = R.fateResolve(hands(0, [{ id: 'favor', seq: 1, born: 1 }]), 0, { favor: true });
+  assert.equal(used.hands[0].some((c) => c.id === 'favor'), false);
 });
