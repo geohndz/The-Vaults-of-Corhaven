@@ -1,0 +1,33 @@
+---
+description: Which banner art to use when Geo asks for a banner in The Vaults of Corhaven
+alwaysApply: true
+---
+
+# Banners
+
+Banner art lives in `assets/banners/`. When Geo says "use a banner", use these files. Don't draw a banner with `clip-path` or hand-made SVG.
+
+## Kingdom banners
+
+Use these when the banner stands for a specific kingdom. The colors are baked into the art, so don't tint them.
+
+| Kingdom | File | Fill |
+|---|---|---|
+| Emberhold | `emberhold.svg` | `#D43F3C` |
+| Thornwald | `thornwald.svg` | `#7B9953` |
+| Solmere | `solmere.svg` | `#DD9E40` |
+| Tidereach | `tidereach.svg` | `#508FC7` |
+
+## General banners
+
+`general-1.svg`, `general-2.svg` and `general-3.svg` are white silhouettes for anything not tied to a kingdom, such as game modes or decoration. Pick any one; varying them across a row is fine. Tint them with a CSS mask so the color comes from the surrounding UI:
+
+```css
+.banner-art{
+  background:var(--c);
+  -webkit-mask:url("assets/banners/general-2.svg") center/contain no-repeat;
+          mask:url("assets/banners/general-2.svg") center/contain no-repeat;
+}
+```
+
+All banners have a ragged bottom edge. Keep the file's aspect ratio (kingdom 94×153, general about 63×103) and don't stretch them.

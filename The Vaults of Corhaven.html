@@ -199,21 +199,36 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .joinside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .joinside h1{margin-bottom:0}
 .joinside label{margin-top:0}
-.joinmain{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;justify-content:flex-start;min-width:0;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 48px) calc(env(safe-area-inset-bottom,0px) + 28px) 40px;border-left:1px solid rgba(230,237,244,.32)}
+.joinmain{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;justify-content:flex-start;min-width:0;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 48px) calc(env(safe-area-inset-bottom,0px) + 28px) 40px}
 .joinmain h2{margin:0 0 8px;color:var(--gold-bright)}
 .openrooms{display:flex;flex-direction:column;width:100%;min-height:0}
 .openrooms[hidden]{display:none !important}
 .openempty{margin:12px 0 0;color:var(--parch-dim)}
-.openroom{display:grid;grid-template-columns:minmax(0,auto) 1fr auto;align-items:center;column-gap:16px;row-gap:4px;width:100%;margin:0;padding:16px 0;border:0;border-bottom:1px solid rgba(154,171,188,.2);border-radius:0;background:transparent;color:inherit;text-align:left}
-.openroom .code{font-size:clamp(22px,3.2vw,32px);font-weight:700;letter-spacing:.16em;color:var(--gold-bright);line-height:1.1}
-.openroom .crests{display:flex;gap:6px;flex-wrap:wrap}
-.openroom .crests .crest{width:22px;height:26px;opacity:.28}
-.openroom .crests .crest.on{opacity:1}
-.openroom .spots{color:var(--parch-dim);font-size:15px;white-space:nowrap}
-.openroom .who{grid-column:1 / -1;color:var(--parch-dim);font-size:15px}
-.openroom:hover,.openroom:focus-visible{color:var(--parch)}
-.openroom:hover .spots,.openroom:focus-visible .spots{color:var(--parch)}
-#lobbyPane[hidden],#codePane[hidden],#onlineHubPane[hidden],#modePaneOnline[hidden],#createSettingsPane[hidden],#publicBlockPane[hidden],#localModePane[hidden],#setupSeatsPane[hidden]{display:none !important}
+.openroom{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:14px;width:100%;margin:0;padding:12px 10px;border:0;border-radius:4px;background:transparent;color:var(--parch);text-align:left;transition:background .15s ease}
+.openroom:hover,.openroom:focus-visible{background:rgba(230,237,244,.07)}
+.openroom .sigil{width:40px;height:40px;color:var(--parch)}
+.openroom .sigil svg{display:block;width:100%;height:100%}
+.openroom .meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+#play .openroom .mode{font-family:var(--font-cinder);font-size:clamp(22px,1.6vw,30px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--parch)}
+#play .openroom .who{font-family:var(--font-serif,var(--font-sans));font-size:clamp(15px,1vw,18px);line-height:1.3;color:var(--parch);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.openroom .who i{font-style:italic}
+.openroom .pennants{display:flex;gap:6px}
+.openroom .pennant{width:clamp(18px,1.4vw,24px);aspect-ratio:3 / 4.4;background:var(--c);clip-path:var(--cut)}
+.openroom .pennant.taken{filter:brightness(.34) saturate(.7)}
+.openroom .pennant.k0{--cut:polygon(0 0,100% 0,100% 82%,78% 92%,50% 100%,22% 92%,0 82%)}
+.openroom .pennant.k1{--cut:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%)}
+.openroom .pennant.k2{--cut:polygon(0 0,100% 0,100% 96%,84% 90%,70% 100%,56% 91%,44% 100%,30% 91%,16% 100%,0 92%)}
+.openroom .pennant.k3{--cut:polygon(0 0,100% 0,100% 90%,66% 100%,50% 88%,34% 100%,0 90%)}
+#lobbyPane[hidden]{display:none !important}
+#play:not(.local) .localseats,#play.local .openrooms{display:none}
+.localseats{display:flex;flex-direction:column;gap:14px;align-self:center;min-width:0}
+#play .localseats .seg button{padding:9px 0;font-size:clamp(15px,1vw,18px)}
+#play .localseats .seat{gap:14px;padding:12px 0}
+#play .localseats .seat .crest{width:24px;height:30px}
+#play .localseats .seat .name{font-size:clamp(17px,1.15vw,21px);line-height:1.2}
+#play .localseats .toggle button{font-size:clamp(14px,.95vw,16px)}
+#play .localseats #btnXRSetup{align-self:flex-start;margin-top:14px;padding:0 18px;font-size:clamp(17px,1.15vw,22px)}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .modeselect{display:flex;flex-direction:column;gap:10px;width:100%;margin:8px 0 0}
 .modepick{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;margin:0;padding:16px 18px;border:1px solid rgba(154,171,188,.28);border-radius:0;background:rgba(8,12,16,.45);color:var(--parch);text-align:left;cursor:pointer;transition:border-color .15s ease,background .15s ease}
 .modepick:hover:not(:disabled),.modepick:focus-visible:not(:disabled){border-color:rgba(230,237,244,.45);background:rgba(62,72,84,.35)}
@@ -225,12 +240,67 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roommeta{margin:0;color:var(--parch-dim);font-size:15px;line-height:1.5}
 .roommeta strong{color:var(--parch);font-weight:600}
 .roommode{margin:0;padding:0;font-size:15px;font-weight:600;color:var(--gold-bright)}
-.openroom .mode{font-size:14px;color:var(--parch-dim);grid-column:2;text-align:right}
 #play,#online,#setup,#profile.menu-page{position:fixed;padding:0;align-items:stretch;overflow:hidden;background:#050608}
-#play{--play-side:clamp(260px,30vw,520px)}
+#play{--play-side:clamp(240px,22vw,420px)}
 #play .joinside h1{text-align:center}
 #play .playside-choices{display:flex;flex-direction:column;align-items:center;gap:32px;width:100%;margin-top:21px}
+#play .playside-choices [aria-pressed="true"]{color:#0c0e12;text-shadow:none}
+#play .playside-choices [aria-pressed="true"]::before{opacity:1}
 #play #playFoot{align-items:center}
+#play .playmain{display:grid;grid-template-columns:minmax(0,1fr) clamp(280px,24vw,420px);align-content:center;align-items:start;column-gap:clamp(28px,3.6vw,72px);row-gap:40px;padding-left:clamp(16px,2vw,40px)}
+.playmodes{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vh,32px);min-width:0}
+#play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
+#play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
+.modecards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
+.modecard{--mc:#356590;position:relative;min-width:0;height:clamp(380px,54vh,520px)}
+.mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1)}
+.modecard.flipped .mc-inner{transform:rotateY(180deg)}
+.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 30%,rgba(10,12,16,.9)) 0%,rgba(10,12,16,.9) 48%,rgba(5,6,9,.95) 100%);box-shadow:0 22px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6)}
+.mc-front{cursor:pointer;font:inherit;transition:border-color .18s ease,box-shadow .18s ease}
+.mc-front:hover,.mc-front:focus-visible{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8);box-shadow:0 22px 44px rgba(0,0,0,.6),0 0 28px color-mix(in srgb,var(--mc) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.07)}
+.mc-front:focus-visible{outline:3px solid var(--gold-bright);outline-offset:3px}
+.mc-back{transform:rotateY(180deg);gap:10px;cursor:pointer}
+.mc-back :is(button,label){cursor:pointer}
+.mc-num{position:relative;z-index:1;display:grid;place-items:center;width:38px;height:38px;margin-top:12px;border:2px solid #C5D0DC;border-radius:50%;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--mc) 70%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 50%,#000));color:#F2F5F8;font-weight:700;font-size:17px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.65)}
+.mc-front .mc-num{position:absolute;top:12px;left:50%;margin:0;transform:translateX(-50%);z-index:2}
+.mc-banner{position:relative;display:grid;place-items:center;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:56px 0 22%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.mc-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);-webkit-mask:var(--bn) center/contain no-repeat;mask:var(--bn) center/contain no-repeat}
+.mc-banner svg{position:relative;width:62%;height:auto;color:#F2F5F8;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.mc-tag{margin-top:clamp(14px,2.4vh,26px);font-size:clamp(12px,.8vw,15px);line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#E3B663}
+.mc-name{margin-top:6px;font-family:var(--font-cinder);font-size:clamp(22px,1.7vw,32px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F8}
+.mc-desc{margin-top:clamp(10px,1.6vh,18px);font-family:var(--font-serif,var(--font-sans));font-style:italic;font-size:clamp(13px,.9vw,17px);line-height:1.45;color:var(--parch-dim)}
+.mc-soon{margin-top:auto;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dim)}
+.modecard.soon .mc-face{background:linear-gradient(180deg,rgba(24,27,32,.9),rgba(6,7,10,.94))}
+.modecard.soon .mc-banner,.modecard.soon .mc-num{filter:grayscale(1) brightness(.6)}
+.modecard.soon .mc-front{cursor:default}
+.modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2);box-shadow:0 22px 44px rgba(0,0,0,.6)}
+.mc-back .mc-tag{margin-top:clamp(18px,2.6vh,30px)}
+.mc-back .mc-name{margin-top:6px}
+#play .mc-back .roommeta{margin:4px 0 0;font-size:clamp(14px,.9vw,16px);line-height:1.45}
+#play .mc-back .check{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:6px 0 0;padding:12px 0;border-top:1px solid rgba(197,208,220,.18);border-bottom:1px solid rgba(197,208,220,.18);font-weight:600;font-size:clamp(15px,1vw,18px);line-height:1.3;color:var(--parch);text-align:left}
+.mc-back .check input{width:22px;height:22px;flex:none;accent-color:#9AABBC}
+#play .mc-back .err{margin:0;font-size:15px;line-height:1.4}
+.mc-back .mc-actions{display:flex;flex-direction:column;align-items:center;gap:26px;margin-top:auto;padding-bottom:6px}
+#play .mc-back :is(button.primary,button.secondary){padding:0 20px;font-size:clamp(17px,1.15vw,22px)}
+.openrooms{align-self:center;gap:14px}
+.roomsearch{display:flex;align-items:center;gap:12px}
+.roomsearch .field{flex:1;min-width:0;padding:9px 14px;font-size:clamp(17px,1.1vw,20px);letter-spacing:.14em;text-transform:uppercase;background:rgba(5,6,9,.6);border-color:rgba(197,208,220,.45)}
+.roomsearch .field::placeholder{letter-spacing:.04em;text-transform:none;color:rgba(197,208,220,.55)}
+#play .roomsearch button.secondary{flex:none;padding:0 18px;font-size:clamp(17px,1.15vw,22px)}
+#play .playstatus{margin:0;color:var(--parch-dim);font-size:15px;line-height:1.4}
+.playstatus:empty{display:none}
+#play #openErrHold .err{margin:0;font-size:15px;line-height:1.4}
+.openlist{display:flex;flex-direction:column;gap:4px;max-height:min(56vh,520px);overflow:auto;margin:0 -10px}
+.openlist .openempty{margin:4px 10px 0;font-size:15px}
+@media (min-width:1181px){
+  #play .sheet::after{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:clamp(380px,34vw,640px);background:linear-gradient(270deg,#000 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,0) 100%);pointer-events:none}
+}
+@media (max-width:1180px) and (min-width:641px){
+  #play .playmain{grid-template-columns:1fr;align-content:start}
+  .openrooms,.localseats{align-self:stretch;max-width:560px;width:100%;justify-self:center}
+}
+@media (prefers-reduced-motion:reduce){.mc-inner{transition:none}}
 @media (min-width:641px){
   #play .join{grid-template-columns:var(--play-side) minmax(0,1fr)}
   #play .sheet::before{width:var(--play-side)}
@@ -241,7 +311,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .menu-page .menuveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,10,.5) 0%,rgba(4,6,10,.18) 36%,rgba(4,6,10,.42) 62%,rgba(2,3,6,.78) 100%),radial-gradient(ellipse 92% 70% at 50% 40%,transparent 8%,rgba(3,4,8,.5) 100%)}
 .menu-page .sheet{position:relative;z-index:1;width:100%;height:100%;max-height:none;padding:0;overflow:hidden;border:0;border-radius:0;box-shadow:none;background:transparent}
 .menu-page .join,.menu-page .lobby,.menu-page .local{position:relative;z-index:1}
-.menu-page .sheet::before{content:"";position:absolute;z-index:0;inset:0 auto 0 0;width:40%;background:rgba(7,10,14,.93);border-right:1px solid rgba(230,237,244,.16);pointer-events:none}
+.menu-page .sheet::before{content:"";position:absolute;z-index:0;inset:0 auto 0 0;width:40%;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 100%);pointer-events:none}
 .menu-page .joinside,.menu-page .localside,.menu-page .lobbyside,.menu-page .localactions,.menu-page .lobbyactions{position:relative;z-index:1}
 .menu-page .joinside p,.menu-page .localside p,.menu-page .lobbyside p{color:var(--parch-dim);text-shadow:0 1px 2px rgba(0,0,0,.85)}
 body.at-lobby canvas#scene,body.at-lobby .hud{visibility:hidden}
@@ -270,7 +340,7 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.titlepage.intro .titlelogo{transform:translate(-50%,0)}.titlepage.intro .titlemenu,.titlepage.intro .titlecorners,.titlepage.intro .titlever,.nameintro,.titlepage.intro-leaving .nameintro{transition:none;transform:none}}
 .lobby{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
 .lobbyside{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:18px;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
-.lobbymain{grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 40px) calc(env(safe-area-inset-bottom,0px) + 28px) 24px;border-left:1px solid rgba(230,237,244,.32)}
+.lobbymain{grid-column:2;grid-row:1 / span 2;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 40px) calc(env(safe-area-inset-bottom,0px) + 28px) 24px}
 .lobbymain .kingdoms{width:100%;margin:0;align-items:end}
 .lobby .roomcode{flex-direction:column;align-items:flex-start;gap:2px;margin:0;padding:0;border:0}
 .lobby .roomcode span{font-size:15px;font-weight:600}
@@ -287,7 +357,7 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 .localside{grid-column:1;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .localside h1{margin-bottom:12px}
 .localside h2,.localmain h2{margin-top:22px}
-.localmain{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 48px) calc(env(safe-area-inset-bottom,0px) + 28px) 40px;border-left:1px solid rgba(230,237,244,.32)}
+.localmain{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) calc(env(safe-area-inset-right,0px) + 48px) calc(env(safe-area-inset-bottom,0px) + 28px) 40px}
 .localmain h2{margin-top:0}
 .localmain .seat{padding:14px 0}
 #lobbyErrHold .err{margin-top:0}
@@ -331,14 +401,18 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
   .lobby,.local,.join{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto;min-height:100%}
   .join{grid-template-rows:auto minmax(0,1fr) auto}
   .lobbyside,.localside,.joinside{grid-column:1;grid-row:1}
-  .lobbymain,.localmain,.joinmain{grid-column:1;grid-row:2;padding:18px 20px;border-left:0;border-top:1px solid rgba(230,237,244,.32)}
+  .lobbymain,.localmain,.joinmain{grid-column:1;grid-row:2;padding:18px 20px}
   .lobbyside,.joinside{padding-bottom:28px}
   .lobbymain,.joinmain{padding-top:32px}
-  .openroom{grid-template-columns:1fr auto;padding:14px 0}
-  .openroom .crests{grid-column:1}
+  #play .playmain{display:flex;flex-direction:column;align-items:stretch;gap:36px}
+  .modecards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .modecard{height:440px}
+  #play .mc-back :is(button.primary,button.secondary){padding:0 8px;font-size:16px}
+  #play .mc-back .check{font-size:15px}
+  .openlist{max-height:none}
   .lobbyactions,.localactions{grid-column:1;grid-row:3}
   .banner .frame{width:88%}
-  .menu-page .sheet::before{width:100%;border-right:0;border-bottom:1px solid rgba(230,237,244,.14)}
+  .menu-page .sheet::before{width:100%}
 }
 body.at-lesson .hud{visibility:hidden}
 body.at-lesson #toast,body.at-lesson #hintDock,body.at-lesson #bottomBar{visibility:visible}
@@ -535,11 +609,38 @@ body.at-lesson #hintDock{z-index:21}
       <aside class="joinside">
         <h1 id="playTitle">Play</h1>
         <div class="playside-choices">
-          <button class="primary" type="button" id="btnPlayOnline">Online</button>
+          <button class="primary" type="button" id="btnPlayOnline" aria-pressed="true">Online</button>
           <button class="primary" type="button" id="btnPlayLocal">Local Game</button>
         </div>
       </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
+      <div class="joinmain playmain">
+        <section class="playmodes" aria-labelledby="modeCardsTitle">
+          <h2 id="modeCardsTitle">Select a game mode</h2>
+          <div class="modecards" id="modeCards"></div>
+        </section>
+        <section class="openrooms" id="openRooms" aria-labelledby="openRoomsTitle">
+          <h2 id="openRoomsTitle">Open rooms</h2>
+          <form class="roomsearch" id="stepCode" role="search">
+            <label class="sr-only" for="codeInput">Room code</label>
+            <input class="field" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" placeholder="Room code">
+            <button class="secondary" id="btnCodeGo" type="submit">Join</button>
+          </form>
+          <p class="playstatus" id="onlineLead" aria-live="polite"></p>
+          <div id="openErrHold"><p class="err" id="onlineErr" role="alert"></p></div>
+          <div class="openlist" id="openList"></div>
+        </section>
+        <section class="localseats" id="localSeats" aria-labelledby="localSeatsTitle">
+          <h2 id="localSeatsTitle">Kingdoms</h2>
+          <p class="playstatus">Everyone plays on this device. Set any kingdom to the computer.</p>
+          <div class="seg" role="radiogroup" id="countSeg" aria-label="How many players">
+            <button role="radio" data-n="2" aria-checked="false">2 players</button>
+            <button role="radio" data-n="3" aria-checked="false">3 players</button>
+            <button role="radio" data-n="4" aria-checked="true">4 players</button>
+          </div>
+          <div id="seats"></div>
+          <button class="secondary" id="btnXRSetup" hidden>Play in the room</button>
+        </section>
+      </div>
       <div class="localactions" id="playFoot">
         <button class="secondary" type="button" id="btnPlayBack">Back</button>
       </div>
@@ -572,87 +673,13 @@ body.at-lesson #hintDock{z-index:21}
   </div>
 </div>
 
-<div class="modal menu-page" id="online" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+<div class="modal menu-page room" id="online" role="dialog" aria-modal="true" aria-label="Your room">
   <div class="menubackdrop" aria-hidden="true">
     <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async">
     <div class="menuveil"></div>
   </div>
   <div class="sheet">
-    <div id="onlineHubPane" class="join" hidden>
-      <aside class="joinside">
-        <h1 id="hubTitle">Online</h1>
-        <p>Play with others over the internet.</p>
-      </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
-      <div class="localactions" id="hubFoot">
-        <button class="primary" type="button" id="btnHubPublic">Public Match</button>
-        <button class="primary" type="button" id="btnHubCreate">Create a Room</button>
-        <button class="primary" type="button" id="btnHubJoin">Join a Room</button>
-        <button class="secondary" type="button" id="btnHubBack">Back</button>
-      </div>
-    </div>
-    <div id="modePaneOnline" class="join" hidden>
-      <aside class="joinside">
-        <h1 id="modeOnlineTitle">Select game mode</h1>
-        <p id="modeOnlineLead">Everyone in this match uses the same rules.</p>
-        <div class="modeselect" id="modeListOnline" role="radiogroup" aria-labelledby="modeOnlineTitle"></div>
-      </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
-      <div class="localactions" id="modeOnlineFoot">
-        <p class="err" id="modeOnlineErr" role="alert"></p>
-        <button class="primary" type="button" id="btnModeOnlineContinue">Continue</button>
-        <button class="secondary" type="button" id="btnModeOnlineBack">Back</button>
-      </div>
-    </div>
-    <div id="createSettingsPane" class="join" hidden>
-      <aside class="joinside">
-        <h1 id="createSettingsTitle">Room settings</h1>
-        <p class="roommode" id="createModeSummary"></p>
-        <button class="btn-text-skip" type="button" id="btnCreateChangeMode">Change mode</button>
-        <p class="roommeta">Up to <strong>four players</strong> may join this room.</p>
-        <div class="roomopts">
-          <label class="check" for="createPrivate">Private — code only<input type="checkbox" id="createPrivate"></label>
-        </div>
-      </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
-      <div class="localactions" id="createSettingsFoot">
-        <div id="createErrHold"><p class="err" id="createSettingsErr" role="alert"></p></div>
-        <button class="primary" type="button" id="btnCreateRoomGo">Create room</button>
-        <button class="secondary" type="button" id="btnCreateSettingsBack">Back</button>
-      </div>
-    </div>
-    <div id="publicBlockPane" class="join" hidden>
-      <aside class="joinside">
-        <h1 id="publicBlockTitle">Public Match</h1>
-        <p>Matchmaking is not available yet. Use Create a Room or Join a Room to play online today.</p>
-      </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
-      <div class="localactions" id="publicBlockFoot">
-        <button class="secondary" type="button" id="btnPublicBlockBack">Back</button>
-      </div>
-    </div>
-    <div id="codePane" class="join">
-      <aside class="joinside">
-        <h1 id="onlineTitle">Join a room</h1>
-        <p id="onlineLead"></p>
-        <form id="stepCode" hidden>
-          <label for="codeInput">Room code</label>
-          <input class="field code" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
-        </form>
-      </aside>
-      <div class="joinmain">
-        <div class="openrooms" id="openRooms" hidden>
-          <h2>Open rooms</h2>
-          <div id="openList"></div>
-        </div>
-      </div>
-      <div class="localactions" id="codeFoot">
-        <div id="codeErrHold"><p class="err" id="onlineErr" role="alert"></p></div>
-        <button class="primary" id="btnCodeGo" type="submit" form="stepCode">Continue</button>
-        <button class="secondary" id="btnOnlineBack" type="button">Back</button>
-      </div>
-    </div>
-    <div id="lobbyPane" class="lobby" hidden>
+    <div id="lobbyPane" class="lobby">
       <aside class="lobbyside">
         <div class="roomcode"><span>Room code</span><b id="roomCode"></b></div>
         <p class="roommode" id="lobbyModeLabel"></p>
@@ -664,6 +691,7 @@ body.at-lesson #hintDock{z-index:21}
       <div class="lobbyactions" id="lobbyActions">
         <div id="lobbyErrHold"></div>
         <button class="primary" id="btnStart">Start the match</button>
+        <button class="secondary" id="btnOnlineBack" type="button">Leave room</button>
       </div>
     </div>
   </div>
@@ -675,50 +703,6 @@ body.at-lesson #hintDock{z-index:21}
     <p id="leaveText">Leaving counts as a forfeit. Your troops leave the board, and you can't rejoin this match.</p>
     <button class="primary" id="btnLeaveYes">Leave the match</button>
     <button class="secondary" id="btnLeaveNo">Stay</button>
-  </div>
-</div>
-
-<div class="modal menu-page" id="setup" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
-  <div class="menubackdrop" aria-hidden="true">
-    <img class="menubg" src="assets/enhance_upscale_image_03.png" alt="" decoding="async">
-    <div class="menuveil"></div>
-  </div>
-  <div class="sheet">
-    <div id="localModePane" class="join" hidden>
-      <aside class="joinside">
-        <h1 id="localModeTitle">Select game mode</h1>
-        <p>Local play on this device.</p>
-        <div class="modeselect" id="modeListLocal" role="radiogroup" aria-labelledby="localModeTitle"></div>
-      </aside>
-      <div class="joinmain" hidden aria-hidden="true"></div>
-      <div class="localactions" id="localModeFoot">
-        <button class="primary" type="button" id="btnModeLocalContinue">Continue</button>
-        <button class="secondary" type="button" id="btnModeLocalBack">Back</button>
-      </div>
-    </div>
-    <div class="local" id="setupSeatsPane">
-      <aside class="localside">
-        <h1 id="setupTitle">Play local</h1>
-        <p class="roommode" id="localModeSummary">Normal</p>
-        <button class="btn-text-skip" type="button" id="btnLocalChangeMode">Change mode</button>
-        <p>Everyone plays on this device. Set any kingdom to the computer.</p>
-        <h2>How many players?</h2>
-        <div class="seg" role="radiogroup" id="countSeg">
-          <button role="radio" data-n="2" aria-checked="false">2</button>
-          <button role="radio" data-n="3" aria-checked="false">3</button>
-          <button role="radio" data-n="4" aria-checked="true">4</button>
-        </div>
-      </aside>
-      <div class="localmain">
-        <h2>Who rules each kingdom?</h2>
-        <div id="seats"><div class="seat"><span class="crest" style="--c:#9E1B18"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#54673B"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#BD7811"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#356590"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
-      </div>
-      <div class="localactions">
-        <button class="primary" id="btnBegin">Begin the game</button>
-        <button class="secondary" id="btnXRSetup" hidden="">Play in the room</button>
-        <button class="secondary" id="btnSetupBack">Back</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -848,12 +832,12 @@ body.at-lesson #hintDock{z-index:21}
 <script src="./lib/siege-fx.js?v=siege18"></script>
 <script src="./lib/smoke-embers.js?v=5"></script>
 <script src="./lib/fate-view.js?v=fate7"></script>
-<script src="./lib/game-modes.js?v=ia1"></script>
+<script src="./lib/game-modes.js?v=ia2"></script>
 <script src="./lib/player-profile.js?v=ia1"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.9.3';
+const GAME_VERSION='1.10.2';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1861,7 +1845,7 @@ document.addEventListener('click',e=>{
   if(btn.id==='btnRoll'||btn.classList.contains('roll')||btn.classList.contains('rollpair'))return;
   if(btn.classList.contains('dchip')){sfx.hover();return;}
   if(btn.closest('#hintDock')){sfx.hover();return;}
-  sfx.press(btn.id==='btnStart'||btn.id==='btnBegin'?START_SRC:PRESS_SRC);
+  sfx.press(btn.id==='btnStart'||btn.classList.contains('mc-begin')?START_SRC:PRESS_SRC);
 },true);
 ['pointerdown','click','keydown','touchend'].forEach(type=>document.addEventListener(type,()=>{
   const ctx=audioCtx();
@@ -3029,9 +3013,20 @@ function renderSetup(){
     const tg=document.createElement('div');tg.className='toggle';tg.setAttribute('role','group');tg.setAttribute('aria-label',HOUSES[h].name+' player type');
     [['Human',false],['Computer',true]].forEach(([lab,val])=>{const b=document.createElement('button');b.textContent=lab;b.setAttribute('aria-pressed',String(seatCpu[h]===val));b.onclick=()=>{seatCpu[h]=val;renderSetup();};tg.appendChild(b);});
     row.appendChild(tg);wrap.appendChild(row);});
+  if($('play').classList.contains('local')){const sum=localSummary();document.querySelectorAll('#modeCards .mc-back .roommeta').forEach(p=>p.textContent=sum);}
 }
-function showLocalModePane(){ $('localModePane').hidden=false;$('setupSeatsPane').hidden=true;renderModeList('modeListLocal');}
-function showLocalSetupPane(){applySelectedModeToLocal();$('localModePane').hidden=true;$('setupSeatsPane').hidden=false;renderSetup();}
+function localSummary(){
+  const seats=SEATS[setupCount],cpu=seats.filter(h=>seatCpu[h]).length;
+  const words=['','One','Two','Three','Four'];
+  const who=cpu===0?'all played here':cpu===seats.length?'all run by the computer':`${words[cpu].toLowerCase()} run by the computer`;
+  return `${words[seats.length]} kingdoms, ${who}.`;
+}
+function beginLocal(){
+  applySelectedModeToLocal();
+  try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,mode:selectedModeId,worlds:setupWorlds,ranked:setupRanked}));}catch(e){}
+  closeModal('play');closeModal('title');
+  newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));
+}
 document.querySelectorAll('#countSeg button').forEach(b=>b.onclick=()=>{setupCount=+b.dataset.n;renderSetup();});
 const TITLE_FX={run:0,ready:false,renderer:null,scene:null,camera:null,api:null,last:0,time:0};
 function resizeTitleFx(){
@@ -3134,16 +3129,11 @@ $('profileForm').onsubmit=e=>{e.preventDefault();const r=PROFILE.setUsername($('
 initNameIntro();
 $('btnProfileBack').onclick=()=>{profileContinue=null;closeModal('profile');};
 $('btnTitleProfile').onclick=()=>openProfile(true);
-$('btnPlay').onclick=()=>{closeModal('title');openModal('play');};
-$('btnPlayBack').onclick=()=>{closeModal('play');openModal('title');};
-$('btnPlayOnline').onclick=()=>withProfile(()=>{closeModal('play');openOnlineHub();});
-$('btnPlayLocal').onclick=()=>{closeModal('play');closeModal('title');showLocalModePane();openModal('setup');};
-$('btnModeLocalContinue').onclick=()=>{const m=MODES.byId(selectedModeId);if(!m.available)return;showLocalSetupPane();};
-$('btnModeLocalBack').onclick=()=>{closeModal('setup');openModal('play');};
-$('btnLocalChangeMode').onclick=()=>showLocalModePane();
-$('btnBegin').onclick=()=>{applySelectedModeToLocal();try{localStorage.setItem('ludo-keeps-setup',JSON.stringify({n:setupCount,cpu:seatCpu,mode:selectedModeId,worlds:setupWorlds,ranked:setupRanked}));}catch(e){}closeModal('setup');closeModal('title');newGame(SEATS[setupCount].map(h=>({h,cpu:seatCpu[h]})));};
+$('btnPlay').onclick=()=>openPlay();
+$('btnPlayBack').onclick=()=>{stopBrowse();closeModal('play');openModal('title');};
+$('btnPlayOnline').onclick=()=>{if(playMode!=='online')openPlay();};
+$('btnPlayLocal').onclick=()=>{if(playMode!=='local')openPlayLocal();};
 $('btnNew').onclick=()=>showTitle();
-$('btnSetupBack').onclick=()=>{closeModal('setup');openModal('play');};
 $('btnLesson').onclick=()=>startLesson();
 $('btnRules').onclick=()=>openModal('rules');
 $('btnStory').onclick=()=>openAbout();
@@ -3193,7 +3183,7 @@ document.addEventListener('keydown',e=>{
 });
 $('btnRulesClose').onclick=()=>closeModal('rules');
 $('btnAgain').onclick=()=>{closeModal('win');if(NET.on){leaveOnline(false);return;}newGame(S.config);};
-$('btnChange').onclick=()=>{closeModal('win');showLocalSetupPane();openModal('setup');};
+$('btnChange').onclick=()=>{closeModal('win');openPlayLocal();};
 const menu=$('menu'),btnMenu=$('btnMenu');
 const menuItems=()=>[...menu.querySelectorAll('button')].filter(b=>!b.hidden);
 function setMenu(open,refocus){
@@ -3219,7 +3209,7 @@ function showTitle(msg){
   const fromLesson=S.lesson||document.body.classList.contains('at-lesson');
   if(!NET.on&&(S.phase!=='idle'||fromLesson)){resetBoard();ui.chips.hidden=true;say('');}
   if(!NET.on)$('btnLeave').hidden=true;
-  ['setup','online','win','leave','settings','lesson','play','profile'].forEach(closeModal);
+  ['online','win','leave','settings','lesson','play','profile'].forEach(closeModal);
   document.body.classList.remove('at-lesson');
   hideHint();
   $('about').classList.remove('open');
@@ -3480,7 +3470,7 @@ async function runLessonStep(i){
   try{if(LESSONS[i].enter)await LESSONS[i].enter();}finally{if(lessonRun&&lessonRun.liveGen===gen)setLessonBusy(false);}
 }
 async function startLesson(){
-  closeModal('title');closeModal('setup');
+  closeModal('title');closeModal('play');
   setMatchView(true);
   resetBoard();
   S.lesson=true;S.phase='idle';localMe=0;
@@ -3572,7 +3562,7 @@ function armSocketLife(){
   NET.lifeTimer=setTimeout(()=>{
     if(!NET.on||NET.ended||!NET.ws||NET.ws.readyState!==1)return;
     if(NET.code)connect({t:'join',id:myId,code:NET.code});
-    else if(onlineStep==='stepCode')connect({t:'browse',id:myId});
+    else if(onlineStep==='browse')connect({t:'browse',id:myId});
   },SOCKET_LIFE_MS+Math.floor(Math.random()*SOCKET_LIFE_SPREAD_MS));
 }
 function paintLink(){
@@ -3620,9 +3610,9 @@ function connect(hello){
     if(NET.playing)NET.forceSnap=true;
     if(!NET.code){
       NET.ws=null;clearLinkHold();setLink('ok');
-      if(onlineStep==='stepCode'){
+      if(onlineStep==='browse'){
         onlineError('offline');
-        NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended&&onlineStep==='stepCode'&&!NET.code)connect({t:'browse',id:myId});},Math.min(10000,600*Math.pow(2,NET.retry++)));
+        NET.retryTimer=setTimeout(()=>{if(NET.on&&!NET.ended&&onlineStep==='browse'&&!NET.code)connect({t:'browse',id:myId});},Math.min(10000,600*Math.pow(2,NET.retry++)));
         return;
       }
       onlineError('offline');return;
@@ -3676,52 +3666,135 @@ function leaveOnline(sendLeave,msg){
 }
 
 /* ---- Lobby screens ---- */
-let onlineStep=null,pendingPick=null;
-const ONLINE_PANES=['onlineHubPane','modePaneOnline','createSettingsPane','publicBlockPane','codePane','lobbyPane'];
-function hideAllOnlinePanes(){ONLINE_PANES.forEach(id=>{const el=$(id);if(el)el.hidden=true;});}
-function showOnlinePane(pane,opts){
-  onlineStep=pane;
+let onlineStep=null,pendingPick=null,playMode='online';
+function showLobby(keepError){
+  onlineStep='stepLobby';flowContext=null;
   closeModal('title');closeModal('play');
   if(!$('online').classList.contains('open'))openModal('online');
-  hideAllOnlinePanes();
-  const o=opts||{};
-  const map={hub:'onlineHubPane',mode:'modePaneOnline',createSettings:'createSettingsPane',publicBlock:'publicBlockPane',stepCode:'codePane',stepLobby:'lobbyPane'};
-  const id=map[pane];if(id&&$(id))$(id).hidden=false;
-  const inLobby=pane==='stepLobby';
-  $('online').classList.toggle('room',inLobby);
-  if(inLobby){$('online').removeAttribute('aria-labelledby');$('online').setAttribute('aria-label','Your room');}
-  else{$('online').classList.remove('room');$('online').removeAttribute('aria-label');$('online').setAttribute('aria-labelledby',pane==='hub'?'hubTitle':'onlineTitle');}
-  if(pane==='stepCode'){
-    $('onlineTitle').textContent=o.title||'Join a room';
-    $('onlineLead').textContent=o.lead||'Enter the code from the person who made the room, or pick a room that still has a seat.';
-    $('stepCode').hidden=false;$('btnCodeGo').hidden=false;$('openRooms').hidden=false;
-    $('btnOnlineBack').textContent='Back';
-    $('codeErrHold').appendChild($('onlineErr'));
-    $('codeFoot').append($('btnOnlineBack'));
-    if(!o.keepError)$('onlineErr').textContent='';
-  }
-  if(pane==='stepLobby'){
-    $('roomCode').textContent=NET.code||'';
-    $('btnOnlineBack').textContent='Leave room';
-    $('lobbyErrHold').appendChild($('onlineErr'));
-    $('lobbyActions').append($('btnStart'),$('btnOnlineBack'));
-    if(!o.keepError)$('onlineErr').textContent='';
-  }
-  if(pane==='createSettings'){
-    $('createModeSummary').textContent=MODES.labelOf(selectedModeId);
-    $('createPrivate').checked=!!o.private;
-    if(!o.keepError)$('createSettingsErr').textContent='';
-  }
-  if(pane==='mode')renderModeList('modeListOnline');
+  $('roomCode').textContent=NET.code||'';
+  $('lobbyErrHold').appendChild($('onlineErr'));
+  if(!keepError)$('onlineErr').textContent='';
 }
-function showStep(step,opts){showOnlinePane(step,opts);}
-function showLobby(keepError){showOnlinePane('stepLobby',{keepError});}
 function onlineError(code){
-  if(!NET.code&&onlineStep!=='stepCode'){if(onlineStep==='createSettings'){$('createSettingsErr').textContent=roomError(code);return;}leaveOnline(false,roomError(code));return;}
+  if(!NET.code&&onlineStep!=='browse'){leaveOnline(false,roomError(code));return;}
+  if(!NET.code)$('onlineLead').textContent='';
+  if(!NET.code&&flowContext==='create'){
+    flowContext=null;pendingRoomOpts=null;
+    const err=document.querySelector('#modeCards .modecard.flipped .err');
+    if(err){err.textContent=roomError(code);return;}
+  }
   $('onlineErr').textContent=roomError(code);
 }
-function openOnlineHub(){startOnline();flowContext=null;showOnlinePane('hub');}
-function leaveOnlinePreLobby(){leaveOnline(false);hideAllOnlinePanes();closeModal('online');openModal('play');}
+function stopBrowse(){
+  if(NET.on&&!NET.code&&!NET.playing){endOnlineSocket();NET.on=false;NET.epoch++;setLink('ok');}
+  if(onlineStep==='browse')onlineStep=null;
+  flowContext=null;
+}
+function openPlay(opts){
+  const o=opts||{};
+  closeModal('title');closeModal('online');
+  startOnline();
+  onlineStep='browse';flowContext=null;pendingRoomOpts=null;
+  $('openErrHold').appendChild($('onlineErr'));
+  $('onlineErr').textContent='';
+  $('onlineLead').textContent=o.lead||'';
+  $('codeInput').value='';
+  setPlayMode('online');
+  renderRooms(null);
+  openModal('play');
+  if(o.browse!==false)connect({t:'browse',id:myId});
+}
+function openPlayLocal(){
+  stopBrowse();
+  closeModal('title');closeModal('online');
+  setPlayMode('local');
+  renderSetup();
+  if(!$('play').classList.contains('open'))openModal('play');
+}
+function setPlayMode(mode){
+  playMode=mode;
+  $('play').classList.toggle('local',mode==='local');
+  $('btnPlayOnline').setAttribute('aria-pressed',String(mode==='online'));
+  $('btnPlayLocal').setAttribute('aria-pressed',String(mode==='local'));
+  renderModeCards();
+}
+const MODE_SIGILS={
+  normal:'<path d="M32 6v40M22 38h20M32 46v8M28 58h8" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M32 6l4 8v24h-8V14z" fill="currentColor"/>',
+  gauntlet:'<path d="M10 46l-2-28 13 12 11-20 11 20 13-12-2 28z" fill="currentColor"/><path d="M10 52h44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+  conquest:'<path d="M12 56V22h8v8h6v-8h12v8h6v-8h8v34z" fill="currentColor"/><path d="M28 56V44a4 4 0 018 0v12" fill="#0a0c10" opacity=".55"/>',
+  classic:'<rect x="12" y="12" width="40" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="23" cy="23" r="4" fill="currentColor"/><circle cx="32" cy="32" r="4" fill="currentColor"/><circle cx="41" cy="41" r="4" fill="currentColor"/>'
+};
+const MODE_TINT={normal:'#356590',gauntlet:'#9E1B18',conquest:'#54673B',classic:'#BD7811'};
+/* Picked once per page load so a card keeps its banner when Online and Local re-render. */
+const GENERAL_BANNERS=['general-1','general-2','general-3'].sort(()=>Math.random()-.5);
+const MODE_BANNER={};
+MODES.MODES.forEach((m,i)=>{MODE_BANNER[m.id]=`url("assets/banners/${GENERAL_BANNERS[i%GENERAL_BANNERS.length]}.svg")`;});
+function flipModeCard(card){
+  document.querySelectorAll('#modeCards .modecard').forEach(c=>{
+    const on=c===card;
+    c.classList.toggle('flipped',on);
+    c.querySelector('.mc-front').setAttribute('aria-expanded',String(on));
+    c.querySelector('.mc-front').inert=on;
+    c.querySelector('.mc-back').inert=!on;
+    if(!on)c.querySelector('.mc-back .err').textContent='';
+  });
+  if(card)setTimeout(()=>card.querySelector('.mc-back .primary')?.focus(),60);
+}
+function renderModeCards(){
+  const box=$('modeCards');box.innerHTML='';
+  const local=playMode==='local';
+  MODES.MODES.forEach((m,i)=>{
+    const card=document.createElement('div');
+    card.className='modecard'+(m.available?'':' soon');card.dataset.mode=m.id;
+    card.style.setProperty('--mc',MODE_TINT[m.id]||'#356590');
+    card.style.setProperty('--bn',MODE_BANNER[m.id]);
+    const backId='modeBack-'+m.id;
+    card.innerHTML=`<div class="mc-inner">
+      <button type="button" class="mc-face mc-front" aria-expanded="false" aria-controls="${backId}">
+        <span class="mc-num" aria-hidden="true">${i+1}</span>
+        <span class="mc-banner" aria-hidden="true"><svg viewBox="0 0 64 64">${MODE_SIGILS[m.id]||''}</svg></span>
+        <span class="mc-tag">${m.tagline||''}</span>
+        <span class="mc-name">${m.label}</span>
+        <span class="mc-desc">${m.desc}</span>
+        ${m.available?'':'<span class="mc-soon">Coming soon</span>'}
+      </button>
+      <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label} ${local?'match':'room'} settings">
+        <span class="mc-num" aria-hidden="true">${i+1}</span>
+        <span class="mc-tag">${local?'Local match':'Room settings'}</span>
+        <span class="mc-name">${m.label}</span>
+        ${local?`<p class="roommeta">${localSummary()}</p>`:`<p class="roommeta">Up to <strong>four players</strong> may join this room.</p>
+        <label class="check">Private — code only<input type="checkbox"></label>`}
+        <p class="err" role="alert"></p>
+        <div class="mc-actions">
+          <button class="primary${local?' mc-begin':''}" type="button">${local?'Begin':'Create room'}</button>
+        </div>
+      </div>
+    </div>`;
+    const front=card.querySelector('.mc-front'),back=card.querySelector('.mc-back');
+    back.inert=true;
+    if(!m.available){front.setAttribute('aria-disabled','true');front.setAttribute('aria-label',m.label+', coming soon');front.removeAttribute('aria-expanded');}
+    else front.onclick=()=>flipModeCard(card);
+    back.addEventListener('click',e=>{if(!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
+    back.querySelector('.primary').onclick=local
+      ?()=>{selectedModeId=m.id;beginLocal();}
+      :()=>createRoom(m.id,back.querySelector('input').checked,back.querySelector('.err'));
+    back.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();flipModeCard(null);front.focus();}});
+    box.appendChild(card);
+  });
+}
+$('play').addEventListener('click',e=>{if(!e.target.closest('.modecard')&&document.querySelector('#modeCards .modecard.flipped'))flipModeCard(null);});
+function createRoom(modeId,isPrivate,errEl){
+  const opts=MODES.applyToRoomOpts(modeId);
+  if(!opts){errEl.textContent='That mode is not available yet.';return;}
+  selectedModeId=modeId;
+  opts.private=!!isPrivate;
+  pendingRoomOpts=opts;
+  flowContext='create';
+  errEl.textContent='';$('onlineErr').textContent='';
+  $('onlineLead').textContent='Making a room…';
+  if(NET.ws&&NET.ws.readyState===1)netSend({t:'create',id:myId});
+  else connect({t:'create',id:myId});
+}
 (function bindTitleMenu(){
   const menu=$('title')?.querySelector('.titlemenu');
   if(!menu)return;
@@ -3738,78 +3811,52 @@ function leaveOnlinePreLobby(){leaveOnline(false);hideAllOnlinePanes();closeModa
   });
 })();
 $('btnTitleSettings')?.addEventListener('click',()=>$('btnGear').click());
-$('btnHubBack').onclick=()=>leaveOnlinePreLobby();
-$('btnHubPublic').onclick=()=>withProfile(()=>showOnlinePane('publicBlock'));
-$('btnHubCreate').onclick=()=>withProfile(()=>{flowContext='create';selectedModeId=MODES.DEFAULT_ID;showOnlinePane('mode');});
-$('btnHubJoin').onclick=()=>withProfile(()=>{
-  startOnline();
-  showOnlinePane('stepCode');
-  $('codeInput').value='';
-  renderRooms([]);
-  connect({t:'browse',id:myId});
-  setTimeout(()=>$('codeInput').focus(),40);
-});
-$('btnModeOnlineBack').onclick=()=>{
-  if(flowContext==='create')showOnlinePane('hub');
-  else if(flowContext==='public')showOnlinePane('publicBlock');
-  else showOnlinePane('hub');
-};
-$('btnModeOnlineContinue').onclick=()=>{
-  const m=MODES.byId(selectedModeId);
-  if(!m.available){$('modeOnlineErr').textContent='That mode is not available yet.';return;}
-  $('modeOnlineErr').textContent='';
-  if(flowContext==='create')showOnlinePane('createSettings');
-  else showOnlinePane('hub');
-};
-$('btnCreateChangeMode').onclick=()=>showOnlinePane('mode');
-$('btnCreateSettingsBack').onclick=()=>showOnlinePane('mode');
-$('btnPublicBlockBack').onclick=()=>showOnlinePane('hub');
-$('btnCreateRoomGo').onclick=()=>{
-  const opts=MODES.applyToRoomOpts(selectedModeId);if(!opts){$('createSettingsErr').textContent='That mode is not available yet.';return;}
-  opts.private=$('createPrivate').checked;
-  pendingRoomOpts=opts;
-  $('createSettingsErr').textContent='';
-  $('onlineLead').textContent='Making a room…';
-  startOnline();
-  connect({t:'create',id:myId});
-};
-$('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);});
+let openRoomsList=null;
+$('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);$('onlineErr').textContent='';renderRooms(openRoomsList);});
 function joinCode(code){
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);
   if(code.length!==5){$('onlineErr').textContent='Room codes have five characters.';return;}
-  $('codeInput').value=code;
+  flowContext='join';pendingRoomOpts=null;
   $('onlineErr').textContent='';
   $('onlineLead').textContent='Finding the room…';
   if(NET.ws&&NET.ws.readyState===1)netSend({t:'join',id:myId,code});
   else connect({t:'join',id:myId,code});
 }
 $('stepCode').onsubmit=e=>{e.preventDefault();joinCode($('codeInput').value);};
+const ROOM_SIGIL='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 21l-1-11 8 6 8-10 8 10 8-6-1 11z" fill="currentColor"/><path d="M12 24h24v6c0 5-3 9-6 10v4h-12v-4c-3-1-6-5-6-10z" fill="currentColor"/><circle cx="19" cy="31" r="3" fill="#050608"/><circle cx="29" cy="31" r="3" fill="#050608"/><path d="M22 37h4" stroke="#050608" stroke-width="2" stroke-linecap="round"/></svg>';
+const PENNANT_ORDER=[0,1,3,2];
 function renderRooms(rooms){
   const box=$('openList');
   if(!box)return;
+  openRoomsList=rooms;
   box.innerHTML='';
-  if(!rooms.length){
-    const p=document.createElement('p');p.className='openempty';p.textContent='No rooms are waiting.';
+  const q=$('codeInput').value;
+  const list=(rooms||[]).filter(r=>!q||String(r.code).startsWith(q));
+  if(!list.length){
+    const p=document.createElement('p');p.className='openempty';
+    p.textContent=!rooms?'Looking for rooms…':q.length===5?`Press Join to enter room ${q}.`:q?'No open room matches that code.':'No rooms are waiting. Pick a mode to make one.';
     box.appendChild(p);return;
   }
-  rooms.forEach(r=>{
+  list.forEach(r=>{
     const b=document.createElement('button');
     b.type='button';b.className='openroom';
-    const open=r.open===1?'Last seat':r.open+' seats open';
-    const names=(r.names&&r.names.length)?r.names.join(', '):'A host is waiting';
-    b.setAttribute('aria-label','Join room '+r.code+', '+open);
-    const code=document.createElement('b');code.className='code';code.textContent=r.code;b.appendChild(code);
-    const crests=document.createElement('span');crests.className='crests';crests.setAttribute('aria-hidden','true');
-    const claimed=Array.isArray(r.kingdoms)?r.kingdoms.slice():[];
-    for(let i=0;i<4;i++){
-      const c=document.createElement('span');c.className='crest'+(i<r.taken?' on':'');
-      c.style.setProperty('--c',i<claimed.length?HOUSES[claimed[i]].css:'#5A6672');
-      crests.appendChild(c);
-    }
-    b.appendChild(crests);
-    const mode=document.createElement('span');mode.className='mode';mode.textContent=r.modeLabel||(r.ranked?'Gauntlet':'Normal');b.appendChild(mode);
-    const spots=document.createElement('span');spots.className='spots';spots.textContent=open;b.appendChild(spots);
-    const who=document.createElement('span');who.className='who';who.textContent=names;b.appendChild(who);
+    const label=r.modeLabel||(r.ranked?'Gauntlet':'Normal');
+    const host=(r.names&&r.names[0])||'';
+    const open=r.open===1?'last seat':r.open+' seats open';
+    b.setAttribute('aria-label',`Join ${label} room${host?' hosted by '+host:''}, ${open}`);
+    b.innerHTML=`<span class="sigil">${ROOM_SIGIL}</span><span class="meta"><span class="mode"></span><span class="who"></span></span><span class="pennants" aria-hidden="true"></span>`;
+    b.querySelector('.mode').textContent=label;
+    const who=b.querySelector('.who');
+    if(host){who.append('Hosted by ');const i=document.createElement('i');i.textContent=host;who.appendChild(i);}
+    else who.textContent='A host is waiting';
+    const claimed=Array.isArray(r.kingdoms)?r.kingdoms:[];
+    const pens=b.querySelector('.pennants');
+    PENNANT_ORDER.forEach(h=>{
+      const p=document.createElement('span');
+      p.className='pennant k'+h+(claimed.includes(h)?' taken':'');
+      p.style.setProperty('--c',HOUSES[h].css);
+      pens.appendChild(p);
+    });
     b.onclick=()=>joinCode(r.code);
     box.appendChild(b);
   });
@@ -3827,7 +3874,7 @@ function commitName(required){
   return true;
 }
 $('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
-$('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else{leaveOnline(false);hideAllOnlinePanes();closeModal('online');openModal('play');}};
+$('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else openPlay();};
 
 function seatRow(room,s){
   const row=document.createElement('div');row.className='seat';
@@ -4041,7 +4088,7 @@ async function enterMatch(room){
   NET.playing=true;NET.seen=room.seq;NET.forceSnap=false;S.orderAnnounced=false;
   const me=room.seats.find(s=>s.pid===NET.pid);NET.myH=me?me.h:null;
   const at=room.game&&room.game.themeAt;
-  ['online','title','setup','leave'].forEach(closeModal);
+  ['online','title','play','leave'].forEach(closeModal);
   const gating=typeof at==='number'&&at-netNow()>450;
   if(gating){
     themeHold=true;
@@ -4094,13 +4141,13 @@ function onNetMessage(m){
     if(pendingRoomOpts){const opts=Object.assign({},pendingRoomOpts);pendingRoomOpts=null;netSend(Object.assign({t:'opts'},opts));commitName(false);}
     return;
   }
-  if(m.t==='rooms'){if(onlineStep==='stepCode')renderRooms(m.rooms||[]);return;}
+  if(m.t==='rooms'){if(onlineStep==='browse')renderRooms(m.rooms||[]);return;}
   if(m.t==='state'){onState(m.room);return;}
   if(m.t==='left')return;
   if(m.t==='error'){
     if(m.during==='join'){
-      if(NET.playing||onlineStep!=='stepCode'){leaveOnline(false,roomError(m.code));return;}
-      $('onlineLead').textContent='Enter the code from the person who made the room, or pick a room that still has a seat.';
+      if(NET.playing||onlineStep!=='browse'){leaveOnline(false,roomError(m.code));return;}
+      $('onlineLead').textContent='';
       onlineError(m.code);return;
     }
     if(m.during==='roll'||m.during==='move'||m.during==='fate'||m.during==='decree'||m.during==='reroll'){
@@ -4447,8 +4494,7 @@ let labFaces=[];const labQuat=new THREE.Quaternion();
   if(markerLab)return;
   const code=savedRoom();
   if(!code||location.protocol==='file:')return;
-  startOnline();
-  showStep('stepCode',{title:'Rejoining room',lead:`Rejoining room ${code}…`});
+  openPlay({lead:`Rejoining room ${code}…`,browse:false});
   connect({t:'join',id:myId,code});
 })();
 
@@ -5529,7 +5575,7 @@ function roomDidNotStart(){
 }
 async function enterRoom(){
   if(xrActive||!navigator.xr)return;
-  const starting=$('setup').classList.contains('open')||($('title').classList.contains('open')&&!NET.on);
+  const starting=($('play').classList.contains('open')&&playMode==='local')||($('title').classList.contains('open')&&!NET.on);
   const tries=[
     ['immersive-ar',{requiredFeatures:['hit-test','local-floor'],optionalFeatures:['hand-tracking']}],
     ['immersive-ar',{optionalFeatures:['hit-test','local-floor','hand-tracking']}],
@@ -5541,7 +5587,7 @@ async function enterRoom(){
     catch(e){}
   }
   if(!session){roomDidNotStart();return;}
-  if(starting)$('btnBegin').click();
+  if(starting)beginLocal();
   renderer.xr.setReferenceSpaceType('local-floor');
   try{await renderer.xr.setSession(session);}
   catch(err){roomDidNotStart();try{session.end();}catch(e){}return;}
