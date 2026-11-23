@@ -429,6 +429,19 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 02 | [2026-11-20-02-fate-hand-hover-mobile.png](./screenshots/2026-11-20-02-fate-hand-hover-mobile.png) | Side hand | Kept card eases out and glows; King's Favor marks the legal die +1 |
 | 03 | [2026-11-20-03-fate-hand-open-mobile.png](./screenshots/2026-11-20-03-fate-hand-open-mobile.png) | Side hand, opened | A tap on the peek opens the card. Card art still carries the previous duration line |
 
+## Session: 2026-11-23 — Kingdom colors (V1.9.1)
+
+**Trigger:** Brighter, more distinct kingdom colors so the four realms read apart on the board and in the roster.
+
+**Environment:** Local static server (`python3 -m http.server 8765`), desktop.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-23-01-kingdom-colors-setup-desktop.png](./screenshots/2026-11-23-01-kingdom-colors-setup-desktop.png) | Play local | Crests: Emberhold `#9E1B18`, Thornwald `#54673B`, Solmere `#BD7811`, Tidereach `#356590` |
+| 02 | [2026-11-23-02-kingdom-colors-board-desktop.png](./screenshots/2026-11-23-02-kingdom-colors-board-desktop.png) | In match, order roll | Same four colors on keeps, home paths, troops, and the roster |
+| 03 | [2026-11-23-03-tile-grain-soft-light-desktop.png](./screenshots/2026-11-23-03-tile-grain-soft-light-desktop.png) | In match, order roll | **V1.9.2.** Three charcoal grains, picked per square and blended in soft light. Numbers and stars stay on top |
+| 04 | [2026-11-23-04-tile-grain-softer-center-desktop.png](./screenshots/2026-11-23-04-tile-grain-softer-center-desktop.png) | In match, order roll | **V1.9.3.** Grain at 35% soft light. The four wedges around the chest map the grain across the triangle instead of stretching one edge into stripes |
+
 ---
 
 ## How new entries get added

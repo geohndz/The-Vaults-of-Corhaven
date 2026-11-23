@@ -711,7 +711,7 @@ body.at-lesson #hintDock{z-index:21}
       </aside>
       <div class="localmain">
         <h2>Who rules each kingdom?</h2>
-        <div id="seats"><div class="seat"><span class="crest" style="--c:#7F2F27"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#3B3A29"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#944A08"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#494B54"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
+        <div id="seats"><div class="seat"><span class="crest" style="--c:#9E1B18"></span><span class="name">Emberhold</span><div class="toggle" role="group" aria-label="Emberhold player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#54673B"></span><span class="name">Thornwald</span><div class="toggle" role="group" aria-label="Thornwald player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#BD7811"></span><span class="name">Solmere</span><div class="toggle" role="group" aria-label="Solmere player type"><button aria-pressed="true">Human</button><button aria-pressed="false">Computer</button></div></div><div class="seat"><span class="crest" style="--c:#356590"></span><span class="name">Tidereach</span><div class="toggle" role="group" aria-label="Tidereach player type"><button aria-pressed="false">Human</button><button aria-pressed="true">Computer</button></div></div></div>
       </div>
       <div class="localactions">
         <button class="primary" id="btnBegin">Begin the game</button>
@@ -853,7 +853,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.9.0';
+const GAME_VERSION='1.9.3';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -905,10 +905,10 @@ const NTRACK=TRACK.length;     // 68
 const LAST=R.LAST,GOAL=R.GOAL; // progress: 0..63 track, 64..70 home path, 71 treasure
 
 const HOUSES=[
-  {name:'Emberhold', short:'Emberhold',  color:0x7F2F27,css:'#7F2F27',start:0, yard:[-1,1], goalDir:[-1,0],homeArm:'L'},
-  {name:'Thornwald',short:'Thornwald',color:0x3B3A29,css:'#3B3A29',start:17,yard:[1,1],  goalDir:[0,1], homeArm:'B'},
-  {name:'Solmere',  short:'Solmere', color:0x944A08,css:'#944A08',start:34,yard:[1,-1], goalDir:[1,0], homeArm:'R'},
-  {name:'Tidereach',short:'Tidereach', color:0x494B54,css:'#494B54',start:51,yard:[-1,-1],goalDir:[0,-1],homeArm:'T'},
+  {name:'Emberhold', short:'Emberhold',  color:0x9E1B18,css:'#9E1B18',start:0, yard:[-1,1], goalDir:[-1,0],homeArm:'L'},
+  {name:'Thornwald',short:'Thornwald',color:0x54673B,css:'#54673B',start:17,yard:[1,1],  goalDir:[0,1], homeArm:'B'},
+  {name:'Solmere',  short:'Solmere', color:0xBD7811,css:'#BD7811',start:34,yard:[1,-1], goalDir:[1,0], homeArm:'R'},
+  {name:'Tidereach',short:'Tidereach', color:0x356590,css:'#356590',start:51,yard:[-1,-1],goalDir:[0,-1],homeArm:'T'},
 ];
 const SEATS={2:[0,2],3:[0,1,2],4:[0,1,2,3]};
 const BONUS=R.BONUS,SAFE=R.SAFE;
@@ -965,6 +965,50 @@ staticBox(-HALF-0.25,2,0,0.25,2,HALF+0.5);staticBox(HALF+0.25,2,0,0.25,2,HALF+0.
 
 /* ================= Textures ================= */
 function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');draw(g,w,h);const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t;}
+const GRAIN_FILES=['assets/Frame 36.png','assets/Frame 37.png','assets/Frame 38.png'];
+const grainImgs=[];
+const grainJobs=[];
+let grainReady=false;
+function grainUnit(n){
+  let x=Math.imul((n|0)+1,0x9E3779B1)>>>0;
+  x^=x>>>16;x=Math.imul(x,0x7FEB352D)>>>0;
+  x^=x>>>15;x=Math.imul(x,0x846CA68B)>>>0;
+  x^=x>>>16;
+  return (x>>>0)/4294967296;
+}
+function paintSoftGrain(g,w,h,n){
+  if(!grainReady)return;
+  const img=grainImgs[Math.floor(grainUnit(n*3+1)*grainImgs.length)];
+  if(!img)return;
+  const tall=h>w;
+  const dw=tall?h:w,dh=tall?w:h;
+  const scale=0.16+grainUnit(n*11+4)*0.16;
+  let cw=img.width*scale,ch=cw/(dw/dh);
+  if(ch>img.height){ch=img.height;cw=ch*(dw/dh);}
+  if(cw>img.width){cw=img.width;ch=cw/(dw/dh);}
+  const sx=grainUnit(n*5+2)*Math.max(0,img.width-cw);
+  const sy=grainUnit(n*7+3)*Math.max(0,img.height-ch);
+  g.save();
+  g.globalCompositeOperation='soft-light';
+  g.globalAlpha=0.35;
+  if(tall){g.translate(w/2,h/2);g.rotate(Math.PI/2);g.drawImage(img,sx,sy,cw,ch,-h/2,-w/2,h,w);}
+  else g.drawImage(img,sx,sy,cw,ch,0,0,w,h);
+  g.restore();
+}
+function liveCanvas(w,h,draw){
+  const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+  const tex=new THREE.CanvasTexture(c);tex.anisotropy=8;
+  const paint=()=>{draw(g,w,h);tex.needsUpdate=true;};
+  paint();grainJobs.push(paint);return tex;
+}
+function loadGrain(){
+  Promise.all(GRAIN_FILES.map(src=>new Promise(res=>{const img=new Image();img.onload=()=>res(img);img.onerror=()=>res(null);img.src=src;}))).then(imgs=>{
+    imgs.forEach(im=>{if(im)grainImgs.push(im);});
+    grainReady=grainImgs.length>0;
+    if(grainReady)grainJobs.forEach(fn=>fn());
+  });
+}
+loadGrain();
 function speckle(g,w,h,base,amt){g.fillStyle=base;g.fillRect(0,0,w,h);for(let i=0;i<w*h/18;i++){g.fillStyle=Math.random()<0.5?`rgba(0,0,0,${Math.random()*amt})`:`rgba(255,255,255,${Math.random()*amt*0.8})`;const r=Math.random()*2.2+0.4;g.fillRect(Math.random()*w,Math.random()*h,r,r);}}
 const stoneTex=canvasTex(128,128,(g,w,h)=>{speckle(g,w,h,'#d8d4cc',0.18);});
 const wallTex=canvasTex(128,128,(g,s)=>{speckle(g,s,s,'#cfc9bd',0.2);g.strokeStyle='rgba(40,30,20,.35)';g.lineWidth=2;for(let y=0;y<s;y+=32){g.beginPath();g.moveTo(0,y);g.lineTo(s,y);g.stroke();for(let x=(y/32)%2?0:32;x<s;x+=64){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+32);g.stroke();}}});
@@ -973,8 +1017,10 @@ woodTex.wrapS=woodTex.wrapT=THREE.RepeatWrapping;
 function starPath(g,cx,cy,R,r){g.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rad=i%2?r:R;g.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);}g.closePath();}
 function tileTex(wide,bg,num,opt){
   const w=wide?256:110,h=wide?110:256;
-  return canvasTex(w,h,(g)=>{
-    speckle(g,w,h,bg,0.26);
+  const n=opt.n!=null?opt.n:(num||0);
+  return liveCanvas(w,h,(g)=>{
+    g.fillStyle=bg;g.fillRect(0,0,w,h);
+    paintSoftGrain(g,w,h,n);
     g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=9;g.strokeRect(3,3,w-6,h-6);
     g.strokeStyle='rgba(0,0,0,.22)';g.lineWidth=3;g.strokeRect(11,11,w-22,h-22);
     const m=Math.min(w,h);
@@ -1038,14 +1084,14 @@ function addTileInk(x,z,sx,sz,tex){
 }
 function addTile(arm,lane,k,topMat){const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);const g=new THREE.BoxGeometry(sx-0.05,0.12,sz-0.05);
   const t=new THREE.Mesh(g,[M.tileSide,M.tileSide,topMat,M.tileSide,M.tileSide,M.tileSide]);t.position.set(x,0.06,z);t.receiveShadow=true;board.add(t);}
-function addCornerTile(arm,lane,num,bg){
+function addCornerTile(arm,lane,num,bg,n){
   const poly=insetPoly(cornerPoly(arm,lane),0.025);
   const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
   const PPU=160,cw=Math.round((maxX-minX)*PPU),chh=Math.round((maxZ-minZ)*PPU);const[ax,az]=anchorXZ(arm,lane,0);
-  const tex=canvasTex(cw,chh,g=>{
+  const tex=liveCanvas(cw,chh,g=>{
     g.fillStyle='#000';g.fillRect(0,0,cw,chh);
     g.save();g.beginPath();poly.forEach(([x,z],i)=>{const px=(x-minX)*PPU,py=(z-minZ)*PPU;i?g.lineTo(px,py):g.moveTo(px,py);});g.closePath();g.clip();
-    speckle(g,cw,chh,bg,0.26);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.7)';g.stroke();g.restore();
+    g.fillStyle=bg;g.fillRect(0,0,cw,chh);paintSoftGrain(g,cw,chh,n);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.7)';g.stroke();g.restore();
     const fs=Math.round(T*PPU*0.5);g.font=`700 ${fs}px ${TYPE_SANS}`;g.textAlign='center';g.textBaseline='middle';
     const tx=(ax-minX)*PPU,ty=(az-minZ)*PPU+4;g.lineWidth=7;g.strokeStyle='#fff';g.strokeText(String(num),tx,ty);g.fillStyle='rgba(58,44,30,.85)';g.fillText(String(num),tx,ty);});
   const shape=new THREE.Shape();poly.forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));
@@ -1074,23 +1120,29 @@ TRACK.forEach(([arm,lane,k],i)=>{
   const wide=armDims(arm)[0]>armDims(arm)[1];const hs=HOUSES.findIndex(h=>h.start===i);
   let tex;
   const star=hs>=0||SAFE.has(i);
-  if(hs>=0)tex=tileTex(wide,HOUSES[hs].css,i+1,{star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
-  else if(SAFE.has(i))tex=tileTex(wide,'#857A6E',i+1,{star:true,starFill:'rgba(245,238,222,.55)',numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
-  else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4]);return;}
-  else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
+  if(hs>=0)tex=tileTex(wide,HOUSES[hs].css,i+1,{n:i+1,star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
+  else if(SAFE.has(i))tex=tileTex(wide,'#857A6E',i+1,{n:i+1,star:true,starFill:'rgba(245,238,222,.55)',numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
+  else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4],i+1);return;}
+  else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{n:i+1,numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
   addTile(arm,lane,k,new THREE.MeshStandardMaterial({map:tex,roughness:0.88}));
   const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);
   addTileInk(x,z,sx,sz,tileInkTex(wide,i+1,star));
 });
-HOUSES.forEach(h=>{const wide=armDims(h.homeArm)[0]>armDims(h.homeArm)[1];const mat=new THREE.MeshStandardMaterial({map:tileTex(wide,new THREE.Color(h.color).lerp(new THREE.Color(0xffffff),0.1).getStyle(),null,{}),roughness:0.85});
-  for(let k=0;k<7;k++)addTile(h.homeArm,0,k,mat);});
+HOUSES.forEach((h,hi)=>{const wide=armDims(h.homeArm)[0]>armDims(h.homeArm)[1];const bg=new THREE.Color(h.color).lerp(new THREE.Color(0xffffff),0.1).getStyle();
+  for(let k=0;k<7;k++)addTile(h.homeArm,0,k,new THREE.MeshStandardMaterial({map:tileTex(wide,bg,null,{n:200+hi*10+k}),roughness:0.85}));});
 
 /* Centre */
 const CI=CH-T;
-HOUSES.forEach(H=>{const[dx,dz]=H.goalDir;const sh=new THREE.Shape();
+HOUSES.forEach((H,hi)=>{const[dx,dz]=H.goalDir;const sh=new THREE.Shape();
   [[CI,-CI],[CI,CI],[0,0]].forEach(([d,l],i)=>{const x=dx*d-dz*l,z=dz*d+dx*l;i?sh.lineTo(x,-z):sh.moveTo(x,-z);});
-  const g=new THREE.ShapeGeometry(sh);g.rotateX(-Math.PI/2);
-  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:H.color,roughness:0.75,map:stoneTex,side:THREE.DoubleSide}));m.position.y=0.125;m.receiveShadow=true;board.add(m);});
+  const geo=new THREE.ShapeGeometry(sh);geo.rotateX(-Math.PI/2);
+  const pos=geo.attributes.position,uv=geo.attributes.uv;
+  let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);if(x<minX)minX=x;if(x>maxX)maxX=x;if(z<minZ)minZ=z;if(z>maxZ)maxZ=z;}
+  const spanX=maxX-minX||1,spanZ=maxZ-minZ||1;
+  for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)-minX)/spanX,(pos.getZ(i)-minZ)/spanZ);
+  const wedge=liveCanvas(512,512,(g,w,h)=>{g.fillStyle=H.css;g.fillRect(0,0,w,h);paintSoftGrain(g,w,h,400+hi);});
+  const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.75,map:wedge,side:THREE.DoubleSide}));m.position.y=0.125;m.receiveShadow=true;board.add(m);});
 
 const chest=new THREE.Group();chest.position.set(0,0.36,0);chest.scale.setScalar(1.12);board.add(chest);
 const chestWood=new THREE.MeshStandardMaterial({color:0x7B4A26,map:woodTex,roughness:0.7});
@@ -3788,10 +3840,10 @@ function seatRow(room,s){
 }
 function bannerSvg(h){
   const skies=[
-    ['#E3A396','#7F2F27','#240B09'],
-    ['#CFCBA6','#3B3A29','#121209'],
-    ['#F6D3A0','#944A08','#3A1C02'],
-    ['#D2D5DE','#494B54','#15161B']
+    ['#E0ACA8','#9E1B18','#230605'],
+    ['#BBC6A8','#54673B','#14190E'],
+    ['#EACC9B','#BD7811','#2D1D04'],
+    ['#ACC2D7','#356590','#0F1C28']
   ];
   const scenes=[
     `<path fill="#1A0908" d="M16 124V86h6V74h8v12h6v38zM34 124V60h8V46h12v14h8v64zM62 124V90h5V76h8v14h5v34z"/><rect x="40" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="47" y="68" width="3.2" height="5" fill="#F6D48A"/><rect x="43.5" y="80" width="3.2" height="5" fill="#F6D48A"/><rect x="21" y="96" width="3" height="4" fill="#E07040"/>`,
