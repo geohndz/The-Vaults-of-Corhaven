@@ -222,7 +222,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .openroom .pennant.k2{--cut:polygon(0 0,100% 0,100% 96%,84% 90%,70% 100%,56% 91%,44% 100%,30% 91%,16% 100%,0 92%)}
 .openroom .pennant.k3{--cut:polygon(0 0,100% 0,100% 90%,66% 100%,50% 88%,34% 100%,0 90%)}
 #lobbyPane[hidden]{display:none !important}
-#play:not(.local) .localseats,#play:not(.join) .openrooms,#play.join .playmodes{display:none}
+#play:not(.local) .localseats,#play:not(.join) .openrooms,#play.join .playmodes,#play.local:not(.local-setup) .localseats,#play.local.local-setup .playmodes{display:none}
 .localseats{display:flex;flex-direction:column;gap:14px;align-self:center;min-width:0}
 #play .localseats .seg button{padding:9px 0;font-size:clamp(15px,1vw,18px)}
 #play .localseats .seat{gap:14px;padding:12px 0}
@@ -259,7 +259,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
 .modecards{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
-#play:not(.local) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
+#play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
 .modecard{--mc:#356590;position:relative;min-width:0;height:clamp(380px,54vh,520px)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1)}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
@@ -304,8 +304,8 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .openlist{display:flex;flex-direction:column;gap:4px;max-height:min(56vh,520px);overflow:auto;margin:0 -10px}
 .openlist .openempty{margin:4px 10px 0;font-size:15px}
 @media (min-width:1181px){
-  #play.local .playmain{grid-template-columns:minmax(0,1fr) minmax(240px,clamp(280px,24vw,380px))}
-  #play.local .sheet::after{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:clamp(380px,34vw,640px);background:linear-gradient(270deg,#000 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,0) 100%);pointer-events:none}
+  #play.local.local-setup .playmain{align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + clamp(32px,8vh,96px))}
+  #play.local.local-setup .sheet::after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.78) 30%,rgba(0,0,0,.86) 50%,rgba(0,0,0,.78) 70%,rgba(0,0,0,.2) 100%);pointer-events:none}
 }
 @media (max-width:1180px) and (min-width:641px){
   #play .playmain{align-content:start}
@@ -652,8 +652,9 @@ body.at-lesson #hintDock{z-index:21}
           <div class="openlist" id="openList" aria-labelledby="openListTitle"></div>
         </section>
         <section class="localseats" id="localSeats" aria-labelledby="localSeatsTitle">
-          <h2 id="localSeatsTitle">Kingdoms</h2>
-          <p class="playstatus">Everyone plays on this device. Choose Human or Computer for each kingdom.</p>
+          <h2 id="localSeatsTitle">Set up match</h2>
+          <p class="roommode" id="localModeLabel"></p>
+          <p class="playstatus">Everyone plays on this device. Pick how many kingdoms join, then Human or Computer for each.</p>
           <div class="seg" role="radiogroup" id="countSeg" aria-label="How many players">
             <button role="radio" data-n="2" aria-checked="false">2 players</button>
             <button role="radio" data-n="3" aria-checked="false">3 players</button>
@@ -664,6 +665,7 @@ body.at-lesson #hintDock{z-index:21}
         </section>
       </div>
       <div class="localactions" id="playFoot">
+        <button class="primary" type="button" id="btnPlayStart" hidden>Start match</button>
         <button class="secondary" type="button" id="btnPlayBack">Back</button>
       </div>
     </div>
@@ -862,7 +864,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.10.11';
+const GAME_VERSION='1.11.1';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1122,7 +1124,8 @@ function addCornerTile(arm,lane,num,bg,n){
     g.save();g.beginPath();poly.forEach(([x,z],i)=>{const px=(x-minX)*PPU,py=(z-minZ)*PPU;i?g.lineTo(px,py):g.moveTo(px,py);});g.closePath();g.clip();
     g.fillStyle=bg;g.fillRect(0,0,cw,chh);paintSoftGrain(g,cw,chh,n);g.lineWidth=10;g.strokeStyle='rgba(255,255,255,.7)';g.stroke();g.restore();
     const fs=Math.round(T*PPU*0.5);g.font=`700 ${fs}px ${TYPE_SANS}`;g.textAlign='center';g.textBaseline='middle';
-    const tx=(ax-minX)*PPU,ty=(az-minZ)*PPU+4;g.lineWidth=7;g.strokeStyle='#fff';g.strokeText(String(num),tx,ty);g.fillStyle='rgba(58,44,30,.85)';g.fillText(String(num),tx,ty);});
+    const tx=(ax-minX)*PPU,ty=(az-minZ)*PPU+4;g.lineWidth=7;g.strokeStyle='#fff';g.strokeText(String(num),tx,ty);g.fillStyle='rgba(58,44,30,.85)';g.fillText(String(num),tx,ty);
+    });
   const shape=new THREE.Shape();poly.forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));
   const geo=new THREE.ExtrudeGeometry(shape,{depth:0.12,bevelEnabled:false});geo.rotateX(-Math.PI/2);
   const pos=geo.attributes.position,uv=geo.attributes.uv;
@@ -3063,8 +3066,9 @@ const MODES=CorhavenGameModes;
 const PROFILE=CorhavenProfile;
 let setupCount=4,setupWorlds=true,setupRanked=false;const seatCpu=[false,false,false,false];
 let selectedModeId=MODES.DEFAULT_ID,flowContext=null,pendingRoomOpts=null,profileContinue=null;
+let onlineStep=null,pendingPick=null,playMode='online',localStep='mode';
 try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);if(sv.mode&&MODES.byId(sv.mode).available)selectedModeId=sv.mode;else{setupWorlds=sv.worlds!==false;setupRanked=!!sv.ranked;selectedModeId=setupRanked?'gauntlet':'normal';}}}catch(e){}
-function applySelectedModeToLocal(){const m=MODES.byId(selectedModeId);if(!m.available)return;setupWorlds=!!m.worlds;setupRanked=!!m.ranked;const sum=$('localModeSummary');if(sum)sum.textContent=m.label;}
+function applySelectedModeToLocal(){const m=MODES.byId(selectedModeId);if(!m.available)return;setupWorlds=!!m.worlds;setupRanked=!!m.ranked;const lab=$('localModeLabel');if(lab)lab.textContent=m.label;}
 function renderModeList(boxId,onPick){
   const box=$(boxId);if(!box)return;
   box.innerHTML='';
@@ -3088,12 +3092,6 @@ function renderSetup(){
     const tg=document.createElement('div');tg.className='toggle';tg.setAttribute('role','group');tg.setAttribute('aria-label',HOUSES[h].name+' player type');
     [['Human',false],['Computer',true]].forEach(([lab,val])=>{const b=document.createElement('button');b.textContent=lab;b.setAttribute('aria-pressed',String(seatCpu[h]===val));b.onclick=()=>{seatCpu[h]=val;renderSetup();};tg.appendChild(b);});
     row.appendChild(tg);wrap.appendChild(row);});
-  if($('play').classList.contains('local')){const sum=localSummary();document.querySelectorAll('#modeCards .mc-back .roommeta').forEach(p=>p.textContent=sum);}
-}
-function localSummary(){
-  const seats=SEATS[setupCount],cpu=seats.filter(h=>seatCpu[h]).length;
-  const who=cpu===0?'all human':cpu===seats.length?'all computer':`${cpu} controlled by the computer`;
-  return `${seats.length} players, ${who}.`;
 }
 function beginLocal(){
   applySelectedModeToLocal();
@@ -3204,10 +3202,21 @@ initNameIntro();
 $('btnProfileBack').onclick=()=>{profileContinue=null;closeModal('profile');};
 $('btnTitleProfile').onclick=()=>openProfile(true);
 $('btnPlay').onclick=()=>openPlay();
-$('btnPlayBack').onclick=()=>{stopBrowse();closeModal('play');openModal('title');};
+function syncPlayFoot(){
+  const local=playMode==='local';
+  const setup=local&&localStep==='setup';
+  $('btnPlayStart').hidden=!setup;
+  $('btnPlayBack').textContent=setup?'Back to modes':'Back';
+}
+$('btnPlayStart').onclick=()=>beginLocal();
+$('btnPlayBack').onclick=()=>{
+  if(playMode==='local'&&localStep==='setup'){setLocalStep('mode');return;}
+  stopBrowse();closeModal('play');openModal('title');
+};
 $('btnPlayOnline').onclick=()=>{if(playMode!=='online'){stopBrowse();openPlay();}};
 $('btnPlayLocal').onclick=()=>{if(playMode!=='local')openPlayLocal();};
 $('btnPlayJoin').onclick=()=>{if(playMode!=='join')openPlay({mode:'join'});};
+syncPlayFoot();
 $('btnNew').onclick=()=>showTitle();
 $('btnLesson').onclick=()=>startLesson();
 $('btnRules').onclick=()=>openModal('rules');
@@ -3741,7 +3750,23 @@ function leaveOnline(sendLeave,msg){
 }
 
 /* ---- Lobby screens ---- */
-let onlineStep=null,pendingPick=null,playMode='online';
+function setLocalStep(step){
+  localStep=step;
+  const play=$('play');
+  play.classList.toggle('local-setup',step==='setup');
+  if(step==='setup'){
+    applySelectedModeToLocal();
+    const mode=$('localModeLabel');
+    if(mode)mode.textContent=MODES.labelOf(selectedModeId);
+    renderSetup();
+    setTimeout(()=>document.querySelector('#countSeg [aria-checked="true"]')?.focus(),60);
+  }else{
+    flipModeCard(null);
+    const mode=$('localModeLabel');
+    if(mode)mode.textContent='';
+  }
+  syncPlayFoot();
+}
 function showLobby(keepError){
   onlineStep='stepLobby';flowContext=null;
   closeModal('title');closeModal('play');
@@ -3786,18 +3811,22 @@ function openPlay(opts){
 function openPlayLocal(){
   stopBrowse();
   closeModal('title');closeModal('online');
+  localStep='mode';
   setPlayMode('local');
-  renderSetup();
   if(!$('play').classList.contains('open'))openModal('play');
 }
 function setPlayMode(mode){
   playMode=mode;
   $('play').classList.toggle('local',mode==='local');
   $('play').classList.toggle('join',mode==='join');
+  $('play').classList.toggle('local-setup',mode==='local'&&localStep==='setup');
   $('btnPlayOnline').setAttribute('aria-pressed',String(mode==='online'));
   $('btnPlayLocal').setAttribute('aria-pressed',String(mode==='local'));
   $('btnPlayJoin').setAttribute('aria-pressed',String(mode==='join'));
+  if(mode==='local'){if(localStep!=='setup')localStep='mode';$('play').classList.toggle('local-setup',localStep==='setup');}
+  else{$('play').classList.remove('local-setup');localStep='mode';}
   renderModeCards();
+  syncPlayFoot();
 }
 const MODE_SIGILS={
   normal:'<path d="M32 6v40M22 38h20M32 46v8M28 58h8" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M32 6l4 8v24h-8V14z" fill="currentColor"/>',
@@ -3833,33 +3862,30 @@ function renderModeCards(){
     const backId='modeBack-'+m.id;
     card.innerHTML=`<div class="mc-inner">
       <button type="button" class="mc-face mc-front" aria-expanded="false" aria-controls="${backId}">
-        <span class="mc-num" aria-hidden="true">${i+1}</span>
         <span class="mc-banner" aria-hidden="true"><svg viewBox="0 0 64 64">${MODE_SIGILS[m.id]||''}</svg></span>
         <span class="mc-tag">${m.tagline||''}</span>
         <span class="mc-name">${m.label}</span>
         <span class="mc-desc">${m.desc}</span>
-        ${m.available?(local?'<span class="mc-begin-label">Start</span>':''):'<span class="mc-soon">Coming soon</span>'}
+        ${m.available?'':'<span class="mc-soon">Coming soon</span>'}
       </button>
       <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label} ${local?'match':'room'} settings">
-        <span class="mc-num" aria-hidden="true">${i+1}</span>
         <span class="mc-tag">${local?'Local match':'Room settings'}</span>
         <span class="mc-name">${m.label}</span>
-        ${local?`<p class="roommeta">${localSummary()}</p>`:`<p class="roommeta">Up to <strong>four players</strong> can join. Share the room code to invite friends.</p>
+        ${local?`<p class="roommeta">Everyone plays on this device. On the next step, choose how many players join and who controls each kingdom.</p>`:`<p class="roommeta">Up to <strong>four players</strong> can join. Share the room code to invite friends.</p>
         <label class="check">Private (join by code only)<input type="checkbox"></label>`}
         <p class="err" role="alert"></p>
         <div class="mc-actions">
-          <button class="primary${local?' mc-begin':''}" type="button">${local?'Start match':'Create room'}</button>
+          <button class="primary" type="button">${local?'Continue':'Create room'}</button>
         </div>
       </div>
     </div>`;
     const front=card.querySelector('.mc-front'),back=card.querySelector('.mc-back');
     back.inert=true;
     if(!m.available){front.setAttribute('aria-disabled','true');front.setAttribute('aria-label',m.label+', coming soon');front.removeAttribute('aria-expanded');}
-    else if(local){front.removeAttribute('aria-expanded');front.removeAttribute('aria-controls');front.setAttribute('aria-label','Start a '+m.label+' match');front.onclick=()=>{selectedModeId=m.id;beginLocal();};}
     else front.onclick=()=>flipModeCard(card);
     back.addEventListener('click',e=>{if(!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
     back.querySelector('.primary').onclick=local
-      ?()=>{selectedModeId=m.id;beginLocal();}
+      ?()=>{selectedModeId=m.id;setLocalStep('setup');}
       :()=>createRoom(m.id,back.querySelector('input').checked,back.querySelector('.err'));
     back.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();flipModeCard(null);front.focus();}});
     box.appendChild(card);
