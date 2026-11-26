@@ -21,7 +21,7 @@ Repeated in-game messages (captures, shrines, phalanx, vault, third double, ties
 | Move | Moving a troop by a die's value. Never "march". |
 | Bonus move | The extra 20 squares earned by a capture or by reaching the vault. |
 | Capture | Landing exactly on a single enemy troop, which goes back to its keep. Never "strike" or "fall". |
-| Shrine | A grey star square. Troops there can't be captured. Landing on one deals Fate Cards. |
+| Shrine | A grey square with the shrine mark. Troops there can't be captured. Landing on one deals Fate Cards. |
 | Phalanx | Two troops of the same kingdom on one square. No troop can pass through or land on it. Never "barricade". |
 | Third double | Rolling doubles three times in a row: the turn ends and the furthest troop goes back to the keep. Never "greed". |
 | Fate Card | A card kept from a shrine. Categories: Blessing, Tactical, Curse. Hand limit is two. |

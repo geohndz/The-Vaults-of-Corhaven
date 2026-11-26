@@ -116,7 +116,9 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #gearWrap{left:calc(env(safe-area-inset-left,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:16}
 .menuBtn{display:grid;place-items:center;width:50px;height:50px;padding:0;border-radius:50%;background:linear-gradient(160deg,var(--leather-2),var(--leather));border:2px solid var(--gold);color:var(--gold-bright);box-shadow:0 6px 16px rgba(0,0,0,.4)}
 .menuBtn:hover,.menuBtn[aria-expanded="true"]{border-color:var(--gold-bright)}
-.menuBtn svg{width:22px;height:22px}
+.settings-icon{display:block;width:24px;height:24px;background:currentColor;-webkit-mask:url("assets/settings.svg") center/contain no-repeat;mask:url("assets/settings.svg") center/contain no-repeat}
+.menuBtn .settings-icon{width:24px;height:24px}
+.titleicon .settings-icon{width:20px;height:20px;margin:0 auto}
 .menu{display:flex;flex-direction:column;min-width:220px;padding:6px;transform-origin:top right}
 .menu:not([hidden]){animation:menuIn .14s ease-out}
 .menu[hidden],.menu [hidden]{display:none}
@@ -556,7 +558,7 @@ body.at-lesson #hintDock{z-index:21}
 <ol class="hud roster" id="tally" aria-label="Other players"></ol>
 
 <div class="hud" id="gearWrap">
-  <button class="menuBtn" id="btnGear" aria-label="Settings" aria-haspopup="dialog" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+  <button class="menuBtn" id="btnGear" aria-label="Settings" aria-haspopup="dialog" aria-controls="settings"><span class="settings-icon" aria-hidden="true"></span></button>
 </div>
 
 <div class="hud" id="menuWrap">
@@ -603,7 +605,7 @@ body.at-lesson #hintDock{z-index:21}
     </div>
     <div class="titlecorners" aria-label="Account and settings">
       <button class="titleicon" type="button" id="btnTitleProfile" title="Profile" aria-label="Profile">You</button>
-      <button class="titleicon" type="button" id="btnTitleSettings" title="Settings" aria-label="Settings">⚙</button>
+      <button class="titleicon" type="button" id="btnTitleSettings" title="Settings" aria-label="Settings"><span class="settings-icon" aria-hidden="true"></span></button>
     </div>
     <img class="titlelogo" src="assets/main-logo.svg" alt="The Vaults of Corhaven" width="276" height="192" decoding="async" fetchpriority="high">
     <p class="err" id="titleErr" role="alert"></p>
@@ -755,7 +757,7 @@ body.at-lesson #hintDock{z-index:21}
     <p><strong>Two dice.</strong> Each die is a separate move. Use them on two different troops, or on the same troop one after the other.</p>
     <p><strong>Leaving the keep.</strong> A die showing 1 or 6 moves a troop out of your keep onto your gate, the colored square next to your castle. Enemy troops on your gate are captured when you move out.</p>
     <p><strong>Capturing.</strong> Land exactly on a square with a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of 20 squares for any troop that can use it.</p>
-    <p><strong>Shrines and gates.</strong> Shrines are the grey star squares. Troops on a shrine can't be captured, so troops of different kingdoms can share one. You can only stop on another kingdom's gate when it's empty.</p>
+    <p><strong>Shrines and gates.</strong> Shrines are the grey squares with the shrine mark. Troops on a shrine can't be captured, so troops of different kingdoms can share one. You can only stop on another kingdom's gate when it's empty.</p>
     <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square form a phalanx. No troop can pass through it or land on it, including your own. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
     <p><strong>Doubles.</strong> Rolling doubles gives you another roll after you move. If two of your troops form a phalanx, one of them moves first with the double, before you choose the other die. Rolling doubles three times in a row ends your turn, and your troop furthest along goes back to the keep.</p>
     <p><strong>The road and the vault.</strong> Troops move counterclockwise around the 68-square road, then turn into their own passage: the seven squares in their kingdom's color that lead to the vault. Entering the vault takes an exact roll and earns a bonus move of 20 squares.</p>
@@ -860,7 +862,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.10.8';
+const GAME_VERSION='1.10.10';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1016,6 +1018,22 @@ function loadGrain(){
   });
 }
 loadGrain();
+const SHRINE_ICON_SRC='assets/Group.svg';
+let shrineIcon=null,shrineIconReady=false;
+function loadShrineIcon(){
+  const img=new Image();
+  img.onload=()=>{shrineIcon=img;shrineIconReady=true;grainJobs.forEach(fn=>fn());};
+  img.src=SHRINE_ICON_SRC;
+}
+loadShrineIcon();
+function paintShrineIcon(g,w,h){
+  if(!shrineIconReady||!shrineIcon)return;
+  const m=Math.min(w,h),fit=m*0.62;
+  const scale=Math.min(fit/shrineIcon.width,fit/shrineIcon.height);
+  const dw=shrineIcon.width*scale,dh=shrineIcon.height*scale;
+  const cx=w/2,cy=h/2+3;
+  g.drawImage(shrineIcon,cx-dw/2,cy-dh/2,dw,dh);
+}
 function speckle(g,w,h,base,amt){g.fillStyle=base;g.fillRect(0,0,w,h);for(let i=0;i<w*h/18;i++){g.fillStyle=Math.random()<0.5?`rgba(0,0,0,${Math.random()*amt})`:`rgba(255,255,255,${Math.random()*amt*0.8})`;const r=Math.random()*2.2+0.4;g.fillRect(Math.random()*w,Math.random()*h,r,r);}}
 const stoneTex=canvasTex(128,128,(g,w,h)=>{speckle(g,w,h,'#d8d4cc',0.18);});
 const wallTex=canvasTex(128,128,(g,s)=>{speckle(g,s,s,'#cfc9bd',0.2);g.strokeStyle='rgba(40,30,20,.35)';g.lineWidth=2;for(let y=0;y<s;y+=32){g.beginPath();g.moveTo(0,y);g.lineTo(s,y);g.stroke();for(let x=(y/32)%2?0:32;x<s;x+=64){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+32);g.stroke();}}});
@@ -1031,12 +1049,15 @@ function tileTex(wide,bg,num,opt){
     g.strokeStyle='rgba(255,255,255,.7)';g.lineWidth=9;g.strokeRect(3,3,w-6,h-6);
     g.strokeStyle='rgba(0,0,0,.22)';g.lineWidth=3;g.strokeRect(11,11,w-22,h-22);
     const m=Math.min(w,h);
-    if(opt.star){starPath(g,w/2,h/2+3,m*0.4,m*0.17);g.fillStyle=opt.starFill;g.fill();g.lineWidth=6;g.strokeStyle='rgba(255,255,255,.92)';g.stroke();}
-    if(num){g.font=`700 ${Math.round(m*(opt.star?0.34:0.5))}px ${TYPE_SANS}`;g.textAlign='center';g.textBaseline='middle';
+    if(opt.shrine)paintShrineIcon(g,w,h);
+    else if(opt.star){starPath(g,w/2,h/2+3,m*0.4,m*0.17);g.fillStyle=opt.starFill;g.fill();g.lineWidth=6;g.strokeStyle='rgba(255,255,255,.92)';g.stroke();}
+    if(num){g.font=`700 ${Math.round(m*(opt.star||opt.shrine?0.34:0.5))}px ${TYPE_SANS}`;g.textAlign='center';g.textBaseline='middle';
       g.lineWidth=7;g.strokeStyle='#fff';g.strokeText(String(num),w/2,h/2+4);g.fillStyle=opt.numFill;g.fillText(String(num),w/2,h/2+4);}
   });
 }
-function tileInkTex(wide,num,star){
+function tileInkTex(wide,num,flags){
+  const star=flags===true||flags&&flags.star;
+  const shrine=flags&&flags.shrine;
   const w=wide?256:110,h=wide?110:256;
   const t=canvasTex(w,h,(g)=>{
     g.clearRect(0,0,w,h);
@@ -1044,9 +1065,10 @@ function tileInkTex(wide,num,star){
     g.strokeStyle='#ffffff';
     g.lineWidth=14;g.strokeRect(6,6,w-12,h-12);
     const m=Math.min(w,h);
-    if(star){starPath(g,w/2,h/2+3,m*0.4,m*0.17);g.lineWidth=8;g.stroke();g.fillStyle='rgba(255,255,255,.18)';g.fill();}
+    if(shrine){g.globalAlpha=0.92;paintShrineIcon(g,w,h);g.globalAlpha=1;}
+    else if(star){starPath(g,w/2,h/2+3,m*0.4,m*0.17);g.lineWidth=8;g.stroke();g.fillStyle='rgba(255,255,255,.18)';g.fill();}
     if(num){
-      g.font=`700 ${Math.round(m*(star?0.34:0.5))}px ${TYPE_SANS}`;
+      g.font=`700 ${Math.round(m*(star||shrine?0.34:0.5))}px ${TYPE_SANS}`;
       g.textAlign='center';g.textBaseline='middle';
       g.lineWidth=9;g.strokeText(String(num),w/2,h/2+4);
       g.fillStyle='#fff';g.fillText(String(num),w/2,h/2+4);
@@ -1126,14 +1148,15 @@ const creamShades=['#D6CBB8','#CFC3AE','#DAD0BE','#CABDA6'];
 TRACK.forEach(([arm,lane,k],i)=>{
   const wide=armDims(arm)[0]>armDims(arm)[1];const hs=HOUSES.findIndex(h=>h.start===i);
   let tex;
-  const star=hs>=0||SAFE.has(i);
-  if(hs>=0)tex=tileTex(wide,HOUSES[hs].css,i+1,{n:i+1,star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
-  else if(SAFE.has(i))tex=tileTex(wide,'#857A6E',i+1,{n:i+1,star:true,starFill:'rgba(245,238,222,.55)',numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
+  const isGate=hs>=0;
+  const isShrine=SAFE.has(i)&&!isGate;
+  if(isGate)tex=tileTex(wide,HOUSES[hs].css,i+1,{n:i+1,star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
+  else if(isShrine)tex=tileTex(wide,'#857A6E',i+1,{n:i+1,shrine:true,numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
   else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4],i+1);return;}
   else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{n:i+1,numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
   addTile(arm,lane,k,new THREE.MeshStandardMaterial({map:tex,roughness:0.88}));
   const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);
-  addTileInk(x,z,sx,sz,tileInkTex(wide,i+1,star));
+  addTileInk(x,z,sx,sz,tileInkTex(wide,i+1,{star:isGate,shrine:isShrine}));
 });
 HOUSES.forEach((h,hi)=>{const wide=armDims(h.homeArm)[0]>armDims(h.homeArm)[1];const bg=new THREE.Color(h.color).lerp(new THREE.Color(0xffffff),0.1).getStyle();
   for(let k=0;k<7;k++)addTile(h.homeArm,0,k,new THREE.MeshStandardMaterial({map:tileTex(wide,bg,null,{n:200+hi*10+k}),roughness:0.85}));});
@@ -2283,8 +2306,8 @@ const COPY={
   vault:(kingdom,bonus)=>['Vault reached',`${aOrAn(kingdom).replace(/^a/,'A')} troop reached the vault. Bonus move of ${bonus}.`],
   vaultHint:bonus=>['The vault',`A troop needs an exact roll to enter the vault, and each one that arrives earns a bonus move of ${bonus}. Get all four troops into your vault to win.`],
   shrine:['Shrine','Troops on a shrine can\'t be captured, so troops of different kingdoms can share it.'],
-  shrineHint:['Shrine','Shrines are the grey star squares. Troops there can\'t be captured. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.'],
-  shrineSafeHint:['Shrine','Shrines are the grey star squares. Troops there can\'t be captured, so troops of different kingdoms can share one.'],
+  shrineHint:['Shrine','Shrines are the grey squares with the shrine mark. Troops there can\'t be captured. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.'],
+  shrineSafeHint:['Shrine','Shrines are the grey squares with the shrine mark. Troops there can\'t be captured, so troops of different kingdoms can share one.'],
   phalanx:kingdom=>['Phalanx formed',`Two ${kingdom} troops share a square. No troop can pass through or land there.`],
   phalanxHint:['Phalanx','Two troops of the same kingdom on one square form a phalanx. No troop can pass through it or land on it, including your own.'],
   thirdDouble:who=>['Third double',`${who==='You'?'Your':who+'\'s'} furthest troop goes back to the keep, and the turn ends.`],
@@ -3484,7 +3507,7 @@ const LESSONS=[
     }},
   {title:'Phalanx',body:'When two troops of the same kingdom share a square, they form a phalanx. No troop can pass through it or land on it, including your own. Troops of different kingdoms never form a phalanx.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(0,1);if(a)a.p=8;if(b)b.p=6;await settleAll();if(!a||!b)return;await lessonWalk(b,8);if(!lessonAlive())return;lockShields(0,posOf(a));phalanxToast(0);}},
-  {title:'Shrines',body:'Shrines are the grey star squares. Troops on a shrine can\'t be captured, so troops of different kingdoms can share one. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.',
+  {title:'Shrines',body:'Shrines are the grey squares with the shrine mark. Troops on a shrine can\'t be captured, so troops of different kingdoms can share one. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=11;if(b)b.p=46;await settleAll();if(a)await lessonWalk(a,12);if(!lessonAlive())return;if(a)shrineBurst(posOf(a));toast(...COPY.shrine,0,null,null,true);noteHint(...COPY.shrineHint,0,'shrine');}},
   {title:'Capturing',body:'Land exactly on a square with a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of 20 squares.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint(...COPY.captureHint(BONUS),0,'strike');toast(...COPY.capture('Emberhold',['Thornwald'],1,BONUS),0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
