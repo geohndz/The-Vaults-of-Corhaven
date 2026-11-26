@@ -138,6 +138,12 @@ test('capture and vault bonuses follow the card that was drawn later', () => {
   const strike = R.fateResolve(mark, 0, { captures: 1 });
   assert.equal(strike.captureBonus, 30);
   assert.deepEqual(strike.hands[0].map((c) => c.id), ['burden']);
+  const held = hands(0, [{ id: 'mark', seq: 1 }]);
+  const none = R.fateResolve(held, 0, { captures: 0 });
+  assert.equal(none.hands[0].length, 1);
+  assert.equal(none.spent.length, 0);
+  const sparedOnly = R.fateResolve(hands(1, [{ id: 'mark', seq: 1 }]), 0, { captures: 0, spared: [1] });
+  assert.equal(sparedOnly.hands[1].map((c) => c.id)[0], 'mark');
   const burden = R.fateResolve(hands(0, [{ id: 'burden', seq: 1, born: 1 }]), 0, { goal: true, pilgrim: false });
   assert.equal(burden.vaultBonus, 10);
   assert.equal(burden.hands[0].length, 0);

@@ -257,51 +257,63 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .openhead{margin:22px 0 0;font-family:var(--font-sans);font-weight:600;font-size:clamp(13px,.85vw,15px);line-height:1.3;letter-spacing:.14em;text-transform:uppercase;color:#E3B663}
 .playmodes{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vh,32px);width:100%;min-width:0}
 #play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
+#play .playmodes>h2{font-size:clamp(34px,3.4vw,58px);line-height:1.02;letter-spacing:.05em}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
 .modecards{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
 #play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
 .modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:var(--mc-shadow),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(380px,54vh,520px)}
 .modecard::before{content:"";position:absolute;inset:0;border-radius:3px;pointer-events:none;box-shadow:var(--mc-shadow);transition:box-shadow .22s ease}
-.modecard:not(.flipped):has(.mc-front:hover)::before,.modecard:not(.flipped):has(.mc-front:focus-visible)::before{box-shadow:var(--mc-shadow-hover)}
-.modecard.soon:has(.mc-front:hover)::before,.modecard.soon:has(.mc-front:focus-visible)::before{box-shadow:var(--mc-shadow)}
+.modecard:not(.soon):is(:hover,:focus-within,.flipped)::before{box-shadow:var(--mc-shadow-hover)}
+.modecard.soon:is(:hover,:focus-within)::before{box-shadow:var(--mc-shadow)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1)}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
 .modecard.flipped .mc-front{pointer-events:none}
 .modecard:not(.flipped) .mc-back{pointer-events:none}
+@media (hover:hover) and (pointer:fine){
+  .modecard:not(.soon):is(:hover,:focus-within) .mc-inner{transform:rotateY(180deg)}
+  .modecard:not(.soon):is(:hover,:focus-within) .mc-front{pointer-events:none}
+  .modecard:not(.soon):is(:hover,:focus-within) .mc-back{pointer-events:auto}
+}
 .mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6)}
 .mc-front{cursor:pointer;font:inherit;transition:border-color .18s ease}
 .mc-front::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
-.mc-front:hover::after,.mc-front:focus-visible::after{opacity:.4}
+.modecard:not(.soon):is(:hover,:focus-within) .mc-front::after{opacity:.4}
 .mc-front>*{position:relative;z-index:1}
-.mc-front:hover,.mc-front:focus-visible{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
+.modecard:not(.soon):is(:hover,:focus-within) .mc-front{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
 .mc-front:focus-visible{outline:3px solid var(--gold-bright);outline-offset:3px}
-.mc-back{transform:rotateY(180deg);gap:10px;cursor:pointer}
+.mc-back{transform:rotateY(180deg) translateZ(1px);gap:12px;cursor:pointer;justify-content:flex-start;padding:clamp(36px,6vh,52px) clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);overflow-x:hidden;overflow-y:auto;transition:border-color .18s ease}
+.mc-back::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
+.mc-back::before{z-index:0}
+.modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-back::after{opacity:.4}
+.modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-back{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
+.mc-back>*{position:relative;z-index:1}
 .mc-back :is(button,label){cursor:pointer}
 .mc-num{position:relative;z-index:1;display:grid;place-items:center;width:38px;height:38px;margin-top:12px;border:2px solid #C5D0DC;border-radius:50%;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--mc) 70%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 50%,#000));color:#F2F5F8;font-weight:700;font-size:17px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.65)}
 .mc-front .mc-num{position:absolute;top:12px;left:50%;margin:0;transform:translateX(-50%);z-index:2}
 .mc-banner{position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(28px,3.6vh,38px) 0 22%;--mc-sigil-h:clamp(44px,11vw,58px);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
 .mc-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);-webkit-mask:var(--bn) center/contain no-repeat;mask:var(--bn) center/contain no-repeat}
 .mc-banner :is(svg,.mc-sigil-art){position:relative;display:block;height:var(--mc-sigil-h);width:auto;max-width:72%;margin-inline:auto;margin-top:6px;color:#F2F5F8;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
-.mc-tag{margin-top:clamp(14px,2.4vh,26px);font-size:clamp(12px,.8vw,15px);line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#E3B663}
-.mc-name{margin-top:6px;font-family:var(--font-cinder);font-size:clamp(22px,1.7vw,32px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F8}
-.mc-desc{margin-top:clamp(10px,1.6vh,18px);font-family:var(--font-serif,var(--font-sans));font-style:italic;font-size:clamp(13px,.9vw,17px);line-height:1.45;color:var(--parch-dim)}
+.mc-head{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,.35vh,5px);width:100%;min-height:0;padding:0 .08em;text-align:center}
+.mc-name{margin:0;font-family:var(--font-cinder);font-size:clamp(40px,4.8vw,96px);line-height:.95;letter-spacing:.03em;text-transform:uppercase;color:#F2F5F8;max-width:100%;hyphens:auto}
+.mc-tag{margin:0;font-size:clamp(12px,.8vw,15px);line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:#E3B663}
+.mc-desc{margin:0;font-family:var(--font-serif,var(--font-sans));font-style:italic;font-size:clamp(12px,.78vw,14px);line-height:1.42;color:var(--parch-dim);max-width:32ch}
 .mc-soon,.mc-begin-label{margin-top:auto;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dim)}
 .mc-begin-label{font-family:var(--font-cinder);font-size:clamp(18px,1.3vw,24px);letter-spacing:.08em;color:#F2F5F8}
-.mc-back{background:linear-gradient(180deg,rgba(5,6,9,.8),rgba(5,6,9,.93)),var(--art,none) center/cover no-repeat,#0a0c10}
+.mc-back{background:linear-gradient(180deg,rgba(5,6,9,.72) 0%,rgba(5,6,9,.88) 38%,rgba(5,6,9,.94) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
 .modecard.soon .mc-face{background:linear-gradient(180deg,rgba(8,10,14,.62) 0%,rgba(5,6,9,.9) 58%,rgba(5,6,9,.96) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
 .modecard.soon .mc-banner,.modecard.soon .mc-num{filter:grayscale(1) brightness(.6)}
 .modecard.soon .mc-front{cursor:default}
 .modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2)}
 .modecard.soon .mc-front:hover::after,.modecard.soon .mc-front:focus-visible::after{opacity:0}
-.mc-back .mc-tag{margin-top:clamp(18px,2.6vh,30px)}
-.mc-back .mc-name{margin-top:6px}
-#play .mc-back .roommeta{margin:4px 0 0;font-size:clamp(14px,.9vw,16px);line-height:1.45}
-#play .mc-back .check{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:6px 0 0;padding:12px 0;border-top:1px solid rgba(197,208,220,.18);border-bottom:1px solid rgba(197,208,220,.18);font-weight:600;font-size:clamp(15px,1vw,18px);line-height:1.3;color:var(--parch);text-align:left}
-.mc-back .check input{width:22px;height:22px;flex:none;accent-color:#9AABBC}
-#play .mc-back .err{margin:0;font-size:15px;line-height:1.4}
+.mc-back .mc-head{flex:none;margin:0;padding:0;gap:4px;width:100%}
+.mc-back .mc-name{font-size:clamp(30px,2.6vw,44px);text-transform:uppercase}
+.mc-back .mc-tag{font-size:clamp(15px,1.05vw,19px)}
+.mc-back .mc-desc{flex:none;width:100%;padding:0 .2em;text-align:center;color:var(--parch);font-size:clamp(16px,1.12vw,19px);line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,.95),0 0 24px rgba(0,0,0,.65)}
+#play .mc-back .roommeta{margin:4px 0 0;font-size:clamp(15px,1.02vw,18px);line-height:1.5;max-width:34ch;text-align:center;color:var(--parch-dim)}
+#play .mc-back .err{margin:0;font-size:clamp(15px,1vw,18px);line-height:1.45}
 .mc-back .mc-actions{display:flex;flex-direction:column;align-items:center;gap:26px;margin-top:auto;padding-bottom:6px}
-#play .mc-back :is(button.primary,button.secondary){padding:0 20px;font-size:clamp(17px,1.15vw,22px)}
+#play .mc-back :is(button.primary,button.secondary){padding:0 20px;font-size:clamp(18px,1.25vw,24px)}
 .openrooms{align-self:center;gap:14px}
 .roomsearch{display:flex;align-items:center;gap:12px}
 .roomsearch .field{flex:1;min-width:0;padding:9px 14px;font-size:clamp(17px,1.1vw,20px);letter-spacing:.14em;text-transform:uppercase;background:rgba(5,6,9,.6);border-color:rgba(197,208,220,.45)}
@@ -316,18 +328,16 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
   #play.local.local-setup .playmain{align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + clamp(32px,8vh,96px))}
   #play.local.local-setup .sheet::after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.78) 30%,rgba(0,0,0,.86) 50%,rgba(0,0,0,.78) 70%,rgba(0,0,0,.2) 100%);pointer-events:none}
 }
-@media (max-width:1180px) and (min-width:641px){
+@media (max-width:1180px){
   #play .playmain{align-content:start}
   .modecards,#play:not(.local) .modecards{grid-template-columns:repeat(2,minmax(140px,1fr));max-width:720px}
   .modecard{height:clamp(340px,36vh,420px)}
   .openrooms,.localseats{align-self:stretch;max-width:560px;width:100%;justify-self:center}
 }
 @media (prefers-reduced-motion:reduce){.mc-inner{transition:none}}
-@media (min-width:641px){
-  #play .join{grid-template-columns:var(--play-side) minmax(min(100%,320px),1fr)}
-  #play .sheet::before{width:var(--play-side)}
-  #play :is(.playside-choices,#playFoot) :is(.primary,.secondary){padding-inline:clamp(36px,5vw,72px)}
-}
+#play .join{grid-template-columns:var(--play-side) minmax(min(100%,320px),1fr)}
+#play .sheet::before{width:var(--play-side)}
+#play :is(.playside-choices,#playFoot) :is(.primary,.secondary){padding-inline:clamp(36px,5vw,72px)}
 .menu-page .menubackdrop{position:absolute;inset:0;z-index:0;overflow:hidden}
 .menu-page .menubg{width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:saturate(1.04) contrast(1.03)}
 .menu-page .menuveil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,10,.5) 0%,rgba(4,6,10,.18) 36%,rgba(4,6,10,.42) 62%,rgba(2,3,6,.78) 100%),radial-gradient(ellipse 92% 70% at 50% 40%,transparent 8%,rgba(3,4,8,.5) 100%)}
@@ -425,23 +435,19 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
   .roomcode{padding:8px 10px;gap:8px}
   .kingdoms{grid-template-columns:1fr 1fr;gap:10px}
   #online .sheet,#setup .sheet{height:100%;max-height:none;overflow:auto}
-  .lobby,.local,.join{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto;min-height:100%}
-  .join{grid-template-rows:auto minmax(0,1fr) auto}
-  .lobbyside,.localside,.joinside{grid-column:1;grid-row:1}
-  .lobbymain,.localmain,.joinmain{grid-column:1;grid-row:2;padding:18px 20px}
-  .lobbyside,.joinside{padding-bottom:28px}
-  .lobbymain,.joinmain{padding-top:32px}
-  #play .playmain{display:flex;flex-direction:column;align-items:stretch;gap:36px}
-  #play.join .playmain{padding-top:32px}
+  #play{--play-side:clamp(200px,42vw,280px)}
+  #setup .lobby,#setup .local,#setup .join,#online .lobby,#online .join{grid-template-columns:1fr;grid-template-rows:auto auto auto;height:auto;min-height:100%}
+  #setup .join,#online .join{grid-template-rows:auto minmax(0,1fr) auto}
+  #setup :is(.lobbyside,.localside,.joinside),#online :is(.lobbyside,.joinside){grid-column:1;grid-row:1}
+  #setup :is(.lobbymain,.localmain,.joinmain),#online :is(.lobbymain,.joinmain){grid-column:1;grid-row:2;padding:18px 20px}
+  #setup :is(.lobbyside,.joinside),#online .joinside{padding-bottom:28px}
+  #setup :is(.lobbymain,.joinmain),#online .joinmain{padding-top:32px}
   #play.join .openrooms{width:100%}
-  .modecards{grid-template-columns:repeat(2,minmax(140px,1fr))}
-  .modecard{height:440px}
   #play .mc-back :is(button.primary,button.secondary){padding:0 8px;font-size:16px}
-  #play .mc-back .check{font-size:15px}
-  .openlist{max-height:none}
-  .lobbyactions,.localactions{grid-column:1;grid-row:3}
-  .banner .frame{width:88%}
-  .menu-page .sheet::before{width:100%}
+  #play .openlist{max-height:none}
+  #setup .lobbyactions,#setup .localactions,#online .lobbyactions{grid-column:1;grid-row:3}
+  #online .banner .frame,#setup .banner .frame{width:88%}
+  #setup .sheet::before,#online .sheet::before{width:100%}
 }
 body.at-lesson .hud{visibility:hidden}
 body.at-lesson #toast,body.at-lesson #hintDock,body.at-lesson #bottomBar{visibility:visible}
@@ -716,6 +722,9 @@ body.at-lesson #hintDock{z-index:21}
       <aside class="lobbyside">
         <div class="roomcode"><span>Room code</span><b id="roomCode"></b></div>
         <p class="roommode" id="lobbyModeLabel"></p>
+        <div class="roomopts" id="lobbyRoomOpts" hidden>
+          <label class="check" for="lobbyPrivate">Private Match<input type="checkbox" id="lobbyPrivate" aria-label="Private match, join by room code only"></label>
+        </div>
         <div class="lobbypeople" id="lobbyList" aria-label="Players"></div>
       </aside>
       <div class="lobbymain">
@@ -867,13 +876,13 @@ body.at-lesson #hintDock{z-index:21}
 <script src="./lib/rules.js?v=copy1"></script>
 <script src="./lib/siege-fx.js?v=siege18"></script>
 <script src="./lib/smoke-embers.js?v=5"></script>
-<script src="./lib/fate-view.js?v=fate7"></script>
+<script src="./lib/fate-view.js?v=fate9"></script>
 <script src="./lib/game-modes.js?v=copy1"></script>
 <script src="./lib/player-profile.js?v=ia1"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.11.12';
+const GAME_VERSION='1.11.28';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1163,12 +1172,12 @@ TRACK.forEach(([arm,lane,k],i)=>{
   const isGate=hs>=0;
   const isShrine=SAFE.has(i)&&!isGate;
   if(isGate)tex=tileTex(wide,HOUSES[hs].css,i+1,{n:i+1,star:true,starFill:'rgba(246,227,168,.9)',numFill:'#FFF6DE',numStroke:'rgba(0,0,0,.5)'});
-  else if(isShrine)tex=tileTex(wide,'#857A6E',i+1,{n:i+1,shrine:true,numFill:'#FFFDF6',numStroke:'rgba(30,22,12,.85)'});
+  else if(isShrine)tex=tileTex(wide,'#857A6E',null,{n:i+1,shrine:true});
   else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4],i+1);return;}
   else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{n:i+1,numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
   addTile(arm,lane,k,new THREE.MeshStandardMaterial({map:tex,roughness:0.88}));
   const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);
-  addTileInk(x,z,sx,sz,tileInkTex(wide,i+1,{star:isGate,shrine:isShrine}));
+  addTileInk(x,z,sx,sz,tileInkTex(wide,isShrine?null:i+1,{star:isGate,shrine:isShrine}));
 });
 HOUSES.forEach((h,hi)=>{const wide=armDims(h.homeArm)[0]>armDims(h.homeArm)[1];const bg=new THREE.Color(h.color).lerp(new THREE.Color(0xffffff),0.1).getStyle();
   for(let k=0;k<7;k++)addTile(h.homeArm,0,k,new THREE.MeshStandardMaterial({map:tileTex(wide,bg,null,{n:200+hi*10+k}),roughness:0.85}));});
@@ -1972,13 +1981,14 @@ function dropCards(list){
 }
 async function playBurns(list,h){
   if(!fateView||!list||!list.length)return;
-  const watch=h!=null?h:fatePeekH();
+  const watch=NET.on&&NET.myH!=null?NET.myH:(h!=null?h:fatePeekH());
   if(watch==null)return;
   for(const s of list){
     if(s.h!==watch||fateView.dealing())continue;
     await fateView.burn(s.id);
   }
   shownHand='';
+  if(!fateView.dealing())showHand();
 }
 function applyKept(h,offer,choice){
   const fate=ensureFate();
@@ -2080,7 +2090,7 @@ async function finishReroll(pl,a,b,gid,plan){
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
   announceRoll(pl,a,b,'march');
-  continueTurn();
+  await continueTurn();
 }
 async function doReroll(){
   if(S.phase!=='choose'||!S.canReroll)return;
@@ -2094,7 +2104,8 @@ async function doReroll(){
   if(S.dbl){S.doubles=Math.max(0,S.doubles-1);const st=diceStatsOf();st.doubles=Math.max(0,(st.doubles||0)-1);S.dbl=false;}
   S.phase='rolling';renderTurn();
   const plan=R.adaptRoll(allPieces(),pl.h,S.world,pl,S.players,Math.random,S.adapt,fateHands());
-  const[a,b]=await throwDice(pl.h,plan.vals||undefined);
+  const forced=plan.vals||undefined;
+  const[a,b]=pl.cpu&&!xrActive?await cpuRollDice(pl,forced):await throwDice(pl.h,forced);
   if(gid!==S.gid)return;
   await finishReroll(pl,a,b,gid,plan);
 }
@@ -2410,7 +2421,7 @@ function renderChips(){
     if(opts.some(o=>o.di===di&&o.favor)){const tag=document.createElement('span');tag.className='favortag';tag.textContent='+1';b.appendChild(tag);}
     if(pick&&S.lessonArrow===di&&!d.used)b.appendChild(tapArrow());
     ui.chips.appendChild(b);});
-  const fresh=!S.dieHeld&&S.canReroll&&human&&S.phase==='choose'&&S.pending.length&&S.pending.every(d=>!d.used)&&S.pending.some(d=>!d.bonus);
+  const fresh=S.canReroll&&human&&S.phase==='choose'&&S.pending.length&&S.pending.every(d=>!d.used)&&S.pending.some(d=>!d.bonus);
   if(fresh){
     const b=document.createElement('button');b.type='button';b.className='dchip reroll';
     b.innerHTML=rerollSVG();
@@ -2567,7 +2578,14 @@ async function throwDice(h,forced){
   dice.forEach((d,i)=>{const b=diceBodies[i];b.position.set(d.position.x,d.position.y,d.position.z);b.quaternion.set(d.quaternion.x,d.quaternion.y,d.quaternion.z,d.quaternion.w);
     const aim=inward.clone().multiplyScalar(7+Math.random()*3).addScaledVector(perp,(Math.random()-0.5)*3);
     b.velocity.set(aim.x*k,(1.5+Math.random()*2)*k,aim.z*k);b.angularVelocity.set((Math.random()-.5)*30,(Math.random()-.5)*30,(Math.random()-.5)*30);b.wakeUp();});
-  const faces=await new Promise(res=>{rollState={t:0,still:0,retries:0,res,forced:forced?forced.slice():null,cap:forced?1.15:7};});
+  const faces=await Promise.race([
+    new Promise(res=>{rollState={t:0,still:0,retries:0,res,forced:forced?forced.slice():null,cap:forced?1.15:7};}),
+    wait(9000).then(()=>{if(!rollState)return forced||[1,1];const r=rollState;rollState=null;try{r.res(r.forced||[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)]);}catch(e){}return null;})
+  ]);
+  if(!faces){
+    if(gid!==S.gid)return forced||[1,1];
+    return forced||[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
+  }
   if(gid!==S.gid||!forced)return forced||faces;
   await snapDiceFaces(forced);
   return forced.slice();
@@ -2750,7 +2768,7 @@ function orderRollFor(i,gid){
     S.cur=i;S.phase='orderRoll';S.orderRes=res;
     announceTurn(pl,'order');
     renderTurn();
-    if(pl.cpu){await wait(650);if(gid===S.gid)doOrderRoll();}
+    if(pl.cpu){await wait(650);if(gid===S.gid)await doOrderRoll();}
   });
 }
 async function finishOrder(pl,a,b,gid){
@@ -2762,9 +2780,13 @@ async function finishOrder(pl,a,b,gid){
 async function doOrderRoll(){
   if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
-  if(S.phase!=='orderRoll'||motionRoll)return;const gid=S.gid;const pl=curP();
+  if(S.phase!=='orderRoll')return;
+  if(motionRoll&&!xrActive)motionRoll=null;
+  if(motionRoll)return;
+  const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();
-  const[a,b]=await throwDice(pl.h);if(gid!==S.gid||!pl||pl.out)return;
+  const[a,b]=pl&&!pl.cpu||xrActive?await throwDice(pl.h):await cpuRollDice(pl);
+  if(gid!==S.gid||!pl||pl.out)return;
   await finishOrder(pl,a,b,gid);
 }
 async function beginTurn(again){
@@ -2782,20 +2804,26 @@ async function beginTurn(again){
     const tick=R.fateTick(fate.hands,{turn:{h:pl.h,count:fate.turns[pl.h]}});
     fate.hands=tick.hands;
     const mine=tick.spent.filter(s=>s.h===pl.h);
-    if(mine.length&&fateView&&!fateView.dealing()&&pl.h===fatePeekH()){
+    if(mine.length){
+      dropCards(mine);
       shownHand='';
-      fateView.setHand(before);
-      for(const s of mine)await fateView.burn(s.id);
-      if(gid!==S.gid)return;
-      shownHand='';
+      if(pl.cpu){
+        if(fateView&&fateView.dealing())fateView.reset();
+      }else if(fateView&&!fateView.dealing()&&pl.h===fatePeekH()){
+        fateView.setHand(before);
+        for(const s of mine)await fateView.burn(s.id);
+        if(gid!==S.gid)return;
+        shownHand='';
+      }
     }
   }
+  if(pl.cpu&&fateView&&fateView.dealing())fateView.reset();
   S.canReroll=false;
   clearShownRolls();
   S.phase='roll';S.pending=[];setHighlights();showMarkers([]);
   announceTurn(pl,again?'again':'turn');
   renderTurn();
-  if(pl.cpu){await wait(700);if(gid===S.gid)doRoll();}
+  if(pl.cpu){await wait(700);if(gid===S.gid)await doRoll();}
 }
 async function finishRoll(pl,a,b,gid,plan){
   if(gid!==S.gid||!pl)return;
@@ -2816,23 +2844,34 @@ async function finishRoll(pl,a,b,gid,plan){
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
   announceRoll(pl,a,b,'march');
-  continueTurn();
+  await continueTurn();
+}
+async function cpuRollDice(pl,forced){
+  const vals=forced&&forced.length===2?forced.slice():[1+Math.floor(Math.random()*6),1+Math.floor(Math.random()*6)];
+  return fallbackRoll(vals);
 }
 async function doRoll(){
   if(S.lesson)return;
   if(guardMatchHour())return;
   if(noHumanLeft()){showTitle();return;}
   if(S.phase==='orderRoll')return doOrderRoll();
-  if(S.phase!=='roll'||motionRoll)return;const gid=S.gid;const pl=curP();
+  if(S.phase!=='roll')return;
+  if(motionRoll&&!xrActive)motionRoll=null;
+  if(motionRoll)return;
+  const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();say('');
   const plan=R.adaptRoll(allPieces(),pl.h,S.world,pl,S.players,Math.random,S.adapt,fateHands());
-  const[a,b]=await throwDice(pl.h,plan.vals||undefined);if(gid!==S.gid)return;
+  const forced=plan.vals||undefined;
+  const[a,b]=pl.cpu&&!xrActive?await cpuRollDice(pl,forced):await throwDice(pl.h,forced);
+  if(gid!==S.gid)return;
   await finishRoll(pl,a,b,gid,plan);
 }
 async function continueTurn(){
   if(S.lesson)return;
   if(noHumanLeft()){showTitle();return;}
-  const gid=S.gid;const pl=curP();if(!pl)return;const opts=options();
+  const gid=S.gid;const pl=curP();if(!pl)return;
+  try{
+  const opts=options();
   const fresh=S.pending.length&&S.pending.every(d=>!d.used)&&S.pending.some(d=>!d.bonus);
   const chance=!!(fresh&&R.holds(R.handOf(fateHands(),pl.h),'chance'));
   S.dieHeld=false;S.canReroll=chance;
@@ -2852,13 +2891,22 @@ async function continueTurn(){
   if(chance&&!pl.cpu){S.phase='choose';refreshChoice();return;}
   if(chance&&pl.cpu)S.canReroll=false;
   if(S.dbl){const open=R.phalanxDouble(allPieces(),pl.h,S.pending,S.world,fateHands());if(open){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(open);}}
-  if(pl.cpu){S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
+  if(pl.cpu){
+    if(fateView&&fateView.dealing())fateView.reset();
+    S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
     const best=R.bestOption(allPieces(),opts);
+    if(!best){endTurn();return;}
     S.sel=best.di;if(!veilHides(best.pc)){setHighlights([best.pc]);showMarkers([{pos:resultPos(best.pc,best.r),move:best}]);}renderChips();await wait(380);if(gid!==S.gid)return;
     return doMove(best);}
   const uniq=new Set(opts.map(o=>o.v+':'+o.pc.p));
   if(uniq.size===1){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(opts[0]);}
   S.phase='choose';refreshChoice();
+  }catch(err){
+    console.error(err);
+    if(S.phase==='rolling'&&S.pending.length)S.phase='choose';
+    if(curP()?.cpu)endTurn();
+    else{S.phase='choose';refreshChoice();}
+  }
 }
 function endTurn(){
   S.pending=[];showMarkers([]);setHighlights();
@@ -3789,7 +3837,7 @@ function onlineError(code){
   if(!NET.code)$('onlineLead').textContent='';
   if(!NET.code&&flowContext==='create'){
     flowContext=null;pendingRoomOpts=null;
-    const err=document.querySelector('#modeCards .modecard.flipped .err');
+    const err=document.querySelector(`#modeCards .modecard[data-mode="${selectedModeId}"] .err`);
     if(err){err.textContent=roomError(code);return;}
   }
   $('onlineErr').textContent=roomError(code);
@@ -3855,16 +3903,26 @@ const MODE_TINT={normal:'#DC742A',gauntlet:'#3BAC98',conquest:'#7D5E9E',classic:
 const GENERAL_BANNERS=['general-1','general-2','general-3'].sort(()=>Math.random()-.5);
 const MODE_BANNER={};
 MODES.MODES.forEach((m,i)=>{MODE_BANNER[m.id]=`url("assets/banners/${GENERAL_BANNERS[i%GENERAL_BANNERS.length]}.svg")`;});
+const MODE_CARD_TOUCH_FLIP=()=>matchMedia('(hover: none), (pointer: coarse)').matches;
 function flipModeCard(card){
+  const touch=MODE_CARD_TOUCH_FLIP();
   document.querySelectorAll('#modeCards .modecard').forEach(c=>{
-    const on=c===card;
+    const on=touch&&c===card;
     c.classList.toggle('flipped',on);
-    c.querySelector('.mc-front').setAttribute('aria-expanded',String(on));
-    c.querySelector('.mc-front').inert=on;
-    c.querySelector('.mc-back').inert=!on;
+    const front=c.querySelector('.mc-front'),back=c.querySelector('.mc-back');
+    if(touch){
+      front.setAttribute('aria-expanded',String(on));
+      front.inert=on;
+      back.inert=!on;
+    }else{
+      c.classList.remove('flipped');
+      front.inert=false;
+      back.inert=false;
+      front.removeAttribute('aria-expanded');
+    }
     if(!on)c.querySelector('.mc-back .err').textContent='';
   });
-  if(card)setTimeout(()=>card.querySelector('.mc-back .primary')?.focus(),60);
+  if(card&&touch)setTimeout(()=>card.querySelector('.mc-back .primary')?.focus(),60);
 }
 function renderModeCards(){
   const box=$('modeCards');box.innerHTML='';
@@ -3879,16 +3937,13 @@ function renderModeCards(){
     card.innerHTML=`<div class="mc-inner">
       <button type="button" class="mc-face mc-front" aria-expanded="false" aria-controls="${backId}">
         <span class="mc-banner" aria-hidden="true">${modeSigilMarkup(m.id)}</span>
-        <span class="mc-tag">${m.tagline||''}</span>
-        <span class="mc-name">${m.label}</span>
-        <span class="mc-desc">${m.desc}</span>
+        <span class="mc-head"><span class="mc-name">${m.label}</span><span class="mc-tag">${m.tagline||''}</span></span>
         ${m.available?'':'<span class="mc-soon">Coming soon</span>'}
       </button>
-      <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label} ${local?'match':'room'} settings">
-        <span class="mc-tag">${local?'Local match':'Room settings'}</span>
-        <span class="mc-name">${m.label}</span>
-        ${local?`<p class="roommeta">Everyone plays on this device. On the next step, choose how many players join and who controls each kingdom.</p>`:`<p class="roommeta">Up to <strong>four players</strong> can join. Share the room code to invite friends.</p>
-        <label class="check">Private (join by code only)<input type="checkbox"></label>`}
+      <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label}">
+        <span class="mc-head"><span class="mc-name">${m.label}</span><span class="mc-tag">${m.tagline||''}</span></span>
+        <p class="mc-desc">${m.desc}</p>
+        ${local?'<p class="roommeta">Everyone plays on this device. On the next step, choose how many players join and who controls each kingdom.</p>':''}
         <p class="err" role="alert"></p>
         <div class="mc-actions">
           <button class="primary" type="button">${local?'Continue':'Create room'}</button>
@@ -3896,23 +3951,29 @@ function renderModeCards(){
       </div>
     </div>`;
     const front=card.querySelector('.mc-front'),back=card.querySelector('.mc-back');
-    back.inert=true;
+    const touchFlip=MODE_CARD_TOUCH_FLIP();
+    back.inert=touchFlip;
+    if(m.available)card.tabIndex=0;
     if(!m.available){front.setAttribute('aria-disabled','true');front.setAttribute('aria-label',m.label+', coming soon');front.removeAttribute('aria-expanded');}
-    else front.onclick=()=>flipModeCard(card);
-    back.addEventListener('click',e=>{if(!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
+    else{
+      front.onclick=()=>{if(MODE_CARD_TOUCH_FLIP())flipModeCard(card);};
+      front.setAttribute('aria-label',m.label+'. '+m.tagline);
+    }
+    back.addEventListener('click',e=>{if(MODE_CARD_TOUCH_FLIP()&&!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
     back.querySelector('.primary').onclick=local
       ?()=>{selectedModeId=m.id;setLocalStep('setup');}
-      :()=>createRoom(m.id,back.querySelector('input').checked,back.querySelector('.err'));
-    back.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();flipModeCard(null);front.focus();}});
+      :()=>createRoom(m.id,back.querySelector('.err'));
+    back.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODE_CARD_TOUCH_FLIP()){e.preventDefault();flipModeCard(null);front.focus();}});
+    card.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODE_CARD_TOUCH_FLIP()&&card.classList.contains('flipped')){e.preventDefault();flipModeCard(null);front.focus();}});
     box.appendChild(card);
   });
 }
-$('play').addEventListener('click',e=>{if(!e.target.closest('.modecard')&&document.querySelector('#modeCards .modecard.flipped'))flipModeCard(null);});
-function createRoom(modeId,isPrivate,errEl){
+$('play').addEventListener('click',e=>{if(!MODE_CARD_TOUCH_FLIP())return;if(!e.target.closest('.modecard')&&document.querySelector('#modeCards .modecard.flipped'))flipModeCard(null);});
+function createRoom(modeId,errEl){
   const opts=MODES.applyToRoomOpts(modeId);
   if(!opts){errEl.textContent='That mode is not available yet.';return;}
   selectedModeId=modeId;
-  opts.private=!!isPrivate;
+  opts.private=false;
   pendingRoomOpts=opts;
   flowContext='create';
   errEl.textContent='';$('onlineErr').textContent='';
@@ -3965,7 +4026,7 @@ function renderRooms(rooms){
   list.forEach(r=>{
     const b=document.createElement('button');
     b.type='button';b.className='openroom';
-    const label=r.modeLabel||(r.ranked?'Gauntlet':'Normal');
+    const label=r.modeLabel||MODES.labelOf(MODES.inferMode(r));
     const host=(r.names&&r.names[0])||'';
     const open=r.open===1?'1 seat open':r.open+' seats open';
     b.setAttribute('aria-label',`Join ${label} room${host?' hosted by '+host:''}, ${open}`);
@@ -3999,6 +4060,7 @@ function commitName(required){
   return true;
 }
 $('btnStart').onclick=()=>{$('onlineErr').textContent='';netSend({t:'start'});};
+$('lobbyPrivate')?.addEventListener('change',e=>{if(!NET.code||!NET.room||NET.room.status!=='lobby')return;$('onlineErr').textContent='';netSend({t:'opts',private:!!e.target.checked});});
 $('btnOnlineBack').onclick=()=>{if(NET.code)leaveOnline(true);else openPlay();};
 
 function seatRow(room,s){
@@ -4096,6 +4158,14 @@ function renderLobby(room){
     :!allReady?'Waiting for every player to choose a kingdom.'
     :isHost?'Everyone is ready. Start the match when you like.'
     :'Everyone is ready. Waiting for the host to start the match.';
+  const roomOpts=$('lobbyRoomOpts'),priv=$('lobbyPrivate');
+  if(roomOpts&&priv){
+    roomOpts.hidden=!isHost;
+    if(isHost){
+      priv.disabled=false;
+      if(document.activeElement!==priv)priv.checked=!!room.private;
+    }else priv.disabled=true;
+  }
 }
 
 /* ---- Match ---- */
@@ -4446,7 +4516,7 @@ async function playEvent(e,epoch){
       if(e.spared&&e.spared.length)toast(...COPY.unbroken,e.h,null,null,true);
       if(e.goal){const bonus=e.vaultBonus||BONUS;sfx.home();S.pending.push({v:bonus,bonus:true});toast(...COPY.vault(HOUSES[e.h].short,bonus),e.h);noteHint(...COPY.vaultHint(bonus),e.h,'vault');}
       dropCards(e.spent);
-      await playBurns(e.spent,e.h);
+      await playBurns(e.spent);
       if(gone())return;
       if(onShrine(pc)){shrineBurst(posOf(pc));noteHint(...COPY.shrineHint,e.h,'shrine');}
       if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
@@ -4528,7 +4598,7 @@ async function playEvent(e,epoch){
       }
       if(e.spared&&e.spared.length)toast(...COPY.unbroken,e.h,null,null,true);
       dropCards(e.spent);
-      await playBurns(e.spent,e.h);
+      await playBurns(e.spent);
       return;}
     case'reroll':{
       S.cur=S.players.indexOf(pl);S.canReroll=false;

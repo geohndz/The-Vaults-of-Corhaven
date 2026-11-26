@@ -2,6 +2,7 @@
    Every function mutates a plain room object that is stored as JSON in Redis. */
 import { randomInt } from 'node:crypto';
 import '../lib/rules.js';
+import '../lib/game-modes.js';
 import { recordFromRoom } from './metrics.js';
 
 function noteMatch(room, outcome) {
@@ -10,6 +11,7 @@ function noteMatch(room, outcome) {
 }
 
 const R = globalThis.CorhavenRules;
+const MODES = globalThis.CorhavenGameModes;
 const { GOAL, BONUS } = R;
 
 export const TURN_MS = 20000;
@@ -58,9 +60,7 @@ function eventMs(e) {
 const KNOWN_MODES = new Set(['normal', 'gauntlet']);
 
 export function modeLabel(room) {
-  if (room && room.mode === 'gauntlet') return 'Gauntlet';
-  if (room && room.ranked) return 'Gauntlet';
-  return 'Normal';
+  return MODES.labelOf(MODES.inferMode(room));
 }
 
 function applyMode(room, mode) {
