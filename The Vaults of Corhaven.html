@@ -260,13 +260,21 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
 .modecards{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
 #play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
-.modecard{--mc:#356590;position:relative;min-width:0;height:clamp(380px,54vh,520px)}
+.modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:var(--mc-shadow),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(380px,54vh,520px)}
+.modecard::before{content:"";position:absolute;inset:0;border-radius:3px;pointer-events:none;box-shadow:var(--mc-shadow);transition:box-shadow .22s ease}
+.modecard:not(.flipped):has(.mc-front:hover)::before,.modecard:not(.flipped):has(.mc-front:focus-visible)::before{box-shadow:var(--mc-shadow-hover)}
+.modecard.soon:has(.mc-front:hover)::before,.modecard.soon:has(.mc-front:focus-visible)::before{box-shadow:var(--mc-shadow)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1)}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
-.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:0 22px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.modecard.flipped .mc-front{pointer-events:none}
+.modecard:not(.flipped) .mc-back{pointer-events:none}
+.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6)}
-.mc-front{cursor:pointer;font:inherit;transition:border-color .18s ease,box-shadow .18s ease}
-.mc-front:hover,.mc-front:focus-visible{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8);box-shadow:0 22px 44px rgba(0,0,0,.6),0 0 28px color-mix(in srgb,var(--mc) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.07)}
+.mc-front{cursor:pointer;font:inherit;transition:border-color .18s ease}
+.mc-front::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
+.mc-front:hover::after,.mc-front:focus-visible::after{opacity:.4}
+.mc-front>*{position:relative;z-index:1}
+.mc-front:hover,.mc-front:focus-visible{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
 .mc-front:focus-visible{outline:3px solid var(--gold-bright);outline-offset:3px}
 .mc-back{transform:rotateY(180deg);gap:10px;cursor:pointer}
 .mc-back :is(button,label){cursor:pointer}
@@ -284,7 +292,8 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .modecard.soon .mc-face{background:linear-gradient(180deg,rgba(8,10,14,.62) 0%,rgba(5,6,9,.9) 58%,rgba(5,6,9,.96) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
 .modecard.soon .mc-banner,.modecard.soon .mc-num{filter:grayscale(1) brightness(.6)}
 .modecard.soon .mc-front{cursor:default}
-.modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2);box-shadow:0 22px 44px rgba(0,0,0,.6)}
+.modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2)}
+.modecard.soon .mc-front:hover::after,.modecard.soon .mc-front:focus-visible::after{opacity:0}
 .mc-back .mc-tag{margin-top:clamp(18px,2.6vh,30px)}
 .mc-back .mc-name{margin-top:6px}
 #play .mc-back .roommeta{margin:4px 0 0;font-size:clamp(14px,.9vw,16px);line-height:1.45}
@@ -864,7 +873,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.11.4';
+const GAME_VERSION='1.11.12';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1883,7 +1892,7 @@ document.addEventListener('pointerover',e=>{
   const btn=e.target.closest&&e.target.closest('button');
   if(!btn)return;
   if(e.relatedTarget&&btn.contains(e.relatedTarget))return;
-  if(btn.classList.contains('banner')){sfx.kingdom();return;}
+  if(btn.classList.contains('banner')){if(!btn.disabled&&!btn.classList.contains('claimed'))sfx.kingdom();return;}
   if(btn.disabled||btn.getAttribute('aria-disabled')==='true')return;
   sfx.hover();
 });
@@ -3628,7 +3637,7 @@ function setLink(mode,title,sub){
   el.setAttribute('aria-hidden','false');
   document.body.classList.add('link-bad');
   el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
-  sfx.banner();
+  if(mode==='lost'&&NET.code)sfx.banner();
 }
 /* The room socket is closed at five minutes. Open the next one early, and keep the
    banner down unless that new socket is still down after a couple of seconds. */
@@ -3841,7 +3850,7 @@ function modeSigilMarkup(id){
   if(art)return `<img class="mc-sigil-art" src="${encodeURI(art.src)}" height="${art.h}" alt="" decoding="async">`;
   return `<svg viewBox="0 0 64 64" aria-hidden="true">${MODE_SIGILS[id]||''}</svg>`;
 }
-const MODE_TINT={normal:'#356590',gauntlet:'#9E1B18',conquest:'#54673B',classic:'#BD7811'};
+const MODE_TINT={normal:'#DC742A',gauntlet:'#3BAC98',conquest:'#7D5E9E',classic:'#8A8570'};
 /* Picked once per page load so a card keeps its banner when Online and Local re-render. */
 const GENERAL_BANNERS=['general-1','general-2','general-3'].sort(()=>Math.random()-.5);
 const MODE_BANNER={};
@@ -3863,7 +3872,7 @@ function renderModeCards(){
   MODES.MODES.forEach((m,i)=>{
     const card=document.createElement('div');
     card.className='modecard'+(m.available?'':' soon');card.dataset.mode=m.id;
-    card.style.setProperty('--mc',MODE_TINT[m.id]||'#356590');
+    card.style.setProperty('--mc',MODE_TINT[m.id]||MODE_TINT.normal);
     card.style.setProperty('--bn',MODE_BANNER[m.id]);
     card.style.setProperty('--art',`url("assets/modes/${m.id}.jpg")`);
     const backId='modeBack-'+m.id;
@@ -4020,6 +4029,36 @@ function bannerSvg(h){
   const inner=`M14 ${123+extra}V56C14 40 24 30 35 24 38 22 41 18 43 18s5 4 8 6c11 6 21 16 21 32v${67+extra}q0 6-6 6H20q-6 0-6-6z`;
   return `<svg viewBox="0 0 86 ${H}" aria-hidden="true"><defs><linearGradient id="gold${h}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F5F8"/><stop offset=".48" stop-color="#6E7C8C"/><stop offset="1" stop-color="#C5D0DC"/></linearGradient><linearGradient id="sky${h}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient><clipPath id="win${h}"><path d="${inner}"/></clipPath></defs><path d="${outer}" fill="url(#gold${h})"/><g class="art" clip-path="url(#win${h})"><rect width="86" height="${H}" fill="url(#sky${h})"/>${h===2?'<circle cx="60" cy="72" r="11" fill="#FFF8DC"/>':''}<g transform="translate(0,22) scale(1,1.42)">${scenes[h]}</g></g><circle cx="43" cy="8.5" r="6.4" fill="url(#gold${h})"/><circle cx="43" cy="8.5" r="3.1" fill="#3A4450"/><circle cx="43" cy="8.5" r="1.5" fill="#E6EDF4"/></svg>`;
 }
+function lobbyBannerSig(room){
+  return HOUSES.map((_,h)=>{
+    const s=room.seats.find(x=>x.h===h);return s?`${s.pid}|${s.name}`:'';
+  }).join(';');
+}
+function bindLobbyBanner(b,H,h,room,me){
+  const holder=room.seats.find(s=>s.h===h);
+  const claimed=!!holder;
+  b.className='banner'+(claimed?' claimed':'');
+  b.disabled=claimed;
+  b.setAttribute('aria-pressed',String(!!holder&&holder.pid===NET.pid));
+  b.setAttribute('aria-label',H.name+(holder?' taken by '+holder.name:''));
+  const pname=b.querySelector('.pname');if(pname)pname.textContent=holder?holder.name:'';
+  b.onclick=claimed?null:()=>{
+    if(!profileName()){openProfile(false);return;}
+    pendingPick=h;
+    if(!commitName(true)){pendingPick=null;return;}
+    if(me.name===profileName()){pendingPick=null;netSend({t:'pick',h});}
+  };
+}
+function makeLobbyBanner(H,h){
+  const b=document.createElement('button');b.style.setProperty('--c',H.css);
+  const frame=document.createElement('span');frame.className='frame';
+  frame.insertAdjacentHTML('beforeend',bannerSvg(h));
+  const glow=document.createElement('span');glow.className='glow';frame.appendChild(glow);
+  const kn=document.createElement('span');kn.className='kname';kn.textContent=H.name;
+  const pname=document.createElement('span');pname.className='pname';
+  b.appendChild(kn);b.appendChild(frame);b.appendChild(pname);
+  return b;
+}
 function renderLobby(room){
   const me=room.seats.find(s=>s.pid===NET.pid);
   if(!me){leaveOnline(false,'You were away for more than a minute, so you lost your seat in the room.');return;}
@@ -4030,27 +4069,19 @@ function renderLobby(room){
   const modeEl=$('lobbyModeLabel');if(modeEl)modeEl.textContent=modeLabelOfRoom(room);
   const people=$('lobbyList');people.innerHTML='';
   room.seats.forEach(s=>people.appendChild(seatRow(room,s)));
-  const list=$('kingdomList');list.innerHTML='';
-  HOUSES.forEach((H,h)=>{
-    const holder=room.seats.find(s=>s.h===h);
-    const b=document.createElement('button');b.className='banner'+(holder?' claimed':'');b.disabled=!!holder;b.style.setProperty('--c',H.css);
-    b.setAttribute('aria-pressed',String(!!holder&&holder.pid===NET.pid));
-    b.setAttribute('aria-label',H.name+(holder?' taken by '+holder.name:''));
-    const frame=document.createElement('span');frame.className='frame';
-    frame.insertAdjacentHTML('beforeend',bannerSvg(h));
-    const glow=document.createElement('span');glow.className='glow';frame.appendChild(glow);
-    const kn=document.createElement('span');kn.className='kname';kn.textContent=H.name;
-    b.appendChild(kn);
-    b.appendChild(frame);
-    const pname=document.createElement('span');pname.className='pname';pname.textContent=holder?holder.name:'';b.appendChild(pname);
-    if(!holder)b.onclick=()=>{
-      if(!profileName()){openProfile(false);return;}
-      pendingPick=h;
-      if(!commitName(true)){pendingPick=null;return;}
-      if(me.name===profileName()){pendingPick=null;netSend({t:'pick',h});}
-    };
-    list.appendChild(b);
-  });
+  const bSig=lobbyBannerSig(room);
+  const list=$('kingdomList');
+  if(list.children.length===HOUSES.length&&renderLobby._bSig===bSig){
+    HOUSES.forEach((H,h)=>bindLobbyBanner(list.children[h],H,h,room,me));
+  }else{
+    list.innerHTML='';
+    HOUSES.forEach((H,h)=>{
+      const b=makeLobbyBanner(H,h);
+      bindLobbyBanner(b,H,h,room,me);
+      list.appendChild(b);
+    });
+    renderLobby._bSig=bSig;
+  }
   if(pendingPick!=null&&me.name){
     const h=pendingPick,holder=room.seats.find(s=>s.h===h);
     pendingPick=null;
