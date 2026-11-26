@@ -474,6 +474,24 @@ What made play harder: the pieces look alike, world events and banners move too 
 
 ---
 
+## Session: 2026-11-26 — Classic and Conquest are playable (V1.12.0)
+
+**Trigger:** Geo asked for the two remaining modes, then gave each its own board. Classic drops Corhaven's props. Conquest replaces the treasure with flags and turns the vault and passages grey, because nobody races there.
+
+**Environment:** Local full-stack server (`scripts/local.js` on port 3000), desktop pane. Local matches with four computer players. Uncommitted at capture time.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-26-01-classic-plain-board-desktop.png](./screenshots/2026-11-26-01-classic-plain-board-desktop.png) | Classic, in match | **V1.12.0.** A plain Parchís board: no castles, chest or ruins. Each keep is a flat yard in its kingdom's color, the vault is four bare wedges, and shrines carry a star instead of the shrine mark |
+| 02 | [2026-11-26-02-conquest-flags-grey-centre-desktop.png](./screenshots/2026-11-26-02-conquest-flags-grey-centre-desktop.png) | Conquest, in match | **V1.12.0.** The vault and the sealed passages are grey, and the kingdoms' flags fly where the chest stood. Emberhold has fallen: its flag is down its pole, its HUD row is struck through, and the other rows count originals (pips) and army size |
+| 03 | [2026-11-26-03-conquest-victory-desktop.png](./screenshots/2026-11-26-03-conquest-victory-desktop.png) | Conquest, victory | **V1.12.0.** The win sheet names the conqueror and lists the fallen from last to first |
+| 04 | [2026-11-26-04-play-modes-crucible-wide-desktop.png](./screenshots/2026-11-26-04-play-modes-crucible-wide-desktop.png) | Play, Online | **V1.12.1.** Conquest is off the picker for now. Crucible spans the full row; Gauntlet and Classic sit beneath it in two columns |
+| 05 | [2026-11-26-05-mode-card-ink-desktop.png](./screenshots/2026-11-26-05-mode-card-ink-desktop.png) | Play, mode cards | **V1.12.7.** Card frames, rules, and the marks on the banners are drawn with a brush stroke that feathers where the ink soaks in |
+| 06 | [2026-11-26-06-mode-card-ink-outside-desktop.png](./screenshots/2026-11-26-06-mode-card-ink-outside-desktop.png) | Play, mode card flipped | **V1.12.8.** The brush stroke sits outside the card. The banner marks stay sharp |
+| 07 | [2026-11-26-07-banner-stroke-desktop.png](./screenshots/2026-11-26-07-banner-stroke-desktop.png) | Play, mode cards | **V1.12.10.** Each banner has the same outside brush stroke as the card, in that banner's own color. The marks stay sharp |
+
+---
+
 ## How new entries get added
 
 At the end of a meaningful chat turn, the agent should:

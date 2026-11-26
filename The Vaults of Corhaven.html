@@ -64,6 +64,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 .coins{display:inline-flex;gap:2px;vertical-align:middle}
 .coin{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(154,171,188,.5)}
 .coin.on{background:radial-gradient(circle at 35% 35%,#F4F7FA,#8B9AAB);box-shadow:0 0 5px rgba(200,214,228,.8)}
+.coins .army{margin-left:5px;font-size:11px;line-height:9px;font-weight:600;letter-spacing:.02em;color:#C5D0DC;white-space:nowrap;font-variant-numeric:tabular-nums;text-transform:none}
 @property --p{syntax:'<number>';inherits:true;initial-value:1}
 .av{--p:1;flex:none;position:relative;display:grid;place-items:center;width:44px;height:44px;
   clip-path:polygon(29% 0,71% 0,100% 29%,100% 71%,71% 100%,29% 100%,0 71%,0 29%);
@@ -91,7 +92,7 @@ button:focus-visible{outline:3px solid var(--gold-bright);outline-offset:2px}
 body.link-bad #toast.show{opacity:0;visibility:hidden}
 #toast.show,#linkBanner.show{opacity:1;transform:translate(-50%,0);visibility:visible;transition-delay:0s}
 #toast.show{pointer-events:auto;cursor:pointer}
-#toast .rule,#linkBanner .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
+#toast .rule,#linkBanner .rule{position:absolute;left:6%;right:6%;height:2px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent);filter:url(#ink-edge)}
 #toast .rule.t,#linkBanner .rule.t{top:9px}
 #toast .rule.b,#linkBanner .rule.b{bottom:9px}
 #toast .orn,#linkBanner .orn{display:block;width:34px;height:34px;margin:0 auto 10px;color:var(--c,var(--gold-bright));filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
@@ -114,8 +115,10 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roster li.out b{text-decoration:line-through}
 #menuWrap{right:calc(env(safe-area-inset-right,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 #gearWrap{left:calc(env(safe-area-inset-left,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 14px);z-index:16}
-.menuBtn{display:grid;place-items:center;width:50px;height:50px;padding:0;border-radius:50%;background:linear-gradient(160deg,var(--leather-2),var(--leather));border:2px solid var(--gold);color:var(--gold-bright);box-shadow:0 6px 16px rgba(0,0,0,.4)}
-.menuBtn:hover,.menuBtn[aria-expanded="true"]{border-color:var(--gold-bright)}
+.menuBtn{display:grid;place-items:center;width:50px;height:50px;padding:0;border-radius:50%;background:linear-gradient(160deg,var(--leather-2),var(--leather));border:0;color:var(--gold-bright);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.menuBtn::after{content:"";position:absolute;inset:1px;border-radius:inherit;border:2.2px solid var(--gold);pointer-events:none;filter:url(#ink)}
+.menuBtn:hover::after,.menuBtn[aria-expanded="true"]::after{border-color:var(--gold-bright)}
+.menuBtn{position:relative}
 .settings-icon{display:block;width:24px;height:24px;background:currentColor;-webkit-mask:url("assets/settings.svg") center/contain no-repeat;mask:url("assets/settings.svg") center/contain no-repeat}
 .menuBtn .settings-icon{width:24px;height:24px}
 .titleicon .settings-icon{width:20px;height:20px;margin:0 auto}
@@ -229,7 +232,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .localseats .seat .crest{width:24px;height:30px}
 #play .localseats .seat .name{font-size:clamp(17px,1.15vw,21px);line-height:1.2}
 #play .localseats .toggle button{font-size:clamp(14px,.95vw,16px)}
-#play .localseats #btnXRSetup{align-self:flex-start;margin-top:14px;padding:0 18px;font-size:clamp(17px,1.15vw,22px)}
+#play .localseats #btnPlayStart,#play .localseats #btnXRSetup{align-self:flex-start;margin-top:14px;padding:0 18px;font-size:clamp(17px,1.15vw,22px)}
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .modeselect{display:flex;flex-direction:column;gap:10px;width:100%;margin:8px 0 0}
 .modepick{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;margin:0;padding:16px 18px;border:1px solid rgba(154,171,188,.28);border-radius:0;background:rgba(8,12,16,.45);color:var(--parch);text-align:left;cursor:pointer;transition:border-color .15s ease,background .15s ease}
@@ -259,38 +262,39 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
 #play .playmodes>h2{font-size:clamp(34px,3.4vw,58px);line-height:1.02;letter-spacing:.05em}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
-.modecards{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
-#play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
+.modecards{display:grid;grid-template-columns:repeat(2,minmax(140px,1fr));gap:clamp(22px,1.8vw,32px);width:100%;max-width:720px;perspective:1800px}
+#play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:960px;gap:clamp(26px,2vw,40px)}
+.modecard[data-mode="normal"]{grid-column:1/-1}
 .modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(380px,54vh,520px)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1);will-change:transform}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
 .modecard.flipped .mc-front{pointer-events:none}
 .modecard:not(.flipped) .mc-back{pointer-events:none}
-@media (hover:hover) and (pointer:fine){
-  .modecard:not(.soon):is(:hover,:focus-within) .mc-inner{transform:rotateY(180deg)}
-  .modecard:not(.soon):is(:hover,:focus-within) .mc-front{pointer-events:none}
-  .modecard:not(.soon):is(:hover,:focus-within) .mc-back{pointer-events:auto}
-}
-.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--mc-shadow);transition:box-shadow .22s ease,border-color .18s ease;color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:preserve-3d}
+.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:0;border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--mc-shadow);transition:box-shadow .22s ease;color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:preserve-3d}
+.inkdefs{position:absolute;width:0;height:0;overflow:hidden}
+.mc-ink{position:absolute;inset:-1.75px;z-index:2;box-sizing:border-box;pointer-events:none;border:1.75px solid rgba(236,240,246,.42);border-radius:4px;filter:url(#ink-card);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.mc-ink-front{transform:rotateY(0deg)}
+.mc-ink-back{transform:rotateY(180deg)}
 .modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-face{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--mc-shadow-hover)}
-.mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6)}
+.mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6);filter:url(#ink-edge)}
 .mc-front{transform:rotateY(0deg);cursor:pointer;font:inherit}
-.mc-front::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
+.mc-front::after{content:"";position:absolute;inset:0 0 -2px;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
 .modecard:not(.soon):is(:hover,:focus-within) .mc-front::after{opacity:.4}
 .mc-front>*{position:relative;z-index:1}
-.modecard:not(.soon):is(:hover,:focus-within) .mc-front{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
+.modecard:not(.soon):is(:hover,:focus-within) .mc-ink-front{border-color:color-mix(in srgb,var(--mc) 72%,#F2F5F8)}
 .mc-front:focus-visible{outline:3px solid var(--gold-bright);outline-offset:3px}
 .mc-back{transform:rotateY(180deg);gap:12px;cursor:pointer;justify-content:flex-start;padding:clamp(36px,6vh,52px) clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);overflow-x:hidden;overflow-y:auto}
-.mc-back::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
+.mc-back::after{content:"";position:absolute;inset:0 0 -2px;z-index:0;border-radius:inherit;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity .22s ease;background:linear-gradient(0deg,var(--mc) 0%,color-mix(in srgb,var(--mc) 42%,#000) 100%)}
 .mc-back::before{z-index:0}
 .modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-back::after{opacity:.4}
-.modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-back{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8)}
+.modecard:not(.soon):is(:hover,:focus-within,.flipped) .mc-ink-back{border-color:color-mix(in srgb,var(--mc) 72%,#F2F5F8)}
 .mc-back>*{position:relative;z-index:1}
 .mc-back :is(button,label){cursor:pointer}
 .mc-num{position:relative;z-index:1;display:grid;place-items:center;width:38px;height:38px;margin-top:12px;border:2px solid #C5D0DC;border-radius:50%;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--mc) 70%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 50%,#000));color:#F2F5F8;font-weight:700;font-size:17px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.65)}
 .mc-front .mc-num{position:absolute;top:12px;left:50%;margin:0;transform:translateX(-50%);z-index:2}
-.mc-banner{position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(28px,3.6vh,38px) 0 22%;--mc-sigil-h:clamp(44px,11vw,58px);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
-.mc-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);-webkit-mask:var(--bn) center/contain no-repeat;mask:var(--bn) center/contain no-repeat}
+.mc-banner{--mc-cloth:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(28px,3.6vh,38px) 0 22px;--mc-sigil-h:clamp(44px,11vw,58px)}
+.mc-banner::before{content:'';position:absolute;inset:0;background:var(--mc-cloth);-webkit-mask:var(--bn) center top/contain no-repeat;mask:var(--bn) center top/contain no-repeat}
+.mc-banner::after{content:'';position:absolute;inset:-12px;z-index:-1;pointer-events:none;background:var(--mc-cloth);-webkit-mask:var(--bn) center/calc(100% - 24px) calc(100% - 24px) no-repeat;mask:var(--bn) center/calc(100% - 24px) calc(100% - 24px) no-repeat;filter:url(#ink-banner)}
 .mc-banner :is(svg,.mc-sigil-art){position:relative;display:block;height:var(--mc-sigil-h);width:auto;max-width:72%;margin-inline:auto;margin-top:6px;color:#F2F5F8;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
 .mc-head{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,.35vh,5px);width:100%;min-height:0;padding:0 .08em;text-align:center}
 .mc-name{margin:0;font-family:var(--font-cinder);font-size:clamp(40px,4.8vw,96px);line-height:.95;letter-spacing:.03em;text-transform:uppercase;color:#F2F5F8;max-width:100%;hyphens:auto}
@@ -300,9 +304,11 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .mc-begin-label{font-family:var(--font-cinder);font-size:clamp(18px,1.3vw,24px);letter-spacing:.08em;color:#F2F5F8}
 .mc-back{background:linear-gradient(180deg,rgba(5,6,9,.72) 0%,rgba(5,6,9,.88) 38%,rgba(5,6,9,.94) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
 .modecard.soon .mc-face{background:linear-gradient(180deg,rgba(8,10,14,.62) 0%,rgba(5,6,9,.9) 58%,rgba(5,6,9,.96) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
+/* Cover paints a pixel short of the bottom edge. Stretch the fill past it; overflow clips the extra. */
+.mc-face{background-size:100% calc(100% + 2px),cover,auto;background-position:center top,center,center;background-repeat:no-repeat}
 .modecard.soon .mc-banner,.modecard.soon .mc-num{filter:grayscale(1) brightness(.6)}
 .modecard.soon .mc-front{cursor:default}
-.modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2)}
+.modecard.soon:hover .mc-ink-front{border-color:rgba(226,232,240,.32)}
 .modecard.soon .mc-front:hover::after,.modecard.soon .mc-front:focus-visible::after{opacity:0}
 .mc-back .mc-head{flex:none;margin:0;padding:0;gap:4px;width:100%}
 .mc-back .mc-name{font-size:clamp(30px,2.6vw,44px);text-transform:uppercase}
@@ -347,8 +353,10 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 body.at-lobby canvas#scene,body.at-lobby .hud{visibility:hidden}
 body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 .titlecorners{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 14px);right:calc(env(safe-area-inset-right,0px) + 16px);display:flex;gap:10px}
-.titleicon{width:44px;height:44px;margin:0;padding:0;border:1.5px solid rgba(230,237,244,.35);border-radius:999px;background:rgba(8,12,16,.55);color:var(--parch);font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.85)}
-.titleicon:hover,.titleicon:focus-visible{color:#fff;border-color:var(--gold-bright)}
+.titleicon{position:relative;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:999px;background:rgba(8,12,16,.55);color:var(--parch);font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.titleicon::after{content:"";position:absolute;inset:1px;border-radius:inherit;border:1.7px solid rgba(230,237,244,.7);pointer-events:none;filter:url(#ink)}
+.titleicon:hover,.titleicon:focus-visible{color:#fff}
+.titleicon:hover::after,.titleicon:focus-visible::after{border-color:var(--gold-bright)}
 .titleitem--primary{color:var(--gold-bright);font-size:clamp(calc(44px * 0.51),calc(26.4 * 100vw / 1920),calc(42px))}
 .titlepage.intro .titlelogo{opacity:0;pointer-events:none;transform:translate(-50%,14px);transition:opacity .55s ease,transform .55s ease}
 .titlepage.intro .titlemenu,.titlepage.intro .titlecorners,.titlepage.intro .titlever,.titlepage.intro #titleErr{opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
@@ -358,7 +366,7 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 .nameintro[hidden]{display:none !important}
 .titlepage.intro-leaving .nameintro{opacity:0;transform:translate(-50%,-18px);pointer-events:none;visibility:hidden}
 .nameintro-banner{position:relative;margin:0 auto;padding:22px clamp(24px,5vw,48px) 20px;background:linear-gradient(90deg,rgba(8,12,16,0) 0%,rgba(8,12,16,.78) 8%,rgba(8,12,16,.78) 92%,rgba(8,12,16,0) 100%)}
-.nameintro-banner .rule{position:absolute;left:6%;right:6%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent)}
+.nameintro-banner .rule{position:absolute;left:6%;right:6%;height:2px;background:linear-gradient(90deg,transparent,var(--gold) 18%,var(--gold) 82%,transparent);filter:url(#ink-edge)}
 .nameintro-banner .rule.t{top:9px}
 .nameintro-banner .rule.b{bottom:9px}
 .nameintro-logo{display:block;width:min(220px,46vw);height:auto;margin:0 auto 10px;filter:drop-shadow(0 8px 28px rgba(0,0,0,.75))}
@@ -518,6 +526,65 @@ body.at-lesson #hintDock{z-index:21}
 </style>
 </head>
 <body class="at-title at-lobby">
+<svg class="inkdefs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="ink" x="-50%" y="-80%" width="200%" height="260%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="3" result="brush"/>
+      <feDisplacementMap in="SourceGraphic" in2="brush" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="drawn"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="8" result="fiber"/>
+      <feDisplacementMap in="drawn" in2="fiber" scale="0.7" xChannelSelector="R" yChannelSelector="B" result="toothed"/>
+      <feGaussianBlur in="toothed" stdDeviation="0.8" result="soak"/>
+      <feComponentTransfer in="soak" result="bleed">
+        <feFuncA type="linear" slope="0.55"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="bleed"/>
+        <feMergeNode in="toothed"/>
+      </feMerge>
+    </filter>
+    <filter id="ink-card" x="-8%" y="-12%" width="116%" height="124%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="4" result="brush"/>
+      <feDisplacementMap in="SourceGraphic" in2="brush" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="drawn"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.38" numOctaves="2" seed="9" result="fiber"/>
+      <feDisplacementMap in="drawn" in2="fiber" scale="0.7" xChannelSelector="R" yChannelSelector="B" result="toothed"/>
+      <feGaussianBlur in="toothed" stdDeviation="0.45" result="soak"/>
+      <feComponentTransfer in="soak" result="bleed">
+        <feFuncA type="linear" slope="0.32"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="bleed"/>
+        <feMergeNode in="toothed"/>
+      </feMerge>
+    </filter>
+    <filter id="ink-banner" x="-22%" y="-14%" width="144%" height="140%" color-interpolation-filters="sRGB">
+      <feMorphology in="SourceGraphic" operator="dilate" radius="3" result="wide"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="4" result="brush"/>
+      <feDisplacementMap in="wide" in2="brush" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="drawn"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.38" numOctaves="2" seed="9" result="fiber"/>
+      <feDisplacementMap in="drawn" in2="fiber" scale="0.7" xChannelSelector="R" yChannelSelector="B" result="toothed"/>
+      <feGaussianBlur in="toothed" stdDeviation="0.4" result="soak"/>
+      <feMerge result="inked">
+        <feMergeNode in="soak"/>
+        <feMergeNode in="toothed"/>
+      </feMerge>
+      <feDropShadow in="inked" dx="0" dy="6" stdDeviation="5" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="ink-edge" x="-12%" y="-20%" width="124%" height="140%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="4" result="brush"/>
+      <feDisplacementMap in="SourceGraphic" in2="brush" scale="8.5" xChannelSelector="R" yChannelSelector="G" result="drawn"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.38" numOctaves="2" seed="9" result="fiber"/>
+      <feDisplacementMap in="drawn" in2="fiber" scale="1.8" xChannelSelector="R" yChannelSelector="B" result="toothed"/>
+      <feGaussianBlur in="toothed" stdDeviation="1.35" result="soak"/>
+      <feComponentTransfer in="soak" result="bleed">
+        <feFuncA type="linear" slope="0.58"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="bleed"/>
+        <feMergeNode in="toothed"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
 <canvas id="scene" aria-label="3D ludo board" width="1589" height="1288"></canvas>
 
 <div id="gate" aria-hidden="true">
@@ -674,11 +741,11 @@ body.at-lesson #hintDock{z-index:21}
             <button role="radio" data-n="4" aria-checked="true">4 players</button>
           </div>
           <div id="seats"></div>
+          <button class="primary" type="button" id="btnPlayStart">Start match</button>
           <button class="secondary" id="btnXRSetup" hidden>Play in mixed reality</button>
         </section>
       </div>
       <div class="localactions" id="playFoot">
-        <button class="primary" type="button" id="btnPlayStart" hidden>Start match</button>
         <button class="secondary" type="button" id="btnPlayBack">Back</button>
       </div>
     </div>
@@ -782,6 +849,8 @@ body.at-lesson #hintDock{z-index:21}
     <p><strong>Winning.</strong> The first player to get all four troops into their vault wins. In ranked matches, the others keep playing for second and third place.</p>
     <p><strong>Fate Cards.</strong> Landing on a shrine deals you four Fate Cards, and you keep one. Blessings and Tactical cards help you. Curses work against you. You can hold two cards at a time, so with a full hand you discard one to make room. Each card shows what it does and how long it lasts.</p>
     <p><strong>Mist.</strong> After every third round, Mist covers the board for one round. You can always see your own troops. Enemy troops on the road are hidden unless they're on or next to a square with one of your troops, and move previews won't reveal them.</p>
+    <p><strong>Classic.</strong> Classic matches have no Mist and no Fate Cards. The board is plain, with no castles, treasure or ruins, and shrines are the grey squares with a star. Every other rule is the same.</p>
+    <p><strong>Conquest.</strong> Conquest has no vault, Mist, Fate Cards or phalanxes. The passages are closed, so troops keep circling the road. Shrines are the grey squares with a star. Landing on a square captures every enemy troop there, unless it's a shrine or a gate. When a troop leaves your keep and another of your troops is on the gate, the troop on the gate moves one square ahead. A captured troop joins your keep and marches for you, and it wears a band in its first kingdom's color. A kingdom falls when it holds none of its four original troops. Any troops it still has join the kingdom that captured the last one. The last kingdom remaining wins.</p>
     <p>Keyboard: Space rolls the dice, the Left and Right arrows choose a die, and 1 to 4 move a troop.</p>
     <button class="primary" id="btnRulesClose">Close</button>
   </div>
@@ -880,7 +949,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.11.31';
+const GAME_VERSION='1.12.10';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -983,9 +1052,13 @@ if(window.CANNON){
   const ground=new CANNON.Body({mass:0});ground.addShape(new CANNON.Plane());
   ground.quaternion.setFromAxisAngle(new CANNON.Vec3(1,0,0),-Math.PI/2);ground.position.set(0,TILE_TOP,0);ground.board=true;world.addBody(ground);
 }
-function staticBox(x,y,z,hx,hy,hz){if(!world)return null;const b=new CANNON.Body({mass:0});b.addShape(new CANNON.Box(new CANNON.Vec3(hx,hy,hz)));b.position.set(x,y,z);world.addBody(b);return b;}
+/* While bodyBin is a list, new static bodies are also collected in it. Board looks use
+   those lists to take a prop's collisions away along with the prop. */
+let bodyBin=null;
+function setBodies(list,on){if(!world)return;list.forEach(b=>{const has=world.bodies.includes(b);if(on&&!has)world.addBody(b);else if(!on&&has)world.removeBody(b);});}
+function staticBox(x,y,z,hx,hy,hz){if(!world)return null;const b=new CANNON.Body({mass:0});b.addShape(new CANNON.Box(new CANNON.Vec3(hx,hy,hz)));b.position.set(x,y,z);world.addBody(b);if(bodyBin)bodyBin.push(b);return b;}
 const cylQ=window.CANNON?(()=>{const q=new CANNON.Quaternion();q.setFromAxisAngle(new CANNON.Vec3(1,0,0),-Math.PI/2);return q;})():null;
-function staticCyl(x,y,z,r,h){if(!world)return null;const b=new CANNON.Body({mass:0});b.addShape(new CANNON.Cylinder(r,r,h,12),new CANNON.Vec3(0,0,0),cylQ);b.position.set(x,y,z);world.addBody(b);return b;}
+function staticCyl(x,y,z,r,h){if(!world)return null;const b=new CANNON.Body({mass:0});b.addShape(new CANNON.Cylinder(r,r,h,12),new CANNON.Vec3(0,0,0),cylQ);b.position.set(x,y,z);world.addBody(b);if(bodyBin)bodyBin.push(b);return b;}
 // Invisible rails around the board so dice stay on it
 staticBox(0,2,-HALF-0.25,HALF+0.5,2,0.25);staticBox(0,2,HALF+0.25,HALF+0.5,2,0.25);
 staticBox(-HALF-0.25,2,0,0.25,2,HALF+0.5);staticBox(HALF+0.25,2,0,0.25,2,HALF+0.5);
@@ -1130,7 +1203,7 @@ function addTileInk(x,z,sx,sz,tex){
   m.rotation.x=-Math.PI/2;m.position.set(x,TILE_TOP+0.016,z);m.renderOrder=8;tileInk.add(m);
 }
 function addTile(arm,lane,k,topMat){const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);const g=new THREE.BoxGeometry(sx-0.05,0.12,sz-0.05);
-  const t=new THREE.Mesh(g,[M.tileSide,M.tileSide,topMat,M.tileSide,M.tileSide,M.tileSide]);t.position.set(x,0.06,z);t.receiveShadow=true;board.add(t);}
+  const t=new THREE.Mesh(g,[M.tileSide,M.tileSide,topMat,M.tileSide,M.tileSide,M.tileSide]);t.position.set(x,0.06,z);t.receiveShadow=true;board.add(t);return t;}
 function addCornerTile(arm,lane,num,bg,n){
   const poly=insetPoly(cornerPoly(arm,lane),0.025);
   const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
@@ -1164,6 +1237,8 @@ function addCornerTile(arm,lane,num,bg,n){
   inkMesh.position.y=TILE_TOP+0.016;inkMesh.renderOrder=8;tileInk.add(inkMesh);
 }
 const creamShades=['#D6CBB8','#CFC3AE','#DAD0BE','#CABDA6'];
+/* Tiles a board look repaints: shrines, the passages and the four wedges of the vault. */
+const shrineTiles=[],passageTiles=[],wedgeTiles=[];
 TRACK.forEach(([arm,lane,k],i)=>{
   const wide=armDims(arm)[0]>armDims(arm)[1];const hs=HOUSES.findIndex(h=>h.start===i);
   let tex;
@@ -1173,12 +1248,15 @@ TRACK.forEach(([arm,lane,k],i)=>{
   else if(isShrine)tex=tileTex(wide,'#857A6E',null,{n:i+1,shrine:true});
   else if(isCorner(lane,k)){addCornerTile(arm,lane,i+1,creamShades[(i*3)%4],i+1);return;}
   else tex=tileTex(wide,creamShades[(i*3)%4],i+1,{n:i+1,numFill:'rgba(58,44,30,.85)',numStroke:'rgba(255,255,255,.3)'});
-  addTile(arm,lane,k,new THREE.MeshStandardMaterial({map:tex,roughness:0.88}));
+  const top=new THREE.MeshStandardMaterial({map:tex,roughness:0.88});
+  const tile=addTile(arm,lane,k,top);
+  if(isShrine)shrineTiles.push({tile,own:top,alt:null,wide,n:i+1});
   const[sx,sz]=armDims(arm);const[x,z]=armXZ(arm,lane,k);
   addTileInk(x,z,sx,sz,tileInkTex(wide,isShrine?null:i+1,{star:isGate,shrine:isShrine}));
 });
 HOUSES.forEach((h,hi)=>{const wide=armDims(h.homeArm)[0]>armDims(h.homeArm)[1];const bg=new THREE.Color(h.color).lerp(new THREE.Color(0xffffff),0.1).getStyle();
-  for(let k=0;k<7;k++)addTile(h.homeArm,0,k,new THREE.MeshStandardMaterial({map:tileTex(wide,bg,null,{n:200+hi*10+k}),roughness:0.85}));});
+  for(let k=0;k<7;k++){const top=new THREE.MeshStandardMaterial({map:tileTex(wide,bg,null,{n:200+hi*10+k}),roughness:0.85});
+    passageTiles.push({tile:addTile(h.homeArm,0,k,top),own:top,alt:null,wide,n:200+hi*10+k});}});
 
 /* Centre */
 const CI=CH-T;
@@ -1191,7 +1269,8 @@ HOUSES.forEach((H,hi)=>{const[dx,dz]=H.goalDir;const sh=new THREE.Shape();
   const spanX=maxX-minX||1,spanZ=maxZ-minZ||1;
   for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)-minX)/spanX,(pos.getZ(i)-minZ)/spanZ);
   const wedge=liveCanvas(512,512,(g,w,h)=>{g.fillStyle=H.css;g.fillRect(0,0,w,h);paintSoftGrain(g,w,h,400+hi);});
-  const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.75,map:wedge,side:THREE.DoubleSide}));m.position.y=0.125;m.receiveShadow=true;board.add(m);});
+  const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.75,map:wedge,side:THREE.DoubleSide}));m.position.y=0.125;m.receiveShadow=true;board.add(m);
+  wedgeTiles.push({mesh:m,own:m.material,alt:null,n:400+hi,hi});});
 
 const chest=new THREE.Group();chest.position.set(0,0.36,0);chest.scale.setScalar(1.12);board.add(chest);
 const chestWood=new THREE.MeshStandardMaterial({color:0x7B4A26,map:woodTex,roughness:0.7});
@@ -1212,7 +1291,7 @@ const lidGold=M.gold.clone();lidGold.side=THREE.DoubleSide;
  const kh=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.09,0.02),M.iron);kh.position.set(0,0,0.83);lidPivot.add(kh);}
 const glow=new THREE.PointLight(0xFFC24A,0.6,4);glow.position.set(0,1.1,0.1);chest.add(glow);
 let lidTarget=-0.22;lidPivot.rotation.x=lidTarget;
-staticBox(0,0.36+0.52*1.12,0,0.62*1.12,0.52*1.12,0.42*1.12);
+const chestBodies=[staticBox(0,0.36+0.52*1.12,0,0.62*1.12,0.52*1.12,0.42*1.12)].filter(Boolean);
 
 /* ================= Castles ================= */
 /* Stylised low-poly fortress: earth plinth, curtain walls, four octagonal towers,
@@ -1220,6 +1299,9 @@ staticBox(0,0.36+0.52*1.12,0,0.62*1.12,0.52*1.12,0.42*1.12);
    and trees and boulders around the outside. */
 function yardCenter(h){const[a,b]=HOUSES[h].yard;return new THREE.Vector3(a*YC,0,b*YC);}
 const basePos=[],flags=[],towerMarks=[];
+/* Walls, towers, gatehouses and scenery. The yard under them (plinth, plaza, troop circles) stays on the board. */
+const castleProps=new THREE.Group();board.add(castleProps);
+const castleBodies=[],yards=[];
 const PL_TOP=0.24,PLAZA_Y=0.28,TD=1.8,WH=0.6,WT=0.26;
 function texRep(t,x,y){const c=t.clone();c.needsUpdate=true;c.wrapS=c.wrapT=THREE.RepeatWrapping;c.repeat.set(x,y);return c;}
 const CM={
@@ -1337,7 +1419,8 @@ HOUSES.forEach((H,hi)=>{
   const[sx,sz]=H.yard;
   // plinth
   const earth=plinthSlab(chamferShape(2.3,0.3),0.17,CM.earth,0.02,0.03);earth.castShadow=true;g.add(earth);
-  g.add(plinthSlab(chamferShape(2.26,0.3),0.04,CM.grass,0.2));   // top at PL_TOP so nothing on it floats
+  const turf=plinthSlab(chamferShape(2.26,0.3),0.04,CM.grass,0.2);g.add(turf);   // top at PL_TOP so nothing on it floats
+  yards.push({turf,flat:new THREE.MeshStandardMaterial({color:new THREE.Color(H.color).lerp(new THREE.Color(0xffffff),0.1),roughness:0.9})});
   staticBox(cp.x,PL_TOP/2,cp.z,2.33,PL_TOP/2,2.33);
   // plaza and troop circles
   const rim=new THREE.Mesh(new THREE.CylinderGeometry(1.52,1.56,0.04,48),CM.rim);rim.position.y=PL_TOP+0.015;rim.receiveShadow=true;g.add(rim);
@@ -1350,20 +1433,25 @@ HOUSES.forEach((H,hi)=>{
     const pad=new THREE.Mesh(new THREE.CircleGeometry(0.4,40),new THREE.MeshStandardMaterial({color:0xC2AC84,map:stoneTex,roughness:0.95}));pad.rotation.x=-Math.PI/2;pad.position.set(x,PLAZA_Y+0.001,z);pad.receiveShadow=true;g.add(pad);
     basePos[hi].push(new THREE.Vector3(cp.x+x,PLAZA_Y,cp.z+z));
   });
+  /* A Conquest army outgrows the four pads. Extra troops stand in a cross between them, then along the plaza's edge. */
+  [[0,0],[0,-0.58],[0,0.58],[-0.58,0],[0.58,0],[0,-1.16],[0,1.16],[-1.16,0],[1.16,0],[-1.18,-0.62],[1.18,0.62],[1.18,-0.62]].forEach(([x,z])=>basePos[hi].push(new THREE.Vector3(cp.x+x,PLAZA_Y,cp.z+z)));
   // gatehouse faces the kingdom's gate square (on the side toward its own arm)
   const zSide=(hi===0||hi===2);
   const n=zSide?[0,-sz]:[-sx,0];
   const lx=zSide?-sx*T:n[0]*TD, lz=zSide?n[1]*TD:-sz*T;
   // curtain walls (the one carrying the gatehouse leaves out its merlons there)
+  const pg=new THREE.Group();pg.position.copy(cp);castleProps.add(pg);
+  bodyBin=castleBodies;
   const len=2*TD-0.62;
   const gateOn=(wx,wz)=>(zSide?wz===n[1]*TD:wx===n[0]*TD)?(zSide?lx:lz):undefined;
-  buildWall(g,0,-TD,true,len,gateOn(0,-TD));buildWall(g,0,TD,true,len,gateOn(0,TD));
-  buildWall(g,-TD,0,false,len,gateOn(-TD,0));buildWall(g,TD,0,false,len,gateOn(TD,0));
+  buildWall(pg,0,-TD,true,len,gateOn(0,-TD));buildWall(pg,0,TD,true,len,gateOn(0,TD));
+  buildWall(pg,-TD,0,false,len,gateOn(-TD,0));buildWall(pg,TD,0,false,len,gateOn(TD,0));
   // towers
   const roofMat=new THREE.MeshStandardMaterial({color:H.color,roughness:0.55,flatShading:true});
   const flagMat=new THREE.MeshStandardMaterial({color:H.color,side:THREE.DoubleSide,roughness:0.8});
-  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b],k)=>{buildTower(g,a*TD,b*TD,roofMat,flagMat,hi,k);towerMarks.push({x:cp.x+a*TD,z:cp.z+b*TD,castleX:cp.x,castleZ:cp.z});});
-  buildGatehouse(g,lx,lz,Math.atan2(n[0],n[1]),hi);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b],k)=>{buildTower(pg,a*TD,b*TD,roofMat,flagMat,hi,k);towerMarks.push({x:cp.x+a*TD,z:cp.z+b*TD,castleX:cp.x,castleZ:cp.z});});
+  buildGatehouse(pg,lx,lz,Math.atan2(n[0],n[1]),hi);
+  bodyBin=null;
   // scenery: trees, bushes and boulders in the strip outside the walls
   const rnd=seeded(hi+3);
   const edges=[[0,-1],[0,1],[-1,0],[1,0]];
@@ -1383,12 +1471,13 @@ HOUSES.forEach((H,hi)=>{
   });
   // (the plinth corners are taken up by the tower feet, so no corner scenery)
 });
-Object.values(INST).forEach(o=>{const im=new THREE.InstancedMesh(o.geo,o.mat,o.list.length);o.list.forEach((m,i)=>im.setMatrixAt(i,m));im.castShadow=o.shadow;im.receiveShadow=true;board.add(im);});
+Object.values(INST).forEach(o=>{const im=new THREE.InstancedMesh(o.geo,o.mat,o.list.length);o.list.forEach((m,i)=>im.setMatrixAt(i,m));im.castShadow=o.shadow;im.receiveShadow=true;castleProps.add(im);});
 
 /* Ruins of Corhaven: a white rubble mound under the chest, broken tower stumps on the
    diagonals (clear of the troops' finishing spots) and low crumbled wall fragments.
    The Heartfire Rising sinks this group so the stumps stay inside the cone. */
 let ruinsGroup=null;
+const ruinBodies=[];
 const RUIN_TOP=0.36;
 const RM={
   marble:new THREE.MeshStandardMaterial({color:0xEEEAE0,map:texRep(wallTex,2,1),roughness:0.85}),
@@ -1397,6 +1486,7 @@ const RM={
   moss:new THREE.MeshStandardMaterial({color:0x6F9A34,roughness:1,flatShading:true}),
 };
 {
+  bodyBin=ruinBodies;
   const rr=seeded(77);
   const ruins=new THREE.Group();ruinsGroup=ruins;board.add(ruins);
   const put=(geo,mat,x,y,z,rx,ry,rz,shadow=true)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx||0,ry||0,rz||0);m.castShadow=shadow;m.receiveShadow=true;ruins.add(m);return m;};
@@ -1450,6 +1540,64 @@ const RM={
   put(new THREE.BoxGeometry(0.17,0.08,0.17),RM.marble2,1.62,0.165,0.92,0,0.2,0);
   // a little ivy on the mound
   for(let i=0;i<6;i++){const a=rr()*6.3;put(new THREE.IcosahedronGeometry(0.06,0),RM.moss,Math.cos(a)*0.93,0.2,Math.sin(a)*0.93,0,0,0,false).scale.set(1.2,0.5,1.2);}
+  bodyBin=null;
+}
+
+/* Conquest has no treasure to reach. The kingdoms' flags fly from a stone dais in the
+   middle instead, one for each kingdom in the match, all streaming the same way so they
+   read from the camera. A fallen kingdom's flag comes down its pole. */
+const warFlags=new THREE.Group();warFlags.visible=false;board.add(warFlags);
+const warPoles=[],flagBodies=[];
+{
+  const DAIS_TOP=0.36;
+  const stone=new THREE.MeshStandardMaterial({color:0x9C9891,map:stoneTex,roughness:0.92});
+  [[0.9,0.97,0.18,0.2],[0.76,0.82,0.3,0.5]].forEach(([rt,rb,y,ry])=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,0.12,10),stone);m.position.y=y;m.rotation.y=ry;m.castShadow=true;m.receiveShadow=true;warFlags.add(m);});
+  const poleGeo=new THREE.CylinderGeometry(0.022,0.03,1,8),footGeo=new THREE.CylinderGeometry(0.07,0.09,0.06,8);
+  HOUSES.forEach((H,hi)=>{
+    const[dx,dz]=H.goalDir;
+    const tall=1.85-dz*0.45;   // the pole furthest from the camera is the tallest, so no flag hides another
+    const g=new THREE.Group();g.position.set(dx*0.5,DAIS_TOP,dz*0.5);warFlags.add(g);
+    const foot=new THREE.Mesh(footGeo,M.iron);foot.position.y=0.03;g.add(foot);
+    const pole=new THREE.Mesh(poleGeo,M.darkWood);pole.scale.y=tall;pole.position.y=tall/2;pole.castShadow=true;g.add(pole);
+    const knob=new THREE.Mesh(towerParts.knob,M.gold);knob.position.y=tall+0.02;g.add(knob);
+    const fg=new THREE.PlaneGeometry(0.9,0.56,12,3);fg.translate(0.45,0,0);
+    const cloth=new THREE.Mesh(fg,new THREE.MeshStandardMaterial({color:H.color,emissive:H.color,emissiveIntensity:0.22,side:THREE.DoubleSide,roughness:0.8}));
+    const top=tall-0.34,low=0.36;cloth.position.set(0.02,top,0);cloth.castShadow=true;g.add(cloth);
+    flags.push({geo:fg,orig:fg.attributes.position.array.slice(),phase:hi*1.7+3});
+    warPoles.push({h:hi,group:g,cloth,top,low});
+  });
+  // stands in for the chest's glow, so the middle of the board is lit the same and the scene keeps its light count
+  const lamp=new THREE.PointLight(0xFFE2B0,0.7,5);lamp.position.set(0,1.5,0.9);warFlags.add(lamp);
+  // one body around the cluster keeps the dice out of the poles
+  bodyBin=flagBodies;staticCyl(0,0.8,0,0.82,1.6);bodyBin=null;
+  setBodies(flagBodies,false);
+}
+
+/* ================= Board looks =================
+   Normal and Crucible play on the full Corhaven board. Classic is a plain Parchís board:
+   no castles, chest or ruins, and each keep is a flat yard in its kingdom's color.
+   Conquest keeps the castles, turns the vault and the sealed passages grey, and flies the
+   flags where the chest stood. Both mark shrines with a star instead of the shrine mark. */
+const GREY_SHRINE='#857A6E',GREY_PASSAGE='#8F8B84',GREY_WEDGE=['#7B7771','#8A867F'];
+let boardLook='normal';
+const lookOf=mode=>mode==='classic'||mode==='conquest'?mode:'normal';
+function applyBoardLook(mode){
+  const look=lookOf(mode);if(look===boardLook)return;boardLook=look;
+  const classic=look==='classic',conq=look==='conquest',plain=classic||conq;
+  castleProps.visible=!classic;setBodies(castleBodies,!classic);
+  yards.forEach(y=>{y.turf.material=classic?y.flat:CM.grass;});
+  chest.visible=!plain;setBodies(chestBodies,!plain);
+  ruinsGroup.visible=!plain;setBodies(ruinBodies,!plain);
+  warFlags.visible=conq;setBodies(flagBodies,conq);
+  shrineTiles.forEach(t=>{
+    if(plain&&!t.alt)t.alt=new THREE.MeshStandardMaterial({map:tileTex(t.wide,GREY_SHRINE,null,{n:t.n,star:true,starFill:'rgba(246,227,168,.9)'}),roughness:0.88});
+    t.tile.material[2]=plain?t.alt:t.own;});
+  passageTiles.forEach(t=>{
+    if(conq&&!t.alt)t.alt=new THREE.MeshStandardMaterial({map:tileTex(t.wide,GREY_PASSAGE,null,{n:t.n}),roughness:0.85});
+    t.tile.material[2]=conq?t.alt:t.own;});
+  wedgeTiles.forEach(t=>{
+    if(conq&&!t.alt)t.alt=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.75,side:THREE.DoubleSide,map:liveCanvas(512,512,(g,w,h)=>{g.fillStyle=GREY_WEDGE[t.hi%2];g.fillRect(0,0,w,h);paintSoftGrain(g,w,h,t.n);})});
+    t.mesh.material=conq?t.alt:t.own;});
 }
 
 /* Torches */
@@ -1505,7 +1653,17 @@ function makePiece(h){
   const ghost=new THREE.Mesh(pawnGeo,new THREE.MeshBasicMaterial({color:HOUSES[h].color,transparent:true,opacity:0.32,depthTest:false,depthWrite:false,fog:false}));
   ghost.renderOrder=24;ghost.visible=false;inner.add(ghost);
   grp.renderOrder=12;
-  grp.userData={inner,ring,mat,beacon,ghost};return grp;
+  grp.userData={inner,ring,mat,beacon,ghost,band,plume};return grp;
+}
+/* Conquest: a troop takes its kingdom's color. One that changed sides keeps a band and plume in the color it first marched under. */
+const originMats={};
+function originMat(h){return originMats[h]||(originMats[h]=new THREE.MeshStandardMaterial({color:HOUSES[h].color,roughness:0.45,metalness:0.25}));}
+function skinPiece(pc){
+  const u=pc.mesh.userData,col=HOUSES[pc.h].color;
+  u.mat.color.setHex(col);u.beacon.material.color.setHex(col);u.ghost.material.color.setHex(col);
+  const turned=pc.o!=null&&pc.o!==pc.h,trim=turned?originMat(pc.o):M.gold;
+  u.band.material=trim;u.plume.material=trim;
+  u.band.scale.set(1,1,turned?1.9:1);
 }
 /* destination markers. Touch screens get a wider ring: it is a tap target, not just a hint. */
 const coarse=!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
@@ -1950,8 +2108,28 @@ function trackPos(ti){const[a,l,k]=TRACK[ti];const[x,z]=anchorXZ(a,l,k);return n
 function posOf(pc){return pc.at!=null?trackPos(pc.at):cellPos(pc.h,pc.p,pc.idx);}
 function resultPos(pc,r){return r.at!=null?trackPos(r.at):cellPos(pc.h,r.np,pc.idx);}
 function fateHands(){return S.fate?S.fate.hands:null;}
-function moveResult(pc,v){return R.moveResult(allPieces(),pc,v,S.world,fateHands());}
-function options(){const pl=curP();if(!pl)return[];return R.options(allPieces(),pl.h,S.pending,S.world,fateHands());}
+/* Conquest changes how troops move and capture, so the rules take it in place of a world. */
+const conquest=()=>S.mode==='conquest';
+const rulesWorld=()=>conquest()?R.CONQUEST:S.world;
+function moveResult(pc,v){return R.moveResult(allPieces(),pc,v,rulesWorld(),fateHands());}
+function options(){const pl=curP();if(!pl)return[];return R.options(allPieces(),pl.h,S.pending,rulesWorld(),fateHands());}
+/* A troop that changed kingdoms moves to its new army and takes its colors. */
+function rehome(pc){
+  S.players.forEach(pl=>{const i=pl.pieces.indexOf(pc);if(i>=0)pl.pieces.splice(i,1);});
+  const pl=playerOfH(pc.h);
+  if(pl){pl.pieces.push(pc);pl.pieces.sort((a,b)=>a.idx-b.idx);}
+  skinPiece(pc);
+}
+async function announceFall(h,by,n){
+  const pl=playerOfH(h);if(pl)pl.fallen=true;
+  if(!S.fallen.includes(h))S.fallen.push(h);
+  sfx.bad();
+  toast(...COPY.fall(HOUSES[h].short,HOUSES[by].short,n),h,3400);
+  noteHint(...COPY.fallHint,by,'fall');
+  renderTally();
+  await settleAll(520);
+  await wait(900);
+}
 function onShrine(pc){
   if(!pc||pc.p<0||pc.p>LAST)return false;
   const ti=R.trackIndex(pc.h,pc.p);
@@ -2001,7 +2179,7 @@ function applyKept(h,offer,choice){
   return result.instant||true;
 }
 async function offerFateLocal(pc,gid){
-  if(!fateView||S.lesson||!pc)return false;
+  if(!fateView||S.lesson||S.noFate||!pc)return false;
   const h=pc.h;
   const fate=ensureFate();
   const held=fate.hands[h]||[];
@@ -2073,7 +2251,7 @@ async function finishReroll(pl,a,b,gid,plan){
   if(gid!==S.gid||!pl)return;
   const st=diceStatsOf();
   if(plan&&plan.assisted)st.assisted++;
-  R.noteFinish(allPieces(),pl.h,S.world,pl,a,b,fateHands());
+  R.noteFinish(allPieces(),pl.h,rulesWorld(),pl,a,b,fateHands());
   S.dbl=a===b;
   if(S.dbl){S.doubles++;st.doubles=(st.doubles||0)+1;}
   if(S.dbl&&S.doubles===3){
@@ -2101,7 +2279,7 @@ async function doReroll(){
   if(gid!==S.gid)return;
   if(S.dbl){S.doubles=Math.max(0,S.doubles-1);const st=diceStatsOf();st.doubles=Math.max(0,(st.doubles||0)-1);S.dbl=false;}
   S.phase='rolling';renderTurn();
-  const plan=R.adaptRoll(allPieces(),pl.h,S.world,pl,S.players,Math.random,S.adapt,fateHands());
+  const plan=R.adaptRoll(allPieces(),pl.h,rulesWorld(),pl,S.players,Math.random,S.adapt,fateHands());
   const forced=plan.vals||undefined;
   const[a,b]=pl.cpu&&!xrActive?await cpuRollDice(pl,forced):await throwDice(pl.h,forced);
   if(gid!==S.gid)return;
@@ -2322,13 +2500,20 @@ const COPY={
     n>1?(kingdoms.length>1?`${by} captured ${kingdoms.join(' and ')} troops`:`${by} captured two ${kingdoms[0]} troops`):`${by} captured ${aOrAn(kingdoms[0])} troop`,
     `${n>1?'They go':'It goes'} back to the keep. ${by} gets a bonus move of ${bonus}.`],
   captureHint:bonus=>['Capture',`Land exactly on a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of ${bonus} squares for any troop that can use it.`],
+  conquer:(by,kingdoms,n,bonus)=>[
+    n>1?(kingdoms.length>1?`${by} captured ${kingdoms.join(' and ')} troops`:`${by} captured two ${kingdoms[0]} troops`):`${by} captured ${aOrAn(kingdoms[0])} troop`,
+    `${n>1?'They join':'It joins'} ${by}'s keep. ${by} gets a bonus move of ${bonus}${n>1?' for each':''}.`],
+  makeWayHint:['Gate','Conquest has no phalanxes. When a troop leaves your keep and another of your troops is on the gate, the troop on the gate moves one square ahead. Enemy troops on that square are captured.'],
+  conquerHint:bonus=>['Capture',`In Conquest, a captured troop joins your keep and marches for you. Landing on a square captures every enemy troop there, and each one earns a bonus move of ${bonus} squares.`],
+  fall:(kingdom,by,n)=>[`${kingdom} has fallen`,`${by} captured the last of its original troops.`+(n?` ${n===1?'Its last troop now marches':'Its '+n+' remaining troops now march'} for ${by}.`:'')],
+  fallHint:['Fallen kingdoms','A kingdom falls when it holds none of its four original troops. A troop that changed sides wears a band in its first kingdom\'s color, so you can tell which troops still count.'],
   unbroken:['The Unbroken','The card protected the troop, so it stays on its square.'],
   wanderer:['The Wanderer','The troop on the shrine moved to a random empty square on its road.'],
   vault:(kingdom,bonus)=>['Vault reached',`${aOrAn(kingdom).replace(/^a/,'A')} troop reached the vault. Bonus move of ${bonus}.`],
   vaultHint:bonus=>['The vault',`A troop needs an exact roll to enter the vault, and each one that arrives earns a bonus move of ${bonus}. Get all four troops into your vault to win.`],
   shrine:['Shrine','Troops on a shrine can\'t be captured, so troops of different kingdoms can share it.'],
   shrineHint:['Shrine','Shrines are the grey squares with the shrine mark. Troops there can\'t be captured. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.'],
-  shrineSafeHint:['Shrine','Shrines are the grey squares with the shrine mark. Troops there can\'t be captured, so troops of different kingdoms can share one.'],
+  get shrineSafeHint(){return['Shrine',`Shrines are the grey squares with ${lookOf(S.mode)==='normal'?'the shrine mark':'a star'}. Troops there can't be captured, so troops of different kingdoms can share one.`];},
   phalanx:kingdom=>['Phalanx formed',`Two ${kingdom} troops share a square. No troop can pass through or land there.`],
   phalanxHint:['Phalanx','Two troops of the same kingdom on one square form a phalanx. No troop can pass through it or land on it, including your own.'],
   thirdDouble:who=>['Third double',`${who==='You'?'Your':who+'\'s'} furthest troop goes back to the keep, and the turn ends.`],
@@ -2440,6 +2625,7 @@ function labelsFor(pl){return{name:pl.name||HOUSES[pl.h].name,sub:pl.name?HOUSES
 function orderWords(a,b){return a===b?`double ${a}s, ${a+b} in all`:`${a} and ${b}, ${a+b} in all`;}
 /* The order keeps its total beside every seat. A march shows the two faces beside the other players only. */
 function seatRoll(pl){
+  if(pl.fallen)return' · Fallen';
   if(pl.rank)return' · '+['','1st','2nd','3rd','4th'][pl.rank]+' place';
   if(pl.place)return' · '+['','1st','2nd','3rd','4th'][pl.place];
   if(S.ordering&&pl.orderRoll)return' · '+pl.orderRoll;
@@ -2460,7 +2646,19 @@ function announceRoll(pl,a,b,kind,auto){
   say((auto?`Time ran out, so the dice were rolled for ${shortName(pl)}. `:'')+`${who} rolled ${words}.`);
 }
 function blessed(pl){return !!(pl&&S.world&&R.worldBlessing(S.world)===pl.h);}
-function coinsFor(pl,el){el.innerHTML='';pl.pieces.forEach(pc=>{const c=document.createElement('span');c.className='coin'+(pc.p===GOAL?' on':'');el.appendChild(c);});el.title=`${pl.pieces.filter(p=>p.p===GOAL).length} of 4 troops at the vault`;}
+/* The pips beside a name: troops in the vault, or in Conquest the original troops a kingdom still holds. */
+function coinStates(pl){
+  if(conquest()){const held=pl.pieces.filter(pc=>pc.o===pl.h).length;return[0,1,2,3].map(i=>i<held);}
+  return pl.pieces.map(pc=>pc.p===GOAL);
+}
+function coinsFor(pl,el){
+  const on=coinStates(pl),n=pl.pieces.length;
+  el.innerHTML='';on.forEach(lit=>{const c=document.createElement('span');c.className='coin'+(lit?' on':'');el.appendChild(c);});
+  if(!conquest()){el.title=`${on.filter(Boolean).length} of 4 troops at the vault`;return;}
+  /* Conquest: the pips are the original troops still held, and the number is the whole army. */
+  el.title=`Holds ${on.filter(Boolean).length} of its 4 original troops`;
+  if(n&&!pl.fallen&&!pl.out){const a=document.createElement('span');a.className='army';a.textContent=`${n} ${n===1?'troop':'troops'}`;el.appendChild(a);}
+}
 function renderTally(){
   const me=meP(),live=S.phase!=='over';
   $('meCard').hidden=!me;
@@ -2474,7 +2672,7 @@ function renderTally(){
   ui.tally.innerHTML='';
   S.players.forEach((pl,i)=>{if(pl===me)return;
     const L=labelsFor(pl),cur=i===S.cur&&live&&!pl.out;
-    const li=document.createElement('li');li.className=(cur?'cur':'')+(pl.out?' out':'');
+    const li=document.createElement('li');li.className=(cur?'cur':'')+(pl.out||pl.fallen?' out':'');
     const slot=document.createElement('span');slot.className='avslot'+(blessed(pl)?' blessed':'');
     const av=document.createElement('span');av.className='av'+(cur?' cur':'');av.style.setProperty('--c',HOUSES[pl.h].css);
     const crest=document.createElement('span');crest.className='crest';av.appendChild(crest);slot.appendChild(av);li.appendChild(slot);
@@ -2484,7 +2682,7 @@ function renderTally(){
     const cs=document.createElement('span');cs.className='coins';coinsFor(pl,cs);who.appendChild(cs);
     if(pl.away&&!pl.out){const a=document.createElement('span');a.className='away';a.dataset.awaySince=pl.awaySince;sm.appendChild(a);}
     li.appendChild(who);
-    li.title=pl.out?`${displayName(pl)} left the match`:displayName(pl);
+    li.title=pl.out?`${displayName(pl)} left the match`:pl.fallen?`${displayName(pl)} has fallen`:displayName(pl);
     ui.tally.appendChild(li);});
   if(NET.on)paintClock();
 }
@@ -2504,7 +2702,7 @@ function showTurnMark(){
   if(!pl||S.phase==='over'||S.phase==='idle'||pl.out){turnMark.visible=false;turnBob.h=-1;return;}
   if(pl.h!==turnBob.h){
     turnBob.h=pl.h;turnArrow.material.color.setHex(HOUSES[pl.h].color);
-    const c=yardCenter(pl.h);turnBob.base.set(c.x,2.2,c.z);turnMark.position.copy(turnBob.base);
+    const c=yardCenter(pl.h);turnBob.base.set(c.x,lookOf(S.mode)==='classic'?1.7:2.2,c.z);turnMark.position.copy(turnBob.base);
   }
   turnMark.visible=true;
 }
@@ -2710,12 +2908,12 @@ function dropMotion(){
   if(fateView)fateView.reset();
   shownHand='';
 }
-function createPiece(h,idx){const mesh=makePiece(h);mesh.position.copy(basePos[h][idx]);mesh.rotation.y=Math.atan2(-basePos[h][idx].x,-basePos[h][idx].z);board.add(mesh);pieceMeshes.push(mesh);const pc={h,idx,p:-1,mesh};mesh.userData.piece=pc;return pc;}
+function createPiece(h,idx,o){const mesh=makePiece(h);mesh.position.copy(basePos[h][idx]);mesh.rotation.y=Math.atan2(-basePos[h][idx].x,-basePos[h][idx].z);board.add(mesh);pieceMeshes.push(mesh);const pc={h,idx,p:-1,mesh};if(o!=null){pc.o=o;if(o!==h)skinPiece(pc);}mesh.userData.piece=pc;return pc;}
 function removePiece(pc){board.remove(pc.mesh);const i=pieceMeshes.indexOf(pc.mesh);if(i>=0)pieceMeshes.splice(i,1);}
 function resetBoard(){
   stopOneShots();ensureTheme();
   diceArmed=false;S.gid++;dropMotion();clearPieces();
-  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.orderAnnounced=false;S.phase='idle';S.world=null;S.worlds=0;S.noWorlds=false;S.ranked=false;S.places=[];S.hintFirst={};S.lessonPick=false;S.lessonArrow=null;lidTarget=-0.22;
+  S.players=[];S.cur=0;S.pending=[];S.sel=0;S.dbl=false;S.doubles=0;S.ordering=false;S.orderAnnounced=false;S.phase='idle';S.world=null;S.worlds=0;S.noWorlds=false;S.noFate=false;S.mode='normal';S.ranked=false;S.places=[];S.fallen=[];S.hintFirst={};S.lessonPick=false;S.lessonArrow=null;lidTarget=-0.22;
   S.fate=null;S.canReroll=false;S.decreeRes=null;
   localMe=-1;S.lesson=false;$('meCard').hidden=true;ui.tally.innerHTML='';ui.roll.hidden=true;hideToast();hideHint();closeModal('lesson');document.body.classList.remove('at-lesson');
   if(siege)siege.stop();
@@ -2723,9 +2921,9 @@ function resetBoard(){
 }
 function newGame(config){
   setMatchView(true);
-  resetBoard();S.config=config;S.noWorlds=!setupWorlds;S.ranked=setupRanked;S.hintFirst={};
+  resetBoard();S.config=config;S.mode=selectedModeId;S.noWorlds=!setupWorlds;S.noFate=!setupFate;S.ranked=setupRanked;S.hintFirst={};
   S.diceStats={turns:0,noMoves:0,assisted:0,t0:Date.now(),doubles:0,greed:0,rounds:0,playerTurns:0,worldPicks:{}};
-  S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx))}));
+  S.players=config.map(({h,cpu})=>({h,cpu,dry:0,finishMiss:0,pieces:[0,1,2,3].map(idx=>createPiece(h,idx,conquest()?h:null))}));
   ensureFate();
   metricsStart();
   decideOrder();
@@ -2792,7 +2990,7 @@ async function beginTurn(again){
   if(guardMatchHour())return;
   if(noHumanLeft()){showTitle();return;}
   const pl=curP();if(!pl)return;
-  if(pl.out||pl.rank){nextTurn();return;}
+  if(pl.out||pl.rank||pl.fallen){nextTurn();return;}
   const gid=S.gid;
   if(!again){
     S.doubles=0;bumpStat('playerTurns');
@@ -2828,7 +3026,7 @@ async function finishRoll(pl,a,b,gid,plan){
   const st=diceStatsOf();
   st.turns++;
   if(plan&&plan.assisted)st.assisted++;
-  R.noteFinish(allPieces(),pl.h,S.world,pl,a,b,fateHands());
+  R.noteFinish(allPieces(),pl.h,rulesWorld(),pl,a,b,fateHands());
   S.dbl=a===b;if(S.dbl){S.doubles++;st.doubles++;}
   if(S.dbl&&S.doubles===3){
     st.greed++;
@@ -2858,7 +3056,7 @@ async function doRoll(){
   if(motionRoll)return;
   const gid=S.gid;const pl=curP();
   S.phase='rolling';renderTurn();say('');
-  const plan=R.adaptRoll(allPieces(),pl.h,S.world,pl,S.players,Math.random,S.adapt,fateHands());
+  const plan=R.adaptRoll(allPieces(),pl.h,rulesWorld(),pl,S.players,Math.random,S.adapt,fateHands());
   const forced=plan.vals||undefined;
   const[a,b]=pl.cpu&&!xrActive?await cpuRollDice(pl,forced):await throwDice(pl.h,forced);
   if(gid!==S.gid)return;
@@ -2888,15 +3086,15 @@ async function continueTurn(){
   }
   if(chance&&!pl.cpu){S.phase='choose';refreshChoice();return;}
   if(chance&&pl.cpu)S.canReroll=false;
-  if(S.dbl){const open=R.phalanxDouble(allPieces(),pl.h,S.pending,S.world,fateHands());if(open){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(open);}}
+  if(S.dbl){const open=R.phalanxDouble(allPieces(),pl.h,S.pending,rulesWorld(),fateHands());if(open){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(open);}}
   if(pl.cpu){
     if(fateView&&fateView.dealing())fateView.reset();
     S.phase='moving';renderTurn();await wait(650);if(gid!==S.gid)return;
-    const best=R.bestOption(allPieces(),opts);
+    const best=R.bestOption(allPieces(),opts,undefined,rulesWorld());
     if(!best){endTurn();return;}
     S.sel=best.di;if(!veilHides(best.pc)){setHighlights([best.pc]);showMarkers([{pos:resultPos(best.pc,best.r),move:best}]);}renderChips();await wait(380);if(gid!==S.gid)return;
     return doMove(best);}
-  const uniq=new Set(opts.map(o=>o.v+':'+o.pc.p));
+  const uniq=new Set(opts.map(o=>o.v+':'+o.pc.p+':'+(o.pc.at!=null?o.pc.at:'')));
   if(uniq.size===1){S.phase='moving';renderTurn();await wait(420);if(gid!==S.gid)return;return doMove(opts[0]);}
   S.phase='choose';refreshChoice();
   }catch(err){
@@ -2915,7 +3113,7 @@ async function nextTurn(){
   if(noHumanLeft()){showTitle();return;}
   const gid=S.gid,from=S.cur,n=S.players.length;if(!n)return;
   let to=from;
-  for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out&&!S.players[i].rank){to=i;break;}}
+  for(let k=1;k<=n;k++){const i=(from+k)%n;if(!S.players[i].out&&!S.players[i].rank&&!S.players[i].fallen){to=i;break;}}
   if(to<=from){
     bumpStat('rounds');
     endOfRound();
@@ -2955,7 +3153,7 @@ async function nextTurn(){
 }
 /* The order places beside each name only matter until everyone has marched once. */
 function endOfRound(){S.players.forEach(pl=>{pl.place=0;});renderTally();}
-const racing=()=>S.players.filter(p=>!p.out&&!p.rank);
+const racing=()=>S.players.filter(p=>!p.out&&!p.rank&&!p.fallen);
 /* Ranked play, locally: the kingdom takes the next place, and the rest march on until one is left. */
 async function placeKingdom(pl){
   const gid=S.gid;
@@ -2983,8 +3181,9 @@ async function walkMove(pc,spec,alive){
   if(spec.exit){delete pc.at;pc.p=0;await hop(m,cellPos(pc.h,0,pc.idx),440,1.4);if(!alive())return false;sfx.step();return true;}
   const res={np:spec.to,at:spec.at,shift:spec.shift,land:spec.land};
   const steps=R.walkSpan(pc,res),dur=steps>8?95:165;
-  if(pc.at!=null){
-    let ti=pc.at;
+  /* A Conquest march never turns into the passage, so it follows the track like a troop on a foreign stone. */
+  if(pc.at!=null||conquest()){
+    let ti=pc.at!=null?pc.at:trackIndex(pc.h,pc.p);
     for(let s=0;s<steps;s++){ti=(ti+1)%NTRACK;sfx.step();await hop(m,trackPos(ti),dur,0.5);if(!alive())return false;}
     if(spec.shift&&(spec.to!==spec.land||spec.at!=null)){
       flashWay(ti);
@@ -3004,10 +3203,21 @@ async function walkMove(pc,spec,alive){
   }
   return true;
 }
+/* Conquest: troops on the gate step one square ahead before another troop leaves the keep. */
+async function makeWay(troops,alive){
+  for(const q of troops){
+    q.p=1;delete q.at;sfx.step();
+    await hop(q.mesh,posOf(q),300,0.5);
+    if(!alive())return false;
+  }
+  if(troops.length)noteHint(...COPY.makeWayHint,troops[0].h,'gate');
+  return true;
+}
 async function doMove(opt){
   const gid=S.gid;const{pc,di}=opt;const d=S.pending[di];const r=opt.r||moveResult(pc,opt.v!=null?opt.v:d.v);
   if(!r){return continueTurn();}
   S.phase='moving';d.used=true;S.canReroll=false;if(!d.bonus)R.noteDry(curP(),true);setHighlights();showMarkers([]);renderTurn();
+  if(r.push&&!await makeWay(r.push,()=>gid===S.gid))return;
   if(!await walkMove(pc,{exit:!!r.exit,shift:!!r.shift,land:r.land,to:r.np,at:r.at},()=>gid===S.gid))return;
   const goal=pc.p===GOAL;
   const resolved=R.fateResolve(ensureFate().hands,pc.h,{favor:!!opt.favor,pilgrim:!!r.pilgrim,spared:(r.spared||[]).map(o=>o.h),captures:r.captures.length,goal});
@@ -3016,10 +3226,28 @@ async function doMove(opt){
     const bonus=resolved.captureBonus;
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
-    toast(...COPY.capture(HOUSES[pc.h].short,names,r.captures.length,bonus),pc.h,null,null,true);
-    noteHint(...COPY.captureHint(bonus),pc.h,'strike');
-    await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
-    r.captures.forEach(()=>S.pending.push({v:bonus,bonus:true}));
+    if(conquest()){
+      toast(...COPY.conquer(HOUSES[pc.h].short,names,r.captures.length,bonus),pc.h,null,null,true);
+      noteHint(...COPY.conquerHint(bonus),pc.h,'strike');
+      const losers=[...new Set(r.captures.map(c=>c.h))];
+      await Promise.all(r.captures.map(o=>{R.enlist(allPieces(),o,pc.h);rehome(o);o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+      if(gid!==S.gid)return;
+      r.captures.forEach(()=>S.pending.push({v:bonus,bonus:true}));
+      for(const h of losers){
+        const lost=playerOfH(h);
+        if(h===pc.h||!lost||lost.fallen||!R.fallen(allPieces(),h))continue;
+        const troops=lost.pieces.slice();
+        R.absorb(allPieces(),h,pc.h);
+        troops.forEach(rehome);
+        await announceFall(h,pc.h,troops.length);
+        if(gid!==S.gid)return;
+      }
+    }else{
+      toast(...COPY.capture(HOUSES[pc.h].short,names,r.captures.length,bonus),pc.h,null,null,true);
+      noteHint(...COPY.captureHint(bonus),pc.h,'strike');
+      await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+      r.captures.forEach(()=>S.pending.push({v:bonus,bonus:true}));
+    }
   }
   if(r.spared&&r.spared.length)toast(...COPY.unbroken,pc.h,null,null,true);
   if(goal){const bonus=resolved.vaultBonus;R.noteVault(curP());sfx.home();S.pending.push({v:bonus,bonus:true});toast(...COPY.vault(HOUSES[pc.h].short,bonus),pc.h);noteHint(...COPY.vaultHint(bonus),pc.h,'vault');}
@@ -3039,10 +3267,11 @@ async function doMove(opt){
       noteHint(...COPY.shrineSafeHint,pc.h,'shrine');
     }
   }
-  if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
+  if(!conquest()&&pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
   await settleAll();if(gid!==S.gid)return;
   renderTally();
-  if(curP().pieces.every(p=>p.p===GOAL))return S.ranked?placeKingdom(curP()):victory(curP());
+  if(conquest()){if(racing().length<=1){S.places=[curP().h].concat(S.fallen.slice().reverse());return victory(curP());}}
+  else if(curP().pieces.every(p=>p.p===GOAL))return S.ranked?placeKingdom(curP()):victory(curP());
   const nb=S.pending.findIndex(x=>!x.used);if(nb>=0)S.sel=nb;
   shownHand='';showHand();
   continueTurn();
@@ -3078,16 +3307,18 @@ function stepBarricades(dt){
 async function victory(pl){
   const gid=S.gid;S.phase='over';S.pending=[];renderTurn();setHighlights();showMarkers([]);
   const forfeitWin=NET.on&&NET.room&&NET.room.game&&NET.room.game.winReason==='forfeit';
+  const conquestWin=!forfeitWin&&conquest();
   metricsEnd(forfeitWin?'forfeit':'vault',pl.h);
   if(!NET.on&&S.diceStats)R.lastReport=R.diceReport(S.diceStats);
-  toast(COPY.wins(pl.name||HOUSES[pl.h].name),forfeitWin?'Every other player left the match.':'All four of their troops reached the vault.',pl.h);lidTarget=-1.9;sfx.win();
+  toast(COPY.wins(pl.name||HOUSES[pl.h].name),forfeitWin?'Every other player left the match.':conquestWin?'Every other kingdom has fallen.':'All four of their troops reached the vault.',pl.h);lidTarget=-1.9;sfx.win();
   const cm=new THREE.MeshStandardMaterial({color:0xF0C04A,metalness:0.8,roughness:0.3,emissive:0x442a00});
-  for(let i=0;i<50;i++){const c=new THREE.Mesh(coinGeo,cm);c.scale.setScalar(1.3);c.position.set((Math.random()-.5)*0.6,1.0,(Math.random()-.5)*0.4);c.castShadow=true;board.add(c);
+  for(let i=0;i<(lookOf(S.mode)==='normal'?50:0);i++){const c=new THREE.Mesh(coinGeo,cm);c.scale.setScalar(1.3);c.position.set((Math.random()-.5)*0.6,1.0,(Math.random()-.5)*0.4);c.castShadow=true;board.add(c);
     const a=Math.random()*Math.PI*2,sp=1.5+Math.random()*3;coinsFx.push({m:c,v:new THREE.Vector3(Math.cos(a)*sp,4+Math.random()*4,Math.sin(a)*sp),spin:new THREE.Vector3(Math.random()*10,Math.random()*10,0),rest:false});}
   await wait(1900);if(gid!==S.gid)return;
   const you=isMine(pl)&&(NET.on||S.players.filter(p=>!p.cpu).length===1);
   $('winTitle').textContent=you?'You win':COPY.wins(pl.name||HOUSES[pl.h].name);
   $('winText').textContent=forfeitWin?(you?'Every other player left the match, so you win.':`Every other player left the match, so ${displayName(pl)} wins.`)
+    :conquestWin?(you?`Every other kingdom has fallen to ${HOUSES[pl.h].name}. The realm is yours.`:`Every other kingdom has fallen to ${NET.on?displayName(pl):HOUSES[pl.h].name}.`)
     :you?`All four of your ${HOUSES[pl.h].name} troops reached the vault first. The gold of Corhaven is yours.`
     :NET.on?`All four of ${displayName(pl)}'s ${HOUSES[pl.h].name} troops reached the vault first.`
     :`All four ${HOUSES[pl.h].name} troops reached the vault first.`;
@@ -3119,11 +3350,11 @@ function renderPlaces(){
 /* ================= Setup & navigation ================= */
 const MODES=CorhavenGameModes;
 const PROFILE=CorhavenProfile;
-let setupCount=4,setupWorlds=true,setupRanked=false;const seatCpu=[false,false,false,false];
+let setupCount=4,setupWorlds=true,setupRanked=false,setupFate=true;const seatCpu=[false,false,false,false];
 let selectedModeId=MODES.DEFAULT_ID,flowContext=null,pendingRoomOpts=null,profileContinue=null;
 let onlineStep=null,pendingPick=null,playMode='online',localStep='mode';
 try{const sv=JSON.parse(localStorage.getItem('ludo-keeps-setup')||'null');if(sv){setupCount=sv.n||4;(sv.cpu||[]).forEach((c,i)=>seatCpu[i]=!!c);if(sv.mode&&MODES.byId(sv.mode).available)selectedModeId=sv.mode;else{setupWorlds=sv.worlds!==false;setupRanked=!!sv.ranked;selectedModeId=setupRanked?'gauntlet':'normal';}}}catch(e){}
-function applySelectedModeToLocal(){const m=MODES.byId(selectedModeId);if(!m.available)return;setupWorlds=!!m.worlds;setupRanked=!!m.ranked;const lab=$('localModeLabel');if(lab)lab.textContent=m.label;}
+function applySelectedModeToLocal(){const m=MODES.byId(selectedModeId);if(!m.available)return;setupWorlds=!!m.worlds;setupRanked=!!m.ranked;setupFate=!!m.fate;const lab=$('localModeLabel');if(lab)lab.textContent=m.label;}
 function renderModeList(boxId,onPick){
   const box=$(boxId);if(!box)return;
   box.innerHTML='';
@@ -3258,9 +3489,7 @@ $('btnProfileBack').onclick=()=>{profileContinue=null;closeModal('profile');};
 $('btnTitleProfile').onclick=()=>openProfile(true);
 $('btnPlay').onclick=()=>openPlay();
 function syncPlayFoot(){
-  const local=playMode==='local';
-  const setup=local&&localStep==='setup';
-  $('btnPlayStart').hidden=!setup;
+  const setup=playMode==='local'&&localStep==='setup';
   $('btnPlayBack').textContent=setup?'Back to modes':'Back';
 }
 $('btnPlayStart').onclick=()=>beginLocal();
@@ -3896,36 +4125,27 @@ function modeSigilMarkup(id){
   if(art)return `<img class="mc-sigil-art" src="${encodeURI(art.src)}" height="${art.h}" alt="" decoding="async">`;
   return `<svg viewBox="0 0 64 64" aria-hidden="true">${MODE_SIGILS[id]||''}</svg>`;
 }
-const MODE_TINT={normal:'#DC742A',gauntlet:'#3BAC98',conquest:'#7D5E9E',classic:'#8A8570'};
+const MODE_TINT={normal:'#DC742A',gauntlet:'#3BAC98',conquest:'#7D5E9E',classic:'#7D5E9E'};
 /* Picked once per page load so a card keeps its banner when Online and Local re-render. */
 const GENERAL_BANNERS=['general-1','general-2','general-3'].sort(()=>Math.random()-.5);
 const MODE_BANNER={};
 MODES.MODES.forEach((m,i)=>{MODE_BANNER[m.id]=`url("assets/banners/${GENERAL_BANNERS[i%GENERAL_BANNERS.length]}.svg")`;});
-const MODE_CARD_TOUCH_FLIP=()=>matchMedia('(hover: none), (pointer: coarse)').matches;
 function flipModeCard(card){
-  const touch=MODE_CARD_TOUCH_FLIP();
   document.querySelectorAll('#modeCards .modecard').forEach(c=>{
-    const on=touch&&c===card;
+    const on=c===card;
     c.classList.toggle('flipped',on);
     const front=c.querySelector('.mc-front'),back=c.querySelector('.mc-back');
-    if(touch){
-      front.setAttribute('aria-expanded',String(on));
-      front.inert=on;
-      back.inert=!on;
-    }else{
-      c.classList.remove('flipped');
-      front.inert=false;
-      back.inert=false;
-      front.removeAttribute('aria-expanded');
-    }
+    front.setAttribute('aria-expanded',String(on));
+    front.inert=on;
+    back.inert=!on;
     if(!on)c.querySelector('.mc-back .err').textContent='';
   });
-  if(card&&touch)setTimeout(()=>card.querySelector('.mc-back .primary')?.focus(),60);
+  if(card)setTimeout(()=>card.querySelector('.mc-back .primary')?.focus(),60);
 }
 function renderModeCards(){
   const box=$('modeCards');box.innerHTML='';
   const local=playMode==='local';
-  MODES.MODES.forEach((m,i)=>{
+  MODES.MODES.filter(m=>!m.hidden).forEach((m,i)=>{
     const card=document.createElement('div');
     card.className='modecard'+(m.available?'':' soon');card.dataset.mode=m.id;
     card.style.setProperty('--mc',MODE_TINT[m.id]||MODE_TINT.normal);
@@ -3941,32 +4161,32 @@ function renderModeCards(){
       <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label}">
         <span class="mc-head"><span class="mc-name">${m.label}</span><span class="mc-tag">${m.tagline||''}</span></span>
         <p class="mc-desc">${m.desc}</p>
-        ${local?'<p class="roommeta">Everyone plays on this device. On the next step, choose how many players join and who controls each kingdom.</p>':''}
         <p class="err" role="alert"></p>
         <div class="mc-actions">
           <button class="primary" type="button">${local?'Continue':'Create room'}</button>
         </div>
       </div>
+      <span class="mc-ink mc-ink-front" aria-hidden="true"></span>
+      <span class="mc-ink mc-ink-back" aria-hidden="true"></span>
     </div>`;
     const front=card.querySelector('.mc-front'),back=card.querySelector('.mc-back');
-    const touchFlip=MODE_CARD_TOUCH_FLIP();
-    back.inert=touchFlip;
+    back.inert=true;
     if(m.available)card.tabIndex=0;
     if(!m.available){front.setAttribute('aria-disabled','true');front.setAttribute('aria-label',m.label+', coming soon');front.removeAttribute('aria-expanded');}
     else{
-      front.onclick=()=>{if(MODE_CARD_TOUCH_FLIP())flipModeCard(card);};
+      front.onclick=()=>flipModeCard(card);
       front.setAttribute('aria-label',m.label+'. '+m.tagline);
     }
-    back.addEventListener('click',e=>{if(MODE_CARD_TOUCH_FLIP()&&!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
+    back.addEventListener('click',e=>{if(!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
     back.querySelector('.primary').onclick=local
       ?()=>{selectedModeId=m.id;setLocalStep('setup');}
       :()=>createRoom(m.id,back.querySelector('.err'));
-    back.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODE_CARD_TOUCH_FLIP()){e.preventDefault();flipModeCard(null);front.focus();}});
-    card.addEventListener('keydown',e=>{if(e.key==='Escape'&&MODE_CARD_TOUCH_FLIP()&&card.classList.contains('flipped')){e.preventDefault();flipModeCard(null);front.focus();}});
+    back.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();flipModeCard(null);front.focus();}});
+    card.addEventListener('keydown',e=>{if(e.key==='Escape'&&card.classList.contains('flipped')){e.preventDefault();flipModeCard(null);front.focus();}});
     box.appendChild(card);
   });
 }
-$('play').addEventListener('click',e=>{if(!MODE_CARD_TOUCH_FLIP())return;if(!e.target.closest('.modecard')&&document.querySelector('#modeCards .modecard.flipped'))flipModeCard(null);});
+$('play').addEventListener('click',e=>{if(!e.target.closest('.modecard')&&document.querySelector('#modeCards .modecard.flipped'))flipModeCard(null);});
 function createRoom(modeId,errEl){
   const opts=MODES.applyToRoomOpts(modeId);
   if(!opts){errEl.textContent='That mode is not available yet.';return;}
@@ -4179,7 +4399,8 @@ function syncFromRoom(room){
   applySeats(room);
   const want=new Set(g.pieces.map(p=>p.h+':'+p.idx));
   S.players.forEach(pl=>{pl.pieces=pl.pieces.filter(pc=>{if(want.has(pc.h+':'+pc.idx))return true;removePiece(pc);return false;});});
-  g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx);pl.pieces.push(pc);}pc.p=sp.p;if(sp.at!=null)pc.at=sp.at;else delete pc.at;});
+  g.pieces.forEach(sp=>{const pl=S.players.find(p=>p.h===sp.h);if(!pl)return;let pc=pl.pieces.find(x=>x.idx===sp.idx);if(!pc){pc=createPiece(sp.h,sp.idx,sp.o);pl.pieces.push(pc);}pc.p=sp.p;if(sp.at!=null)pc.at=sp.at;else delete pc.at;
+    const o=sp.o!=null?sp.o:undefined;if(pc.o!==o){if(o===undefined)delete pc.o;else pc.o=o;skinPiece(pc);}});
   S.players.forEach(pl=>pl.pieces.sort((a,b)=>a.idx-b.idx));
   S.cur=g.cur;
   const nextPending=g.pending.map(d=>Object.assign({},d));
@@ -4203,6 +4424,8 @@ function syncFromRoom(room){
     };
   }
   S.canReroll=!!g.canReroll;
+  S.mode=g.mode||MODES.inferMode(room);S.noFate=g.fateOn===false;
+  S.fallen=(g.fallen||[]).slice();S.players.forEach(pl=>{pl.fallen=S.fallen.includes(pl.h);});
   syncPlaces(g);
 }
 function syncPlaces(g){
@@ -4498,17 +4721,27 @@ async function playEvent(e,epoch){
       S.phase='moving';const d=S.pending[e.di];if(d)d.used=true;setHighlights();showMarkers([]);renderTurn();
       if(e.auto)say(autoNote(e,`a move was made for ${nm}`).trim());
       pc.p=e.from;if(e.fromAt!=null)pc.at=e.fromAt;else delete pc.at;
+      if(e.push&&!await makeWay(e.push.map(q=>pl.pieces.find(p=>p.idx===q.idx)).filter(Boolean),()=>!gone()))return;
       if(!await walkMove(pc,{exit:!!e.exit,shift:!!e.shift,land:e.land,to:e.to,at:e.at},()=>!gone()))return;
       if(e.captures.length){
         const bonus=e.captureBonus||BONUS;
         sfx.capture();
-        const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
-        const names=[...new Set(fallen.map(c=>HOUSES[c.h].short))];
-        toast(...COPY.capture(nm,names,fallen.length,bonus),e.h,null,null,true);
-        noteHint(...COPY.captureHint(bonus),e.h,'strike');
-        await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
+        const taken=e.captures.map(c=>{const o=playerOfH(c.h);const t=o&&o.pieces.find(p=>p.idx===c.idx);return t?{t,c}:null;}).filter(Boolean);
+        const names=[...new Set(taken.map(x=>HOUSES[x.c.h].short))];
+        if(conquest()){toast(...COPY.conquer(nm,names,taken.length,bonus),e.h,null,null,true);noteHint(...COPY.conquerHint(bonus),e.h,'strike');}
+        else{toast(...COPY.capture(nm,names,taken.length,bonus),e.h,null,null,true);noteHint(...COPY.captureHint(bonus),e.h,'strike');}
+        /* In Conquest the server names the kingdom and number each captured troop answers to now. */
+        await Promise.all(taken.map(({t,c})=>{if(c.to){t.h=c.to.h;t.idx=c.to.idx;rehome(t);}t.p=-1;delete t.at;t.mesh.scale.setScalar(1);return hop(t.mesh,cellPos(t.h,-1,t.idx),700,3);}));
         if(gone())return;
-        fallen.forEach(()=>S.pending.push({v:bonus,bonus:true}));
+        taken.forEach(()=>S.pending.push({v:bonus,bonus:true}));
+        for(const f of e.falls||[]){
+          const lost=playerOfH(f.h);
+          const moved=(f.troops||[]).map(t=>{const troop=lost&&lost.pieces.find(p=>p.idx===t.from.idx);return troop?{troop,t}:null;}).filter(Boolean);
+          moved.forEach(({troop,t})=>{troop.h=t.to.h;troop.idx=t.to.idx;troop.p=t.p;if(t.at!=null)troop.at=t.at;else delete troop.at;});
+          moved.forEach(({troop})=>rehome(troop));
+          await announceFall(f.h,f.by,moved.length);
+          if(gone())return;
+        }
       }
       if(gone())return;
       if(e.spared&&e.spared.length)toast(...COPY.unbroken,e.h,null,null,true);
@@ -4516,8 +4749,12 @@ async function playEvent(e,epoch){
       dropCards(e.spent);
       await playBurns(e.spent);
       if(gone())return;
-      if(onShrine(pc)){shrineBurst(posOf(pc));noteHint(...COPY.shrineHint,e.h,'shrine');}
-      if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
+      if(onShrine(pc)){
+        shrineBurst(posOf(pc));
+        if(S.noFate){if(isMine(pl))toast(...COPY.shrine,e.h,null,null,true);noteHint(...COPY.shrineSafeHint,e.h,'shrine');}
+        else noteHint(...COPY.shrineHint,e.h,'shrine');
+      }
+      if(!conquest()&&pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();
       await wait(250);return;}
@@ -5130,6 +5367,8 @@ function loop(now,frame){
   labClipUp.set(0,1,0).transformDirection(board.matrixWorld);board.localToWorld(labClipAt.set(0,TILE_TOP-0.02,0));labClip.setFromNormalAndCoplanarPoint(labClipUp,labClipAt);
   markerGlowMat.opacity=0.62+Math.sin(time*5+1)*0.18;markerHeadMat.opacity=0.78+Math.sin(time*5+1)*0.2;markerRingMat.opacity=0.72+Math.sin(time*5+1)*0.13;
   if(tileInk){tileInk.visible=S.world==='ash';tileInk.position.y=S.world==='ash'?0.18:0;}
+  applyBoardLook(S.mode);
+  if(warFlags.visible)warPoles.forEach(w=>{const pl=S.players.find(p=>p.h===w.h);w.group.visible=!!pl;if(pl)w.cloth.position.y+=((pl.fallen?w.low:w.top)-w.cloth.position.y)*Math.min(1,dt*2.5);});
   markers.forEach(mk=>{if(!mk.visible||!mk.userData.post)return;mk.userData.post.position.y=reduced?0.16:0.18+(0.5+0.5*Math.sin(time*2.05+Math.PI+(mk.userData.phase||0)))*0.2;});
   lidPivot.rotation.x+=(lidTarget-lidPivot.rotation.x)*Math.min(1,dt*3);
   glow.intensity=(lidTarget<-1?2.2:0.55)+Math.sin(time*2)*0.12;
@@ -5282,9 +5521,9 @@ function paintViewHud(){
       g.fillStyle=active?'#E8EEF4':'#A9B6C4';
       g.font=typeFont(active?'700':'400',30,TYPE_SANS);g.textAlign='left';g.textBaseline='middle';
       g.fillText(shortName(p)+(p.cpu?' (CPU)':'')+(p.out?' (left)':'')+seatRoll(p),90,y+16);
-      p.pieces.forEach((pc,ci)=>{
+      coinStates(p).forEach((lit,ci)=>{
         g.beginPath();g.arc(W-160+ci*36,y+16,11,0,Math.PI*2);
-        g.fillStyle=pc.p===GOAL?'#D7E0E8':'rgba(0,0,0,.45)';g.fill();
+        g.fillStyle=lit?'#D7E0E8':'rgba(0,0,0,.45)';g.fill();
         g.lineWidth=2;g.strokeStyle='#9AABBC';g.stroke();
       });
       y+=70;

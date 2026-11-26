@@ -26,7 +26,8 @@ function play(room, rand, now = 1, maxSteps = 20000) {
     now += 50;
     if (g.phase === 'roll' || g.phase === 'orderRoll') assert.equal(G.playRoll(room, id, now), null);
     else if (g.phase === 'choose') {
-      const opts = R.options(g.pieces, curH(room), g.pending, g.world, g.fate && g.fate.hands);
+      /* Conquest moves by its own rules, which the server passes where a world id goes. */
+      const opts = R.options(g.pieces, curH(room), g.pending, g.mode === 'conquest' ? R.CONQUEST : g.world, g.fate && g.fate.hands);
       if (!opts.length && g.canReroll) { assert.equal(G.playReroll(room, id, now), null); continue; }
       assert.ok(opts.length, 'choose phase always has a legal move');
       const o = opts[Math.floor(rand() * opts.length)];
@@ -54,6 +55,44 @@ test('the host can set gauntlet mode and the open-room card shows it', () => {
   const card = G.lobbyCard(room);
   assert.equal(card.mode, 'gauntlet');
   assert.equal(card.modeLabel, 'Gauntlet');
+});
+
+test('classic mode plays without the Mist or Fate Cards', () => {
+  const room = lobby(2);
+  assert.equal(G.setOpts(room, ids[0], { mode: 'no-such-mode' }), null);
+  assert.equal(room.mode, 'normal');
+  assert.equal(G.setOpts(room, ids[0], { mode: 'classic' }), null);
+  assert.equal(room.mode, 'classic');
+  assert.equal(room.worlds, false);
+  assert.equal(room.ranked, false);
+  assert.equal(room.fate, false);
+  assert.equal(G.lobbyCard(room).modeLabel, 'Classic');
+  G.start(room, ids[0], 0);
+  const g = room.game;
+  assert.equal(g.fateOn, false);
+  assert.equal(G.publicView(room).game.mode, 'classic');
+  assert.equal(G.publicView(room).game.fateOn, false);
+  let now = 1;
+  while (g.ordering && now < 8000) {
+    assert.equal(G.playRoll(room, idOfH(room, curH(room)), now), null);
+    now += 80;
+  }
+  const h = curH(room);
+  const pc = g.pieces.find((p) => p.h === h && p.idx === 0);
+  pc.p = 5;
+  g.phase = 'choose';
+  g.pending = [{ v: 2 }, { v: 3, used: true }];
+  assert.equal(G.playMove(room, idOfH(room, h), pc.idx, 0, now), null);
+  assert.equal(pc.p, 7);
+  assert.ok(R.landedShrine(pc));
+  assert.notEqual(g.phase, 'fate');
+  assert.equal(g.fate.offer, null);
+  play(room, rng(13), now + 100);
+  assert.equal(room.status, 'over');
+  assert.equal(g.winReason, 'vault');
+  assert.equal(g.world, null);
+  assert.ok(g.fate.hands.every((hand) => hand.length === 0));
+  assert.ok(!room.events.some((e) => e.type === 'world' || e.type === 'fate'));
 });
 
 test('the host can hide a room and skip the March', () => {
@@ -537,4 +576,211 @@ test('landing on a shrine deals four fates, and only that seat may keep one', ()
   G.tick(room, g.deadline + 1);
   assert.notEqual(g.phase, 'fate');
   assert.ok(room.events.some((e) => e.type === 'fateKept' && e.auto));
+});
+
+/* ---------------- Conquest ---------------- */
+
+const troop = (h, idx, p, o = h) => ({ h, idx, p, o });
+
+function conquestRoom(n) {
+  const room = lobby(n);
+  assert.equal(G.setOpts(room, ids[0], { mode: 'conquest' }), null);
+  G.start(room, ids[0], 0);
+  let now = 1;
+  while (room.game.ordering && now < 8000) {
+    assert.equal(G.playRoll(room, idOfH(room, curH(room)), now), null);
+    now += 80;
+  }
+  assert.equal(room.game.ordering, false);
+  return { room, now };
+}
+
+test('conquest mode turns off the Mist and Fate Cards and marks every troop with its first kingdom', () => {
+  const room = lobby(3);
+  assert.equal(G.setOpts(room, ids[0], { mode: 'conquest' }), null);
+  assert.equal(room.mode, 'conquest');
+  assert.equal(room.worlds, false);
+  assert.equal(room.fate, false);
+  assert.equal(room.ranked, false);
+  assert.equal(G.lobbyCard(room).modeLabel, 'Conquest');
+  G.start(room, ids[0], 0);
+  const g = room.game;
+  assert.equal(g.mode, 'conquest');
+  assert.equal(g.fateOn, false);
+  assert.equal(g.pieces.length, 12);
+  g.pieces.forEach((pc) => assert.equal(pc.o, pc.h));
+  assert.deepEqual(G.publicView(room).game.fallen, []);
+});
+
+test('a conquest march passes the sealed passage and starts another lap', () => {
+  const a = troop(0, 0, 62);
+  const pieces = [a, troop(1, 0, -1)];
+  assert.equal(R.moveResult(pieces, a, 3, null, null).np, 65, 'the standard rules turn into the passage');
+  const past = R.moveResult(pieces, a, 3, R.CONQUEST, null);
+  assert.equal(past.at, 65);
+  assert.equal(R.walkSpan(a, past), 3);
+  const lap = R.moveResult(pieces, a, 6, R.CONQUEST, null);
+  assert.equal(lap.np, 0);
+  assert.equal(lap.at, undefined);
+  assert.equal(R.walkSpan(a, lap), 6);
+  const far = { h: 0, idx: 1, p: 62, at: 66, o: 0 };
+  const home = R.moveResult([far], far, 5, R.CONQUEST, null);
+  assert.equal(home.np, 3);
+  assert.equal(R.walkSpan(far, home), 5);
+  const never = [1, 2, 3, 4, 5, 6, 20].every((v) => { const r = R.moveResult(pieces, a, v, R.CONQUEST, null); return r && r.np <= R.LAST; });
+  assert.ok(never, 'no march ends in the passage or the vault');
+});
+
+test('conquest has no phalanx: a pair does not block, and both troops fall together', () => {
+  const a = troop(0, 0, 2);
+  const pair = [troop(1, 0, 0), troop(1, 1, 0)];
+  pair.forEach((pc) => { pc.at = 5; });
+  const pieces = [a, ...pair];
+  assert.equal(R.moveResult(pieces, a, 3, null, null), null, 'a phalanx cannot be landed on in the standard rules');
+  assert.equal(R.moveResult(pieces, a, 5, null, null), null, 'or passed');
+  const through = R.moveResult(pieces, a, 5, R.CONQUEST, null);
+  assert.equal(through.np, 7);
+  const strike = R.moveResult(pieces, a, 3, R.CONQUEST, null);
+  assert.equal(strike.captures.length, 2);
+  const shrine = [troop(0, 0, 4), { h: 1, idx: 0, p: 0, at: 7, o: 1 }, { h: 1, idx: 1, p: 0, at: 7, o: 1 }];
+  assert.equal(R.moveResult(shrine, shrine[0], 3, R.CONQUEST, null), null, 'a full shrine still holds only two');
+  shrine.pop();
+  assert.deepEqual(R.moveResult(shrine, shrine[0], 3, R.CONQUEST, null).captures, [], 'and a shrine is still safe');
+  const mine = [troop(0, 0, 2), troop(0, 1, 5), troop(0, 2, 5)];
+  assert.equal(R.moveResult(mine, mine[0], 3, R.CONQUEST, null), null, 'a square holds two troops');
+  assert.equal(R.phalanxDouble(mine, 0, [{ v: 4 }, { v: 4 }], R.CONQUEST, null), null);
+});
+
+test('conquest: a troop on the gate steps one square ahead when another leaves the keep', () => {
+  const onGate = troop(0, 0, 0);
+  const inKeep = troop(0, 1, -1);
+  const pieces = [onGate, inKeep, troop(1, 0, -1)];
+  assert.equal(R.moveResult(pieces, inKeep, 6, null, null).push, undefined, 'the standard rules form a phalanx on the gate');
+  assert.equal(R.moveResult(pieces, inKeep, 3, R.CONQUEST, null), null, 'leaving the keep still takes a 1 or a 6');
+  const out = R.moveResult(pieces, inKeep, 6, R.CONQUEST, null);
+  assert.equal(out.np, 0);
+  assert.deepEqual(out.push, [onGate]);
+  assert.deepEqual(out.captures, []);
+  /* The square ahead takes the troop like any landing: enemies there are captured, and it holds only two. */
+  const foe = { h: 1, idx: 1, p: 0, at: R.trackIndex(0, 1), o: 1 };
+  const strike = R.moveResult([...pieces, foe], inKeep, 1, R.CONQUEST, null);
+  assert.deepEqual(strike.captures, [foe]);
+  const full = [...pieces, troop(0, 2, 1), troop(0, 3, 1)];
+  assert.equal(R.moveResult(full, inKeep, 6, R.CONQUEST, null), null, 'no room ahead, so the troop stays in the keep');
+  const alone = [inKeep, troop(1, 0, -1)];
+  assert.equal(R.moveResult(alone, inKeep, 6, R.CONQUEST, null).push, undefined, 'an empty gate pushes nobody');
+
+  const { room, now } = conquestRoom(2);
+  const g = room.game;
+  const h = curH(room);
+  const mine = g.pieces.filter((p) => p.h === h);
+  const enemy = g.pieces.find((p) => p.h !== h);
+  mine[0].p = 0;
+  enemy.p = R.progressOn(enemy.h, R.trackIndex(h, 1));
+  g.phase = 'choose';
+  g.pending = [{ v: 6 }, { v: 2, used: true }];
+  assert.equal(G.playMove(room, idOfH(room, h), mine[1].idx, 0, now), null);
+  const ev = room.events.find((e) => e.type === 'move' && e.push);
+  assert.deepEqual(ev.push, [{ h, idx: mine[0].idx, to: 1 }]);
+  assert.equal(ev.exit, true);
+  assert.equal(ev.captures.length, 1);
+  assert.equal(enemy.h, h, 'the enemy on the square ahead was captured and changed kingdoms');
+  assert.equal(g.pieces.filter((p) => p.h === h && R.locKey(p) === 't' + R.STARTS[h]).length, 1, 'the gate holds one troop');
+  const stepped = g.pieces.filter((p) => p.h === h && R.locKey(p) === 't' + R.trackIndex(h, 1));
+  assert.ok(stepped.includes(mine[0]), 'the troop that was on the gate stands one square ahead');
+});
+
+test('a captured troop joins the captor, and a kingdom with none of its first troops falls', () => {
+  const { room, now } = conquestRoom(3);
+  const g = room.game;
+  const h = curH(room);
+  const [foe, other] = g.players.map((p) => p.h).filter((x) => x !== h);
+  const mine = g.pieces.filter((p) => p.h === h);
+  const theirs = g.pieces.filter((p) => p.h === foe);
+  /* The foe has already lost three of its first troops to the third kingdom, and holds one troop it converted. */
+  theirs.slice(1).forEach((pc, i) => { pc.h = other; pc.idx = 4 + i; });
+  const turned = g.pieces.find((p) => p.h === other && p.o === other && p.idx === 3);
+  turned.h = foe; turned.idx = 1; turned.p = -1;
+  const last = theirs[0];
+  const target = R.trackIndex(h, 9);
+  assert.ok(!R.SAFE.has(target));
+  last.p = R.progressOn(foe, target);
+  assert.notEqual(last.p, null);
+  mine[0].p = 6;
+  g.phase = 'choose';
+  g.pending = [{ v: 3 }, { v: 2, used: true }];
+  assert.equal(G.playMove(room, idOfH(room, h), mine[0].idx, 0, now), null);
+  assert.equal(last.h, h);
+  assert.equal(last.o, foe);
+  assert.equal(last.p, -1);
+  assert.equal(last.idx, 4);
+  const ev = room.events.find((e) => e.type === 'move' && e.captures.length);
+  assert.deepEqual(ev.captures[0].to, { h, idx: 4 });
+  assert.equal(ev.captureBonus, R.BONUS);
+  assert.deepEqual(g.fallen, [foe]);
+  assert.equal(ev.falls.length, 1);
+  assert.equal(ev.falls[0].h, foe);
+  assert.equal(ev.falls[0].by, h);
+  assert.deepEqual(ev.falls[0].troops[0].to, { h, idx: 5 });
+  assert.equal(turned.h, h);
+  assert.equal(turned.o, other);
+  assert.equal(g.pieces.filter((p) => p.h === foe).length, 0);
+  assert.equal(room.status, 'playing');
+  /* The fallen kingdom is skipped from now on. */
+  const before = room.seq;
+  play(room, rng(3), now + 100, 400);
+  assert.ok(room.seq > before);
+  assert.ok(!room.events.some((e) => e.type === 'turn' && e.h === foe));
+});
+
+test('a troop won back counts as one of the kingdom\'s first troops again', () => {
+  const pieces = [troop(0, 0, 5), troop(0, 4, 3, 1), troop(1, 0, -1), troop(2, 0, -1)];
+  assert.equal(R.fallen(pieces, 1), false);
+  pieces[2].h = 2; pieces[2].idx = 1;
+  assert.equal(R.fallen(pieces, 1), true);
+  assert.deepEqual(R.enlist(pieces, pieces[1], 1), { h: 1, idx: 0 });
+  assert.equal(R.fallen(pieces, 1), false);
+  const road = [troop(1, 0, 10), troop(1, 1, 62), troop(1, 2, -1), troop(0, 0, 0)];
+  road[1].at = (R.STARTS[1] + 66) % R.NTRACK;
+  const moved = R.absorb(road, 1, 0);
+  assert.equal(moved.length, 3);
+  assert.deepEqual(moved.map((m) => m.to.idx), [1, 2, 3]);
+  assert.equal(R.trackIndex(0, road[0].p), R.trackIndex(1, 10), 'a troop on the road changes banners where it stands');
+  assert.equal(R.locKey(road[1]), 't' + (R.STARTS[1] + 66) % R.NTRACK);
+  assert.equal(road[2].p, -1);
+  road.forEach((pc) => assert.equal(pc.h, 0));
+});
+
+test('a conquest match ends when one kingdom holds every troop', () => {
+  for (const [n, seed] of [[2, 4], [3, 9], [4, 2]]) {
+    const room = lobby(n);
+    G.setOpts(room, ids[0], { mode: 'conquest' });
+    G.start(room, ids[0], 0);
+    const rand = rng(seed);
+    let now = 1;
+    for (let i = 0; i < 200000 && room.status === 'playing'; i++) {
+      const g = room.game;
+      const h = curH(room);
+      now += 50;
+      if (g.phase === 'roll' || g.phase === 'orderRoll') assert.equal(G.playRoll(room, idOfH(room, h), now), null);
+      else {
+        assert.equal(g.phase, 'choose');
+        const opts = R.options(g.pieces, h, g.pending, R.CONQUEST, null);
+        const o = R.bestOption(g.pieces, opts, rand, R.CONQUEST);
+        assert.equal(G.playMove(room, idOfH(room, h), o.pc.idx, o.di, now), null);
+      }
+      const seen = new Set(g.pieces.map((pc) => pc.h + ':' + pc.idx));
+      assert.equal(seen.size, g.pieces.length, 'every troop keeps its own number');
+      assert.ok(g.pieces.every((pc) => pc.p <= R.LAST));
+    }
+    const g = room.game;
+    assert.equal(room.status, 'over');
+    assert.equal(g.winReason, 'conquest');
+    assert.equal(g.pieces.length, n * 4);
+    assert.ok(g.pieces.every((pc) => pc.h === g.winner));
+    assert.equal(g.fallen.length, n - 1);
+    assert.deepEqual(g.places, [g.winner].concat(g.fallen.slice().reverse()));
+    assert.equal(g.world, null);
+    assert.ok(g.fate.hands.every((hand) => hand.length === 0));
+  }
 });

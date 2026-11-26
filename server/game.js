@@ -51,32 +51,32 @@ function eventMs(e) {
     case 'finish': return 2600;
     case 'move': {
       const span = R.walkSpan({ h: e.h, p: e.from, at: e.fromAt }, { np: e.to, at: e.at, shift: e.shift, land: e.land, exit: e.exit });
-      return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0);
+      return 500 + (e.exit ? 440 : span * (span > 8 ? 95 : 165)) + (e.shift ? 700 : 0) + (e.captures.length ? 750 : 0) + (e.goal ? 300 : 0) + (e.push ? e.push.length * 300 : 0) + (e.falls && e.falls.length ? 2600 : 0);
     }
     default: return 0;
   }
 }
 
-const KNOWN_MODES = new Set(['normal', 'gauntlet']);
+/* Conquest changes how troops move and capture, so the rules take it in place of a world. It never has the Mist. */
+const isConquest = (g) => !!g && g.mode === 'conquest';
+const rulesWorld = (g) => (isConquest(g) ? R.CONQUEST : g.world);
 
 export function modeLabel(room) {
   return MODES.labelOf(MODES.inferMode(room));
 }
 
+/* The mode catalog decides the Mist, ranked places and Fate Cards. Modes that are not playable yet are ignored. */
 function applyMode(room, mode) {
-  if (!KNOWN_MODES.has(mode)) return;
-  room.mode = mode;
-  if (mode === 'gauntlet') {
-    room.worlds = true;
-    room.ranked = true;
-  } else {
-    room.worlds = true;
-    room.ranked = false;
-  }
+  const m = MODES.MODES.find((x) => x.id === mode);
+  if (!m || !m.available) return;
+  room.mode = m.id;
+  room.worlds = !!m.worlds;
+  room.ranked = !!m.ranked;
+  room.fate = !!m.fate;
 }
 
 export function newRoom(code, now) {
-  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true, ranked: false, mode: 'normal' };
+  return { code, v: 0, created: now, status: 'lobby', hostId: null, seats: [], seq: 0, events: [], game: null, closed: null, private: false, worlds: true, ranked: false, fate: true, mode: 'normal' };
 }
 
 export const isJoinable = (room) => room && room.status === 'lobby' && room.seats.length > 0 && room.seats.length < MAX_SEATS;
@@ -149,6 +149,7 @@ export function setOpts(room, id, msg) {
     if (typeof msg.ranked === 'boolean') room.ranked = msg.ranked;
     if (typeof msg.ranked === 'boolean' || typeof msg.worlds === 'boolean') {
       room.mode = room.ranked ? 'gauntlet' : 'normal';
+      room.fate = true;
     }
   }
   return null;
@@ -182,7 +183,7 @@ export function start(room, id, now) {
   room.status = 'playing';
   room.game = {
     players,
-    pieces: players.flatMap(({ h }) => [0, 1, 2, 3].map((idx) => ({ h, idx, p: -1 }))),
+    pieces: players.flatMap(({ h }) => [0, 1, 2, 3].map((idx) => (room.mode === 'conquest' ? { h, idx, p: -1, o: h } : { h, idx, p: -1 }))),
     phase: 'orderRoll',
     cur: 0,
     pending: [],
@@ -196,10 +197,13 @@ export function start(room, id, now) {
     winReason: null,
     world: null,
     worlds: room.worlds !== false,
+    mode: MODES.inferMode(room),
+    fateOn: room.fate !== false,
     fate: { hands: R.emptyHands(), seq: 0, turns: [0, 0, 0, 0], offer: null },
     canReroll: false,
     ranked: !!room.ranked,
     places: [],
+    fallen: [],
     diceStats: { turns: 0, noMoves: 0, assisted: 0, started: now, doubles: 0, greed: 0, rounds: 0, playerTurns: 0, worldPicks: {} },
     themeAt: now + MATCH_CUE_MS,
   };
@@ -320,8 +324,9 @@ function turnWorld(room, rounds) {
   emit(room, { type: 'world', id, change, burn });
 }
 
-const isHome = (g, h) => Array.isArray(g.places) && g.places.includes(h);
-/* Kingdoms still on the road: not forfeited, and not already placed in a ranked match. */
+/* A kingdom is done marching once it is placed in a ranked match, or has fallen in Conquest. */
+const isHome = (g, h) => (Array.isArray(g.places) && g.places.includes(h)) || (Array.isArray(g.fallen) && g.fallen.includes(h));
+/* Kingdoms still on the road: not forfeited, not placed, and not fallen. */
 const racers = (room) => room.game.players.filter((p) => !isOut(room, p.h) && !isHome(room.game, p.h));
 
 function nextTurn(room) {
@@ -368,12 +373,12 @@ function roll(room, auto) {
   if (g.phase === 'orderRoll') return orderRoll(room, auto);
   const h = curH(room);
   const pl = g.players[g.cur];
-  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
+  const plan = R.adaptRoll(g.pieces, h, rulesWorld(g), pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
   const [a, b] = plan.vals || [die(), die()];
   const d = diceStatsOf(g);
   d.turns++;
   if (plan.assisted) d.assisted++;
-  R.noteFinish(g.pieces, h, g.world, pl, a, b, handsOf(g));
+  R.noteFinish(g.pieces, h, rulesWorld(g), pl, a, b, handsOf(g));
   g.dbl = a === b;
   if (g.dbl) {
     g.doubles++;
@@ -398,7 +403,7 @@ function holdingChance(g, h) {
 function continueTurn(room) {
   const g = room.game;
   const h = curH(room);
-  const opts = R.options(g.pieces, h, g.pending, g.world, handsOf(g));
+  const opts = R.options(g.pieces, h, g.pending, rulesWorld(g), handsOf(g));
   if (holdingChance(g, h)) { g.canReroll = true; g.phase = 'choose'; return; }
   g.canReroll = false;
   if (!opts.length) {
@@ -413,10 +418,10 @@ function continueTurn(room) {
     return endTurn(room);
   }
   if (g.dbl) {
-    const open = R.phalanxDouble(g.pieces, h, g.pending, g.world, handsOf(g));
+    const open = R.phalanxDouble(g.pieces, h, g.pending, rulesWorld(g), handsOf(g));
     if (open) return applyMove(room, open, false);
   }
-  const uniq = new Set(opts.map((o) => o.v + ':' + o.pc.p));
+  const uniq = new Set(opts.map((o) => o.v + ':' + o.pc.p + ':' + (o.pc.at != null ? o.pc.at : '')));
   if (uniq.size === 1) return applyMove(room, opts[0], false);
   g.phase = 'choose';
 }
@@ -436,7 +441,7 @@ function settleFate(g, h, info) {
 
 function offerFate(room, pc) {
   const g = room.game;
-  if (!R.landedShrine(pc)) return false;
+  if (g.fateOn === false || !R.landedShrine(pc)) return false;
   const fate = fateState(g);
   const offer = R.fateOffer(fate.hands[pc.h] || [], () => randomInt(0x100000000) / 0x100000000, {
     pieces: g.pieces, h: pc.h, worldId: g.world, hands: fate.hands, mistOn: g.worlds !== false,
@@ -461,19 +466,57 @@ function applyMove(room, opt, auto) {
   if (r.at != null) pc.at = r.at;
   else delete pc.at;
   const captures = r.captures.map((o) => ({ h: o.h, idx: o.idx, from: o.p }));
+  /* Conquest: a troop on the gate steps one square ahead when another leaves the keep. */
+  const push = (r.push || []).map((o) => { o.p = 1; delete o.at; return { h: o.h, idx: o.idx, to: 1 }; });
   const spared = (r.spared || []).map((o) => ({ h: o.h, idx: o.idx }));
   const goal = pc.p === GOAL;
   const resolved = settleFate(g, pc.h, { favor: !!opt.favor, pilgrim: !!r.pilgrim, spared: spared.map((o) => o.h), captures: captures.length, goal });
-  r.captures.forEach((o) => { o.p = -1; delete o.at; g.pending.push({ v: resolved.captureBonus, bonus: true }); });
+  const conquest = isConquest(g);
+  /* In Conquest a captured troop joins the captor's keep, and a kingdom left with none of its first troops falls to the captor. */
+  r.captures.forEach((o, i) => {
+    if (conquest) captures[i].to = R.enlist(g.pieces, o, pc.h);
+    else { o.p = -1; delete o.at; }
+    g.pending.push({ v: resolved.captureBonus, bonus: true });
+  });
+  const falls = conquest ? takeFallen(room, pc.h, captures.map((c) => c.h)) : [];
   if (goal) { R.noteVault(g.players.find((p) => p.h === pc.h)); g.pending.push({ v: resolved.vaultBonus, bonus: true }); }
-  emit(room, { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, spared, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null, spent: resolved.spent, captureBonus: captures.length ? resolved.captureBonus : null, vaultBonus: goal ? resolved.vaultBonus : null });
+  const ev = { type: 'move', h: pc.h, idx: pc.idx, di, from, fromAt, to: pc.p, at: r.at != null ? r.at : null, exit: !!r.exit, captures, spared, goal, auto: !!auto, shift: !!r.shift, land: r.shift ? r.land : null, spent: resolved.spent, captureBonus: captures.length ? resolved.captureBonus : null, vaultBonus: goal ? resolved.vaultBonus : null };
+  if (push.length) ev.push = push;
+  if (falls.length) ev.falls = falls;
+  emit(room, ev);
+  if (conquest) {
+    if (racers(room).length <= 1) return win(room, pc.h, 'conquest');
+    return continueTurn(room);
+  }
   if (R.allHome(g.pieces, pc.h)) return g.ranked ? placeKingdom(room, pc.h) : win(room, pc.h, 'vault');
   if (offerFate(room, pc)) return;
   continueTurn(room);
 }
 
+/* Kingdoms that just lost a troop and now hold none of their own. Each falls to the captor, in the order given. */
+function takeFallen(room, captor, losers) {
+  const g = room.game;
+  if (!Array.isArray(g.fallen)) g.fallen = [];
+  const out = [];
+  [...new Set(losers)].forEach((h) => {
+    if (h === captor || g.fallen.includes(h) || !R.fallen(g.pieces, h)) return;
+    g.fallen.push(h);
+    out.push({ h, by: captor, troops: R.absorb(g.pieces, h, captor) });
+  });
+  return out;
+}
+
+/* Conquest standings: the conqueror, then the fallen from last to first, then anyone who left. */
+function conquestPlaces(room, winner) {
+  const g = room.game;
+  const fell = (g.fallen || []).slice().reverse();
+  const rest = g.players.map((p) => p.h).filter((h) => h !== winner && !fell.includes(h));
+  return [winner].concat(fell, rest);
+}
+
 function win(room, h, reason) {
   const g = room.game;
+  if (isConquest(g)) g.places = conquestPlaces(room, h);
   room.status = 'over';
   g.phase = 'over';
   g.pending = [];
@@ -522,7 +565,7 @@ export function playMove(room, id, idx, di, now, act) {
   if (room.status !== 'playing' || !seat || seat.out) return 'nope';
   if (repeatedAct(seat, act)) return null;
   if (curH(room) !== seat.h || g.phase !== 'choose') return 'not-your-turn';
-  const opt = R.options(g.pieces, seat.h, g.pending, g.world, handsOf(g)).find((o) => o.pc.idx === idx && o.di === di);
+  const opt = R.options(g.pieces, seat.h, g.pending, rulesWorld(g), handsOf(g)).find((o) => o.pc.idx === idx && o.di === di);
   if (!opt) return 'illegal';
   step(room, now, () => applyMove(room, opt, false));
   noteAct(seat, act);
@@ -555,7 +598,7 @@ function decreeChoices(room) {
   const h = curH(room);
   return g.pieces.filter((p) => {
     if (p.h !== h || p.p >= 0) return false;
-    const r = R.moveResult(g.pieces, p, 1, g.world, handsOf(g));
+    const r = R.moveResult(g.pieces, p, 1, rulesWorld(g), handsOf(g));
     return !!(r && r.exit);
   });
 }
@@ -589,7 +632,7 @@ function applyDecree(room, idx, auto) {
   const h = curH(room);
   const pc = g.pieces.find((p) => p.h === h && p.idx === idx);
   if (!pc) return 'illegal';
-  const r = R.moveResult(g.pieces, pc, 1, g.world, handsOf(g));
+  const r = R.moveResult(g.pieces, pc, 1, rulesWorld(g), handsOf(g));
   if (!r || !r.exit) return 'illegal';
   const from = pc.p;
   pc.p = r.np;
@@ -616,10 +659,10 @@ function reroll(room, auto) {
     stats.doubles = Math.max(0, (stats.doubles || 0) - 1);
   }
   const pl = g.players[g.cur];
-  const plan = R.adaptRoll(g.pieces, h, g.world, pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
+  const plan = R.adaptRoll(g.pieces, h, rulesWorld(g), pl, g.players, () => randomInt(0x100000000) / 0x100000000, g.adapt, handsOf(g));
   const [a, b] = plan.vals || [die(), die()];
   if (plan.assisted) diceStatsOf(g).assisted++;
-  R.noteFinish(g.pieces, h, g.world, pl, a, b, handsOf(g));
+  R.noteFinish(g.pieces, h, rulesWorld(g), pl, a, b, handsOf(g));
   g.dbl = a === b;
   if (g.dbl) {
     g.doubles++;
@@ -781,12 +824,12 @@ export function tick(room, now) {
       step(room, now, () => (choice ? acceptFate(room, choice.pick, choice.drop, true) : (g.deadline = null)));
     } else if (g.phase === 'decree') {
       const h = curH(room);
-      const troop = g.pieces.find((p) => p.h === h && p.p < 0 && R.moveResult(g.pieces, p, 1, g.world, handsOf(g)));
+      const troop = g.pieces.find((p) => p.h === h && p.p < 0 && R.moveResult(g.pieces, p, 1, rulesWorld(g), handsOf(g)));
       step(room, now, () => (troop ? applyDecree(room, troop.idx, true) : continueTurn(room)));
-    } else if (g.phase === 'choose' && g.canReroll && !R.options(g.pieces, curH(room), g.pending, g.world, handsOf(g)).length) {
+    } else if (g.phase === 'choose' && g.canReroll && !R.options(g.pieces, curH(room), g.pending, rulesWorld(g), handsOf(g)).length) {
       step(room, now, () => reroll(room, true));
     } else if (g.phase === 'choose') {
-      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending, g.world, handsOf(g)));
+      const opt = R.bestOption(g.pieces, R.options(g.pieces, curH(room), g.pending, rulesWorld(g), handsOf(g)), undefined, rulesWorld(g));
       step(room, now, () => (opt ? applyMove(room, opt, true) : continueTurn(room)));
     } else g.deadline = null;
     changed = true;
@@ -819,6 +862,7 @@ export function publicView(room) {
     private: !!room.private,
     worlds: room.worlds !== false,
     ranked: !!room.ranked,
+    fate: room.fate !== false,
     mode: room.mode || (room.ranked ? 'gauntlet' : 'normal'),
     modeLabel: modeLabel(room),
     hostPid: host ? host.pid : null,
@@ -838,10 +882,13 @@ export function publicView(room) {
       winReason: room.game.winReason,
       world: room.game.world,
       worlds: room.game.worlds !== false,
+      mode: room.game.mode || MODES.inferMode(room),
+      fateOn: room.game.fateOn !== false,
       fate: room.game.fate ? { hands: room.game.fate.hands, offer: room.game.fate.offer, turns: room.game.fate.turns, seq: room.game.fate.seq } : null,
       canReroll: !!room.game.canReroll,
       ranked: !!room.game.ranked,
       places: room.game.places || [],
+      fallen: room.game.fallen || [],
       themeAt: room.game.themeAt,
       diceStats: room.game.diceStats ? R.diceReport(room.game.diceStats) : null,
     },
