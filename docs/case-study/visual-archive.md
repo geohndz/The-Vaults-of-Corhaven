@@ -445,6 +445,32 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 06 | [2026-11-23-06-play-mode-card-flipped-desktop.png](./screenshots/2026-11-23-06-play-mode-card-flipped-desktop.png) | Play, Online, card flipped | **V1.10.0.** A mode card turns over to its room settings: Private toggle and Create room |
 | 07 | [2026-11-23-07-play-local-modes-desktop.png](./screenshots/2026-11-23-07-play-local-modes-desktop.png) | Play, Local Game, card flipped | **V1.10.0.** Local uses the same mode banners. The right column holds player count and Human/Computer per kingdom, and the flipped card shows a summary and Begin. No Back button: click the card or anywhere else to turn it back |
 | 08 | [2026-11-23-08-play-mode-general-banners-desktop.png](./screenshots/2026-11-23-08-play-mode-general-banners-desktop.png) | Play, Online, mode cards | **V1.10.1.** The mode cards use Geo's general banner art (`assets/banners/general-*.svg`) as a CSS mask, tinted per mode, in place of the clip-path shape. Each card gets one of the three at random per page load |
+| 09 | [2026-11-23-09-play-join-room-desktop.png](./screenshots/2026-11-23-09-play-join-room-desktop.png) | Play, Join Room | **V1.10.3.** Join Room is back as its own Play choice: the room code field on top and the open rooms underneath, on a black dim. The room list only connects on this view |
+| 10 | [2026-11-23-10-play-online-wide-cards-desktop.png](./screenshots/2026-11-23-10-play-online-wide-cards-desktop.png) | Play, Online | **V1.10.3.** With the room lookup gone, the four mode cards take the full width |
+| 11 | [2026-11-23-11-play-mode-card-art-desktop.png](./screenshots/2026-11-23-11-play-mode-card-art-desktop.png) | Play, Online, mode card art | **V1.10.4.** Each mode card carries Geo's painting in black and white (`assets/modes/*.jpg`) under a dark fade, so the banner stays the only color. The flipped side dims the art further for the room settings |
+| 12 | [2026-11-23-12-play-mode-cards-2x2-tablet.png](./screenshots/2026-11-23-12-play-mode-cards-2x2-tablet.png) | Play, Online, tablet (820×1180) | **V1.10.5.** Tablets join phones in a 2×2 card grid, with shorter cards so both rows fit on screen |
+
+## Session: 2026-11-25 — Begin starts the match (V1.10.6)
+
+**Trigger:** Clicking Begin on a local mode left the setup screen up, crushed into a narrow column over the board.
+
+**Environment:** Local static server (`python3 -m http.server 8765`), desktop.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 01 | [2026-11-25-01-play-local-begin-desktop.png](./screenshots/2026-11-25-01-play-local-begin-desktop.png) | Play, Local Game | **V1.10.6.** Normal and Gauntlet show Begin on the card. The setup screen closes when the match starts, instead of staying up as a collapsed grid |
+
+---
+
+## Session: 2026-11-25 — Plain board-game language (V1.10.7)
+
+**Trigger:** Content and UX writing overhaul. Lore wording ("march", "strike", "the realm", "greed") replaced with board-game terms across menus, rules, tutorial, banners, errors and Fate Cards. See [terminology reference](../terminology.md).
+
+**Environment:** Local static server (`python3 -m http.server 8765`), tablet-width pane.
+
+| # | File | Screen / component | Notes |
+|---|------|-------------------|--------|
+| 02 | [2026-11-25-02-play-mode-copy-tablet.png](./screenshots/2026-11-25-02-play-mode-copy-tablet.png) | Play, Online mode cards | **V1.10.7.** Taglines say what each mode is (Standard rules, Ranked, Elimination, Original rules), and descriptions explain the mechanics instead of the lore |
 
 ---
 

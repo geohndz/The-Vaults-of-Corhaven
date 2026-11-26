@@ -220,7 +220,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .openroom .pennant.k2{--cut:polygon(0 0,100% 0,100% 96%,84% 90%,70% 100%,56% 91%,44% 100%,30% 91%,16% 100%,0 92%)}
 .openroom .pennant.k3{--cut:polygon(0 0,100% 0,100% 90%,66% 100%,50% 88%,34% 100%,0 90%)}
 #lobbyPane[hidden]{display:none !important}
-#play:not(.local) .localseats,#play.local .openrooms{display:none}
+#play:not(.local) .localseats,#play:not(.join) .openrooms,#play.join .playmodes{display:none}
 .localseats{display:flex;flex-direction:column;gap:14px;align-self:center;min-width:0}
 #play .localseats .seg button{padding:9px 0;font-size:clamp(15px,1vw,18px)}
 #play .localseats .seat{gap:14px;padding:12px 0}
@@ -247,15 +247,21 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .playside-choices [aria-pressed="true"]{color:#0c0e12;text-shadow:none}
 #play .playside-choices [aria-pressed="true"]::before{opacity:1}
 #play #playFoot{align-items:center}
-#play .playmain{display:grid;grid-template-columns:minmax(0,1fr) clamp(280px,24vw,420px);align-content:center;align-items:start;column-gap:clamp(28px,3.6vw,72px);row-gap:40px;padding-left:clamp(16px,2vw,40px)}
-.playmodes{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vh,32px);min-width:0}
+#play .playmain{display:grid;grid-template-columns:minmax(0,1fr);align-content:center;align-items:start;column-gap:clamp(28px,3.6vw,72px);row-gap:40px;width:100%;min-width:min(100%,320px);padding-left:clamp(16px,2vw,40px)}
+#play.join .playmain{align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + clamp(48px,12vh,140px))}
+#play.join .openrooms{justify-self:center;align-self:start;width:min(720px,100%)}
+#play.join .sheet::after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.78) 30%,rgba(0,0,0,.86) 50%,rgba(0,0,0,.78) 70%,rgba(0,0,0,.2) 100%);pointer-events:none}
+#play.join .openlist{max-height:none}
+#play .openhead{margin:22px 0 0;font-family:var(--font-sans);font-weight:600;font-size:clamp(13px,.85vw,15px);line-height:1.3;letter-spacing:.14em;text-transform:uppercase;color:#E3B663}
+.playmodes{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vh,32px);width:100%;min-width:0}
 #play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
-.modecards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
+.modecards{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:clamp(10px,1.1vw,22px);width:100%;max-width:1000px;perspective:1800px}
+#play:not(.local) .modecards{max-width:1440px;gap:clamp(14px,1.4vw,28px)}
 .modecard{--mc:#356590;position:relative;min-width:0;height:clamp(380px,54vh,520px)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1)}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
-.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 30%,rgba(10,12,16,.9)) 0%,rgba(10,12,16,.9) 48%,rgba(5,6,9,.95) 100%);box-shadow:0 22px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.mc-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;margin:0;padding:0 clamp(12px,1vw,20px) clamp(16px,2.4vh,26px);border:1px solid rgba(197,208,220,.2);border-radius:3px;background:linear-gradient(180deg,rgba(8,10,14,.15) 0%,rgba(8,10,14,.38) 30%,rgba(5,6,9,.74) 56%,rgba(5,6,9,.9) 100%),var(--art,none) center/cover no-repeat,#0a0c10;box-shadow:0 22px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.07);color:var(--parch);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .mc-face::before{content:"";position:absolute;left:8px;right:8px;top:30px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#C5D0DC 12%,#F2F5F8 50%,#C5D0DC 88%,transparent);box-shadow:0 2px 4px rgba(0,0,0,.6)}
 .mc-front{cursor:pointer;font:inherit;transition:border-color .18s ease,box-shadow .18s ease}
 .mc-front:hover,.mc-front:focus-visible{border-color:color-mix(in srgb,var(--mc) 60%,#F2F5F8);box-shadow:0 22px 44px rgba(0,0,0,.6),0 0 28px color-mix(in srgb,var(--mc) 55%,transparent),inset 0 1px 0 rgba(255,255,255,.07)}
@@ -270,8 +276,10 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .mc-tag{margin-top:clamp(14px,2.4vh,26px);font-size:clamp(12px,.8vw,15px);line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#E3B663}
 .mc-name{margin-top:6px;font-family:var(--font-cinder);font-size:clamp(22px,1.7vw,32px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F8}
 .mc-desc{margin-top:clamp(10px,1.6vh,18px);font-family:var(--font-serif,var(--font-sans));font-style:italic;font-size:clamp(13px,.9vw,17px);line-height:1.45;color:var(--parch-dim)}
-.mc-soon{margin-top:auto;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dim)}
-.modecard.soon .mc-face{background:linear-gradient(180deg,rgba(24,27,32,.9),rgba(6,7,10,.94))}
+.mc-soon,.mc-begin-label{margin-top:auto;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--parch-dim)}
+.mc-begin-label{font-family:var(--font-cinder);font-size:clamp(18px,1.3vw,24px);letter-spacing:.08em;color:#F2F5F8}
+.mc-back{background:linear-gradient(180deg,rgba(5,6,9,.8),rgba(5,6,9,.93)),var(--art,none) center/cover no-repeat,#0a0c10}
+.modecard.soon .mc-face{background:linear-gradient(180deg,rgba(8,10,14,.62) 0%,rgba(5,6,9,.9) 58%,rgba(5,6,9,.96) 100%),var(--art,none) center/cover no-repeat,#0a0c10}
 .modecard.soon .mc-banner,.modecard.soon .mc-num{filter:grayscale(1) brightness(.6)}
 .modecard.soon .mc-front{cursor:default}
 .modecard.soon .mc-front:hover{border-color:rgba(197,208,220,.2);box-shadow:0 22px 44px rgba(0,0,0,.6)}
@@ -294,15 +302,18 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .openlist{display:flex;flex-direction:column;gap:4px;max-height:min(56vh,520px);overflow:auto;margin:0 -10px}
 .openlist .openempty{margin:4px 10px 0;font-size:15px}
 @media (min-width:1181px){
-  #play .sheet::after{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:clamp(380px,34vw,640px);background:linear-gradient(270deg,#000 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,0) 100%);pointer-events:none}
+  #play.local .playmain{grid-template-columns:minmax(0,1fr) minmax(240px,clamp(280px,24vw,380px))}
+  #play.local .sheet::after{content:"";position:absolute;z-index:0;inset:0 0 0 auto;width:clamp(380px,34vw,640px);background:linear-gradient(270deg,#000 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,0) 100%);pointer-events:none}
 }
 @media (max-width:1180px) and (min-width:641px){
-  #play .playmain{grid-template-columns:1fr;align-content:start}
+  #play .playmain{align-content:start}
+  .modecards,#play:not(.local) .modecards{grid-template-columns:repeat(2,minmax(140px,1fr));max-width:720px}
+  .modecard{height:clamp(340px,36vh,420px)}
   .openrooms,.localseats{align-self:stretch;max-width:560px;width:100%;justify-self:center}
 }
 @media (prefers-reduced-motion:reduce){.mc-inner{transition:none}}
 @media (min-width:641px){
-  #play .join{grid-template-columns:var(--play-side) minmax(0,1fr)}
+  #play .join{grid-template-columns:var(--play-side) minmax(min(100%,320px),1fr)}
   #play .sheet::before{width:var(--play-side)}
   #play :is(.playside-choices,#playFoot) :is(.primary,.secondary){padding-inline:clamp(36px,5vw,72px)}
 }
@@ -354,6 +365,9 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 .setupopts{display:flex;flex-direction:column;gap:14px;margin-top:18px}
 .lobbyactions,.localactions{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:38px;padding:8px 32px calc(env(safe-area-inset-bottom,0px) + 28px) calc(env(safe-area-inset-left,0px) + 32px)}
 .local{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);grid-template-rows:minmax(0,1fr) auto;width:100%;height:100%;min-height:0}
+/* #play.local marks the local mode. It must not keep the dialog on screen after close, and it must not become this older setup grid. */
+#play:not(.open){display:none}
+#play.open{display:flex}
 .localside{grid-column:1;grid-row:1;display:flex;flex-direction:column;min-height:0;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 32px) 32px 8px calc(env(safe-area-inset-left,0px) + 32px)}
 .localside h1{margin-bottom:12px}
 .localside h2,.localmain h2{margin-top:22px}
@@ -361,6 +375,8 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
 .localmain h2{margin-top:0}
 .localmain .seat{padding:14px 0}
 #lobbyErrHold .err{margin-top:0}
+.lobbystatus{margin:0;color:var(--parch-dim);font-size:15px;line-height:1.4}
+.lobbystatus:empty{display:none}
 .banner{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0;background:none;border:0;color:inherit}
 .banner .frame{position:relative;width:100%;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
 .banner .frame svg{display:block;width:100%;height:auto}
@@ -405,7 +421,9 @@ body.at-lobby #gearWrap{visibility:hidden;pointer-events:none}
   .lobbyside,.joinside{padding-bottom:28px}
   .lobbymain,.joinmain{padding-top:32px}
   #play .playmain{display:flex;flex-direction:column;align-items:stretch;gap:36px}
-  .modecards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #play.join .playmain{padding-top:32px}
+  #play.join .openrooms{width:100%}
+  .modecards{grid-template-columns:repeat(2,minmax(140px,1fr))}
   .modecard{height:440px}
   #play .mc-back :is(button.primary,button.secondary){padding:0 8px;font-size:16px}
   #play .mc-back .check{font-size:15px}
@@ -494,7 +512,7 @@ body.at-lesson #hintDock{z-index:21}
   </div>
   <div class="gatemain">
     <img class="gatelogo" src="assets/main-logo.svg" alt="The Vaults of Corhaven" width="276" height="192" decoding="async">
-    <p class="gatecopy">Every kingdom steps onto the road at the same moment.</p>
+    <p class="gatecopy">Setting up the board…</p>
     <div class="gatebar" aria-hidden="true"><span id="gateBar"></span></div>
   </div>
 </div>
@@ -531,7 +549,7 @@ body.at-lesson #hintDock{z-index:21}
     <circle class="arc a0" cx="12" cy="18.5" r="1.15" fill="currentColor"/>
   </svg>
   <div class="tt">Connection lost</div>
-  <div class="st">Reconnecting.</div>
+  <div class="st">Trying to reconnect…</div>
   <span class="rule b"></span>
 </div>
 
@@ -543,13 +561,13 @@ body.at-lesson #hintDock{z-index:21}
 
 <div class="hud" id="menuWrap">
   <button class="menuBtn" id="btnMenu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
-  <button class="chip" id="btnXRHud" hidden type="button">Play in the room</button>
+  <button class="chip" id="btnXRHud" hidden type="button">Play in mixed reality</button>
   <div class="menu panel" id="menu" role="menu" aria-label="Game menu" hidden>
     <button role="menuitem" id="btnStory">About</button>
     <button role="menuitem" id="btnRules">Rules</button>
     <button role="menuitem" id="btnNew">Back to title screen</button>
     <button role="menuitem" id="btnLeave" hidden>Leave room</button>
-    <button role="menuitem" id="btnXR" hidden type="button">Play in the room</button>
+    <button role="menuitem" id="btnXR" hidden type="button">Play in mixed reality</button>
   </div>
 </div>
 
@@ -558,7 +576,7 @@ body.at-lesson #hintDock{z-index:21}
   <span class="dieclock" id="dieClock" hidden=""></span>
   <button class="roll" id="btnRoll" hidden="">Roll the dice</button>
   <button class="roll" id="btnReroll" hidden="" type="button">Reroll both</button>
-  <button class="roll" id="btnPass" hidden="" type="button">End the turn</button>
+  <button class="roll" id="btnPass" hidden="" type="button">End turn</button>
   <div class="hint" id="hint"></div>
 </div>
 
@@ -573,7 +591,7 @@ body.at-lesson #hintDock{z-index:21}
       <div class="nameintro-banner">
         <span class="rule t" aria-hidden="true"></span>
         <img class="nameintro-logo" src="assets/main-logo.svg" alt="" width="276" height="192" decoding="async">
-        <p class="nameintro-blurb" id="nameIntroBlurb">Four kingdoms race the Sundered March. Bring every troop to your vault before the gold belongs to another realm.</p>
+        <p class="nameintro-blurb" id="nameIntroBlurb">A race game for 2 to 4 players. Move all four of your troops into your vault before the other kingdoms do.</p>
         <form id="nameIntroForm" autocomplete="on">
           <label class="nameintro-label" for="nameIntroInput">Name</label>
           <input class="field" id="nameIntroInput" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="go" placeholder="How you appear online">
@@ -593,7 +611,7 @@ body.at-lesson #hintDock{z-index:21}
       <button class="titleitem titleitem--primary" type="button" id="btnPlay">Play</button>
       <button class="titleitem" type="button" id="btnLesson">Tutorial</button>
       <button class="titleitem" type="button" id="btnStory2">About Corhäven</button>
-      <button class="titleitem" type="button" id="btnXRTitle" hidden>Play in the Room</button>
+      <button class="titleitem" type="button" id="btnXRTitle" hidden>Play in Mixed Reality</button>
     </nav>
     <p class="titlever type-ui-fine" id="titleVer">V1.2.1</p>
   </main>
@@ -611,6 +629,7 @@ body.at-lesson #hintDock{z-index:21}
         <div class="playside-choices">
           <button class="primary" type="button" id="btnPlayOnline" aria-pressed="true">Online</button>
           <button class="primary" type="button" id="btnPlayLocal">Local Game</button>
+          <button class="primary" type="button" id="btnPlayJoin">Join Room</button>
         </div>
       </aside>
       <div class="joinmain playmain">
@@ -619,7 +638,7 @@ body.at-lesson #hintDock{z-index:21}
           <div class="modecards" id="modeCards"></div>
         </section>
         <section class="openrooms" id="openRooms" aria-labelledby="openRoomsTitle">
-          <h2 id="openRoomsTitle">Open rooms</h2>
+          <h2 id="openRoomsTitle">Join a room</h2>
           <form class="roomsearch" id="stepCode" role="search">
             <label class="sr-only" for="codeInput">Room code</label>
             <input class="field" id="codeInput" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" placeholder="Room code">
@@ -627,18 +646,19 @@ body.at-lesson #hintDock{z-index:21}
           </form>
           <p class="playstatus" id="onlineLead" aria-live="polite"></p>
           <div id="openErrHold"><p class="err" id="onlineErr" role="alert"></p></div>
-          <div class="openlist" id="openList"></div>
+          <h3 class="openhead" id="openListTitle">Open rooms</h3>
+          <div class="openlist" id="openList" aria-labelledby="openListTitle"></div>
         </section>
         <section class="localseats" id="localSeats" aria-labelledby="localSeatsTitle">
           <h2 id="localSeatsTitle">Kingdoms</h2>
-          <p class="playstatus">Everyone plays on this device. Set any kingdom to the computer.</p>
+          <p class="playstatus">Everyone plays on this device. Choose Human or Computer for each kingdom.</p>
           <div class="seg" role="radiogroup" id="countSeg" aria-label="How many players">
             <button role="radio" data-n="2" aria-checked="false">2 players</button>
             <button role="radio" data-n="3" aria-checked="false">3 players</button>
             <button role="radio" data-n="4" aria-checked="true">4 players</button>
           </div>
           <div id="seats"></div>
-          <button class="secondary" id="btnXRSetup" hidden>Play in the room</button>
+          <button class="secondary" id="btnXRSetup" hidden>Play in mixed reality</button>
         </section>
       </div>
       <div class="localactions" id="playFoot">
@@ -657,7 +677,7 @@ body.at-lesson #hintDock{z-index:21}
     <div class="join">
       <aside class="joinside">
         <h1 id="profileTitle">Profile</h1>
-        <p id="profileLead">Your name appears in rooms and on the roster when you play online.</p>
+        <p id="profileLead">Other players see this name when you play online.</p>
         <form id="profileForm">
           <label for="profileName">Username</label>
           <input class="field" id="profileName" maxlength="16" autocomplete="nickname" spellcheck="false" enterkeyhint="done">
@@ -690,7 +710,8 @@ body.at-lesson #hintDock{z-index:21}
       </div>
       <div class="lobbyactions" id="lobbyActions">
         <div id="lobbyErrHold"></div>
-        <button class="primary" id="btnStart">Start the match</button>
+        <p class="lobbystatus" id="lobbyStatus" aria-live="polite"></p>
+        <button class="primary" id="btnStart">Start match</button>
         <button class="secondary" id="btnOnlineBack" type="button">Leave room</button>
       </div>
     </div>
@@ -700,7 +721,7 @@ body.at-lesson #hintDock{z-index:21}
 <div class="modal" id="leave" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
   <div class="sheet panel">
     <h1 id="leaveTitle">Leave the match?</h1>
-    <p id="leaveText">Leaving counts as a forfeit. Your troops leave the board, and you can't rejoin this match.</p>
+    <p id="leaveText">Leaving counts as a forfeit. Your troops are removed from the board, and you can't rejoin this match.</p>
     <button class="primary" id="btnLeaveYes">Leave the match</button>
     <button class="secondary" id="btnLeaveNo">Stay</button>
   </div>
@@ -719,7 +740,7 @@ body.at-lesson #hintDock{z-index:21}
         </div>
         <div class="localactions">
           <button class="primary" id="btnLessonNext">Next</button>
-          <button class="secondary" id="btnLessonSkip">Back to title</button>
+          <button class="secondary" id="btnLessonSkip">Exit tutorial</button>
         </div>
       </aside>
     </div>
@@ -728,19 +749,21 @@ body.at-lesson #hintDock{z-index:21}
 
 <div class="modal" id="rules" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
   <div class="sheet panel rules">
-    <h1 id="rulesTitle">Rules of the realm</h1>
-    <p><strong>Who rides first.</strong> Each kingdom rolls both dice at the start. The highest total moves first, the way the rider reached that court first, and so on down. Ties roll again.</p>
-    <p><strong>Two dice.</strong> Each die is its own march. Use them on two different troops, or on the same troop one after the other.</p>
-    <p><strong>Leaving the keep.</strong> A die showing 1 or 6 sends a troop out through your gate, the coloured square beside your castle. Enemy troops standing at your gate fall when you march out.</p>
-    <p><strong>Falling in battle.</strong> Land exactly on a lone enemy troop and it falls. Its kingdom must raise a new troop at its keep. The victor presses on with a bonus march of 20 squares for any troop that can make it.</p>
-    <p><strong>Shrines and gates.</strong> Grey star squares are shrines where no blood may be spilled, so troops of different kingdoms can stand there together. Landing on a shrine offers four Fate cards. Keep one. A hand holds two. You may only stop on another kingdom's gate when nobody is standing on it.</p>
-    <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square lock shields into a phalanx. Nobody may pass or land on it. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
-    <p><strong>Doubles.</strong> Rolling doubles lets you roll again after the movement. If two of your troops are locked in a phalanx, one of them marches with that double before you choose the other die. A third double in a row is greed punished: your furthest troop is lost and must be raised again at the keep, and your turn ends.</p>
-    <p><strong>The passages.</strong> Troops march counterclockwise around the 68 squares of the old King's Road, then into their own kingdom's hidden passage, the seven coloured squares, to the vault. Reaching the vault needs an exact count and earns a bonus march of 20.</p>
-    <p><strong>Victory.</strong> The first kingdom to bring all four troops to the vault claims the gold of Corhaven. In a ranked match the others march on, and the next kingdoms home take second and third.</p>
-    <p><strong>The Veil of Mist.</strong> After every third round the mist rolls in, and it lifts after the next round. While it is up you see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
-    <p>Keys: Space rolls, left and right arrows pick a die, 1 to 4 move a troop.</p>
-    <button class="primary" id="btnRulesClose">Back to the board</button>
+    <h1 id="rulesTitle">Rules</h1>
+    <p><strong>Goal.</strong> Be the first player to move all four of your troops from your keep into your vault.</p>
+    <p><strong>Turn order.</strong> At the start of a match, every player rolls both dice. The highest total goes first, then the next highest, and so on. Players who tie roll again.</p>
+    <p><strong>Two dice.</strong> Each die is a separate move. Use them on two different troops, or on the same troop one after the other.</p>
+    <p><strong>Leaving the keep.</strong> A die showing 1 or 6 moves a troop out of your keep onto your gate, the colored square next to your castle. Enemy troops on your gate are captured when you move out.</p>
+    <p><strong>Capturing.</strong> Land exactly on a square with a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of 20 squares for any troop that can use it.</p>
+    <p><strong>Shrines and gates.</strong> Shrines are the grey star squares. Troops on a shrine can't be captured, so troops of different kingdoms can share one. You can only stop on another kingdom's gate when it's empty.</p>
+    <p><strong>Phalanx.</strong> Two troops of the same kingdom on one square form a phalanx. No troop can pass through it or land on it, including your own. Troops of different kingdoms never form a phalanx. A square holds at most two troops.</p>
+    <p><strong>Doubles.</strong> Rolling doubles gives you another roll after you move. If two of your troops form a phalanx, one of them moves first with the double, before you choose the other die. Rolling doubles three times in a row ends your turn, and your troop furthest along goes back to the keep.</p>
+    <p><strong>The road and the vault.</strong> Troops move counterclockwise around the 68-square road, then turn into their own passage: the seven squares in their kingdom's color that lead to the vault. Entering the vault takes an exact roll and earns a bonus move of 20 squares.</p>
+    <p><strong>Winning.</strong> The first player to get all four troops into their vault wins. In ranked matches, the others keep playing for second and third place.</p>
+    <p><strong>Fate Cards.</strong> Landing on a shrine deals you four Fate Cards, and you keep one. Blessings and Tactical cards help you. Curses work against you. You can hold two cards at a time, so with a full hand you discard one to make room. Each card shows what it does and how long it lasts.</p>
+    <p><strong>Mist.</strong> After every third round, Mist covers the board for one round. You can always see your own troops. Enemy troops on the road are hidden unless they're on or next to a square with one of your troops, and move previews won't reveal them.</p>
+    <p>Keyboard: Space rolls the dice, the Left and Right arrows choose a die, and 1 to 4 move a troop.</p>
+    <button class="primary" id="btnRulesClose">Close</button>
   </div>
 </div>
 
@@ -796,7 +819,7 @@ body.at-lesson #hintDock{z-index:21}
       </section>
       <section data-lore="events" hidden>
         <h2>The Veil of Mist</h2>
-        <p>An unnatural fog hides everything beyond a short distance. It comes down after every third round and lifts after the next. While it holds, you see your own troops, and an enemy only on the next square. The markers that would give a hidden enemy away stay off the board.</p>
+        <p>An unnatural fog hides everything beyond a short distance. In play, it covers the board after every third round and clears after one round. While it lasts, you can see all of your own troops, but enemy troops on the road only when they're on or next to a square with one of yours.</p>
       </section>
     </div>
     <button class="secondary aboutback" id="btnAboutBack" type="button">Back</button>
@@ -806,11 +829,11 @@ body.at-lesson #hintDock{z-index:21}
 <div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
   <div class="sheet panel">
     <h1 id="settingsTitle">Settings</h1>
-    <p>The theme and the effects can each sit quieter, or go silent. A change here stays on this device.</p>
-    <label class="check">Theme <input type="checkbox" id="themeOn" checked></label>
-    <input class="vol" id="themeVol" type="range" min="0" max="100" value="22" aria-label="Theme volume">
-    <label class="check">Effects <input type="checkbox" id="fxOn" checked></label>
-    <input class="vol" id="fxVol" type="range" min="0" max="100" value="100" aria-label="Effects volume">
+    <p>Turn the music and sound effects down or off. Your settings are saved on this device.</p>
+    <label class="check">Music <input type="checkbox" id="themeOn" checked></label>
+    <input class="vol" id="themeVol" type="range" min="0" max="100" value="22" aria-label="Music volume">
+    <label class="check">Sound effects <input type="checkbox" id="fxOn" checked></label>
+    <input class="vol" id="fxVol" type="range" min="0" max="100" value="100" aria-label="Sound effects volume">
     <button class="primary" id="btnSettingsClose" type="button">Done</button>
   </div>
 </div>
@@ -821,23 +844,23 @@ body.at-lesson #hintDock{z-index:21}
     <p id="winText"></p>
     <ol class="places" id="winPlaces" aria-label="Places" hidden></ol>
     <button class="primary" id="btnAgain">Play again</button>
-    <button class="secondary" id="btnChange">Change players</button>
+    <button class="secondary" id="btnChange">Change setup</button>
   </div>
 </div>
 
 <script src="./The Vaults of Corhaven_files/three.min.js"></script>
 <script src="./The Vaults of Corhaven_files/OrbitControls.js"></script>
 <script src="./The Vaults of Corhaven_files/cannon.min.js"></script>
-<script src="./lib/rules.js?v=fate2"></script>
+<script src="./lib/rules.js?v=copy1"></script>
 <script src="./lib/siege-fx.js?v=siege18"></script>
 <script src="./lib/smoke-embers.js?v=5"></script>
-<script src="./lib/fate-view.js?v=fate7"></script>
-<script src="./lib/game-modes.js?v=ia2"></script>
+<script src="./lib/fate-view.js?v=copy1"></script>
+<script src="./lib/game-modes.js?v=copy1"></script>
 <script src="./lib/player-profile.js?v=ia1"></script>
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.10.2';
+const GAME_VERSION='1.10.7';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1943,7 +1966,7 @@ async function offerFateLocal(pc,gid){
   if(!offer.length)return false;
   fate.offer={h,idx:pc.idx,ids:offer};
   S.phase='fate';renderTurn();
-  noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',h,'shrine');
+  noteHint(...COPY.shrineHint,h,'shrine');
   const pl=playerOfH(h);
   const ids=held.map(c=>c.id);
   let choice=null;
@@ -1966,7 +1989,7 @@ async function playWander(pc,gid){
   const land=R.wanderSquare(allPieces(),pc,Math.random);
   if(!land||gid!==S.gid)return;
   delete pc.at;pc.p=land.np;
-  toast('The Wanderer','The troop on the shrine is carried to another square.',pc.h);
+  toast(...COPY.wanderer,pc.h);
   await hop(pc.mesh,posOf(pc),720,2.2);
   if(gid!==S.gid)return;
   await settleAll();
@@ -1981,7 +2004,7 @@ function chooseDecree(gid){
   if(troops.length===1||pl.cpu)return wait(pl.cpu?450:0).then(()=>gid===S.gid?troops[0]:null);
   S.phase='decree';
   setHighlights(troops);
-  say('The decree. Choose a troop in the keep.');
+  say(promptFor(pl));
   renderTurn();
   return new Promise(res=>{S.decreeRes=res;});
 }
@@ -1996,11 +2019,11 @@ async function runDecree(pc,gid){
     const bonus=resolved.captureBonus;
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
-    toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${bonus}.`,pc.h,null,null,true);
+    toast(...COPY.capture(HOUSES[pc.h].short,names,r.captures.length,bonus),pc.h,null,null,true);
     await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:bonus,bonus:true}));
   }
-  if(r.spared&&r.spared.length)toast('The Unbroken','The troop stays on its square. No blood is spilled.',pc.h,null,null,true);
+  if(r.spared&&r.spared.length)toast(...COPY.unbroken,pc.h,null,null,true);
   await playBurns(resolved.spent,pc.h);
 }
 async function finishReroll(pl,a,b,gid,plan){
@@ -2016,8 +2039,8 @@ async function finishReroll(pl,a,b,gid,plan){
     S.phase='moving';renderTurn();
     const out=pl.pieces.filter(p=>p.p>=0&&p.p<GOAL).sort((x,y)=>y.p-x.p)[0];
     sfx.bad();
-    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',pl.h,'greed');out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
-    else {toast('Third double',`${pl.cpu?'The computer loses':'You lose'} the turn.`,pl.h);noteHint('Greed','A third double in a row ends the turn. If a troop is on the road, the furthest one returns to the keep.',pl.h,'greed');}
+    if(out){toast(...COPY.thirdDouble(isMine(pl)?'You':HOUSES[pl.h].short),pl.h);noteHint(...COPY.thirdDoubleHint,pl.h,'greed');out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
+    else {toast(...COPY.thirdDoubleNoTroop(isMine(pl)?'You':HOUSES[pl.h].short),pl.h);noteHint(...COPY.thirdDoubleHint,pl.h,'greed');}
     await wait(1300);if(gid===S.gid)nextTurn();return;
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
@@ -2139,11 +2162,11 @@ function stopMatchHour(){
   S.gid++;dropMotion();
   S.phase='over';S.pending=[];showMarkers([]);setHighlights();
   metricsEnd('abandoned');
-  toast('The march ends','This match has lasted an hour, so the table is closed.');
+  toast(...COPY.timeLimit);
   const online=NET.on;
   setTimeout(()=>{
     if(S.phase!=='over')return;
-    if(online)leaveOnline(false,'This match lasted an hour, so the table closed.');
+    if(online)leaveOnline(false,COPY.timeLimitLeave);
     else showTitle();
   },2800);
 }
@@ -2243,10 +2266,40 @@ function toggleHint(open){
 }
 $('hintChip').onclick=()=>toggleHint();
 $('hintSheetClose').onclick=()=>toggleHint(false);
-function phalanxToast(h,nm){
-  const who=nm||HOUSES[h].short;
-  toast('Shields locked',`Two ${who} troops form a phalanx. None may pass or land there.`,h,null,null,true);
-  noteHint('Barricade',`Two ${who} troops share a square and lock shields. Nobody may pass or land there.`,h,'barricade');
+/* Player-facing messages shared by local play, online replays and the tutorial. Each entry is [title, body] for toast() or noteHint(). */
+const squares=v=>v+(v===1?' square':' squares');
+const aOrAn=w=>(/^[aeiou]/i.test(w)?'an ':'a ')+w;
+const COPY={
+  orderStart:['Turn order','Every player rolls both dice. The highest total goes first.'],
+  orderHint:['Turn order','Every player rolls both dice. The highest total goes first, then the next highest, and so on. Players who tie roll again.'],
+  tie:(total,names)=>[`Tied on ${total}`,`${names.join(' and ')} roll again.`],
+  tieHint:['Tie','When players roll the same total, only they roll again. The new roll settles their order, and everyone else keeps their place.'],
+  capture:(by,kingdoms,n,bonus)=>[
+    n>1?(kingdoms.length>1?`${by} captured ${kingdoms.join(' and ')} troops`:`${by} captured two ${kingdoms[0]} troops`):`${by} captured ${aOrAn(kingdoms[0])} troop`,
+    `${n>1?'They go':'It goes'} back to the keep. ${by} gets a bonus move of ${bonus}.`],
+  captureHint:bonus=>['Capture',`Land exactly on a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of ${bonus} squares for any troop that can use it.`],
+  unbroken:['The Unbroken','The card protected the troop, so it stays on its square.'],
+  wanderer:['The Wanderer','The troop on the shrine moved to a random empty square on its road.'],
+  vault:(kingdom,bonus)=>['Vault reached',`${aOrAn(kingdom).replace(/^a/,'A')} troop reached the vault. Bonus move of ${bonus}.`],
+  vaultHint:bonus=>['The vault',`A troop needs an exact roll to enter the vault, and each one that arrives earns a bonus move of ${bonus}. Get all four troops into your vault to win.`],
+  shrine:['Shrine','Troops on a shrine can\'t be captured, so troops of different kingdoms can share it.'],
+  shrineHint:['Shrine','Shrines are the grey star squares. Troops there can\'t be captured. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.'],
+  shrineSafeHint:['Shrine','Shrines are the grey star squares. Troops there can\'t be captured, so troops of different kingdoms can share one.'],
+  phalanx:kingdom=>['Phalanx formed',`Two ${kingdom} troops share a square. No troop can pass through or land there.`],
+  phalanxHint:['Phalanx','Two troops of the same kingdom on one square form a phalanx. No troop can pass through it or land on it, including your own.'],
+  thirdDouble:who=>['Third double',`${who==='You'?'Your':who+'\'s'} furthest troop goes back to the keep, and the turn ends.`],
+  thirdDoubleNoTroop:who=>['Third double',`${who==='You'?'You lose':who+' loses'} the turn.`],
+  thirdDoubleHint:['Three doubles','Rolling doubles three times in a row ends the turn. If that player has troops on the road, the one furthest along goes back to the keep.'],
+  noMove:'No legal move',
+  noMoveWhy:(vals,bonus)=>bonus?`No troop can use the ${bonus}-square bonus move.`:`No troop can move ${vals.length===1?squares(vals[0]):vals.join(' or ')+' squares'}.`,
+  timeLimit:['Time limit reached','Matches end after one hour, so this match is over.'],
+  timeLimitLeave:'This match ended because it reached the one-hour time limit.',
+  left:(name,away)=>[`${name} left the match`,away?'They were away too long and forfeited.':''],
+  wins:name=>`${name} wins`,
+};
+function phalanxToast(h){
+  toast(...COPY.phalanx(HOUSES[h].short),h,null,null,true);
+  noteHint(...COPY.phalanxHint,h,'barricade');
 }
 /* Order is announced to the whole table. A march still only banners the player who is up. */
 function announceTurn(pl,kind){
@@ -2255,12 +2308,12 @@ function announceTurn(pl,kind){
     if(isMine(pl))sfx.turn();
     if(!S.orderAnnounced){
       S.orderAnnounced=true;
-      toast('Rolling for order',isMine(pl)?'Every kingdom rolls. Highest total marches first.':`${nm} rolls to see when the rider arrived.`,pl.h);
-      noteHint('Rolling for order','Every kingdom rolls both dice. The highest total marches first. A tie rolls again.',pl.h,'order');
+      toast(...COPY.orderStart,pl.h);
+      noteHint(...COPY.orderHint,pl.h,'order');
     }
     return;
   }
-  if(!isMine(pl)){say(kind==='again'?`${nm} rolled doubles and rolls again.`:`${nm} is on the march.`);return;}
+  if(!isMine(pl)){say(kind==='again'?`${nm} rolled doubles and rolls again.`:`It's ${nm}'s turn.`);return;}
   sfx.turn();
   if(kind==='again')toast('Doubles','Roll again.',pl.h);
   else toast('Your turn','Roll the dice.',pl.h);
@@ -2272,11 +2325,10 @@ function orderToast(list){
   const mine=list.findIndex(pl=>isMine(pl));
   const totals=list.map(pl=>pl.orderRoll||0);
   const showTotals=totals.every((t,i)=>t>0&&(i===0||totals[i-1]>t));
-  const title=mine>=0?`You march ${PLACE[mine]||'next'}${showTotals?' on '+list[mine].orderRoll:''}`:`${shortName(list[0])} marches first${showTotals?' on '+list[0].orderRoll:''}`;
-  const name=pl=>label(pl)+(showTotals?' '+pl.orderRoll:'');
-  const sub=list.length<2?'':list.length===2?`${name(list[1])} rides second.`
-    :`Then ${list.slice(1,-1).map(name).join(', ')}, and ${name(list[list.length-1])} last.`;
-  toast(title,sub?sub.charAt(0).toUpperCase()+sub.slice(1):'');
+  const title=mine>=0?`You go ${PLACE[mine]||'next'}${showTotals?' with '+list[mine].orderRoll:''}`:`${shortName(list[0])} goes first${showTotals?' with '+list[0].orderRoll:''}`;
+  const name=pl=>label(pl)+(showTotals?' ('+pl.orderRoll+')':'');
+  const sub=list.length<2?'':`Turn order: ${list.map(name).join(', ')}.`;
+  toast(title,sub);
 }
 function pipSVG(n){return `<svg viewBox="0 0 100 100" aria-hidden="true">${PIPS[n].map(([x,y])=>`<circle cx="${x*100}" cy="${y*100}" r="9.5" fill="#7A1A14"/>`).join('')}</svg>`;}
 function rerollSVG(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3M4.5 12a7.5 7.5 0 0 1 12.8-5.3"/><path fill="currentColor" d="M18.2 4.6v4.4h-4.4M5.8 19.4v-4.4h4.4"/></svg>';}
@@ -2648,8 +2700,8 @@ async function rankGroup(ids,gid){
   for(const grp of R.orderGroups(entries)){
     const ix=grp.map(e=>e.id);
     if(ix.length>1){
-      toast(`Tied on ${grp[0].total}`,`${ix.map(i=>HOUSES[S.players[i].h].short).join(' and ')} roll again.`);
-      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',S.players[ix[0]].h,'tie');
+      toast(...COPY.tie(grp[0].total,ix.map(i=>HOUSES[S.players[i].h].short)));
+      noteHint(...COPY.tieHint,S.players[ix[0]].h,'tie');
       renderTurn();await wait(2800);if(gid!==S.gid)return ids;
       out.push(...await rankGroup(ix,gid));
     }else out.push(ix[0]);
@@ -2716,7 +2768,6 @@ async function finishRoll(pl,a,b,gid,plan){
   st.turns++;
   if(plan&&plan.assisted)st.assisted++;
   R.noteFinish(allPieces(),pl.h,S.world,pl,a,b,fateHands());
-  const who=pl.cpu?'The computer':'You';
   S.dbl=a===b;if(S.dbl){S.doubles++;st.doubles++;}
   if(S.dbl&&S.doubles===3){
     st.greed++;
@@ -2724,8 +2775,8 @@ async function finishRoll(pl,a,b,gid,plan){
     S.phase='moving';renderTurn();
     const out=pl.pieces.filter(p=>p.p>=0&&p.p<GOAL).sort((x,y)=>y.p-x.p)[0];
     sfx.bad();
-    if(out){toast('Third double',`Greed is punished: ${HOUSES[pl.h].short}'s furthest troop returns to the keep.`,pl.h);noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',pl.h,'greed');out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
-    else {toast('Third double',`${who} lose${pl.cpu?'s':''} the turn.`,pl.h);noteHint('Greed','A third double in a row ends the turn. If a troop is on the road, the furthest one returns to the keep.',pl.h,'greed');}
+    if(out){toast(...COPY.thirdDouble(isMine(pl)?'You':HOUSES[pl.h].short),pl.h);noteHint(...COPY.thirdDoubleHint,pl.h,'greed');out.p=-1;delete out.at;await hop(out.mesh,cellPos(out.h,-1,out.idx),800,3);await settleAll();renderTally();}
+    else {toast(...COPY.thirdDoubleNoTroop(isMine(pl)?'You':HOUSES[pl.h].short),pl.h);noteHint(...COPY.thirdDoubleHint,pl.h,'greed');}
     await wait(1300);if(gid===S.gid)nextTurn();return;
   }
   S.pending=[{v:a},{v:b}];S.sel=0;
@@ -2752,14 +2803,14 @@ async function continueTurn(){
   S.dieHeld=false;S.canReroll=chance;
   if(!opts.length){
     if(chance&&pl.cpu)return doReroll();
-    if(chance){S.phase='choose';setHighlights();showMarkers([]);renderTurn();say('No legal move. Reroll both.');return;}
+    if(chance){S.phase='choose';setHighlights();showMarkers([]);renderTurn();say('No legal move. Reroll both dice.');return;}
     const left=S.pending.filter(d=>!d.used);
     const usedDie=S.pending.some(d=>d.used&&!d.bonus);
     R.noteDry(pl,usedDie);
     if(!usedDie&&left.some(d=>!d.bonus)){diceStatsOf().noMoves++;}
     if(left.length){S.phase='moving';renderTurn();
-      const why=left.length===1&&left[0].bonus?`No troop can make the ${left[0].v}-square bonus march.`: `No troop can march with ${[...new Set(left.map(d=>d.v))].map(v=>'a '+v).join(' or ')}.`;
-      if(isMine(pl))toast('No legal move',why,pl.h);else say(`${shortName(pl)}: ${why}`);
+      const why=left.length===1&&left[0].bonus?COPY.noMoveWhy(null,left[0].v):COPY.noMoveWhy([...new Set(left.map(d=>d.v))]);
+      if(isMine(pl))toast(COPY.noMove,why,pl.h);else say(`${shortName(pl)}: ${why}`);
       await wait(1200);if(gid!==S.gid)return;}
     return endTurn();
   }
@@ -2839,7 +2890,7 @@ async function placeKingdom(pl){
 function announcePlace(pl){
   const place=PLACE[pl.rank-1]||'next';
   sfx.home();
-  toast(isMine(pl)?`You take ${place} place`:`${shortName(pl)} takes ${place} place`,'All four troops reached the vault. The others march on for the places behind.',pl.h,3400);
+  toast(isMine(pl)?`You finished in ${place} place`:`${shortName(pl)} finished in ${place} place`,`All four of ${isMine(pl)?'your':'their'} troops reached the vault. Everyone else keeps playing for the remaining places.`,pl.h,3400);
   renderTally();
 }
 /* Walk a troop along a resolved move. A shifting stone is a march to that square, then a hop to its pair.
@@ -2884,13 +2935,13 @@ async function doMove(opt){
     const bonus=resolved.captureBonus;
     sfx.capture();
     const names=[...new Set(r.captures.map(c=>HOUSES[c.h].short))];
-    toast(`${HOUSES[pc.h].short} strikes ${names.join(' and ')}`,`${r.captures.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${bonus}.`,pc.h,null,null,true);
-    noteHint('A strike',`The fallen troop returns to its keep. ${HOUSES[pc.h].short} then presses on with a bonus march of ${bonus}.`,pc.h,'strike');
+    toast(...COPY.capture(HOUSES[pc.h].short,names,r.captures.length,bonus),pc.h,null,null,true);
+    noteHint(...COPY.captureHint(bonus),pc.h,'strike');
     await Promise.all(r.captures.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
     r.captures.forEach(()=>S.pending.push({v:bonus,bonus:true}));
   }
-  if(r.spared&&r.spared.length)toast('The Unbroken','The troop stays on its square. No blood is spilled.',pc.h,null,null,true);
-  if(goal){const bonus=resolved.vaultBonus;R.noteVault(curP());sfx.home();S.pending.push({v:bonus,bonus:true});toast('Vault reached',`A ${HOUSES[pc.h].short} troop found the passage. Bonus march of ${bonus}.`,pc.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${bonus}. The first kingdom to bring all four troops home claims the gold.`,pc.h,'vault');}
+  if(r.spared&&r.spared.length)toast(...COPY.unbroken,pc.h,null,null,true);
+  if(goal){const bonus=resolved.vaultBonus;R.noteVault(curP());sfx.home();S.pending.push({v:bonus,bonus:true});toast(...COPY.vault(HOUSES[pc.h].short,bonus),pc.h);noteHint(...COPY.vaultHint(bonus),pc.h,'vault');}
   await playBurns(resolved.spent,pc.h);
   if(gid!==S.gid)return;
   if(onShrine(pc)){
@@ -2903,8 +2954,8 @@ async function doMove(opt){
       await runDecree(troop,gid);
       if(gid!==S.gid)return;
     }else if(!dealt&&isMine(curP())){
-      toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',pc.h,null,null,true);
-      noteHint('A shrine','Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together.',pc.h,'shrine');
+      toast(...COPY.shrine,pc.h,null,null,true);
+      noteHint(...COPY.shrineSafeHint,pc.h,'shrine');
     }
   }
   if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
@@ -2948,18 +2999,19 @@ async function victory(pl){
   const forfeitWin=NET.on&&NET.room&&NET.room.game&&NET.room.game.winReason==='forfeit';
   metricsEnd(forfeitWin?'forfeit':'vault',pl.h);
   if(!NET.on&&S.diceStats)R.lastReport=R.diceReport(S.diceStats);
-  toast(`${pl.name||HOUSES[pl.h].name} claims the vault`,'The gold of Corhaven is theirs.',pl.h);lidTarget=-1.9;sfx.win();
+  toast(COPY.wins(pl.name||HOUSES[pl.h].name),forfeitWin?'Every other player left the match.':'All four of their troops reached the vault.',pl.h);lidTarget=-1.9;sfx.win();
   const cm=new THREE.MeshStandardMaterial({color:0xF0C04A,metalness:0.8,roughness:0.3,emissive:0x442a00});
   for(let i=0;i<50;i++){const c=new THREE.Mesh(coinGeo,cm);c.scale.setScalar(1.3);c.position.set((Math.random()-.5)*0.6,1.0,(Math.random()-.5)*0.4);c.castShadow=true;board.add(c);
     const a=Math.random()*Math.PI*2,sp=1.5+Math.random()*3;coinsFx.push({m:c,v:new THREE.Vector3(Math.cos(a)*sp,4+Math.random()*4,Math.sin(a)*sp),spin:new THREE.Vector3(Math.random()*10,Math.random()*10,0),rest:false});}
   await wait(1900);if(gid!==S.gid)return;
-  $('winTitle').textContent=`${pl.name||HOUSES[pl.h].name} claims the vault`;
-  $('winText').textContent=forfeitWin?(isMine(pl)?`Everyone else abandoned the race for the vault. The gold of Corhaven is yours, and with it the realm.`:`Everyone else abandoned the race for the vault, so ${displayName(pl)} claims the gold of Corhaven.`)
-    :isMine(pl)?`All four of your troops reached the vault. The gold of Corhaven is yours, and with it the realm.`
-    :NET.on?`All four of ${displayName(pl)}'s ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, they now stand above every kingdom in the realm.`
-    :`All four ${HOUSES[pl.h].name} troops reached the vault first. With Corhaven's gold, ${HOUSES[pl.h].name} now stands above every kingdom in the realm.`;
+  const you=isMine(pl)&&(NET.on||S.players.filter(p=>!p.cpu).length===1);
+  $('winTitle').textContent=you?'You win':COPY.wins(pl.name||HOUSES[pl.h].name);
+  $('winText').textContent=forfeitWin?(you?'Every other player left the match, so you win.':`Every other player left the match, so ${displayName(pl)} wins.`)
+    :you?`All four of your ${HOUSES[pl.h].name} troops reached the vault first. The gold of Corhaven is yours.`
+    :NET.on?`All four of ${displayName(pl)}'s ${HOUSES[pl.h].name} troops reached the vault first.`
+    :`All four ${HOUSES[pl.h].name} troops reached the vault first.`;
   renderPlaces();
-  $('btnAgain').textContent=NET.on?'Back to the title':'Play again';
+  $('btnAgain').textContent=NET.on?'Back to title screen':'Play again';
   $('btnChange').hidden=NET.on;
   if(NET.on){$('btnLeave').hidden=true;$('btnNew').hidden=false;}
   openModal('win');
@@ -2998,7 +3050,7 @@ function renderModeList(boxId,onPick){
     b.setAttribute('role','radio');b.setAttribute('aria-checked',String(m.id===selectedModeId));
     const name=document.createElement('span');name.className='mode-name';name.textContent=m.label;b.appendChild(name);
     const desc=document.createElement('span');desc.className='mode-desc';desc.textContent=m.desc;b.appendChild(desc);
-    if(!m.available){b.disabled=true;b.setAttribute('aria-disabled','true');const soon=document.createElement('span');soon.className='mode-soon';soon.textContent='Not available yet';b.appendChild(soon);}
+    if(!m.available){b.disabled=true;b.setAttribute('aria-disabled','true');const soon=document.createElement('span');soon.className='mode-soon';soon.textContent='Coming soon';b.appendChild(soon);}
     else b.onclick=()=>{selectedModeId=m.id;renderModeList(boxId,onPick);if(onPick)onPick();};
     box.appendChild(b);
   });
@@ -3017,9 +3069,8 @@ function renderSetup(){
 }
 function localSummary(){
   const seats=SEATS[setupCount],cpu=seats.filter(h=>seatCpu[h]).length;
-  const words=['','One','Two','Three','Four'];
-  const who=cpu===0?'all played here':cpu===seats.length?'all run by the computer':`${words[cpu].toLowerCase()} run by the computer`;
-  return `${words[seats.length]} kingdoms, ${who}.`;
+  const who=cpu===0?'all human':cpu===seats.length?'all computer':`${cpu} controlled by the computer`;
+  return `${seats.length} players, ${who}.`;
 }
 function beginLocal(){
   applySelectedModeToLocal();
@@ -3131,8 +3182,9 @@ $('btnProfileBack').onclick=()=>{profileContinue=null;closeModal('profile');};
 $('btnTitleProfile').onclick=()=>openProfile(true);
 $('btnPlay').onclick=()=>openPlay();
 $('btnPlayBack').onclick=()=>{stopBrowse();closeModal('play');openModal('title');};
-$('btnPlayOnline').onclick=()=>{if(playMode!=='online')openPlay();};
+$('btnPlayOnline').onclick=()=>{if(playMode!=='online'){stopBrowse();openPlay();}};
 $('btnPlayLocal').onclick=()=>{if(playMode!=='local')openPlayLocal();};
+$('btnPlayJoin').onclick=()=>{if(playMode!=='join')openPlay({mode:'join'});};
 $('btnNew').onclick=()=>showTitle();
 $('btnLesson').onclick=()=>startLesson();
 $('btnRules').onclick=()=>openModal('rules');
@@ -3345,7 +3397,7 @@ async function clearLessonBoard(){
   await settleAll(reduced?50:240);
 }
 const LESSONS=[
-  {title:'Who rides first',body:'Every kingdom rolls both dice. The highest total marches first. If two kingdoms tie, only those kingdoms roll again — the second throw seats them, and the others keep their place. Tap the dice when it is your throw.',
+  {title:'Turn order',body:'At the start of a match, every player rolls both dice. The highest total goes first, then the next highest, and so on. If players tie, only they roll again. Tap the dice when it\'s your roll.',
     freeNav:true,
     enter:async()=>{
       await clearLessonBoard();
@@ -3358,8 +3410,8 @@ const LESSONS=[
       if(!lessonAlive())return;
       await lessonWaitRoll(3,[5,3],'order');
       if(!lessonAlive())return;
-      toast('Tied on 8','Emberhold and Tidereach roll again.');
-      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',0,'tie');
+      toast(...COPY.tie(8,['Emberhold','Tidereach']));
+      noteHint(...COPY.tieHint,0,'tie');
       renderTurn();
       await wait(2800);
       if(!lessonAlive())return;
@@ -3379,7 +3431,7 @@ const LESSONS=[
       S.phase='idle';
       renderTurn();
     }},
-  {title:'Leaving the keep',body:'A 1 or a 6 sends a troop out through your gate, the coloured square beside your castle. Tap the dice.',
+  {title:'Leaving the keep',body:'Your troops start in your keep. A die showing 1 or 6 moves a troop out onto your gate, the colored square next to your castle. Tap the dice.',
     enter:async()=>{await clearLessonBoard();lessonOfferRoll(async()=>{
       const pc=troopOf(0,0);if(!pc)return;
       await lessonWalk(pc,0);
@@ -3388,7 +3440,7 @@ const LESSONS=[
       await lessonWalk(pc,1);
       if(S.pending[1])S.pending[1].used=true;renderChips();
     });}},
-  {title:'Two dice',body:'Each die is its own march. Tap the second die to see where your troops could go, then tap the first. You can spend them on two troops, or on the same troop one after the other.',
+  {title:'Two dice',body:'Each die is a separate move. Use them on two different troops, or on the same troop one after the other. Tap the second die to see where your troops could go, then tap the first.',
     enter:async()=>{
       await clearLessonBoard();
       const a=troopOf(0,0),b=troopOf(0,1);
@@ -3401,7 +3453,7 @@ const LESSONS=[
       showMarkers(opts.filter(o=>{const k=(o.r.at!=null?'a'+o.r.at:o.r.np)+':'+o.pc.idx+':'+o.di;if(seen.has(k))return false;seen.add(k);return true;}).map(o=>({pos:resultPos(o.pc,o.r),move:o})));
       renderTurn();
     }},
-  {title:'Doubles',body:'Doubles let you roll again after you march. Three doubles in a row is greed: the furthest troop returns to the keep, and the turn ends. Tap the dice.',
+  {title:'Doubles',body:'Rolling doubles gives you another roll after you move. Three doubles in a row ends your turn, and your troop furthest along goes back to the keep. Tap the dice.',
     enter:async()=>{
       await clearLessonBoard();
       const pc=troopOf(0,0);if(pc)pc.p=18;await settleAll();
@@ -3412,33 +3464,33 @@ const LESSONS=[
       await lessonWaitRoll(0,[5,5],'again');
       if(!lessonAlive())return;
       sfx.bad();
-      toast('Third double','Greed is punished: Emberhold\'s furthest troop returns to the keep.',0);
-      noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',0,'greed');
+      toast(...COPY.thirdDouble('You'),0);
+      noteHint(...COPY.thirdDoubleHint,0,'greed');
       if(pc){pc.p=-1;await hop(pc.mesh,posOf(pc),800,3);await settleAll();}
       if(!lessonAlive()||!lessonRun)return;
       lessonRun.fromDoubles=true;
-      await runLessonStep(LESSONS.findIndex(s=>s.title==='Greed'));
+      await runLessonStep(LESSONS.findIndex(s=>s.title==='Three doubles'));
     }},
-  {title:'Greed',body:'A third double in a row is greed. Your furthest troop returns to the keep, and your turn ends.',
+  {title:'Three doubles',body:'If you roll doubles three times in a row, your turn ends and your troop furthest along goes back to the keep.',
     enter:async()=>{
       const skip=lessonRun&&lessonRun.fromDoubles;
       if(lessonRun)lessonRun.fromDoubles=false;
       if(skip)return;
       await clearLessonBoard();
       const pc=troopOf(0,0);if(pc)pc.p=18;await settleAll();if(!pc)return;
-      toast('Third double','Greed is punished: Emberhold\'s furthest troop returns to the keep.',0);
-      noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',0,'greed');
+      toast(...COPY.thirdDouble('You'),0);
+      noteHint(...COPY.thirdDoubleHint,0,'greed');
       sfx.bad();pc.p=-1;await hop(pc.mesh,posOf(pc),800,3);await settleAll();
     }},
-  {title:'Barricades',body:'Two troops of the same kingdom on one square lock shields. Nobody may pass or land there. Troops of different kingdoms never form a phalanx.',
+  {title:'Phalanx',body:'When two troops of the same kingdom share a square, they form a phalanx. No troop can pass through it or land on it, including your own. Troops of different kingdoms never form a phalanx.',
     enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(0,1);if(a)a.p=8;if(b)b.p=6;await settleAll();if(!a||!b)return;await lessonWalk(b,8);if(!lessonAlive())return;lockShields(0,posOf(a));phalanxToast(0);}},
-  {title:'Shrines',body:'Grey star squares are shrines. No blood may be spilled there, so troops of different kingdoms can stand together. Landing there offers four Fate cards. Keep one. A hand holds two.',
-    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=11;if(b)b.p=46;await settleAll();if(a)await lessonWalk(a,12);if(!lessonAlive())return;if(a)shrineBurst(posOf(a));toast('A shrine','No blood may be spilled here. Troops of different kingdoms may stand together.',0,null,null,true);noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',0,'shrine');}},
-  {title:'A strike',body:'Land exactly on a lone enemy and it falls. Its kingdom must raise that troop at the keep. You then press on with a bonus march of 20.',
-    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint('A strike','The fallen troop returns to its keep. Emberhold then presses on with a bonus march of 20.',0,'strike');toast('Emberhold strikes Thornwald','A troop returns to the keep. Bonus march of 20.',0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
-  {title:'The vault',body:'Reaching the vault needs an exact count and earns another bonus march of 20. The passages are the seven coloured squares after the King\'s Road.',
-    enter:async()=>{await clearLessonBoard();const home=troopOf(0,0),march=troopOf(0,1);if(home)home.p=70;if(march)march.p=43;await settleAll();if(home)await lessonWalk(home,GOAL);if(!lessonAlive())return;toast('Vault reached','An Emberhold troop found the passage. Bonus march of 20.',0);noteHint('The vault','An exact count into the vault earns a bonus march of 20. The first kingdom to bring all four troops home claims the gold.',0,'vault');S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();if(march)await lessonWalk(march,63);}},
-  {title:'The mist',body:'After every third round the mist rolls in, and it lifts after the next round. You still see all of your own troops, but an enemy only when it stands on the next square.',
+  {title:'Shrines',body:'Shrines are the grey star squares. Troops on a shrine can\'t be captured, so troops of different kingdoms can share one. Landing on a shrine deals you four Fate Cards, and you keep one. You can hold two.',
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(2,0);if(a)a.p=11;if(b)b.p=46;await settleAll();if(a)await lessonWalk(a,12);if(!lessonAlive())return;if(a)shrineBurst(posOf(a));toast(...COPY.shrine,0,null,null,true);noteHint(...COPY.shrineHint,0,'shrine');}},
+  {title:'Capturing',body:'Land exactly on a square with a single enemy troop to capture it. The captured troop goes back to its keep, and you get a bonus move of 20 squares.',
+    enter:async()=>{await clearLessonBoard();const a=troopOf(0,0),b=troopOf(1,0);if(a)a.p=20;if(b)b.p=4;await settleAll();if(!a||!b)return;await lessonWalk(a,21);if(!lessonAlive())return;sfx.capture();noteHint(...COPY.captureHint(BONUS),0,'strike');toast(...COPY.capture('Emberhold',['Thornwald'],1,BONUS),0,null,null,true);b.p=-1;await hop(b.mesh,posOf(b),700,3);await settleAll();if(!lessonAlive())return;S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();await lessonWalk(a,41);}},
+  {title:'The vault',body:'After going around the road, each troop turns into its passage: the seven squares in its kingdom\'s color. Entering the vault takes an exact roll and earns another bonus move of 20 squares.',
+    enter:async()=>{await clearLessonBoard();const home=troopOf(0,0),march=troopOf(0,1);if(home)home.p=70;if(march)march.p=43;await settleAll();if(home)await lessonWalk(home,GOAL);if(!lessonAlive())return;toast(...COPY.vault('Emberhold',BONUS),0);noteHint(...COPY.vaultHint(BONUS),0,'vault');S.pending=[{v:BONUS,bonus:true}];S.phase='choose';renderTurn();if(march)await lessonWalk(march,63);}},
+  {title:'Mist',body:'After every third round, Mist covers the board for one round. You can still see all of your own troops, but enemy troops on the road are hidden unless they\'re on or next to a square with one of yours.',
     freeNav:true,
     enter:async()=>{
       await clearLessonBoard();
@@ -3447,8 +3499,8 @@ const LESSONS=[
       if(!lessonAlive())return;
       await presentWorld('mist');
     }},
-  {title:'Victory',body:'The first kingdom to bring all four troops to the vault claims the gold of Corhaven. In a ranked match the others play on for second and third.',
-    enter:async()=>{await clearLessonBoard();S.players[0].pieces.forEach(pc=>{pc.p=GOAL;});await settleAll();lidTarget=-1.9;sfx.win();toast('Emberhold claims the vault','The gold of Corhaven is theirs.',0);}}
+  {title:'Winning',body:'The first player to get all four troops into their vault wins the match. In ranked matches, the others keep playing for second and third place.',
+    enter:async()=>{await clearLessonBoard();S.players[0].pieces.forEach(pc=>{pc.p=GOAL;});await settleAll();lidTarget=-1.9;sfx.win();toast(COPY.wins('Emberhold'),'All four of their troops reached the vault.',0);}}
 ];
 function paintLesson(i){
   const step=LESSONS[i],last=i===LESSONS.length-1;
@@ -3504,19 +3556,19 @@ $('btnLessonAgain').onclick=()=>lessonAgain();
 $('btnLessonSkip').onclick=()=>showTitle();
 /* ================= Online rooms ================= */
 const ROOM_ERRORS={
-  gone:'No room has that code. Check it with the person who made the room.',
-  full:'That room already has four players.',
+  gone:'No room has that code. Check the code with the host.',
+  full:'That room is full. Rooms hold up to four players.',
   started:'That match has already started.',
   forfeited:'You left that match, so you can\'t rejoin it.',
   'name-empty':'Enter a name.',
   'name-taken':'Someone in this room already uses that name.',
-  'kingdom-taken':'Someone just claimed that kingdom. Pick another one.',
+  'kingdom-taken':'Another player just took that kingdom. Choose a different one.',
   'need-two':'At least two players need to join before the match can start.',
-  'not-ready':'Everyone needs a name and a kingdom before the match can start.',
-  'not-host':'Only the person who made the room can start the match.',
-  offline:'Couldn\'t reach the room server. Check your connection and try again.',
-  file:'Online rooms only work when the game is opened from its web address.',
-  server:'Something went wrong in the room. Try that again.',
+  'not-ready':'Every player needs a name and a kingdom before the match can start.',
+  'not-host':'Only the host can start the match.',
+  offline:'Couldn\'t connect to the game server. Check your internet connection and try again.',
+  file:'Online play only works when the game is opened from its web address.',
+  server:'Something went wrong. Try again.',
 };
 const roomError=code=>ROOM_ERRORS[code]||ROOM_ERRORS.server;
 function playerId(){
@@ -3578,10 +3630,10 @@ function paintLink(){
   if((NET.code||linkGraceUntil)&&Date.now()<linkGraceUntil)return;
   if(!NET.ws){
     if(!NET.code){setLink('ok');return;}
-    setLink('lost','Connection lost','Reconnecting.');
+    setLink('lost','Connection lost','Trying to reconnect…');
     return;
   }
-  setLink(rs===0?'connecting':'lost',rs===0?'Connecting':'Connection lost',rs===0?'Reaching the room.':'Reconnecting.');
+  setLink(rs===0?'connecting':'lost',rs===0?'Connecting':'Connection lost',rs===0?'Connecting to the room…':'Trying to reconnect…');
 }
 function connect(hello){
   if(location.protocol!=='http:'&&location.protocol!=='https:'){onlineError('file');return;}
@@ -3699,10 +3751,14 @@ function openPlay(opts){
   $('onlineErr').textContent='';
   $('onlineLead').textContent=o.lead||'';
   $('codeInput').value='';
-  setPlayMode('online');
+  const mode=o.mode||'online';
+  setPlayMode(mode);
   renderRooms(null);
-  openModal('play');
-  if(o.browse!==false)connect({t:'browse',id:myId});
+  if(!$('play').classList.contains('open'))openModal('play');
+  if(mode==='join'){
+    if(o.browse!==false)connect({t:'browse',id:myId});
+    setTimeout(()=>$('codeInput').focus(),60);
+  }
 }
 function openPlayLocal(){
   stopBrowse();
@@ -3714,8 +3770,10 @@ function openPlayLocal(){
 function setPlayMode(mode){
   playMode=mode;
   $('play').classList.toggle('local',mode==='local');
+  $('play').classList.toggle('join',mode==='join');
   $('btnPlayOnline').setAttribute('aria-pressed',String(mode==='online'));
   $('btnPlayLocal').setAttribute('aria-pressed',String(mode==='local'));
+  $('btnPlayJoin').setAttribute('aria-pressed',String(mode==='join'));
   renderModeCards();
 }
 const MODE_SIGILS={
@@ -3748,6 +3806,7 @@ function renderModeCards(){
     card.className='modecard'+(m.available?'':' soon');card.dataset.mode=m.id;
     card.style.setProperty('--mc',MODE_TINT[m.id]||'#356590');
     card.style.setProperty('--bn',MODE_BANNER[m.id]);
+    card.style.setProperty('--art',`url("assets/modes/${m.id}.jpg")`);
     const backId='modeBack-'+m.id;
     card.innerHTML=`<div class="mc-inner">
       <button type="button" class="mc-face mc-front" aria-expanded="false" aria-controls="${backId}">
@@ -3756,23 +3815,24 @@ function renderModeCards(){
         <span class="mc-tag">${m.tagline||''}</span>
         <span class="mc-name">${m.label}</span>
         <span class="mc-desc">${m.desc}</span>
-        ${m.available?'':'<span class="mc-soon">Coming soon</span>'}
+        ${m.available?(local?'<span class="mc-begin-label">Start</span>':''):'<span class="mc-soon">Coming soon</span>'}
       </button>
       <div class="mc-face mc-back" id="${backId}" role="group" aria-label="${m.label} ${local?'match':'room'} settings">
         <span class="mc-num" aria-hidden="true">${i+1}</span>
         <span class="mc-tag">${local?'Local match':'Room settings'}</span>
         <span class="mc-name">${m.label}</span>
-        ${local?`<p class="roommeta">${localSummary()}</p>`:`<p class="roommeta">Up to <strong>four players</strong> may join this room.</p>
-        <label class="check">Private — code only<input type="checkbox"></label>`}
+        ${local?`<p class="roommeta">${localSummary()}</p>`:`<p class="roommeta">Up to <strong>four players</strong> can join. Share the room code to invite friends.</p>
+        <label class="check">Private (join by code only)<input type="checkbox"></label>`}
         <p class="err" role="alert"></p>
         <div class="mc-actions">
-          <button class="primary${local?' mc-begin':''}" type="button">${local?'Begin':'Create room'}</button>
+          <button class="primary${local?' mc-begin':''}" type="button">${local?'Start match':'Create room'}</button>
         </div>
       </div>
     </div>`;
     const front=card.querySelector('.mc-front'),back=card.querySelector('.mc-back');
     back.inert=true;
     if(!m.available){front.setAttribute('aria-disabled','true');front.setAttribute('aria-label',m.label+', coming soon');front.removeAttribute('aria-expanded');}
+    else if(local){front.removeAttribute('aria-expanded');front.removeAttribute('aria-controls');front.setAttribute('aria-label','Start a '+m.label+' match');front.onclick=()=>{selectedModeId=m.id;beginLocal();};}
     else front.onclick=()=>flipModeCard(card);
     back.addEventListener('click',e=>{if(!e.target.closest('button,label,input')){flipModeCard(null);front.focus();}});
     back.querySelector('.primary').onclick=local
@@ -3791,7 +3851,7 @@ function createRoom(modeId,isPrivate,errEl){
   pendingRoomOpts=opts;
   flowContext='create';
   errEl.textContent='';$('onlineErr').textContent='';
-  $('onlineLead').textContent='Making a room…';
+  $('onlineLead').textContent='Creating room…';
   if(NET.ws&&NET.ws.readyState===1)netSend({t:'create',id:myId});
   else connect({t:'create',id:myId});
 }
@@ -3815,10 +3875,10 @@ let openRoomsList=null;
 $('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);$('onlineErr').textContent='';renderRooms(openRoomsList);});
 function joinCode(code){
   code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);
-  if(code.length!==5){$('onlineErr').textContent='Room codes have five characters.';return;}
+  if(code.length!==5){$('onlineErr').textContent='Room codes are five letters or numbers.';return;}
   flowContext='join';pendingRoomOpts=null;
   $('onlineErr').textContent='';
-  $('onlineLead').textContent='Finding the room…';
+  $('onlineLead').textContent='Joining room…';
   if(NET.ws&&NET.ws.readyState===1)netSend({t:'join',id:myId,code});
   else connect({t:'join',id:myId,code});
 }
@@ -3834,7 +3894,7 @@ function renderRooms(rooms){
   const list=(rooms||[]).filter(r=>!q||String(r.code).startsWith(q));
   if(!list.length){
     const p=document.createElement('p');p.className='openempty';
-    p.textContent=!rooms?'Looking for rooms…':q.length===5?`Press Join to enter room ${q}.`:q?'No open room matches that code.':'No rooms are waiting. Pick a mode to make one.';
+    p.textContent=!rooms?'Looking for open rooms…':q.length===5?`Press Join to enter room ${q}.`:q?'No open room matches that code. For a private room, enter the full code and press Join.':'No open rooms right now. Create one from Online, or enter a room code above.';
     box.appendChild(p);return;
   }
   list.forEach(r=>{
@@ -3842,13 +3902,13 @@ function renderRooms(rooms){
     b.type='button';b.className='openroom';
     const label=r.modeLabel||(r.ranked?'Gauntlet':'Normal');
     const host=(r.names&&r.names[0])||'';
-    const open=r.open===1?'last seat':r.open+' seats open';
+    const open=r.open===1?'1 seat open':r.open+' seats open';
     b.setAttribute('aria-label',`Join ${label} room${host?' hosted by '+host:''}, ${open}`);
     b.innerHTML=`<span class="sigil">${ROOM_SIGIL}</span><span class="meta"><span class="mode"></span><span class="who"></span></span><span class="pennants" aria-hidden="true"></span>`;
     b.querySelector('.mode').textContent=label;
     const who=b.querySelector('.who');
     if(host){who.append('Hosted by ');const i=document.createElement('i');i.textContent=host;who.appendChild(i);}
-    else who.textContent='A host is waiting';
+    else who.textContent='Waiting for players';
     const claimed=Array.isArray(r.kingdoms)?r.kingdoms:[];
     const pens=b.querySelector('.pennants');
     PENNANT_ORDER.forEach(h=>{
@@ -3880,7 +3940,7 @@ function seatRow(room,s){
   const row=document.createElement('div');row.className='seat';
   const crest=document.createElement('span');crest.className='crest';crest.style.setProperty('--c',s.h===null?'#5A6672':HOUSES[s.h].css);row.appendChild(crest);
   const who=document.createElement('div');who.className='who';who.textContent=s.name||'Joining…';
-  const sub=document.createElement('small');sub.textContent=s.h===null?(s.name?'Picking a kingdom':'Entering a name'):HOUSES[s.h].name;who.appendChild(sub);row.appendChild(who);
+  const sub=document.createElement('small');sub.textContent=s.h===null?(s.name?'Choosing a kingdom':'Entering a name'):HOUSES[s.h].name;who.appendChild(sub);row.appendChild(who);
   if(s.pid===room.hostPid){const t=document.createElement('span');t.className='tag';t.textContent='Host';row.appendChild(t);}
   if(s.pid===NET.pid){const t=document.createElement('span');t.className='tag';t.textContent='You';row.appendChild(t);}
   return row;
@@ -3906,7 +3966,7 @@ function bannerSvg(h){
 }
 function renderLobby(room){
   const me=room.seats.find(s=>s.pid===NET.pid);
-  if(!me){leaveOnline(false,'You were away from the room for over a minute, so your seat was given up.');return;}
+  if(!me){leaveOnline(false,'You were away for more than a minute, so you lost your seat in the room.');return;}
   const isHost=me.pid===room.hostPid;
   const first=onlineStep!=='stepLobby';
   showLobby(!first);
@@ -3944,6 +4004,11 @@ function renderLobby(room){
   const allReady=ready===room.seats.length;
   $('btnStart').hidden=!isHost;
   $('btnStart').disabled=!(ready>=2&&allReady);
+  $('lobbyStatus').textContent=me.h===null?'Choose a kingdom to take your seat.'
+    :room.seats.length<2?'Waiting for another player to join. Share the room code to invite friends.'
+    :!allReady?'Waiting for every player to choose a kingdom.'
+    :isHost?'Everyone is ready. Start the match when you like.'
+    :'Everyone is ready. Waiting for the host to start the match.';
 }
 
 /* ---- Match ---- */
@@ -3991,12 +4056,12 @@ function syncPlaces(g){
 }
 function promptFor(pl){
   if(!pl)return'';const mine=isMine(pl),nm=shortName(pl);
-  if(S.phase==='orderRoll')return mine?'Roll to see when the rider reached your court.':`${nm} rolls to see when the rider arrived.`;
-  if(S.phase==='roll')return mine?'Your turn. Roll the dice.':`${nm} is on the march.`;
-  if(S.phase==='fate')return mine?'The shrine offers four fates. Choose one.':`${nm} is choosing a fate.`;
-  if(S.phase==='decree')return mine?'The decree. Choose a troop in the keep.':`${nm} is choosing a troop in the keep.`;
-  if(S.phase==='choose'&&S.canReroll)return mine?(options().length?'Reroll both, or pick a die and a troop.':'No legal move. Reroll both.'):`${nm} may reroll both dice.`;
-  if(S.phase==='choose')return mine?'Pick a die, then tap a glowing troop.':`${nm} is choosing a troop.`;
+  if(S.phase==='orderRoll')return mine?'Roll for turn order.':`${nm} is rolling for turn order.`;
+  if(S.phase==='roll')return mine?'Your turn. Roll the dice.':`It's ${nm}'s turn.`;
+  if(S.phase==='fate')return mine?'Choose a Fate Card to keep.':`${nm} is choosing a Fate Card.`;
+  if(S.phase==='decree')return mine?'Royal Decree: choose a troop in your keep to bring onto the board.':`${nm} is choosing a troop to bring out of the keep.`;
+  if(S.phase==='choose'&&S.canReroll)return mine?(options().length?'Reroll both dice, or choose a die and a troop.':'No legal move. Reroll both dice.'):`${nm} can reroll both dice.`;
+  if(S.phase==='choose')return mine?'Choose a die, then tap a highlighted troop.':`${nm} is choosing a move.`;
   return'';
 }
 function settleUi(snapMsg){
@@ -4124,7 +4189,7 @@ function onState(room){
   if(NET.pending&&room.seq>NET.pending.seq){NET.pending=null;clearTimeout(NET.pendingTimer);}
   paintLink();
   if(room.status==='closed'){
-    if(!NET.playing)leaveOnline(false,room.closed==='host-left'?'The person who made the room left, so the room closed.':'The room closed.');
+    if(!NET.playing)leaveOnline(false,room.closed==='host-left'?'The host left, so the room was closed.':'The room was closed.');
     return;
   }
   if(room.status==='lobby'){renderLobby(room);return;}
@@ -4205,8 +4270,8 @@ async function playEvent(e,epoch){
       pl.orderRoll=e.total;pl.orderVals=e.vals;announceRoll(pl,e.vals[0],e.vals[1],'order',e.auto);S.phase='moving';renderTurn();
       await wait(1600);return;
     case'orderTie':
-      toast(`Tied on ${e.total}`,`${e.hs.map(h=>shortName(playerOfH(h))).join(' and ')} roll again.`);
-      noteHint('A tie','When two kingdoms share a total, only those kingdoms roll again. That second throw seats them, and the others keep their place.',e.hs[0],'tie');
+      toast(...COPY.tie(e.total,e.hs.map(h=>shortName(playerOfH(h)))));
+      noteHint(...COPY.tieHint,e.hs[0],'tie');
       renderTurn();
       await wait(1500);return;
     case'order':{
@@ -4265,39 +4330,39 @@ async function playEvent(e,epoch){
       if(!isMine(pl)&&e.vals)pl.shownRoll=[e.vals[0],e.vals[1]];
       S.phase='moving';renderTurn();sfx.bad();
       const lost=e.idx===null?null:pl.pieces.find(p=>p.idx===e.idx);
-      if(lost){toast('Third double',`Greed is punished: ${nm}'s furthest troop returns to the keep.`,e.h);noteHint('Greed','A third double in a row is punished. That kingdom\'s furthest troop returns to the keep, and the turn ends.',e.h,'greed');lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);if(gone())return;await settleAll();if(gone())return;renderTally();}
-      else {toast('Third double',`${isMine(pl)?'You lose':nm+' loses'} the turn.`,e.h);noteHint('Greed','A third double in a row ends the turn. If a troop is on the road, the furthest one returns to the keep.',e.h,'greed');}
+      if(lost){toast(...COPY.thirdDouble(isMine(pl)?'You':nm),e.h);noteHint(...COPY.thirdDoubleHint,e.h,'greed');lost.p=-1;delete lost.at;await hop(lost.mesh,cellPos(lost.h,-1,lost.idx),800,3);if(gone())return;await settleAll();if(gone())return;renderTally();}
+      else {toast(...COPY.thirdDoubleNoTroop(isMine(pl)?'You':nm),e.h);noteHint(...COPY.thirdDoubleHint,e.h,'greed');}
       await wait(1300);return;}
     case'noMove':{
       S.phase='moving';renderTurn();
-      const why=e.bonusOnly?`No troop can make the ${e.bonus||BONUS}-square bonus march.`: `No troop can march with ${e.vals.map(v=>'a '+v).join(' or ')}.`;
-      if(isMine(pl))toast('No legal move',why,e.h);else say(`${nm}: ${why}`);
+      const why=e.bonusOnly?COPY.noMoveWhy(null,e.bonus||BONUS):COPY.noMoveWhy([...new Set(e.vals)]);
+      if(isMine(pl))toast(COPY.noMove,why,e.h);else say(`${nm}: ${why}`);
       await wait(1200);return;}
     case'move':{
       const pc=pl.pieces.find(p=>p.idx===e.idx);if(!pc)return;
       S.phase='moving';const d=S.pending[e.di];if(d)d.used=true;setHighlights();showMarkers([]);renderTurn();
-      if(e.auto)say(autoNote(e,`${nm}'s march was made for them`).trim());
+      if(e.auto)say(autoNote(e,`a move was made for ${nm}`).trim());
       pc.p=e.from;if(e.fromAt!=null)pc.at=e.fromAt;else delete pc.at;
       if(!await walkMove(pc,{exit:!!e.exit,shift:!!e.shift,land:e.land,to:e.to,at:e.at},()=>!gone()))return;
       if(e.captures.length){
         const bonus=e.captureBonus||BONUS;
         sfx.capture();
         const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
-        const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
-        toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${bonus}.`,e.h,null,null,true);
-        noteHint('A strike',`The fallen troop returns to its keep. ${nm} then presses on with a bonus march of ${bonus}.`,e.h,'strike');
+        const names=[...new Set(fallen.map(c=>HOUSES[c.h].short))];
+        toast(...COPY.capture(nm,names,fallen.length,bonus),e.h,null,null,true);
+        noteHint(...COPY.captureHint(bonus),e.h,'strike');
         await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
         if(gone())return;
         fallen.forEach(()=>S.pending.push({v:bonus,bonus:true}));
       }
       if(gone())return;
-      if(e.spared&&e.spared.length)toast('The Unbroken','The troop stays on its square. No blood is spilled.',e.h,null,null,true);
-      if(e.goal){const bonus=e.vaultBonus||BONUS;sfx.home();S.pending.push({v:bonus,bonus:true});toast('Vault reached',`A ${nm} troop found the passage. Bonus march of ${bonus}.`,e.h);noteHint('The vault',`An exact count into the vault earns a bonus march of ${bonus}. The first kingdom to bring all four troops home claims the gold.`,e.h,'vault');}
+      if(e.spared&&e.spared.length)toast(...COPY.unbroken,e.h,null,null,true);
+      if(e.goal){const bonus=e.vaultBonus||BONUS;sfx.home();S.pending.push({v:bonus,bonus:true});toast(...COPY.vault(HOUSES[e.h].short,bonus),e.h);noteHint(...COPY.vaultHint(bonus),e.h,'vault');}
       dropCards(e.spent);
       await playBurns(e.spent,e.h);
       if(gone())return;
-      if(onShrine(pc)){shrineBurst(posOf(pc));noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',e.h,'shrine');}
-      if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h,nm);}}
+      if(onShrine(pc)){shrineBurst(posOf(pc));noteHint(...COPY.shrineHint,e.h,'shrine');}
+      if(pc.p>=0&&pc.p<GOAL){const key=R.locKey(pc);const mates=allPieces().filter(o=>o.h===pc.h&&R.locKey(o)===key);if(mates.length>=2){lockShields(pc.h,posOf(pc));phalanxToast(pc.h);}}
       await settleAll();if(gone())return;
       renderTally();renderChips();
       await wait(250);return;}
@@ -4308,21 +4373,21 @@ async function playEvent(e,epoch){
       if(gone())return;
       pl.pieces.forEach(removePiece);pl.pieces=[];
       if(e.h===NET.myH){leaveOnline(false,e.reason==='away'?'You were away for more than a minute, so you forfeited the match.':'');return;}
-      toast(`${e.name||nm} left the realm`,e.reason==='away'?'Away too long, so they forfeited.':'',e.h);
+      toast(...COPY.left(e.name||nm,e.reason==='away'),e.h);
       await settleAll();renderTally();renderTurn();
       await wait(900);return;}
     case'timeout':
       S.phase='over';S.pending=[];showMarkers([]);setHighlights();
       metricsEnd('abandoned');
-      toast('The march ends','This match has lasted an hour, so the table is closed.');
+      toast(...COPY.timeLimit);
       await wait(2800);if(gone())return;
-      leaveOnline(false,'This match lasted an hour, so the table closed.');
+      leaveOnline(false,COPY.timeLimitLeave);
       return;
     case'fate':{
       S.cur=S.players.indexOf(pl);S.phase='fate';
       const fate=ensureFate();
       renderTurn();
-      noteHint('A shrine','Landing on a shrine offers four Fate cards. Keep one. A hand holds two.',e.h,'shrine');
+      noteHint(...COPY.shrineHint,e.h,'shrine');
       const ids=Array.isArray(e.offer)?e.offer:(e.offer&&e.offer.ids)||[];
       fate.offer={h:e.h,idx:e.idx,ids};
       const held=handIds(e.h);
@@ -4351,7 +4416,7 @@ async function playEvent(e,epoch){
         const troop=pl.pieces.find(p=>p.idx===e.wander.idx);
         if(troop){
           delete troop.at;troop.p=e.wander.to;
-          toast('The Wanderer','The troop on the shrine is carried to another square.',e.h);
+          toast(...COPY.wanderer,e.h);
           await hop(troop.mesh,posOf(troop),720,2.2);
           if(gone())return;
           await settleAll();
@@ -4368,13 +4433,13 @@ async function playEvent(e,epoch){
         const bonus=e.captureBonus||BONUS;
         sfx.capture();
         const fallen=e.captures.map(c=>{const o=playerOfH(c.h);return o&&o.pieces.find(p=>p.idx===c.idx);}).filter(Boolean);
-        const names=[...new Set(fallen.map(c=>shortName(playerOfH(c.h))))];
-        toast(`${nm} strikes ${names.join(' and ')}`,`${fallen.length>1?'Two troops return':'A troop returns'} to the keep. Bonus march of ${bonus}.`,e.h,null,null,true);
+        const names=[...new Set(fallen.map(c=>HOUSES[c.h].short))];
+        toast(...COPY.capture(nm,names,fallen.length,bonus),e.h,null,null,true);
         await Promise.all(fallen.map(o=>{o.p=-1;delete o.at;o.mesh.scale.setScalar(1);return hop(o.mesh,cellPos(o.h,-1,o.idx),700,3);}));
         if(gone())return;
         fallen.forEach(()=>S.pending.push({v:bonus,bonus:true}));
       }
-      if(e.spared&&e.spared.length)toast('The Unbroken','The troop stays on its square. No blood is spilled.',e.h,null,null,true);
+      if(e.spared&&e.spared.length)toast(...COPY.unbroken,e.h,null,null,true);
       dropCards(e.spent);
       await playBurns(e.spent,e.h);
       return;}
@@ -4403,10 +4468,10 @@ async function playEvent(e,epoch){
 function openLeave(){
   if(NET.on){
     $('leaveTitle').textContent='Leave the match?';
-    $('leaveText').textContent='Leaving counts as a forfeit. Your troops leave the board, and you can\'t rejoin this match.';
+    $('leaveText').textContent='Leaving counts as a forfeit. Your troops are removed from the board, and you can\'t rejoin this match.';
   }else if(S.players.filter(p=>!p.cpu&&!p.out).length>1){
     $('leaveTitle').textContent='Leave the match?';
-    $('leaveText').textContent='Your troops leave the board. The others keep playing.';
+    $('leaveText').textContent='Your troops are removed from the board. The other players keep playing.';
   }else{
     $('leaveTitle').textContent='Leave the match?';
     $('leaveText').textContent='You are the only one still in this match. Leaving ends it.';
@@ -4425,7 +4490,7 @@ function forfeitSeat(pl){
   pl.out=true;
   pl.pieces.slice().forEach(removePiece);
   pl.pieces=[];
-  toast(`${HOUSES[pl.h].name} left the realm`,'',pl.h);
+  toast(...COPY.left(HOUSES[pl.h].name,false),pl.h);
   if(curP()===pl){
     S.pending=[];showMarkers([]);setHighlights();
     if(S.ordering){
@@ -4494,7 +4559,7 @@ let labFaces=[];const labQuat=new THREE.Quaternion();
   if(markerLab)return;
   const code=savedRoom();
   if(!code||location.protocol==='file:')return;
-  openPlay({lead:`Rejoining room ${code}…`,browse:false});
+  openPlay({mode:'join',lead:`Rejoining room ${code}…`,browse:false});
   connect({t:'join',id:myId,code});
 })();
 
@@ -4769,7 +4834,7 @@ function presentWorld(id){
   if(!w){
     if(!S.world)return Promise.resolve();
     setWorld(null);
-    toast('The mist lifts','Every troop on the road is in sight again.',null,reduced?900:MIST_LIFT_MS,null,true);
+    toast('The Mist clears','You can see every troop on the board again.',null,reduced?900:MIST_LIFT_MS,null,true);
     return wait(reduced?900:MIST_LIFT_MS);
   }
   primeWorldBed(id);
@@ -4779,7 +4844,7 @@ function presentWorld(id){
   sfx.spell();
   const hold=reduced?900:(WORLD_INTRO[id]||2000);
   toast(w.name,w.rule,null,hold,null,true);
-  noteHint(w.name,w.lore+' '+w.rule+' It lifts after the next round.',null,'world');
+  noteHint(w.name,w.lore+' '+w.rule+' It clears after one round.',null,'world');
   return wait(hold);
 }
 
@@ -5008,7 +5073,7 @@ function xrInstruction(){
   if(!isMine(pl))return '';
   if(heldDice.length)return 'Toss and release. The dice land on the board.';
   if(S.phase==='roll'||S.phase==='orderRoll')return NET.on?'Press the trigger, or pinch your right hand, to roll.':'Press the trigger, or pinch your right hand. The dice come to that hand.';
-  if(S.phase==='choose')return 'Tap a troop or a ring with your hand, or point and press the trigger.';
+  if(S.phase==='choose')return 'Tap a troop or a move marker with your hand, or point and press the trigger.';
   return 'Tap X, or pinch your left hand, for settings.';
 }
 function paintViewHud(){
@@ -5106,7 +5171,7 @@ function paintXRPanel(){
     y+=124;
   }
   const bh=108,gap=16,bw=(W-96-gap)/2;
-  if(S.phase==='over'){paintBtn(g,'again',NET.on?'Back to the title':'Play again',48,y,W-96,bh,true);y+=bh+gap;}
+  if(S.phase==='over'){paintBtn(g,'again',NET.on?'Back to title screen':'Play again',48,y,W-96,bh,true);y+=bh+gap;}
   if(xrPlaced){paintBtn(g,'move',xrPlacing?'Placing…':'Move board',48,y,W-96,bh,xrPlacing);y+=bh+gap;}
   paintBtn(g,'sound',(themeOn||fxOn)?'Sound on':'Sound off',48,y,bw,bh,false);
   paintBtn(g,'exit','Exit',48+bw+gap,y,bw,bh,false);
@@ -5569,7 +5634,7 @@ function updateXR(frame,dt){
   updateHandPanel(xrCam);
 }
 function roomDidNotStart(){
-  const msg='The room view did not start. Stay in the Quest Browser and try again.';
+  const msg='Mixed reality didn\'t start. Stay in the Quest Browser and try again.';
   if($('title').classList.contains('open'))$('titleErr').textContent=msg;
   ui.hint.textContent=msg;
 }
