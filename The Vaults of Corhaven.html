@@ -272,9 +272,9 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .mc-back :is(button,label){cursor:pointer}
 .mc-num{position:relative;z-index:1;display:grid;place-items:center;width:38px;height:38px;margin-top:12px;border:2px solid #C5D0DC;border-radius:50%;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--mc) 70%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 50%,#000));color:#F2F5F8;font-weight:700;font-size:17px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.65)}
 .mc-front .mc-num{position:absolute;top:12px;left:50%;margin:0;transform:translateX(-50%);z-index:2}
-.mc-banner{position:relative;display:grid;place-items:center;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:56px 0 22%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.mc-banner{position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(28px,3.6vh,38px) 0 22%;--mc-sigil-h:clamp(44px,11vw,58px);filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
 .mc-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);-webkit-mask:var(--bn) center/contain no-repeat;mask:var(--bn) center/contain no-repeat}
-.mc-banner svg{position:relative;width:62%;height:auto;color:#F2F5F8;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.mc-banner :is(svg,.mc-sigil-art){position:relative;display:block;height:var(--mc-sigil-h);width:auto;max-width:72%;margin-inline:auto;margin-top:6px;color:#F2F5F8;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
 .mc-tag{margin-top:clamp(14px,2.4vh,26px);font-size:clamp(12px,.8vw,15px);line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#E3B663}
 .mc-name{margin-top:6px;font-family:var(--font-cinder);font-size:clamp(22px,1.7vw,32px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F8}
 .mc-desc{margin-top:clamp(10px,1.6vh,18px);font-family:var(--font-serif,var(--font-sans));font-style:italic;font-size:clamp(13px,.9vw,17px);line-height:1.45;color:var(--parch-dim)}
@@ -864,7 +864,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.11.1';
+const GAME_VERSION='1.11.4';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -3828,12 +3828,19 @@ function setPlayMode(mode){
   renderModeCards();
   syncPlayFoot();
 }
+const MODE_SIGIL_ART={
+  normal:{src:'assets/Board Game/Normal Mode.svg',h:108},
+  gauntlet:{src:'assets/Board Game/Gauntlet.svg',h:108}
+};
 const MODE_SIGILS={
-  normal:'<path d="M32 6v40M22 38h20M32 46v8M28 58h8" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M32 6l4 8v24h-8V14z" fill="currentColor"/>',
-  gauntlet:'<path d="M10 46l-2-28 13 12 11-20 11 20 13-12-2 28z" fill="currentColor"/><path d="M10 52h44" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
   conquest:'<path d="M12 56V22h8v8h6v-8h12v8h6v-8h8v34z" fill="currentColor"/><path d="M28 56V44a4 4 0 018 0v12" fill="#0a0c10" opacity=".55"/>',
   classic:'<rect x="12" y="12" width="40" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="23" cy="23" r="4" fill="currentColor"/><circle cx="32" cy="32" r="4" fill="currentColor"/><circle cx="41" cy="41" r="4" fill="currentColor"/>'
 };
+function modeSigilMarkup(id){
+  const art=MODE_SIGIL_ART[id];
+  if(art)return `<img class="mc-sigil-art" src="${encodeURI(art.src)}" height="${art.h}" alt="" decoding="async">`;
+  return `<svg viewBox="0 0 64 64" aria-hidden="true">${MODE_SIGILS[id]||''}</svg>`;
+}
 const MODE_TINT={normal:'#356590',gauntlet:'#9E1B18',conquest:'#54673B',classic:'#BD7811'};
 /* Picked once per page load so a card keeps its banner when Online and Local re-render. */
 const GENERAL_BANNERS=['general-1','general-2','general-3'].sort(()=>Math.random()-.5);
@@ -3862,7 +3869,7 @@ function renderModeCards(){
     const backId='modeBack-'+m.id;
     card.innerHTML=`<div class="mc-inner">
       <button type="button" class="mc-face mc-front" aria-expanded="false" aria-controls="${backId}">
-        <span class="mc-banner" aria-hidden="true"><svg viewBox="0 0 64 64">${MODE_SIGILS[m.id]||''}</svg></span>
+        <span class="mc-banner" aria-hidden="true">${modeSigilMarkup(m.id)}</span>
         <span class="mc-tag">${m.tagline||''}</span>
         <span class="mc-name">${m.label}</span>
         <span class="mc-desc">${m.desc}</span>
