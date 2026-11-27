@@ -247,12 +247,12 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .roommode{margin:0;padding:0;font-size:15px;font-weight:600;color:var(--gold-bright)}
 #play,#online,#setup,#profile.menu-page{position:fixed;padding:0;align-items:stretch;overflow:hidden;background:#050608}
 #play{--play-side:clamp(240px,22vw,420px)}
-#play .joinside h1{text-align:center}
+#play .joinside h1{display:flex;align-items:center;justify-content:center;height:calc(1.3 * clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25)));margin:0;font-size:calc(1.3 * clamp(calc(55px * 0.85), calc(55 * 100vw / 1920), calc(55px * 1.25)));line-height:1;text-align:center}
 #play .playside-choices{display:flex;flex-direction:column;align-items:center;gap:32px;width:100%;margin-top:21px}
 #play .playside-choices [aria-pressed="true"]{color:#0c0e12;text-shadow:none}
 #play .playside-choices [aria-pressed="true"]::before{opacity:1}
 #play #playFoot{align-items:center}
-#play .playmain{display:grid;grid-template-columns:minmax(0,1fr);align-content:center;align-items:start;column-gap:clamp(28px,3.6vw,72px);row-gap:40px;width:100%;min-width:min(100%,320px);padding-left:clamp(16px,2vw,40px)}
+#play .playmain{display:grid;grid-template-columns:minmax(0,1fr);align-content:start;align-items:start;column-gap:clamp(28px,3.6vw,72px);row-gap:40px;width:100%;min-width:min(100%,320px);padding-left:clamp(16px,2vw,40px)}
 #play.join .playmain{align-content:start;padding-top:calc(env(safe-area-inset-top,0px) + clamp(48px,12vh,140px))}
 #play.join .openrooms{justify-self:center;align-self:start;width:min(720px,100%)}
 #play.join .sheet::after{content:"";position:absolute;z-index:0;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.78) 30%,rgba(0,0,0,.86) 50%,rgba(0,0,0,.78) 70%,rgba(0,0,0,.2) 100%);pointer-events:none}
@@ -260,12 +260,12 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 #play .openhead{margin:22px 0 0;font-family:var(--font-sans);font-weight:600;font-size:clamp(13px,.85vw,15px);line-height:1.3;letter-spacing:.14em;text-transform:uppercase;color:#E3B663}
 .playmodes{display:flex;flex-direction:column;align-items:center;gap:clamp(18px,2.6vh,32px);width:100%;min-width:0}
 #play .playmain h2{margin:0;font-family:var(--font-cinder);font-weight:400;font-size:clamp(26px,2.2vw,42px);line-height:1.05;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 2px 12px rgba(0,0,0,.85)}
-#play .playmodes>h2{font-size:clamp(34px,3.4vw,58px);line-height:1.02;letter-spacing:.05em}
+#play .playmodes>h2{display:flex;align-items:center;justify-content:center;height:calc(1.3 * clamp(calc(64px * 0.85), calc(64 * 100vw / 1920), calc(64px * 1.25)));font-size:clamp(34px,3.4vw,58px);line-height:1;letter-spacing:.05em}
 #play :is(.openrooms,.localseats) h2{font-size:clamp(22px,1.6vw,30px)}
 .modecards{display:grid;grid-template-columns:repeat(2,minmax(140px,1fr));gap:clamp(22px,1.8vw,32px);width:100%;max-width:720px;perspective:1800px}
 #play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:960px;gap:clamp(26px,2vw,40px)}
 .modecard[data-mode="normal"]{grid-column:1/-1}
-.modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(240px,30vh,340px)}
+.modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(300px,34vh,420px)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1);will-change:transform}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
 .modecard.flipped .mc-front{pointer-events:none}
@@ -335,7 +335,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 @media (max-width:1180px){
   #play .playmain{align-content:start}
   .modecards,#play:not(.local) .modecards{grid-template-columns:repeat(2,minmax(140px,1fr));max-width:720px}
-  .modecard{height:clamp(220px,28vh,300px)}
+  .modecard{height:clamp(260px,32vh,360px)}
   .openrooms,.localseats{align-self:stretch;max-width:560px;width:100%;justify-self:center}
 }
 @media (prefers-reduced-motion:reduce){.mc-inner{transition:none}}
@@ -949,7 +949,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.12.11';
+const GAME_VERSION='1.12.13';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1699,6 +1699,9 @@ function hop(mesh,to,dur,h){const from=mesh.position.clone();if(mesh.userData.li
 /* Theme is mastered much hotter than the short clips. Levels go through a gain node, because a phone ignores the volume on the audio element itself. */
 const AUDIO_KEY='corhaven-audio';
 let themeOn=true,fxOn=true,themeVol=0.22,fxVol=1,winPlaying=false,clipEpoch=0,lastStep=-1;
+/* The effects slider still reads 0–100. Full on that slider plays at 60% of the file level. */
+const FX_CEILING=0.6;
+function fxLevel(){return fxOn?fxVol*FX_CEILING:0;}
 try{const saved=JSON.parse(localStorage.getItem(AUDIO_KEY)||'null');if(saved){if(typeof saved.themeOn==='boolean')themeOn=saved.themeOn;if(typeof saved.fxOn==='boolean')fxOn=saved.fxOn;if(typeof saved.themeVol==='number')themeVol=saved.themeVol;if(typeof saved.fxVol==='number')fxVol=saved.fxVol;}}catch(e){}
 function saveAudioPrefs(){try{localStorage.setItem(AUDIO_KEY,JSON.stringify({themeOn,fxOn,themeVol,fxVol}));}catch(e){}}
 const theme=document.getElementById('theme');
@@ -1730,7 +1733,7 @@ function applyGains(){
     if(actx)themeGain.gain.cancelScheduledValues(actx.currentTime);
     themeGain.gain.value=level;
   }else theme.volume=level;
-  if(fxGain)fxGain.gain.value=fxOn?fxVol:0;
+  if(fxGain)fxGain.gain.value=fxLevel();
 }
 function fadeThemeGain(to,ms){
   const token=++themeFadeToken;
@@ -1777,7 +1780,7 @@ function setBase(audio,base){
   audio.dataset.base=String(base);
   const g=wireMedia(audio);
   if(g)g.gain.value=Math.max(0,base);
-  else audio.volume=fxOn?Math.min(1,Math.max(0,base*fxVol)):0;
+  else audio.volume=Math.min(1,Math.max(0,base*fxLevel()));
 }
 theme.addEventListener('ended',()=>{if(themeOn&&themeVol>0.001&&!winPlaying){theme.currentTime=0;const p=theme.play();if(p)p.catch(()=>{});}});
 const STEP_SRCS=[1,2,3,4,5].map(n=>'assets/Music/piece-movement-'+n+'.wav');
