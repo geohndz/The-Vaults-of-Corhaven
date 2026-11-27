@@ -265,7 +265,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .modecards{display:grid;grid-template-columns:repeat(2,minmax(140px,1fr));gap:clamp(22px,1.8vw,32px);width:100%;max-width:720px;perspective:1800px}
 #play:not(.local) .modecards,#play.local:not(.local-setup) .modecards{max-width:960px;gap:clamp(26px,2vw,40px)}
 .modecard[data-mode="normal"]{grid-column:1/-1}
-.modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(380px,54vh,520px)}
+.modecard{--mc:#DC742A;--mc-shadow:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18);--mc-shadow-hover:0 4px 18px rgba(0,0,0,.24),0 16px 42px rgba(0,0,0,.26),0 32px 80px rgba(0,0,0,.18),0 0 52px 14px color-mix(in srgb,var(--mc) 26%,transparent);position:relative;min-width:0;height:clamp(240px,30vh,340px)}
 .mc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.22,.8,.24,1);will-change:transform}
 .modecard.flipped .mc-inner{transform:rotateY(180deg)}
 .modecard.flipped .mc-front{pointer-events:none}
@@ -335,7 +335,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 @media (max-width:1180px){
   #play .playmain{align-content:start}
   .modecards,#play:not(.local) .modecards{grid-template-columns:repeat(2,minmax(140px,1fr));max-width:720px}
-  .modecard{height:clamp(340px,36vh,420px)}
+  .modecard{height:clamp(220px,28vh,300px)}
   .openrooms,.localseats{align-self:stretch;max-width:560px;width:100%;justify-self:center}
 }
 @media (prefers-reduced-motion:reduce){.mc-inner{transition:none}}
@@ -949,7 +949,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.12.10';
+const GAME_VERSION='1.12.11';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';

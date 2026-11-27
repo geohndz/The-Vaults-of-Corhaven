@@ -489,6 +489,7 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 05 | [2026-11-26-05-mode-card-ink-desktop.png](./screenshots/2026-11-26-05-mode-card-ink-desktop.png) | Play, mode cards | **V1.12.7.** Card frames, rules, and the marks on the banners are drawn with a brush stroke that feathers where the ink soaks in |
 | 06 | [2026-11-26-06-mode-card-ink-outside-desktop.png](./screenshots/2026-11-26-06-mode-card-ink-outside-desktop.png) | Play, mode card flipped | **V1.12.8.** The brush stroke sits outside the card. The banner marks stay sharp |
 | 07 | [2026-11-26-07-banner-stroke-desktop.png](./screenshots/2026-11-26-07-banner-stroke-desktop.png) | Play, mode cards | **V1.12.10.** Each banner has the same outside brush stroke as the card, in that banner's own color. The marks stay sharp |
+| 08 | [2026-11-26-08-mode-cards-shorter-desktop.png](./screenshots/2026-11-26-08-mode-cards-shorter-desktop.png) | Play, mode cards | **V1.12.11.** The mode cards are shorter, so the heading and both rows sit on the parchment instead of filling the screen |
 
 ---
 
