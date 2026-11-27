@@ -292,10 +292,10 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 .mc-back :is(button,label){cursor:pointer}
 .mc-num{position:relative;z-index:1;display:grid;place-items:center;width:38px;height:38px;margin-top:12px;border:2px solid #C5D0DC;border-radius:50%;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--mc) 70%,#fff),var(--mc) 60%,color-mix(in srgb,var(--mc) 50%,#000));color:#F2F5F8;font-weight:700;font-size:17px;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.65)}
 .mc-front .mc-num{position:absolute;top:12px;left:50%;margin:0;transform:translateX(-50%);z-index:2}
-.mc-banner{--mc-cloth:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(28px,3.6vh,38px) 0 22px;--mc-sigil-h:clamp(44px,11vw,58px)}
+.mc-banner{--mc-cloth:linear-gradient(180deg,color-mix(in srgb,var(--mc) 85%,#fff) 0%,var(--mc) 40%,color-mix(in srgb,var(--mc) 60%,#000) 100%);position:relative;display:grid;place-items:start center;align-content:start;width:46%;max-width:96px;aspect-ratio:63 / 103;padding:clamp(16px,2vh,24px) 0 22px;--mc-sigil-h:clamp(44px,11vw,58px)}
 .mc-banner::before{content:'';position:absolute;inset:0;background:var(--mc-cloth);-webkit-mask:var(--bn) center top/contain no-repeat;mask:var(--bn) center top/contain no-repeat}
 .mc-banner::after{content:'';position:absolute;inset:-12px;z-index:-1;pointer-events:none;background:var(--mc-cloth);-webkit-mask:var(--bn) center/calc(100% - 24px) calc(100% - 24px) no-repeat;mask:var(--bn) center/calc(100% - 24px) calc(100% - 24px) no-repeat;filter:url(#ink-banner)}
-.mc-banner :is(svg,.mc-sigil-art){position:relative;display:block;height:var(--mc-sigil-h);width:auto;max-width:72%;margin-inline:auto;margin-top:6px;color:#F2F5F8;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.mc-banner :is(svg,.mc-sigil-art){position:relative;display:block;height:var(--mc-sigil-h);width:auto;max-width:72%;margin-inline:auto;margin-top:13px;color:#F2F5F8;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
 .mc-head{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,.35vh,5px);width:100%;min-height:0;padding:0 .08em;text-align:center}
 .mc-name{margin:0;font-family:var(--font-cinder);font-size:clamp(40px,4.8vw,96px);line-height:.95;letter-spacing:.03em;text-transform:uppercase;color:#F2F5F8;max-width:100%;hyphens:auto}
 .mc-tag{margin:0;font-size:clamp(12px,.8vw,15px);line-height:1.2;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--mc) 78%,#F2F5F8);text-shadow:0 1px 3px rgba(0,0,0,.85)}
@@ -952,7 +952,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.12.16';
+const GAME_VERSION='1.12.21';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';

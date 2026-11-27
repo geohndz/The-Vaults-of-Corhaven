@@ -494,6 +494,10 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 10 | [2026-11-26-10-mode-cards-taller-desktop.png](./screenshots/2026-11-26-10-mode-cards-taller-desktop.png) | Play, mode cards | **V1.12.14.** The mode cards are taller again, and both rows still sit on the parchment |
 | 11 | [2026-11-26-11-mode-card-back-desktop.png](./screenshots/2026-11-26-11-mode-card-back-desktop.png) | Play, mode card back | **V1.12.15.** Cards fill the space under the heading. The back has no inner stroke, and the description sits between the title and Continue |
 | 12 | [2026-11-26-12-mode-card-back-type-desktop.png](./screenshots/2026-11-26-12-mode-card-back-type-desktop.png) | Play, mode card back | **V1.12.16.** The title and the description on the back of a mode card are larger |
+| 13 | [2026-11-26-13-banner-sigil-higher-desktop.png](./screenshots/2026-11-26-13-banner-sigil-higher-desktop.png) | Play, mode cards | **V1.12.17.** The marks sit higher on the banners |
+| 14 | [2026-11-26-14-banner-sigil-settled-desktop.png](./screenshots/2026-11-26-14-banner-sigil-settled-desktop.png) | Play, mode cards | **V1.12.18.** The marks come down a little, still in the upper part of the cloth |
+| 15 | [2026-11-26-15-banner-sigil-lower-desktop.png](./screenshots/2026-11-26-15-banner-sigil-lower-desktop.png) | Play, mode cards | **V1.12.20.** The marks sit a little lower on the cloth, clear of the ragged edge |
+| 16 | [2026-11-26-16-banner-sigil-desktop.png](./screenshots/2026-11-26-16-banner-sigil-desktop.png) | Play, mode cards | **V1.12.21.** The marks move up 5 pixels |
 
 ---
 
