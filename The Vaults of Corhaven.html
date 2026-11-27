@@ -338,6 +338,7 @@ body.link-bad #toast.show{opacity:0;visibility:hidden}
 @media (min-width:1181px){
   #play:not(.join):not(.local-setup) .modecards{flex:0.9 1 0}
   #play:not(.join):not(.local-setup) .playmodes::after{content:"";flex:0.1 1 0;min-height:0}
+  #play:not(.join):not(.local-setup) .mc-back .mc-desc{font-size:clamp(21px,1.55vw,22px)}
 }
 @media (max-width:1180px){
   #play .playmain{align-content:start}
@@ -956,7 +957,7 @@ body.at-lesson #hintDock{z-index:21}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION='1.12.23';
+const GAME_VERSION='1.12.24';
 const TYPE_SANS='"Libertinus Sans",system-ui,sans-serif';
 const TYPE_SERIF='"Libertinus Serif",Georgia,serif';
 const TYPE_DISPLAY='"Libertinus Serif Display","Libertinus Serif",Georgia,serif';
@@ -1706,8 +1707,8 @@ function hop(mesh,to,dur,h){const from=mesh.position.clone();if(mesh.userData.li
 /* Theme is mastered much hotter than the short clips. Levels go through a gain node, because a phone ignores the volume on the audio element itself. */
 const AUDIO_KEY='corhaven-audio';
 let themeOn=true,fxOn=true,themeVol=0.22,fxVol=1,winPlaying=false,clipEpoch=0,lastStep=-1;
-/* The effects slider still reads 0–100. Full on that slider plays at 60% of the file level. */
-const FX_CEILING=0.6;
+/* The effects slider still reads 0–100. Full on that slider plays at 40% of the file level. */
+const FX_CEILING=0.4;
 function fxLevel(){return fxOn?fxVol*FX_CEILING:0;}
 try{const saved=JSON.parse(localStorage.getItem(AUDIO_KEY)||'null');if(saved){if(typeof saved.themeOn==='boolean')themeOn=saved.themeOn;if(typeof saved.fxOn==='boolean')fxOn=saved.fxOn;if(typeof saved.themeVol==='number')themeVol=saved.themeVol;if(typeof saved.fxVol==='number')fxVol=saved.fxVol;}}catch(e){}
 function saveAudioPrefs(){try{localStorage.setItem(AUDIO_KEY,JSON.stringify({themeOn,fxOn,themeVol,fxVol}));}catch(e){}}
