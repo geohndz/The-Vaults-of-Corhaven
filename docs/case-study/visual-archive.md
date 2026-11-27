@@ -491,6 +491,9 @@ What made play harder: the pieces look alike, world events and banners move too 
 | 07 | [2026-11-26-07-banner-stroke-desktop.png](./screenshots/2026-11-26-07-banner-stroke-desktop.png) | Play, mode cards | **V1.12.10.** Each banner has the same outside brush stroke as the card, in that banner's own color. The marks stay sharp |
 | 08 | [2026-11-26-08-mode-cards-shorter-desktop.png](./screenshots/2026-11-26-08-mode-cards-shorter-desktop.png) | Play, mode cards | **V1.12.11.** The mode cards are shorter, so the heading and both rows sit on the parchment instead of filling the screen |
 | 09 | [2026-11-26-09-play-title-aligned-desktop.png](./screenshots/2026-11-26-09-play-title-aligned-desktop.png) | Play, mode cards | **V1.12.13.** Play and Select a game mode share one line. Play is larger, and the cards are a little taller |
+| 10 | [2026-11-26-10-mode-cards-taller-desktop.png](./screenshots/2026-11-26-10-mode-cards-taller-desktop.png) | Play, mode cards | **V1.12.14.** The mode cards are taller again, and both rows still sit on the parchment |
+| 11 | [2026-11-26-11-mode-card-back-desktop.png](./screenshots/2026-11-26-11-mode-card-back-desktop.png) | Play, mode card back | **V1.12.15.** Cards fill the space under the heading. The back has no inner stroke, and the description sits between the title and Continue |
+| 12 | [2026-11-26-12-mode-card-back-type-desktop.png](./screenshots/2026-11-26-12-mode-card-back-type-desktop.png) | Play, mode card back | **V1.12.16.** The title and the description on the back of a mode card are larger |
 
 ---
 
